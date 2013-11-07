@@ -12,18 +12,22 @@ module Elasticsearch
           @klass = klass
         end
 
+        def self.register(name, condition)
+          self.adapters[name] = condition
+        end
+
+        def self.adapters
+          @adapters ||= {}
+        end
+
         def records_mixin
           adapter.const_get(:Records)
         end
 
         def adapter
-          @adapter ||= case
-            when defined?(::ActiveRecord::Base) && klass.ancestors.include?(::ActiveRecord::Base)
-              Elasticsearch::Model::Adapter::ActiveRecord
-            when defined?(::Mongoid) && klass.ancestors.include?(::Mongoid::Document)
-              Elasticsearch::Model::Adapter::Mongoid
-            else
-              Elasticsearch::Model::Adapter::Default
+          @adapter ||= begin
+            self.class.adapters.find( lambda {[]} ) { |name, condition| condition.call(klass) }.first \
+            || Elasticsearch::Model::Adapter::Default
           end
         end
 
