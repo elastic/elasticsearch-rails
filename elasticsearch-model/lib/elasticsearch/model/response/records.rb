@@ -7,10 +7,13 @@ module Elasticsearch
         def initialize(klass, response)
           super
           @ids = response['hits']['hits'].map { |hit| hit['_id'] }
-        end
 
-        def records
-          @records = klass.find(@ids)
+          # Include module provided by the adapter in the singleton class ("metaclass")
+          #
+          adapter = Adapter.from_class(klass)
+          metaclass = class << self; self; end
+          metaclass.__send__ :include, adapter.response
+          self
         end
 
         # Delegate methods to `@records`
