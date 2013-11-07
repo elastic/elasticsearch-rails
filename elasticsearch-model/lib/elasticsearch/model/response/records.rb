@@ -2,6 +2,11 @@ module Elasticsearch
   module Model
     module Response
       class Records
+        include Enumerable
+
+        extend  Forwardable
+        def_delegators :records, :each, :empty?, :size, :slice, :[], :to_a, :to_ary
+
         include Base
 
         def initialize(klass, response)
@@ -12,7 +17,7 @@ module Elasticsearch
           #
           adapter = Adapter.from_class(klass)
           metaclass = class << self; self; end
-          metaclass.__send__ :include, adapter.response
+          metaclass.__send__ :include, adapter.records_mixin
           self
         end
 
