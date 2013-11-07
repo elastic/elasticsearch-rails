@@ -3,8 +3,10 @@ module Elasticsearch
     module Adapter
       module Mongoid
 
-        module Records
+        Adapter.register self,
+                         lambda { |klass| defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
 
+        module Records
           # Return the `ActiveRecord::Relation` instance
           #
           def records
@@ -31,8 +33,8 @@ module Elasticsearch
               criteria
             end
           end
-
         end
+
       end
 
     end

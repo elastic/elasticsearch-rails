@@ -3,6 +3,9 @@ module Elasticsearch
     module Adapter
       module ActiveRecord
 
+        Adapter.register self,
+                         lambda { |klass| defined?(::ActiveRecord::Base) && klass.ancestors.include?(::ActiveRecord::Base) }
+
         module Records
 
           # Return the `ActiveRecord::Relation` instance
@@ -43,6 +46,7 @@ module Elasticsearch
             sql_records
           end
         end
+
       end
 
     end
