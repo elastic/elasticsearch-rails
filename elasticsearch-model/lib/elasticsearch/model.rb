@@ -4,6 +4,8 @@ require 'elasticsearch'
 
 require 'hashie'
 
+require 'elasticsearch/model/support/forwardable'
+
 require 'elasticsearch/model/adapter'
 require 'elasticsearch/model/adapters/default'
 require 'elasticsearch/model/adapters/active_record'

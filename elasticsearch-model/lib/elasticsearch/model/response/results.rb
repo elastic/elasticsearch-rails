@@ -8,8 +8,8 @@ module Elasticsearch
 
         include Enumerable
 
-        extend  Forwardable
-        def_delegators :results, :each, :empty?, :size, :slice, :[], :to_a, :to_ary
+        extend  Support::Forwardable
+        forward :results, :each, :empty?, :size, :slice, :[], :to_a, :to_ary
 
         def initialize(klass, response)
           super
