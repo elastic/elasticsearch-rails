@@ -9,10 +9,6 @@ module Elasticsearch
           Response::Response.new(self, response)
         end
 
-        def client
-          @client ||= Elasticsearch::Client.new
-        end
-
       end
 
     end
