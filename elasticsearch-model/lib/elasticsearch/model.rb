@@ -13,6 +13,8 @@ require 'elasticsearch/model/adapters/default'
 require 'elasticsearch/model/adapters/active_record'
 require 'elasticsearch/model/adapters/mongoid'
 
+require 'elasticsearch/model/naming'
+
 require 'elasticsearch/model/response'
 require 'elasticsearch/model/response/base'
 require 'elasticsearch/model/response/result'
