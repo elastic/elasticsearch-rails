@@ -4,10 +4,10 @@ module Elasticsearch
 
       module ClassMethods
 
-        # Get or set the client
+        # Get or set the client for a specific model
         #
         def client client=nil
-          @client = client || @client || Elasticsearch::Client.new
+          @client = client || @client || Elasticsearch::Model.client
         end
       end
 

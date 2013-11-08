@@ -24,6 +24,17 @@ require 'elasticsearch/model/version'
 
 module Elasticsearch
   module Model
-    # Your code goes here...
+
+    module ClassMethods
+
+      # Get or set the client for all models
+      #
+      def client client=nil
+        @client = client || @client || Elasticsearch::Client.new
+      end
+
+    end
+    extend ClassMethods
+
   end
 end
