@@ -5,9 +5,9 @@ module Elasticsearch
         attr_reader :klass, :response
 
         include Enumerable
+        extend  Support::Forwardable
 
-        extend  Forwardable
-        def_delegators :results, :each, :empty?, :size, :slice, :[], :to_ary
+        forward :results, :each, :empty?, :size, :slice, :[], :to_ary
 
         def initialize(klass, response)
           @klass    = klass
