@@ -20,6 +20,16 @@ module Elasticsearch
 
       end
 
+      module InstanceMethods
+        def index_name name=nil
+          @index_name = name || @index_name || self.class.index_name
+        end
+
+        def document_type name=nil
+          @document_type = name || @document_type || self.class.document_type
+        end
+      end
+
     end
   end
 end
