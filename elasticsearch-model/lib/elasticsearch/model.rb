@@ -29,6 +29,25 @@ require 'elasticsearch/model/version'
 module Elasticsearch
   module Model
 
+    # Add the Elasticsearch::Model functionality the including class/module
+    #
+    def self.included(base)
+      base.class_eval do
+        extend  Elasticsearch::Model::Client::ClassMethods
+        include Elasticsearch::Model::Client::InstanceMethods
+
+        extend  Elasticsearch::Model::Naming::ClassMethods
+        include Elasticsearch::Model::Naming::InstanceMethods
+
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        include Elasticsearch::Model::Serializing::InstanceMethods
+
+        extend  Elasticsearch::Model::Searching::ClassMethods
+      end
+    end
+
     module ClassMethods
 
       # Get or set the client for all models
