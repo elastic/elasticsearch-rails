@@ -16,35 +16,71 @@ require 'elasticsearch/model/adapters/mongoid'
 require 'elasticsearch/model/indexing'
 require 'elasticsearch/model/naming'
 require 'elasticsearch/model/serializing'
+require 'elasticsearch/model/searching'
+
+require 'elasticsearch/model/proxy'
 
 require 'elasticsearch/model/response'
 require 'elasticsearch/model/response/base'
 require 'elasticsearch/model/response/result'
 require 'elasticsearch/model/response/results'
 require 'elasticsearch/model/response/records'
-require 'elasticsearch/model/searching'
 
 require 'elasticsearch/model/version'
 
 module Elasticsearch
+
+  # Elasticsearch integration for Ruby models
+  # =========================================
+  #
+  # TODO: Description
+  #
   module Model
 
-    # Add the Elasticsearch::Model functionality the including class/module
+    # Adds the `Elasticsearch::Model` functionality to the including class.
+    #
+    # * Creates the `__elasticsearch__` class and instance methods, pointing to the proxy object
+    # * Includes the necessary modules in the proxy classes
+    # * Sets up delegation for crucial methods such as `search`, etc.
+    #
+    # @example Include the {Elasticsearch::Model} module in the `Article` model definition
+    #
+    #     class Article < ActiveRecord::Base
+    #       include Elasticsearch::Model
+    #     end
+    #
+    # @example Inject the {Elasticsearch::Model} module into the `Article` model
+    #
+    #     Article.__send__ :include, Elasticsearch::Model
+    #
+    # It is possible to include/extend the model with the corresponding
+    # modules directly, without using the proxy, if this is desired:
+    #
+    #     MyModel.__send__ :extend,  Elasticsearch::Model::Client::ClassMethods
+    #     MyModel.__send__ :include, Elasticsearch::Model::Client::InstanceMethods
+    #     MyModel.__send__ :extend,  Elasticsearch::Model::Searching::ClassMethods
+    #     # ...
     #
     def self.included(base)
       base.class_eval do
-        extend  Elasticsearch::Model::Client::ClassMethods
-        include Elasticsearch::Model::Client::InstanceMethods
+        include Elasticsearch::Model::Proxy
 
-        extend  Elasticsearch::Model::Naming::ClassMethods
-        include Elasticsearch::Model::Naming::InstanceMethods
+        Elasticsearch::Model::Proxy::ClassMethodsProxy.class_eval do
+          include Elasticsearch::Model::Client::ClassMethods
+          include Elasticsearch::Model::Naming::ClassMethods
+          include Elasticsearch::Model::Indexing::ClassMethods
+          include Elasticsearch::Model::Searching::ClassMethods
+        end
 
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+        Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval do
+          include Elasticsearch::Model::Client::InstanceMethods
+          include Elasticsearch::Model::Naming::InstanceMethods
+          include Elasticsearch::Model::Indexing::InstanceMethods
+          include Elasticsearch::Model::Serializing::InstanceMethods
+        end
 
-        include Elasticsearch::Model::Serializing::InstanceMethods
-
-        extend  Elasticsearch::Model::Searching::ClassMethods
+        extend  Support::Forwardable
+        forward :'self.__elasticsearch__', :search unless respond_to?(:search)
       end
     end
 
