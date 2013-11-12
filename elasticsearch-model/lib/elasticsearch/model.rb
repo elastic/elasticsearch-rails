@@ -17,6 +17,7 @@ require 'elasticsearch/model/indexing'
 require 'elasticsearch/model/naming'
 require 'elasticsearch/model/serializing'
 require 'elasticsearch/model/searching'
+require 'elasticsearch/model/callbacks'
 
 require 'elasticsearch/model/proxy'
 

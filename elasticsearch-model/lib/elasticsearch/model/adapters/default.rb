@@ -12,6 +12,10 @@ module Elasticsearch
           end
         end
 
+        module Callbacks
+          # noop
+        end
+
       end
     end
   end

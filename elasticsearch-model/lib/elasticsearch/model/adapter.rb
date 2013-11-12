@@ -24,6 +24,10 @@ module Elasticsearch
           adapter.const_get(:Records)
         end
 
+        def callbacks_mixin
+          adapter.const_get(:Callbacks)
+        end
+
         def adapter
           @adapter ||= begin
             self.class.adapters.find( lambda {[]} ) { |name, condition| condition.call(klass) }.first \
