@@ -32,7 +32,7 @@ module Elasticsearch
           methods = Array(methods).flatten
           target  = self.__send__ :eval, receiver.to_s rescue nil
 
-          if target.is_a?(Module)
+          if target
             single_delegate   methods => receiver
           else
             instance_delegate methods => receiver
