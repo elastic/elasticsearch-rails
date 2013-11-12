@@ -35,6 +35,14 @@ module Elasticsearch
           end
         end
 
+        module Callbacks
+          def self.included(base)
+            base.after_create  { |document| document.__elasticsearch__.index_document  }
+            base.after_update  { |document| document.__elasticsearch__.update_document }
+            base.after_destroy { |document| document.__elasticsearch__.delete_document }
+          end
+        end
+
       end
 
     end
