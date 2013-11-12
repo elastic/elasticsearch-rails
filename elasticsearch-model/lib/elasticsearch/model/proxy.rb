@@ -52,32 +52,38 @@ module Elasticsearch
         end
       end
 
+      # Common module for the proxy classes
+      #
+      module Base
+        attr_reader :target
+
+        def initialize(target)
+          @target = target
+        end
+
+        # Delegate methods to `@target`
+        #
+        def method_missing(method_name, *arguments, &block)
+          target.respond_to?(method_name) ? target.__send__(method_name, *arguments, &block) : super
+        end
+
+        # Respond to methods from `@target`
+        #
+        def respond_to?(method_name, include_private = false)
+          target.respond_to?(method_name) || super
+        end
+
+        def inspect
+          "[PROXY] #{target.inspect}"
+        end
+      end
+
       # A proxy interfacing between Elasticsearch::Model class methods and model class methods
       #
       # TODO: Inherit from BasicObject and make Pry's `ls` command behave
       #
       class ClassMethodsProxy
-        attr_reader :klass
-
-        def initialize(klass)
-          @klass = klass
-        end
-
-        # Delegate methods to `@klass`
-        #
-        def method_missing(method_name, *arguments, &block)
-          klass.respond_to?(method_name) ? klass.__send__(method_name, *arguments, &block) : super
-        end
-
-        # Respond to methods from `@klass`
-        #
-        def respond_to?(method_name, include_private = false)
-          klass.respond_to?(method_name) || super
-        end
-
-        def inspect
-          "[PROXY] #{klass.inspect}"
-        end
+        include Base
       end
 
       # A proxy interfacing between Elasticsearch::Model instance methods and model instance methods
@@ -85,42 +91,21 @@ module Elasticsearch
       # TODO: Inherit from BasicObject and make Pry's `ls` command behave
       #
       class InstanceMethodsProxy
-        attr_reader :instance
+        include Base
 
-        def initialize(instance)
-          @instance = instance
-        end
-
-        # Return the class of the target (instance class object)
-        #
         def klass
-          instance.class
+          target.class
         end
 
-        # Return the `ClassMethodsProxy` instance (instance class' `__elasticsearch__` object)
-        #
         def class
           klass.__elasticsearch__
         end
 
-        def inspect
-          "[PROXY] #{instance.inspect}"
-        end
-
+        # Need to redefine `as_json` because we're not inheriting from `BasicObject`,
+        # see note above.
+        #
         def as_json(options={})
-          instance.as_json(options)
-        end
-
-        # Delegate methods to `@instance`
-        #
-        def method_missing(method_name, *arguments, &block)
-          instance.respond_to?(method_name) ? instance.__send__(method_name, *arguments, &block) : super
-        end
-
-        # Respond to methods from `@instance`
-        #
-        def respond_to?(method_name, include_private = false)
-          instance.respond_to?(method_name) || super
+          target.as_json(options)
         end
       end
 
