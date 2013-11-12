@@ -10,6 +10,7 @@ module Elasticsearch
       module Forwardable
         def self.extended(base)
           base.__send__ :extend, ::Forwardable
+          base.__send__ :extend, ::SingleForwardable
         end
 
         # Forwards specific method(s) to the provided receiver
@@ -18,6 +19,10 @@ module Elasticsearch
         #
         #   MyClass.forward(:results, :each)
         #
+        # @example Forward the `include?` method to `ancestors` class method
+        #
+        #   MyClass.forward(:'self.ancestors', :include?)
+        #
         # @param [ Symbol ] receiver        The name of the receiver method
         # @param [ Symbol, Array ] methods  The forwarded methods
         #
@@ -25,9 +30,13 @@ module Elasticsearch
         #
         def forward(receiver, *methods)
           methods = Array(methods).flatten
+          target  = self.__send__ :eval, receiver.to_s rescue nil
 
-          def_delegators receiver, *methods
-
+          if target.is_a?(Module)
+            single_delegate   methods => receiver
+          else
+            instance_delegate methods => receiver
+          end
         end; module_function :forward
       end
     end
