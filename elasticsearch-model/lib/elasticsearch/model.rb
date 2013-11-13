@@ -81,7 +81,9 @@ module Elasticsearch
         end
 
         extend  Support::Forwardable
-        forward :'self.__elasticsearch__', :search unless respond_to?(:search)
+        forward :'self.__elasticsearch__', :search   unless respond_to?(:search)
+        forward :'self.__elasticsearch__', :mapping  unless respond_to?(:mapping)
+        forward :'self.__elasticsearch__', :settings unless respond_to?(:settings)
       end
     end
 
