@@ -4,7 +4,6 @@ module Elasticsearch
       module Default
 
         module Records
-
           # Use `ActiveModel#find`
           #
           def records
@@ -14,6 +13,12 @@ module Elasticsearch
 
         module Callbacks
           # noop
+        end
+
+        module Importing
+          def __find_in_batches(options={}, &block)
+            raise NoMethodError, "Method not implemented for default adapter"
+          end
         end
 
       end

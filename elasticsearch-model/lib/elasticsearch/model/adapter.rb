@@ -28,6 +28,10 @@ module Elasticsearch
           adapter.const_get(:Callbacks)
         end
 
+        def importing_mixin
+          adapter.const_get(:Importing)
+        end
+
         def adapter
           @adapter ||= begin
             self.class.adapters.find( lambda {[]} ) { |name, condition| condition.call(klass) }.first \

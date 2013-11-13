@@ -57,6 +57,19 @@ module Elasticsearch
           end
         end
 
+        module Importing
+          # Fetch batches of records from the database
+          #
+          # Use the [`find_in_batches`](http://api.rubyonrails.org/classes/ActiveRecord/Batches.html) method
+          #
+          def __find_in_batches(options={}, &block)
+            find_in_batches(options) do |batch|
+              batch_for_bulk = batch.as_json.map { |a| { index: { _id: a.delete('id'), data: a } } }
+              yield batch_for_bulk
+            end
+          end
+        end
+
       end
 
     end

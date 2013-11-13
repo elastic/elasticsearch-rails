@@ -13,6 +13,7 @@ require 'elasticsearch/model/adapters/default'
 require 'elasticsearch/model/adapters/active_record'
 require 'elasticsearch/model/adapters/mongoid'
 
+require 'elasticsearch/model/importing'
 require 'elasticsearch/model/indexing'
 require 'elasticsearch/model/naming'
 require 'elasticsearch/model/serializing'
@@ -80,10 +81,18 @@ module Elasticsearch
           include Elasticsearch::Model::Serializing::InstanceMethods
         end
 
+        # Delegate important methods to the `__elasticsearch__` proxy, unless they are defined already
+        #
         extend  Support::Forwardable
         forward :'self.__elasticsearch__', :search   unless respond_to?(:search)
         forward :'self.__elasticsearch__', :mapping  unless respond_to?(:mapping)
         forward :'self.__elasticsearch__', :settings unless respond_to?(:settings)
+        forward :'self.__elasticsearch__', :import   unless respond_to?(:import)
+
+        # Mix the importing module into the proxy
+        #
+        self.__elasticsearch__.class.__send__ :include, Elasticsearch::Model::Importing::ClassMethods
+        self.__elasticsearch__.class.__send__ :include, Adapter.from_class(base).importing_mixin
       end
     end
 
