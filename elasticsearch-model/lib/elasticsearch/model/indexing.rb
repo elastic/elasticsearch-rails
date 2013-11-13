@@ -157,6 +157,21 @@ module Elasticsearch
       end
 
       module InstanceMethods
+
+        def self.included(base)
+          # Register callback for storing changed attributes for models
+          # which implement `before_save` and `changed_attributes` methods
+          #
+          # @note This is typically triggered only when the module would be
+          #       included in the model directly, not within the proxy.
+          #
+          base.before_save do |instance|
+            instance_variable_set(:@__changed_attributes,
+                                  Hash[ instance.changes.map { |key, value| [key, value.last] } ])
+            # puts "--- STORING changes --- (#{self.__elasticsearch__.instance_variable_get(:@__changed_attributes)})"
+          end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
+        end
+
         def index_document(options={})
           document = self.as_indexed_json
 
@@ -177,9 +192,17 @@ module Elasticsearch
         end
 
         def update_document(options={})
-          # TODO: Intercept changes to the record, and use `changed_attributes`
-          #       to perform update by partial doc.
-          index_document(options)
+          # puts "--- STORED changes --- (#{self.instance_variable_get(:@__changed_attributes)})"
+          if changed_attributes = self.instance_variable_get(:@__changed_attributes)
+            client.update(
+              { index: index_name,
+                type:  document_type,
+                id:    self.id,
+                body:  { doc: changed_attributes } }.merge(options)
+            )
+          else
+            index_document(options)
+          end
         end
       end
 
