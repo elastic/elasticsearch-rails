@@ -43,6 +43,33 @@ module Elasticsearch
           end
         end
 
+        module Importing
+          # Fetch batches of records from the database
+          #
+          # @see https://github.com/mongoid/mongoid/issues/1334
+          # @see https://github.com/karmi/retire/pull/724
+          #
+          def __find_in_batches(options={}, &block)
+            options[:batch_size] ||= 1_000
+            items = []
+
+            all.each do |item|
+              items << item
+
+              if items.length % options[:batch_size] == 0
+                batch_for_bulk = items.map { |a| { index: { _id: a.id, data: a.attributes } } }
+                yield batch_for_bulk
+                items = []
+              end
+            end
+
+            unless items.empty?
+              batch_for_bulk = items.map { |a| { index: { _id: a.id, data: a.attributes } } }
+              yield batch_for_bulk
+            end
+          end
+        end
+
       end
 
     end
