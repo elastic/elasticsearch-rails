@@ -30,7 +30,10 @@ module Elasticsearch
     module Proxy
 
       # Define the `__elasticsearch__` class and instance methods
-      # in including class.
+      # in including class and register the callback for intercepting changes in the model
+      #
+      # @note The callback is triggered only when `Elasticsearch::Model` is included in the
+      #       module and the functionality is accessible via the proxy.
       #
       def self.included(base)
         base.class_eval do
@@ -49,6 +52,15 @@ module Elasticsearch
             @__elasticsearch__.instance_eval(&block) if block_given?
             @__elasticsearch__
           end
+
+          # Register callback for storing changed attributes for models which implement
+          # `before_save` and `changed_attributes` methods (when `Elasticsearch::Model` is included)
+          #
+          before_save do |i|
+            i.__elasticsearch__.instance_variable_set(:@__changed_attributes,
+                                                      Hash[ i.changes.map { |key, value| [key, value.last] } ])
+            # puts "--- STORING changes --- (#{self.__elasticsearch__.instance_variable_get(:@__changed_attributes)})"
+          end if respond_to?(:before_save) && instance_methods.include?(:changed_attributes)
         end
       end
 
