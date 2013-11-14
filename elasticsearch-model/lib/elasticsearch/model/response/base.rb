@@ -4,7 +4,7 @@ module Elasticsearch
       module Base
         attr_reader :klass, :response
 
-        def initialize(klass, response)
+        def initialize(klass, response, results=nil)
           @klass     = klass
           @response  = response
           @total     = response['total']
