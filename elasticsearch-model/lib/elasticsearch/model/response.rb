@@ -19,7 +19,7 @@ module Elasticsearch
         end
 
         def records
-          @records ||= Records.new(klass, response)
+          @records ||= Records.new(klass, response, results)
         end
 
       end

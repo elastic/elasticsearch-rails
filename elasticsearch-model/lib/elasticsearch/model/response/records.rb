@@ -9,8 +9,10 @@ module Elasticsearch
 
         include Base
 
-        def initialize(klass, response)
+        def initialize(klass, response, results)
           super
+          @response = response
+          @results  = results
           @ids = response['hits']['hits'].map { |hit| hit['_id'] }
 
           # Include module provided by the adapter in the singleton class ("metaclass")
@@ -18,7 +20,14 @@ module Elasticsearch
           adapter = Adapter.from_class(klass)
           metaclass = class << self; self; end
           metaclass.__send__ :include, adapter.records_mixin
+
           self
+        end
+
+        # Returns [record, hit] pairs
+        #
+        def each_with_hit(&block)
+          records.zip(@results).each(&block)
         end
 
         # Delegate methods to `@records`
