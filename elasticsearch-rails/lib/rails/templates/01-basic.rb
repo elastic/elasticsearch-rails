@@ -151,8 +151,8 @@ puts
 say_status  "Database", "Seeding the database with data...", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-run "rm -f db/seeds.rb"
-file 'db/seeds.rb', %q{
+remove_file "db/seeds.rb"
+create_file 'db/seeds.rb', %q{
 contents = [
 'Lorem ipsum dolor sit amet.',
 'Consectetur adipisicing elit, sed do eiusmod tempor incididunt.',
@@ -246,15 +246,6 @@ resources :articles do
 CODE
 
 git :commit => "-a -m 'Added search form and controller action'"
-
-# ----- Import data into Elasticsearch ------------------------------------------------------------
-
-puts
-say_status  "Index", "Indexing the database...", :yellow
-puts        '-'*80, ''; sleep 0.25
-
-# rake "environment elasticsearch:import:model CLASS='Article' FORCE=true"
-run "rails runner 'Article.__elasticsearch__.client.indices.delete index: Article.__elasticsearch__.index_name rescue nil'; rails runner 'Article.__elasticsearch__.client.indices.create index: Article.__elasticsearch__.index_name'; rails runner 'Article.import'"
 
 # ----- Print Git log -----------------------------------------------------------------------------
 
