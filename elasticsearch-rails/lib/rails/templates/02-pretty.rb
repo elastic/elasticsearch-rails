@@ -1,3 +1,9 @@
+# $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
+
+# (See: 01-basic.rb)
+
+# ----- Add loading Bootstrap assets --------------------------------------------------------------
+
 puts
 say_status  "Bootstrap", "Adding Bootstrap asset links into the 'application' layout...\n", :yellow
 puts        '-'*80, ''; sleep 0.5
@@ -14,6 +20,8 @@ inject_into_file 'app/views/layouts/application.html.erb', <<-CODE, before: '</h
 CODE
 
 git :commit => "-a -m 'Added loading Bootstrap assets in the application layout'"
+
+# ----- Customize the search form -----------------------------------------------------------------
 
 puts
 say_status  "Bootstrap", "Customizing the index page...\n", :yellow
@@ -35,6 +43,8 @@ end
 
 git :commit => "-a -m 'Refactored the search form to use Bootstrap components'"
 
+# ----- Customize the results listing -------------------------------------------------------------
+
 gsub_file 'app/views/articles/index.html.erb', %r{<table>} do |match|
   '<table class="table table-hover">'
 end
@@ -55,7 +65,7 @@ say_status  "CSS", "Adding custom styles...\n", :yellow
 puts        '-'*80, ''; sleep 0.5
 
 append_to_file 'app/assets/stylesheets/application.css' do
-  return if File.read('app/assets/stylesheets/application.css').include?('.label-highlight')
+  unless File.read('app/assets/stylesheets/application.css').include?('.label-highlight')
 <<-CODE
 
 .label-highlight {
@@ -66,6 +76,88 @@ append_to_file 'app/assets/stylesheets/application.css' do
   background: #fff401;
 }
 CODE
+  else
+    ''
+  end
 end
 
 git :commit => "-a -m 'Added custom style definitions into application.css'"
+
+# ----- Add `Article.search` class method ---------------------------------------------------------
+
+puts
+say_status  "Model", "Adding a `Article.search` class method...\n", :yellow
+puts        '-'*80, ''; sleep 0.5
+
+inject_into_file 'app/models/article.rb', <<-CODE, after: 'include Elasticsearch::Model::Callbacks'
+
+
+  def self.search(query)
+    __elasticsearch__.search(
+      {
+        query: {
+          multi_match: {
+            query: query,
+            fields: ['title^10', 'content']
+          }
+        },
+        highlight: {
+          pre_tags: ['<em class="label label-highlight">'],
+          post_tags: ['</em>'],
+          fields: {
+            title:   { number_of_fragments: 0 },
+            content: { fragment_size: 25 }
+          }
+        }
+      }
+    )
+  end
+CODE
+
+git :add    => 'app/models/article.rb'
+git :commit => "-m 'Added a `Article.search` custom method'"
+
+# ----- Use highlighted excerpts in the listing ---------------------------------------------------
+
+gsub_file 'app/views/articles/index.html.erb', %r{<% @articles.each do \|article\| %>$} do |match|
+  "<% @articles.__send__ controller.action_name == 'search' ? :each_with_hit : :each do |article, hit| %>"
+end
+
+gsub_file 'app/views/articles/index.html.erb', %r{<td><%= article.title %></td>$} do |match|
+  "<td><%= hit.try(:highlight).try(:title)   ? hit.highlight.title.join.html_safe : article.title %></td>"
+end
+
+gsub_file 'app/views/articles/index.html.erb', %r{<td><%= article.content %></td>$} do |match|
+  "<td><%= hit.try(:highlight).try(:content) ? hit.highlight.content.join('&hellip;').html_safe : article.content %></td>"
+end
+
+git :add    => '.'
+git :commit => "-m 'Improved the search results listing'"
+
+# ----- Print Git log -----------------------------------------------------------------------------
+
+puts
+say_status  "Git", "Details about the application:", :yellow
+puts        '-'*80, ''
+
+git :tag => "pretty"
+git :log => "--reverse --oneline pretty...basic"
+
+# ----- Start the application ---------------------------------------------------------------------
+
+require 'net/http'
+if (begin; Net::HTTP.get(URI('http://localhost:3000')); rescue Errno::ECONNREFUSED; false; rescue Exception; true; end)
+  puts        "\n"
+  say_status  "ERROR", "Some other application is running on port 3000!\n", :red
+  puts        '-'*80
+
+  port = ask("Please provide free port:", :bold)
+else
+  port = '3000'
+end
+
+puts  "", "="*80
+say_status  "DONE", "\e[1mStarting the application. Open http://localhost:#{port}\e[0m", :yellow
+puts  "="*80, ""
+
+run  "rails server --port=#{port}"
