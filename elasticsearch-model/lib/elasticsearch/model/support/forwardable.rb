@@ -3,7 +3,7 @@ module Elasticsearch
     module Support
 
       # Lightweight wrapper around "forwardable.rb" interface,
-      # to allow easy delegation implementation changes in the future.
+      # to allow easy implementation changes in the future.
       #
       # Cf. https://github.com/mongoid/origin/blob/master/lib/origin/forwardable.rb
       #

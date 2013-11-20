@@ -1,8 +1,15 @@
 module Elasticsearch
   module Model
 
-    # This module provides the necessary support to set up index options (mappings, settings)
+    # Provides the necessary support to set up index options (mappings, settings)
     # as well as instance methods to create, update or delete documents in the index.
+    #
+    # @see ClassMethods#settings
+    # @see ClassMethods#mapping
+    #
+    # @see InstanceMethods#index_document
+    # @see InstanceMethods#update_document
+    # @see InstanceMethods#delete_document
     #
     module Indexing
 
@@ -51,7 +58,7 @@ module Elasticsearch
             end
           end
 
-          # Set the `type` to string by default
+          # Set the type to `string` by default
           #
           @mapping[name][:type] ||= 'string'
 
@@ -165,13 +172,28 @@ module Elasticsearch
           # @note This is typically triggered only when the module would be
           #       included in the model directly, not within the proxy.
           #
+          # @see #update_document
+          #
           base.before_save do |instance|
             instance_variable_set(:@__changed_attributes,
                                   Hash[ instance.changes.map { |key, value| [key, value.last] } ])
-            # puts "--- STORING changes --- (#{self.__elasticsearch__.instance_variable_get(:@__changed_attributes)})"
           end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
         end
 
+        # Serializes the model instance into JSON (by calling `as_indexed_json`),
+        # and saves the document into the Elasticsearch index.
+        #
+        # @param options [Hash] Optional arguments for passing to the client
+        #
+        # @example Index a record
+        #
+        #     @article.__elasticsearch__.index_document
+        #     2013-11-20 16:25:57 +0100: PUT http://localhost:9200/articles/article/1 ...
+        #
+        # @return [Hash] The response from Elasticsearch
+        #
+        # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:index
+        #
         def index_document(options={})
           document = self.as_indexed_json
 
@@ -183,6 +205,19 @@ module Elasticsearch
           )
         end
 
+        # Deletes the model instance from the index
+        #
+        # @param options [Hash] Optional arguments for passing to the client
+        #
+        # @example Delete a record
+        #
+        #     @article.__elasticsearch__.delete_document
+        #     2013-11-20 16:27:00 +0100: DELETE http://localhost:9200/articles/article/1
+        #
+        # @return [Hash] The response from Elasticsearch
+        #
+        # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:delete
+        #
         def delete_document(options={})
           client.delete(
             { index: index_name,
@@ -191,8 +226,29 @@ module Elasticsearch
           )
         end
 
+        # Tries to gather the changed attributes of a model instance
+        # (via [ActiveModel::Dirty](http://api.rubyonrails.org/classes/ActiveModel/Dirty.html)),
+        # performing a _partial_ update of the document.
+        #
+        # When the changed attributes are not available, performs full re-index of the record.
+        #
+        # @param options [Hash] Optional arguments for passing to the client
+        #
+        # @example Update a document corresponding to the record
+        #
+        #     @article = Article.first
+        #     @article.update_attribute :title, 'Updated'
+        #     # SQL (0.3ms)  UPDATE "articles" SET "title" = ?...
+        #
+        #     @article.__elasticsearch__.update_document
+        #     # 2013-11-20 17:00:05 +0100: POST http://localhost:9200/articles/article/1/_update ...
+        #     # 2013-11-20 17:00:05 +0100: > {"doc":{"title":"Updated"}}
+        #
+        # @return [Hash] The response from Elasticsearch
+        #
+        # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:update
+        #
         def update_document(options={})
-          # puts "--- STORED changes --- (#{self.instance_variable_get(:@__changed_attributes)})"
           if changed_attributes = self.instance_variable_get(:@__changed_attributes)
             client.update(
               { index: index_name,

@@ -1,6 +1,9 @@
 module Elasticsearch
   module Model
     module Adapter
+
+      # An adapter for ActiveRecord-based models
+      #
       module ActiveRecord
 
         Adapter.register self,
@@ -8,7 +11,7 @@ module Elasticsearch
 
         module Records
 
-          # Return the `ActiveRecord::Relation` instance
+          # Returns an `ActiveRecord::Relation` instance
           #
           def records
             sql_records = klass.where(id: @ids)
@@ -32,7 +35,7 @@ module Elasticsearch
             records.load
           end
 
-          # Intercept call to order, so we can ignore the order from Elasticsearch
+          # Intercept call to the `order` method, so we can ignore the order from Elasticsearch
           #
           def order(*args)
             sql_records = records.__send__ :order, *args
@@ -48,6 +51,12 @@ module Elasticsearch
         end
 
         module Callbacks
+
+          # Handle index updates (creating, updating or deleting documents)
+          # when the model changes, by hooking into the lifecycle
+          #
+          # @see http://guides.rubyonrails.org/active_record_callbacks.html
+          #
           def self.included(base)
             base.class_eval do
               after_commit lambda { __elasticsearch__.index_document  },  on: [:create]
@@ -58,9 +67,10 @@ module Elasticsearch
         end
 
         module Importing
+
           # Fetch batches of records from the database
           #
-          # Use the [`find_in_batches`](http://api.rubyonrails.org/classes/ActiveRecord/Batches.html) method
+          # @see http://api.rubyonrails.org/classes/ActiveRecord/Batches.html ActiveRecord::Batches.find_in_batches
           #
           def __find_in_batches(options={}, &block)
             find_in_batches(options) do |batch|

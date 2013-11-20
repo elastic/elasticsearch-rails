@@ -1,13 +1,19 @@
 module Elasticsearch
   module Model
     module Adapter
+
+      # An adapter for Mongoid-based models
+      #
+      # @see http://mongoid.org
+      #
       module Mongoid
 
         Adapter.register self,
                          lambda { |klass| defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
 
         module Records
-          # Return the `ActiveRecord::Relation` instance
+
+          # Return a `Mongoid::Criteria` instance
           #
           def records
             criteria = klass.where(:id.in => @ids)
@@ -36,6 +42,12 @@ module Elasticsearch
         end
 
         module Callbacks
+
+          # Handle index updates (creating, updating or deleting documents)
+          # when the model changes, by hooking into the lifecycle
+          #
+          # @see http://mongoid.org/en/mongoid/docs/callbacks.html
+          #
           def self.included(base)
             base.after_create  { |document| document.__elasticsearch__.index_document  }
             base.after_update  { |document| document.__elasticsearch__.update_document }
@@ -44,6 +56,7 @@ module Elasticsearch
         end
 
         module Importing
+
           # Fetch batches of records from the database
           #
           # @see https://github.com/mongoid/mongoid/issues/1334

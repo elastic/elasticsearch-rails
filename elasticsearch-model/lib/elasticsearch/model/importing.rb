@@ -1,13 +1,23 @@
 module Elasticsearch
   module Model
 
-    # This module provides the support for easily and efficiently importing
-    #  all the records from the including class into the index.
+    # Provides support for easily and efficiently importing large amounts of
+    # records from the including class into the index.
+    #
+    # @see ClassMethods#import
     #
     module Importing
 
       module ClassMethods
 
+        # When included in a model, adds the importing methods.
+        #
+        # @example Import all records from the `Article` model
+        #
+        #     Article.import
+        #
+        # @see #import
+        #
         def self.included(base)
           adapter = Adapter.from_class(base)
           base.__send__ :include, adapter.importing_mixin
@@ -17,6 +27,13 @@ module Elasticsearch
         #
         # The method will pick up correct strategy based on the `Importing` module
         # defined in the corresponding adapter.
+        #
+        # @param options [Hash] Options passed to the underlying `__find_in_batches`method
+        # @param block  [Proc] Optional block to evaluate for each batch
+        #
+        # @yield [Hash] Gives the Hash with the Elasticsearch response to the block
+        #
+        # @return [Fixnum] Number of errors encountered during importing
         #
         # @example Import all records into the index
         #

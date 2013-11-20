@@ -35,7 +35,23 @@ module Elasticsearch
   # Elasticsearch integration for Ruby models
   # =========================================
   #
-  # TODO: Description
+  # `Elasticsearch::Model` contains modules for integrating the Elasticsearch search and analytical engine
+  # with ActiveModel-based classes, or models, for the Ruby programming language.
+  #
+  # It facilitates importing your data into an index, automatically updating it when a record changes,
+  # searching the specific index, setting up the index mapping or the model JSON serialization.
+  #
+  # When the `Elasticsearch::Model` module is included in your class, it automatically extends it
+  # with the functionality; see {Elasticsearch::Model.included}. Most methods are available via
+  # the `__elasticsearch__` class and instance method proxies.
+  #
+  # It is possible to include/extend the model with the corresponding
+  # modules directly, if that is desired:
+  #
+  #     MyModel.__send__ :extend,  Elasticsearch::Model::Client::ClassMethods
+  #     MyModel.__send__ :include, Elasticsearch::Model::Client::InstanceMethods
+  #     MyModel.__send__ :extend,  Elasticsearch::Model::Searching::ClassMethods
+  #     # ...
   #
   module Model
 
@@ -45,23 +61,16 @@ module Elasticsearch
     # * Includes the necessary modules in the proxy classes
     # * Sets up delegation for crucial methods such as `search`, etc.
     #
-    # @example Include the {Elasticsearch::Model} module in the `Article` model definition
+    # @example Include the module in the `Article` model definition
     #
     #     class Article < ActiveRecord::Base
     #       include Elasticsearch::Model
     #     end
     #
-    # @example Inject the {Elasticsearch::Model} module into the `Article` model
+    # @example Inject the module into the `Article` model during run time
     #
     #     Article.__send__ :include, Elasticsearch::Model
     #
-    # It is possible to include/extend the model with the corresponding
-    # modules directly, without using the proxy, if this is desired:
-    #
-    #     MyModel.__send__ :extend,  Elasticsearch::Model::Client::ClassMethods
-    #     MyModel.__send__ :include, Elasticsearch::Model::Client::InstanceMethods
-    #     MyModel.__send__ :extend,  Elasticsearch::Model::Searching::ClassMethods
-    #     # ...
     #
     def self.included(base)
       base.class_eval do
@@ -99,6 +108,19 @@ module Elasticsearch
     module ClassMethods
 
       # Get or set the client for all models
+      #
+      # @example Get the client
+      #
+      #     Elasticsearch::Model.client
+      #     => #<Elasticsearch::Transport::Client:0x007f96a7d0d000 @transport=... >
+      #
+      # @example Configure (set) the client for all the models
+      #
+      #     Elasticsearch::Model.client Elasticsearch::Client.new host: 'http://localhost:9200', tracer: true
+      #     => #<Elasticsearch::Transport::Client:0x007f96a6dd0d80 @transport=... >
+      #
+      # @note You have to set the client before you call Elasticsearch methods on the model,
+      #       or set it directly on the model; see {Elasticsearch::Model::Client::ClassMethods#client}
       #
       def client client=nil
         @client = client || @client || Elasticsearch::Client.new

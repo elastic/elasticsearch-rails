@@ -1,6 +1,12 @@
 module Elasticsearch
   module Model
     module Response
+
+      # Encapsulates the collection of records returned from the database
+      #
+      # Implements Enumerable and forwards its methods to the {#records} object,
+      # which is provided by an {Elasticsearch::Model::Adapter::Adapter} implementation.
+      #
       class Records
         include Enumerable
 
@@ -9,6 +15,8 @@ module Elasticsearch
 
         include Base
 
+        # @see Base#initialize
+        #
         def initialize(klass, response, results)
           super
           @response = response
@@ -24,7 +32,7 @@ module Elasticsearch
           self
         end
 
-        # Returns [record, hit] pairs
+        # Yields [record, hit] pairs to the block
         #
         def each_with_hit(&block)
           records.zip(@results).each(&block)
