@@ -2,7 +2,7 @@ module Elasticsearch
   module Model
 
     # This module provides a proxy interfacing between the including class and
-    # Elasticsearch::Model, preventing polluting the including class namespace.
+    # {Elasticsearch::Model}, preventing the pollution of the including class namespace.
     #
     # The only "gateway" between the model and Elasticsearch::Model is the
     # `__elasticsearch__` class and instance method.
@@ -29,8 +29,8 @@ module Elasticsearch
     #
     module Proxy
 
-      # Define the `__elasticsearch__` class and instance methods
-      # in including class and register the callback for intercepting changes in the model
+      # Define the `__elasticsearch__` class and instance methods in the including class
+      # and register a callback for intercepting changes in the model.
       #
       # @note The callback is triggered only when `Elasticsearch::Model` is included in the
       #       module and the functionality is accessible via the proxy.
@@ -53,13 +53,14 @@ module Elasticsearch
             @__elasticsearch__
           end
 
-          # Register callback for storing changed attributes for models which implement
+          # Register a callback for storing changed attributes for models which implement
           # `before_save` and `changed_attributes` methods (when `Elasticsearch::Model` is included)
+          #
+          # @see http://api.rubyonrails.org/classes/ActiveModel/Dirty.html
           #
           before_save do |i|
             i.__elasticsearch__.instance_variable_set(:@__changed_attributes,
                                                       Hash[ i.changes.map { |key, value| [key, value.last] } ])
-            # puts "--- STORING changes --- (#{self.__elasticsearch__.instance_variable_get(:@__changed_attributes)})"
           end if respond_to?(:before_save) && instance_methods.include?(:changed_attributes)
         end
       end
@@ -92,7 +93,7 @@ module Elasticsearch
 
       # A proxy interfacing between Elasticsearch::Model class methods and model class methods
       #
-      # TODO: Inherit from BasicObject and make Pry's `ls` command behave
+      # TODO: Inherit from BasicObject and make Pry's `ls` command behave?
       #
       class ClassMethodsProxy
         include Base
@@ -100,7 +101,7 @@ module Elasticsearch
 
       # A proxy interfacing between Elasticsearch::Model instance methods and model instance methods
       #
-      # TODO: Inherit from BasicObject and make Pry's `ls` command behave
+      # TODO: Inherit from BasicObject and make Pry's `ls` command behave?
       #
       class InstanceMethodsProxy
         include Base
@@ -113,8 +114,8 @@ module Elasticsearch
           klass.__elasticsearch__
         end
 
-        # Need to redefine `as_json` because we're not inheriting from `BasicObject`,
-        # see note above.
+        # Need to redefine `as_json` because we're not inheriting from `BasicObject`;
+        # see TODO note above.
         #
         def as_json(options={})
           target.as_json(options)
