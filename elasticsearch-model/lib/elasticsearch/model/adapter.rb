@@ -5,6 +5,14 @@ module Elasticsearch
         Adapter.new(klass)
       end; module_function :from_class
 
+      def adapters
+        Adapter.adapters
+      end; module_function :adapters
+
+      def register(name, condition)
+        Adapter.register(name, condition)
+      end; module_function :register
+
       class Adapter
         attr_reader :klass
 
