@@ -93,10 +93,18 @@ module Elasticsearch
         # Delegate important methods to the `__elasticsearch__` proxy, unless they are defined already
         #
         extend  Support::Forwardable
-        forward :'self.__elasticsearch__', :search   unless respond_to?(:search)
-        forward :'self.__elasticsearch__', :mapping  unless respond_to?(:mapping)
-        forward :'self.__elasticsearch__', :settings unless respond_to?(:settings)
-        forward :'self.__elasticsearch__', :import   unless respond_to?(:import)
+        forward :'self.__elasticsearch__', :search        unless respond_to?(:search)
+        forward :'self.__elasticsearch__', :mapping       unless respond_to?(:mapping)
+        forward :'self.__elasticsearch__', :mappings      unless respond_to?(:mappings)
+        forward :'self.__elasticsearch__', :settings      unless respond_to?(:settings)
+        forward :'self.__elasticsearch__', :index_name    unless respond_to?(:index_name)
+        forward :'self.__elasticsearch__', :document_type unless respond_to?(:document_type)
+        forward :'self.__elasticsearch__', :import        unless respond_to?(:import)
+
+        instance_delegate [:as_indexed_json] => :__elasticsearch__
+        instance_delegate [:index_document]  => :__elasticsearch__
+        instance_delegate [:update_document] => :__elasticsearch__
+        instance_delegate [:delete_document] => :__elasticsearch__
 
         # Mix the importing module into the proxy
         #
