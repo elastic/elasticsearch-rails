@@ -50,14 +50,21 @@ module Elasticsearch
         #     end
         #
         def import(options={}, &block)
+          errors = 0
+
           __find_in_batches(options) do |batch|
             response = client.bulk \
                          index: index_name,
                          type:  document_type,
                          body:  batch,
                          refresh: options[:refresh]
+
             yield response if block_given?
+
+            errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
           end
+
+          return errors
         end
 
       end
