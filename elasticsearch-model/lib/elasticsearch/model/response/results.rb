@@ -9,7 +9,7 @@ module Elasticsearch
       class Results
         include Base
 
-        attr_reader :klass, :results
+        attr_reader :results
 
         include Enumerable
 
@@ -20,6 +20,7 @@ module Elasticsearch
         #
         def initialize(klass, response)
           super
+          # TODO: Configurable custom wrapper
           @results   = response['hits']['hits'].map { |hit| Result.new(hit) }
         end
 

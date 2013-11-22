@@ -10,7 +10,8 @@ module Elasticsearch
       # Implements Enumerable and forwards its methods to the {#results} object.
       #
       class Response
-        attr_reader :klass, :response
+        attr_reader :klass, :response,
+                    :took, :timed_out, :shards
 
         include Enumerable
         extend  Support::Forwardable
@@ -18,8 +19,11 @@ module Elasticsearch
         forward :results, :each, :empty?, :size, :slice, :[], :to_ary
 
         def initialize(klass, response)
-          @klass    = klass
-          @response = response
+          @klass     = klass
+          @response  = response
+          @took      = response['took']
+          @timed_out = response['timed_out']
+          @shards    = Hashie::Mash.new(response['_shards'])
         end
 
         # Return the collection of "hits" from Elasticsearch

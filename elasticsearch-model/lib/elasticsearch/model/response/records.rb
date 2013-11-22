@@ -38,6 +38,12 @@ module Elasticsearch
           records.zip(@results).each(&block)
         end
 
+        # Yields [record, hit] pairs and returns the result
+        #
+        def map_with_hit(&block)
+          records.zip(@results).map(&block)
+        end
+
         # Delegate methods to `@records`
         #
         def method_missing(method_name, *arguments)

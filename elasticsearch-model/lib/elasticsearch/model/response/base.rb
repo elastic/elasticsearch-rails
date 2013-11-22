@@ -5,7 +5,8 @@ module Elasticsearch
       # Common funtionality for classes in the {Elasticsearch::Model::Response} module
       #
       module Base
-        attr_reader :klass, :response
+        attr_reader :klass, :response,
+                    :total, :max_score
 
         # @param klass    [Class] The name of the model class
         # @param response [Hash]  The full response returned from Elasticsearch client
@@ -14,8 +15,8 @@ module Elasticsearch
         def initialize(klass, response, results=nil)
           @klass     = klass
           @response  = response
-          @total     = response['total']
-          @max_score = response['max_score']
+          @total     = response['hits']['total']
+          @max_score = response['hits']['max_score']
         end
 
         # @abstract Implement this method in specific class
