@@ -145,48 +145,6 @@ rake  "db:migrate"
 git :add => '.'
 git :commit => "-m 'Added the Article resource'"
 
-# ----- Seed the database -------------------------------------------------------------------------
-
-puts
-say_status  "Database", "Seeding the database with data...", :yellow
-puts        '-'*80, ''; sleep 0.25
-
-remove_file "db/seeds.rb"
-create_file 'db/seeds.rb', %q{
-contents = [
-'Lorem ipsum dolor sit amet.',
-'Consectetur adipisicing elit, sed do eiusmod tempor incididunt.',
-'Labore et dolore magna aliqua.',
-'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
-'Excepteur sint occaecat cupidatat non proident.'
-]
-
-puts "Deleting all articles..."
-Article.delete_all
-
-unless ENV['COUNT']
-
-  puts "Creating articles..."
-  %w[ One Two Three Four Five ].each_with_index do |title, i|
-    Article.create :title => title, :content => contents[i], :published_on => i.days.ago.utc
-  end
-
-else
-
-  puts "Creating 10,000 articles..."
-  (1..ENV['COUNT'].to_i).each_with_index do |title, i|
-    Article.create :title => "Title #{title}", :content => 'Lorem', :published_on => i.days.ago.utc
-    print '.'
-  end
-
-end
-}
-
-rake "db:seed"
-
-git :add    => "db/seeds.rb"
-git :commit => "-m 'Added database seeding script'"
-
 # ----- Add Elasticsearch integration into the model ----------------------------------------------
 
 puts
@@ -247,6 +205,48 @@ CODE
 
 git :commit => "-a -m 'Added search form and controller action'"
 
+# ----- Seed the database -------------------------------------------------------------------------
+
+puts
+say_status  "Database", "Seeding the database with data...", :yellow
+puts        '-'*80, ''; sleep 0.25
+
+remove_file "db/seeds.rb"
+create_file 'db/seeds.rb', %q{
+contents = [
+'Lorem ipsum dolor sit amet.',
+'Consectetur adipisicing elit, sed do eiusmod tempor incididunt.',
+'Labore et dolore magna aliqua.',
+'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.',
+'Excepteur sint occaecat cupidatat non proident.'
+]
+
+puts "Deleting all articles..."
+Article.delete_all
+
+unless ENV['COUNT']
+
+  puts "Creating articles..."
+  %w[ One Two Three Four Five ].each_with_index do |title, i|
+    Article.create :title => title, :content => contents[i], :published_on => i.days.ago.utc
+  end
+
+else
+
+  puts "Creating 10,000 articles..."
+  (1..ENV['COUNT'].to_i).each_with_index do |title, i|
+    Article.create :title => "Title #{title}", :content => 'Lorem', :published_on => i.days.ago.utc
+    print '.'
+  end
+
+end
+}
+
+rake "db:seed"
+
+git :add    => "db/seeds.rb"
+git :commit => "-m 'Added database seeding script'"
+
 # ----- Print Git log -----------------------------------------------------------------------------
 
 puts
@@ -270,7 +270,7 @@ else
 end
 
 puts  "", "="*80
-say_status  "DONE", "\e[1mStarting the application. Open http://localhost:#{port}\e[0m", :yellow
+say_status  "DONE", "\e[1mStarting the application.\e[0m", :yellow
 puts  "="*80, ""
 
 run  "rails server --port=#{port}"
