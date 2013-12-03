@@ -90,6 +90,12 @@ module Elasticsearch
           include Elasticsearch::Model::Serializing::InstanceMethods
         end
 
+        Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval <<-CODE, __FILE__, __LINE__ + 1
+          def as_indexed_json(options={})
+            target.respond_to?(:as_indexed_json) ? target.__send__(:as_indexed_json, options) : super
+          end
+        CODE
+
         # Delegate important methods to the `__elasticsearch__` proxy, unless they are defined already
         #
         extend  Support::Forwardable
@@ -100,11 +106,6 @@ module Elasticsearch
         forward :'self.__elasticsearch__', :index_name    unless respond_to?(:index_name)
         forward :'self.__elasticsearch__', :document_type unless respond_to?(:document_type)
         forward :'self.__elasticsearch__', :import        unless respond_to?(:import)
-
-        instance_delegate [:as_indexed_json] => :__elasticsearch__
-        instance_delegate [:index_document]  => :__elasticsearch__
-        instance_delegate [:update_document] => :__elasticsearch__
-        instance_delegate [:delete_document] => :__elasticsearch__
 
         # Mix the importing module into the proxy
         #

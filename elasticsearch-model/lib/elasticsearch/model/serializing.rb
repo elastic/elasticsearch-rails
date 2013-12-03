@@ -12,11 +12,13 @@ module Elasticsearch
 
         # Serialize the record as a Hash, to be passed to the client.
         #
+        # Re-define this method to customize the serialization.
+        #
         # @return [Hash]
         #
-        # @example
+        # @example Return the model instance as a Hash
         #
-        #     Article.first.__elasticsearch__.as_indexed_json(only: 'title')
+        #     Article.first.__elasticsearch__.as_indexed_json
         #     => {"title"=>"Foo"}
         #
         # @see Elasticsearch::Model::Indexing

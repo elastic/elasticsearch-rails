@@ -21,10 +21,10 @@ module Elasticsearch
     #
     #     article = Article.first
     #
-    #     article.respond_to? :as_indexed_json
+    #     article.respond_to? :index_document
     #     # => false
     #
-    #     article.__elasticsearch__.respond_to?(:as_indexed_json)
+    #     article.__elasticsearch__.respond_to?(:index_document)
     #     # => true
     #
     module Proxy
