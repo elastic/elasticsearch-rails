@@ -61,7 +61,7 @@ Article.__send__ :include, Elasticsearch::Model
 
 puts '', '-'*Pry::Terminal.width!
 
-Elasticsearch::Model.client Elasticsearch::Client.new log: true
+Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 
 response = Article.search 'foo';
 

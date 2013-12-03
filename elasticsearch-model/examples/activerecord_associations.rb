@@ -94,7 +94,7 @@ module Searchable
     include Elasticsearch::Model
     include Elasticsearch::Model::Callbacks
 
-    __elasticsearch__.client Elasticsearch::Client.new log: true
+    __elasticsearch__.client = Elasticsearch::Client.new log: true
     __elasticsearch__.client.transport.logger.formatter = proc { |s, d, p, m| "\e[32m#{m}\n\e[0m" }
 
     include Indexing

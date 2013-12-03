@@ -121,13 +121,13 @@ Article.__elasticsearch__.client.cluster.health
 To use a client with different configuration, just set up a client for the model:
 
 ```ruby
-Article.__elasticsearch__.client Elasticsearch::Client.new host: 'api.server.org'
+Article.__elasticsearch__.client = Elasticsearch::Client.new host: 'api.server.org'
 ```
 
 Or configure the client for all models:
 
 ```ruby
-Elasticsearch::Model.client Elasticsearch::Client.new log:true
+Elasticsearch::Model.client = Elasticsearch::Client.new log:true
 ```
 
 You might want to do this during you application bootstrap process, e.g. in a Rails initializer.
