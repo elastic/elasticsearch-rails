@@ -1,7 +1,6 @@
 module Elasticsearch
   module Model
     module Response
-
       # Common funtionality for classes in the {Elasticsearch::Model::Response} module
       #
       module Base
@@ -22,13 +21,13 @@ module Elasticsearch
         # @abstract Implement this method in specific class
         #
         def results
-          raise NoMethodError, "Abstract method called"
+          raise NotImplemented, "Implement this method in #{klass}"
         end
 
         # @abstract Implement this method in specific class
         #
         def records
-          raise NoMethodError, "Abstract method called"
+          raise NotImplemented, "Implement this method in #{klass}"
         end
 
       end

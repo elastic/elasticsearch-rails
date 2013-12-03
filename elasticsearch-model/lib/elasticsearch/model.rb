@@ -144,5 +144,6 @@ module Elasticsearch
     end
     extend ClassMethods
 
+    class NotImplemented < NoMethodError; end
   end
 end
