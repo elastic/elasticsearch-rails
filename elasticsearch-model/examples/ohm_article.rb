@@ -47,7 +47,7 @@ end
 
 # Configure the Elasticsearch client to log operations
 #
-Elasticsearch::Model.client Elasticsearch::Client.new log: true
+Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 
 puts '', '-'*Pry::Terminal.width!
 

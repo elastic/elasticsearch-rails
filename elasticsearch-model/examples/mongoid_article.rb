@@ -21,7 +21,7 @@ Moped.logger.level = Logger::DEBUG
 
 Mongoid.connect_to 'articles'
 
-Elasticsearch::Model.client Elasticsearch::Client.new log: true
+Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 
 class Article
   include Mongoid::Document
