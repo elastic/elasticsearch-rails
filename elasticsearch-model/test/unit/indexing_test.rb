@@ -241,5 +241,112 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
       end
     end
 
+    context "Re-creating the index" do
+      class ::DummyIndexingModelForRecreate
+        extend ActiveModel::Naming
+        extend Elasticsearch::Model::Naming::ClassMethods
+        extend Elasticsearch::Model::Indexing::ClassMethods
+
+        settings index: { number_of_shards: 1 } do
+          mappings do
+            indexes :foo, analyzer: 'keyword'
+          end
+        end
+      end
+
+      should "delete the index without raising exception" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:delete).returns({}).then.raises(Exception).at_least_once
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised do
+          DummyIndexingModelForRecreate.delete_index!
+          DummyIndexingModelForRecreate.delete_index!
+        end
+      end
+
+      should "create the index with correct settings and mappings when it doesn't exist" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:exists).returns(false)
+
+        indices.expects(:create).with do |payload|
+          assert_equal 'dummy_indexing_model_for_recreates', payload[:index]
+          assert_equal 1,         payload[:body][:settings][:index][:number_of_shards]
+          assert_equal 'keyword', payload[:body][:mappings][:dummy_indexing_model_for_recreate][:properties][:foo][:analyzer]
+        end.returns({})
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised { DummyIndexingModelForRecreate.create_index! }
+      end
+
+      should "not create the index when it exists" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:exists).returns(true)
+
+        indices.expects(:create).never
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised { DummyIndexingModelForRecreate.create_index! }
+      end
+
+      should "not raise exception during index creation" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:exists).returns(false)
+        indices.expects(:create).raises(Exception).at_least_once
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised do
+          DummyIndexingModelForRecreate.create_index!
+        end
+      end
+
+      should "delete the index first with the force option" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:delete).returns({})
+        indices.expects(:exists).returns(false)
+        indices.expects(:create).returns({}).at_least_once
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised do
+          DummyIndexingModelForRecreate.create_index! force: true
+        end
+      end
+
+      should "refresh the index without raising exception" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:refresh).returns({}).then.raises(Exception).at_least_once
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised do
+          DummyIndexingModelForRecreate.refresh_index!
+          DummyIndexingModelForRecreate.refresh_index!
+        end
+      end
+    end
+
   end
 end
