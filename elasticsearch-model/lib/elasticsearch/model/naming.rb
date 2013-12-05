@@ -25,6 +25,13 @@ module Elasticsearch
           @index_name = name || @index_name || self.model_name.collection
         end
 
+        # Set the index name
+        #
+        # @see index_name
+        def index_name=(name)
+          @index_name = name
+        end
+
         # Get or set the document type
         #
         # @example Set the document type for the `Article` model
@@ -41,6 +48,14 @@ module Elasticsearch
           @document_type = name || @document_type || self.model_name.element
         end
 
+
+        # Set the document type
+        #
+        # @see document_type
+        #
+        def document_type=(name)
+          @document_type = name
+        end
       end
 
       module InstanceMethods
@@ -56,6 +71,13 @@ module Elasticsearch
           @index_name = name || @index_name || self.class.index_name
         end
 
+        # Set the index name
+        #
+        # @see index_name
+        def index_name=(name)
+          @index_name = name
+        end
+
         # @example Set the document type for an instance of the `Article` model
         #
         #     @article.document_type "my-article"
@@ -63,6 +85,14 @@ module Elasticsearch
         #
         def document_type name=nil
           @document_type = name || @document_type || self.class.document_type
+        end
+
+        # Set the document type
+        #
+        # @see document_type
+        #
+        def document_type=(name)
+          @document_type = name
         end
       end
 
