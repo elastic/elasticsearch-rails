@@ -317,6 +317,13 @@ Article.__elasticsearch__.client.indices.create \
   body: { settings: Article.settings.to_hash, mappings: Article.mappings.to_hash }
 ```
 
+There's a shortcut available for this common operation (e.g. in tests):
+
+```ruby
+Article.__elasticsearch__.create_index! force: true
+Article.__elasticsearch__.refresh_index!
+```
+
 By default, index name and document type will be inferred from your class name,
 but you can also set it explicitely:
 

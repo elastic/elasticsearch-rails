@@ -161,6 +161,63 @@ module Elasticsearch
             @settings
           end
         end
+
+        # Creates an index with correct name, automatically passing
+        # `settings` and `mappings` defined in the model
+        #
+        # @example Create an index for the `Article` model
+        #
+        #     Article.__elasticsearch__.create_index!
+        #
+        # @example Forcefully create (delete first) an index for the `Article` model
+        #
+        #     Article.__elasticsearch__.create_index! force: true
+        #
+        def create_index!(options={})
+          delete_index! if options[:force]
+
+          unless ( self.client.indices.exists(index: self.index_name) rescue false )
+            begin
+              self.client.indices.create index: self.index_name,
+                                                           body: {
+                                                             settings: self.settings.to_hash,
+                                                             mappings: self.mappings.to_hash }
+            rescue Exception => e
+              STDERR.puts "[!!!] Error when creating the index: #{e.class}", "#{e.message}"
+            end
+          else
+          end
+        end
+
+        # Deletes the index with corresponding name
+        #
+        # @example Delete the index for the `Article` model
+        #
+        #     Article.__elasticsearch__.delete_index!
+        #
+        def delete_index!(options={})
+          begin
+            self.client.indices.delete index: self.index_name
+          rescue Exception => e
+            STDERR.puts "[!!!] Error when deleting the index: #{e.class}", "#{e.message}"
+          end
+        end
+
+        # Performs the "refresh" operation for the index (useful e.g. in tests)
+        #
+        # @example Refresh the index for the `Article` model
+        #
+        #     Article.__elasticsearch__.refresh_index!
+        #
+        # @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-refresh.html
+        #
+        def refresh_index!(options={})
+          begin
+            self.client.indices.refresh index: self.index_name
+          rescue Exception => e
+            STDERR.puts "[!!!] Error when refreshing the index: #{e.class}", "#{e.message}"
+          end
+        end
       end
 
       module InstanceMethods
