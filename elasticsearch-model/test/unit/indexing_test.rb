@@ -1,0 +1,245 @@
+require 'test_helper'
+
+class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
+  context "Indexing module: " do
+    class ::DummyIndexingModel
+      extend ActiveModel::Naming
+      extend Elasticsearch::Model::Naming::ClassMethods
+      extend Elasticsearch::Model::Indexing::ClassMethods
+
+      def self.foo
+        'bar'
+      end
+    end
+
+    context "Settings class" do
+      should "be convertible to hash" do
+        hash     = { foo: 'bar' }
+        settings = Elasticsearch::Model::Indexing::Settings.new hash
+        assert_equal hash, settings.to_hash
+        assert_equal settings.to_hash, settings.as_json
+      end
+    end
+
+    context "Settings method" do
+      should "initialize the index settings" do
+        assert_instance_of Elasticsearch::Model::Indexing::Settings, DummyIndexingModel.settings
+      end
+
+      should "update and return the index settings" do
+        DummyIndexingModel.settings foo: 'boo'
+        DummyIndexingModel.settings bar: 'bam'
+
+        assert_equal( {foo: 'boo', bar: 'bam'},  DummyIndexingModel.settings.to_hash)
+      end
+
+      should "evaluate the block" do
+        DummyIndexingModel.expects(:foo)
+
+        DummyIndexingModel.settings do
+          foo
+        end
+      end
+    end
+
+    context "Mappings class" do
+      should "initialize the index mappings" do
+        assert_instance_of Elasticsearch::Model::Indexing::Mappings, DummyIndexingModel.mappings
+      end
+
+      should "be convertible to hash" do
+        mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype, { foo: 'bar' }
+        assert_equal( { :mytype => { foo: 'bar', :properties => {} } }, mappings.to_hash )
+        assert_equal mappings.to_hash, mappings.as_json
+      end
+
+      should "define properties" do
+        mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
+        assert_respond_to mappings, :indexes
+
+        mappings.indexes :foo, { type: 'boolean', include_in_all: false }
+        assert_equal 'boolean', mappings.to_hash[:mytype][:properties][:foo][:type]
+      end
+
+      should "define type as string by default" do
+        mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
+
+        mappings.indexes :bar, {}
+        assert_equal 'string', mappings.to_hash[:mytype][:properties][:bar][:type]
+      end
+
+      should "define embedded properties" do
+        mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
+
+        mappings.indexes :foo do
+          indexes :bar
+        end
+
+        assert_equal 'object', mappings.to_hash[:mytype][:properties][:foo][:type]
+        assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo][:properties][:bar][:type]
+      end
+    end
+
+    context "Mappings method" do
+      should "initialize the index mappings" do
+        assert_instance_of Elasticsearch::Model::Indexing::Mappings, DummyIndexingModel.mappings
+      end
+
+      should "update and return the index mappings" do
+        DummyIndexingModel.mappings foo: 'boo' do; end
+        DummyIndexingModel.mappings bar: 'bam' do; end
+        assert_equal( { dummy_indexing_model: { foo: "boo", bar: "bam", properties: {} } },
+                      DummyIndexingModel.mappings.to_hash )
+      end
+
+      should "evaluate the block" do
+        DummyIndexingModel.mappings.expects(:indexes).with(:foo).returns(true)
+
+        DummyIndexingModel.mappings do
+          indexes :foo
+        end
+      end
+    end
+
+    context "Instance methods" do
+      class ::DummyIndexingModelWithCallbacks
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def changed_attributes; [:foo]; end
+
+        def changes
+          {:foo => ['One', 'Two']}
+        end
+      end
+
+      should "register before_save callback when included" do
+        ::DummyIndexingModelWithCallbacks.expects(:before_save).returns(true)
+        ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+      end
+
+      should "set the @__changed_attributes variable before save" do
+        instance = ::DummyIndexingModelWithCallbacks.new
+        instance.expects(:instance_variable_set).with do |name, value|
+          assert_equal :@__changed_attributes, name
+          assert_equal({foo: 'Two'}, value)
+        end
+
+        ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+
+        ::DummyIndexingModelWithCallbacks.instance_variable_get(:@callbacks).each do |n,b|
+          instance.instance_eval(&b)
+        end
+      end
+
+      should "have the index_document method" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        client.expects(:index).with do |payload|
+          assert_equal 'foo',  payload[:index]
+          assert_equal 'bar',  payload[:type]
+          assert_equal '1',    payload[:id]
+          assert_equal 'JSON', payload[:body]
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:as_indexed_json).returns('JSON')
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.index_document
+      end
+
+      should "pass extra options to the index_document method to client.index" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        client.expects(:index).with do |payload|
+          assert_equal 'A',  payload[:parent]
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:as_indexed_json).returns('JSON')
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.index_document(parent: 'A')
+      end
+
+      should "have the delete_document method" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        client.expects(:delete).with do |payload|
+          assert_equal 'foo',  payload[:index]
+          assert_equal 'bar',  payload[:type]
+          assert_equal '1',    payload[:id]
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.delete_document()
+      end
+
+      should "pass extra options to the delete_document method to client.delete" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        client.expects(:delete).with do |payload|
+          assert_equal 'A',  payload[:parent]
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:id).returns('1')
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+
+        instance.delete_document(parent: 'A')
+      end
+
+      should "update the document by re-indexing when no changes are present" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        # Reset the fake `changes`
+        instance.instance_variable_set(:@__changed_attributes, nil)
+
+        instance.expects(:index_document)
+        instance.update_document
+      end
+
+      should "update the document by partial update when changes are present" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        # Set the fake `changes` hash
+        instance.instance_variable_set(:@__changed_attributes, {foo: 'bar'})
+
+        client.expects(:update).with do |payload|
+          assert_equal 'foo',  payload[:index]
+          assert_equal 'bar',  payload[:type]
+          assert_equal '1',    payload[:id]
+          assert_equal({foo: 'bar'}, payload[:body][:doc])
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document
+      end
+    end
+
+  end
+end
