@@ -7,7 +7,7 @@ module Elasticsearch
       module ActiveRecord
 
         Adapter.register self,
-                         lambda { |klass| defined?(::ActiveRecord::Base) && klass.ancestors.include?(::ActiveRecord::Base) }
+                         lambda { |klass| !!defined?(::ActiveRecord::Base) && klass.ancestors.include?(::ActiveRecord::Base) }
 
         module Records
 
@@ -22,7 +22,7 @@ module Elasticsearch
             sql_records.instance_exec(response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
                 self.load
-                @records.sort_by { |record| hits.index { |hit| hit['_id'] == record.id.to_s } }
+                @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
               end
             end
 
@@ -74,7 +74,7 @@ module Elasticsearch
           #
           def __find_in_batches(options={}, &block)
             find_in_batches(options) do |batch|
-              batch_for_bulk = batch.map { |a| { index: { _id: a.id, data: a.as_indexed_json } } }
+              batch_for_bulk = batch.map { |a| { index: { _id: a.id, data: a.__elasticsearch__.as_indexed_json } } }
               yield batch_for_bulk
             end
           end

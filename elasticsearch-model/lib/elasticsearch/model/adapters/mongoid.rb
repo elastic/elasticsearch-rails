@@ -9,7 +9,7 @@ module Elasticsearch
       module Mongoid
 
         Adapter.register self,
-                         lambda { |klass| defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
+                         lambda { |klass| !!defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
 
         module Records
 
@@ -20,7 +20,7 @@ module Elasticsearch
 
             criteria.instance_exec(response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
-                self.entries.sort_by { |e| hits.index { |hit| hit['_id'] == e.id.to_s } }
+                self.entries.sort_by { |e| hits.index { |hit| hit['_id'].to_s == e.id.to_s } }
               end
             end
 
