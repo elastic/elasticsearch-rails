@@ -3,7 +3,7 @@
 The `elasticsearch-model` library builds on top of the
 the [`elasticsearch`](https://github.com/elasticsearch/elasticsearch-ruby) library.
 
-it aims to simplify integration of Ruby classes ("models"), commonly found
+It aims to simplify integration of Ruby classes ("models"), commonly found
 e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the
 [Elasticsearch](http://www.elasticsearch.org) search and analytics engine.
 
@@ -98,8 +98,8 @@ all its functionality. To prevent polluting your model namespace, this functiona
 available via the `__elasticsearch__` class and instance level proxy methods;
 see the `Elasticsearch::Model::Proxy` class documentation for technical information.
 
-The module will include its methods, such as `search` or `as_indexed_json` in your model only if they haven't
-been already defined in the including class or module. Following two calls are thus functionally equivalent:
+The module will include important methods, such as `search`, into the includeing class or module
+only when they haven't been defined already. Following two calls are thus functionally equivalent:
 
 ```ruby
 Article.__elasticsearch__.search 'fox'
@@ -111,7 +111,7 @@ See the `Elasticsearch::Model` module documentation for technical information.
 ### The Elasticsearch client
 
 The module will set up a [client](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch),
-connected to `localhost:9200`, by default. You can access and use it normally:
+connected to `localhost:9200`, by default. You can access and use it as any other `Elasticsearch::Client`:
 
 ```ruby
 Article.__elasticsearch__.client.cluster.health
@@ -147,7 +147,7 @@ Article.import
 # => 0
 ```
 
-As we see, no errors were encountered during importing, so let's search the index!
+No errors were reported during importing, so... let's search the index!
 
 
 ### Searching
@@ -176,7 +176,7 @@ The returned `response` object is a rich wrapper around the JSON returned from E
 providing access to response metadata and the actual results ("hits").
 
 Each "hit" is wrapped in the `Result` class, and provides method access
-to the properties via [`Hashie::Mash`](http://github.com/intridea/hashie).
+to its properties via [`Hashie::Mash`](http://github.com/intridea/hashie).
 
 The `results` object supports the `Enumerable` interface:
 
@@ -234,7 +234,8 @@ In most cases, working with `results` coming from Elasticsearch is sufficient, a
 [`elasticsearch-rails`](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails)
 library for more information about compatibility with the Ruby on Rails framework.
 
-When you want to access both the database `records` and search `results`, use the `each_with_hit` iterator:
+When you want to access both the database `records` and search `results`, use the `each_with_hit`
+(or `map_with_hit`) iterator:
 
 ```ruby
 response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._score}" }
@@ -317,7 +318,7 @@ Article.__elasticsearch__.client.indices.create \
   body: { settings: Article.settings.to_hash, mappings: Article.mappings.to_hash }
 ```
 
-There's a shortcut available for this common operation (e.g. in tests):
+There's a shortcut available for this common operation (convenient e.g. in tests):
 
 ```ruby
 Article.__elasticsearch__.create_index! force: true
@@ -325,7 +326,7 @@ Article.__elasticsearch__.refresh_index!
 ```
 
 By default, index name and document type will be inferred from your class name,
-but you can also set it explicitely:
+you can set it explicitely, however:
 
 ```ruby
 class Article
@@ -340,7 +341,7 @@ Usually, we need to update the Elasticsearch index when records in the database 
 use the `index_document`, `update_document` and `delete_document` methods, respectively:
 
 ```ruby
-Article.first.index_document
+Article.first.__elasticsearch__.index_document
 # => {"ok"=>true, ... "_version"=>2}
 ```
 
@@ -466,7 +467,7 @@ By default, the model instance will be serialized to JSON using the `as_indexed_
 which is defined automatically by the `Elasticsearch::Model::Serializing` module:
 
 ```ruby
-Article.first.as_indexed_json
+Article.first.__elasticsearch__.as_indexed_json
 # => {"id"=>1, "title"=>"Quick brown fox"}
 ```
 
@@ -485,12 +486,12 @@ Article.first.as_indexed_json
 # => {"title"=>"Quick brown fox"}
 ```
 
-The re-defined method will be used in the indexings method, such as `index_document`.
+The re-defined method will be used in the indexing methods, such as `index_document`.
 
 #### Relationships and Associations
 
-When you have a more complicated structure/schema, you need to customize the `as_indexed_json` method
-- or perform the indexing separately, on your own.
+When you have a more complicated structure/schema, you need to customize the `as_indexed_json` method -
+or perform the indexing separately, on your own.
 For example, let's have an `Article` model, which _has_many_ `Comment`s,
 `Author`s and `Categories`. We might want to define the serialization like this:
 
