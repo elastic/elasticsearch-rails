@@ -175,7 +175,7 @@ module Elasticsearch
           # @see #update_document
           #
           base.before_save do |instance|
-            instance_variable_set(:@__changed_attributes,
+            instance.instance_variable_set(:@__changed_attributes,
                                   Hash[ instance.changes.map { |key, value| [key, value.last] } ])
           end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
         end
