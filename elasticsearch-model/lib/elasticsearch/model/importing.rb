@@ -8,20 +8,23 @@ module Elasticsearch
     #
     module Importing
 
-      module ClassMethods
+      # When included in a model, adds the importing methods.
+      #
+      # @example Import all records from the `Article` model
+      #
+      #     Article.import
+      #
+      # @see #import
+      #
+      def self.included(base)
+        base.__send__ :extend, ClassMethods
 
-        # When included in a model, adds the importing methods.
-        #
-        # @example Import all records from the `Article` model
-        #
-        #     Article.import
-        #
-        # @see #import
-        #
-        def self.included(base)
-          adapter = Adapter.from_class(base)
-          base.__send__ :include, adapter.importing_mixin
-        end
+        adapter = Adapter.from_class(base)
+        base.__send__ :include, adapter.importing_mixin
+        base.__send__ :extend,  adapter.importing_mixin
+      end
+
+      module ClassMethods
 
         # Import all model records into the index
         #
