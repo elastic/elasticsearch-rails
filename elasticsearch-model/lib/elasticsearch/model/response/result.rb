@@ -38,6 +38,10 @@ module Elasticsearch
           super
         end
 
+        def as_json(options={})
+          @result.as_json(options)
+        end
+
         # TODO: #to_s, #inspect, with support for Pry
 
       end
