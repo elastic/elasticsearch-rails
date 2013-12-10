@@ -174,7 +174,7 @@ module Elasticsearch
         #     Article.__elasticsearch__.create_index! force: true
         #
         def create_index!(options={})
-          delete_index! if options[:force]
+          delete_index!(options) if options[:force]
 
           unless ( self.client.indices.exists(index: self.index_name) rescue false )
             begin
@@ -183,7 +183,9 @@ module Elasticsearch
                                                              settings: self.settings.to_hash,
                                                              mappings: self.mappings.to_hash }
             rescue Exception => e
-              STDERR.puts "[!!!] Error when creating the index: #{e.class}", "#{e.message}"
+              unless e.class.to_s =~ /NotFound/ && options[:force]
+                STDERR.puts "[!!!] Error when creating the index: #{e.class}", "#{e.message}"
+              end
             end
           else
           end
@@ -199,7 +201,9 @@ module Elasticsearch
           begin
             self.client.indices.delete index: self.index_name
           rescue Exception => e
-            STDERR.puts "[!!!] Error when deleting the index: #{e.class}", "#{e.message}"
+            unless e.class.to_s =~ /NotFound/ && options[:force]
+              STDERR.puts "[!!!] Error when deleting the index: #{e.class}", "#{e.message}"
+            end
           end
         end
 
@@ -215,7 +219,9 @@ module Elasticsearch
           begin
             self.client.indices.refresh index: self.index_name
           rescue Exception => e
-            STDERR.puts "[!!!] Error when refreshing the index: #{e.class}", "#{e.message}"
+            unless e.class.to_s =~ /NotFound/ && options[:force]
+              STDERR.puts "[!!!] Error when refreshing the index: #{e.class}", "#{e.message}"
+            end
           end
         end
       end
