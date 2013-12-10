@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "activesupport", "> 3.0"
   s.add_development_dependency "activemodel",   "> 3.0"
   s.add_development_dependency "activerecord",  "> 3.0"
+  s.add_development_dependency "mongoid",       "> 2.0"
   s.add_development_dependency "oj"
 
   s.add_development_dependency "shoulda-context"
