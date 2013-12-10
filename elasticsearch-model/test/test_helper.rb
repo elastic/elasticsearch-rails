@@ -8,6 +8,8 @@ require 'simplecov' and SimpleCov.start { add_filter "/test|test_/" } if ENV["CO
 # MUST be called before requiring `test/unit`.
 at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks }
 
+puts '-'*80
+
 require 'test/unit'
 require 'shoulda-context'
 require 'mocha/setup'
