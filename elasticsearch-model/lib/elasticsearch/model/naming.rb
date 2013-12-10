@@ -22,7 +22,7 @@ module Elasticsearch
         # TODO: Dynamic names a la Tire -- `Article.index_name { "articles-#{Time.now.year}" }`
         #
         def index_name name=nil
-          @index_name = name || @index_name || self.model_name.collection
+          @index_name = name || @index_name || self.model_name.collection.gsub(/\//, '-')
         end
 
         # Set the index name
