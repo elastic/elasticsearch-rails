@@ -10,7 +10,6 @@ module Elasticsearch
                          lambda { |klass| !!defined?(::ActiveRecord::Base) && klass.ancestors.include?(::ActiveRecord::Base) }
 
         module Records
-
           # Returns an `ActiveRecord::Relation` instance
           #
           def records
@@ -21,7 +20,11 @@ module Elasticsearch
             #
             sql_records.instance_exec(response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
-                self.load
+                if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+                  self.load
+                else
+                  self.__send__(:exec_queries)
+                end
                 @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
               end
             end
@@ -43,7 +46,14 @@ module Elasticsearch
             # Redefine the `to_a` method to the original one
             #
             sql_records.instance_exec do
-              define_singleton_method(:to_a) { self.load; @records }
+              define_singleton_method(:to_a) do
+                if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+                  self.load
+                else
+                  self.__send__(:exec_queries)
+                end
+                @records
+              end
             end
 
             sql_records
@@ -59,9 +69,9 @@ module Elasticsearch
           #
           def self.included(base)
             base.class_eval do
-              after_commit lambda { __elasticsearch__.index_document  },  on: [:create]
-              after_commit lambda { __elasticsearch__.update_document },  on: [:update]
-              after_commit lambda { __elasticsearch__.delete_document },  on: [:destroy]
+              after_commit lambda { __elasticsearch__.index_document  },  on: :create
+              after_commit lambda { __elasticsearch__.update_document },  on: :update
+              after_commit lambda { __elasticsearch__.delete_document },  on: :destroy
             end
           end
         end

@@ -26,9 +26,9 @@ module Elasticsearch
           Article.delete_all
           Article.__elasticsearch__.create_index! force: true
 
-          Article.create! title: 'Test'
-          Article.create! title: 'Testing Coding'
-          Article.create! title: 'Coding'
+          ::Article.create! title: 'Test'
+          ::Article.create! title: 'Testing Coding'
+          ::Article.create! title: 'Coding'
 
           Article.__elasticsearch__.refresh_index!
         end
@@ -36,7 +36,7 @@ module Elasticsearch
         should "index and find a document" do
           response = Article.search('title:test')
 
-          assert response.any?
+          assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
           assert_equal 2, response.results.size
           assert_equal 2, response.records.size
