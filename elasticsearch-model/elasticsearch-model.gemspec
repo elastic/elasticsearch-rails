@@ -27,7 +27,13 @@ Gem::Specification.new do |s|
   s.add_development_dependency "bundler", "~> 1.3"
   s.add_development_dependency "rake"
 
-  s.add_development_dependency "active_model", "> 3"
+  s.add_development_dependency "elasticsearch-extensions"
+
+  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "activesupport", "> 3.0"
+  s.add_development_dependency "activemodel",   "> 3.0"
+  s.add_development_dependency "activerecord",  "> 3.0"
+  s.add_development_dependency "oj"
 
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
