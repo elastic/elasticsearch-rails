@@ -9,9 +9,23 @@ class Elasticsearch::Model::NamingTest < Test::Unit::TestCase
       include Elasticsearch::Model::Naming::InstanceMethods
     end
 
+    module ::MyNamespace
+      class DummyNamingModelInNamespace
+        extend ActiveModel::Naming
+
+        extend  Elasticsearch::Model::Naming::ClassMethods
+        include Elasticsearch::Model::Naming::InstanceMethods
+      end
+    end
+
     should "return the default index_name" do
       assert_equal 'dummy_naming_models', DummyNamingModel.index_name
       assert_equal 'dummy_naming_models', DummyNamingModel.new.index_name
+    end
+
+    should "return the sanitized default index_name for namespaced model" do
+      assert_equal 'my_namespace-dummy_naming_model_in_namespaces', ::MyNamespace::DummyNamingModelInNamespace.index_name
+      assert_equal 'my_namespace-dummy_naming_model_in_namespaces', ::MyNamespace::DummyNamingModelInNamespace.new.index_name
     end
 
     should "return the default document_type" do
