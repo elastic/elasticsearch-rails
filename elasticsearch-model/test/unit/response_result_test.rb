@@ -27,5 +27,18 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
       assert_equal 'baz', result.bar
     end
 
+    should "delegate methods to @result" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar'
+
+      assert_equal 'bar', result.foo
+      assert_equal 'bar', result.fetch('foo')
+      assert_equal 'moo', result.fetch('NOT_EXIST', 'moo')
+
+      assert_respond_to result, :to_hash
+      assert_equal({'foo' => 'bar'}, result.to_hash)
+
+      assert_raise(NoMethodError) { result.does_not_exist }
+    end
+
   end
 end
