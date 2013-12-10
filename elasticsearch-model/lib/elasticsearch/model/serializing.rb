@@ -25,7 +25,7 @@ module Elasticsearch
         #
         def as_indexed_json(options={})
           # TODO: Play with the `MyModel.indexes` method -- reject non-mapped attributes, `:as` options, etc
-          self.as_json(options)
+          self.as_json(options.merge root: false)
         end
 
       end
