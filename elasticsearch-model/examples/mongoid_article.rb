@@ -21,14 +21,18 @@ Moped.logger.level = Logger::DEBUG
 
 Mongoid.connect_to 'articles'
 
-Elasticsearch::Model.client = Elasticsearch::Client.new log: true
+Elasticsearch::Model.client = Elasticsearch::Client.new host: 'localhost:9250', log: true
 
 class Article
   include Mongoid::Document
   field :id, type: String
   field :title, type: String
   field :published_at, type: DateTime
-  attr_accessible :id, :title, :published_at
+  attr_accessible :id, :title, :published_at if respond_to? :attr_accessible
+
+  def as_indexed_json(options={})
+    as_json(except: [:id, :_id])
+  end
 end
 
 # Extend the model with Elasticsearch support
@@ -45,7 +49,7 @@ Article.create id: '3', title: 'Foo Foo'
 
 # Index data
 #
-client = Elasticsearch::Client.new log:true
+client = Elasticsearch::Client.new host:'localhost:9250', log:true
 
 client.indices.delete index: 'articles' rescue nil
 client.bulk index: 'articles',

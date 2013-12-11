@@ -15,3 +15,6 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+
+gemfiles/3.gemfile.lock
+gemfiles/4.gemfile.lock
