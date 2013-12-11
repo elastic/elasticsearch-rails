@@ -134,6 +134,35 @@ if ENV["MONGODB_AVAILABLE"]
             assert_equal 'Testing Coding', response.records.first.title
           end
 
+
+          context "importing" do
+            setup do
+              MongoidArticle.delete_all
+              97.times { |i| MongoidArticle.create! title: "Test #{i}" }
+              MongoidArticle.__elasticsearch__.create_index! force: true
+            end
+
+            should "import all the documents" do
+              assert_equal 97, MongoidArticle.count
+
+              MongoidArticle.__elasticsearch__.refresh_index!
+              assert_equal 0, MongoidArticle.search('*').results.total
+
+              batches = 0
+              errors  = MongoidArticle.import(batch_size: 10) do |response|
+                batches += 1
+              end
+
+              assert_equal 0, errors
+              assert_equal 10, batches
+
+              MongoidArticle.__elasticsearch__.refresh_index!
+              assert_equal 97, MongoidArticle.search('*').results.total
+
+              response = MongoidArticle.search('test')
+              assert response.results.any?, "Search has not returned results: #{response.to_a}"
+            end
+          end
         end
 
       end
