@@ -108,10 +108,11 @@ module Elasticsearch
 
         # Mix the importing module into the proxy
         #
-        self.__elasticsearch__.class.__send__ :include, Elasticsearch::Model::Importing::ClassMethods
-        self.__elasticsearch__.class.__send__ :include, Adapter.from_class(base).importing_mixin
+        proxy_class = class << self.__elasticsearch__; self; end
+        proxy_class.__send__ :include, Elasticsearch::Model::Importing::ClassMethods
+        proxy_class.__send__ :include, Adapter.from_class(base).importing_mixin
 
-        forward :'self.__elasticsearch__', :import        unless respond_to?(:import)
+        forward :'self.__elasticsearch__', :import unless respond_to?(:import)
       end
     end
 
