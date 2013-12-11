@@ -1,5 +1,7 @@
 require 'test_helper'
 
+puts "ActiveRecord #{ActiveRecord::VERSION::STRING}", '-'*80
+
 module Elasticsearch
   module Model
     class ActiveRecordBasicIntegrationTest < Elasticsearch::Test::IntegrationTestCase

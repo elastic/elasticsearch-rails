@@ -9,6 +9,7 @@ rescue LoadError, Moped::Errors::ConnectionFailure => e
 end
 
 if ENV["MONGODB_AVAILABLE"]
+  puts "Mongoid #{Mongoid::VERSION}", '-'*80
 
   logger = ::Logger.new(STDERR)
   logger.formatter = lambda { |s, d, p, m| " #{m.ansi(:faint, :cyan)}\n" }
@@ -30,11 +31,15 @@ if ENV["MONGODB_AVAILABLE"]
 
           field :id, type: String
           field :title, type: String
-          attr_accessible :title
+          attr_accessible :title if respond_to? :attr_accessible
 
           mapping do
             indexes :title,      type: 'string', analyzer: 'snowball'
             indexes :created_at, type: 'date'
+          end
+
+          def as_indexed_json(options={})
+            as_json(except: [:id, :_id])
           end
         end
 
