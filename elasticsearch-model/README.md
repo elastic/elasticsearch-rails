@@ -535,6 +535,10 @@ class Article
   attr_accessible :id, :title, :published_at
 
   include Elasticsearch::Model
+
+  def as_indexed_json(options={})
+    as_json(except: [:id, :_id])
+  end
 end
 
 Article.create id: '1', title: 'Quick brown fox'
