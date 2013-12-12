@@ -42,24 +42,26 @@ module Searchable
 
     # Set up the mapping
     #
-    mapping do
-      indexes :title,      analyzer: 'snowball'
-      indexes :created_at, type: 'date'
+    settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+      mapping do
+        indexes :title,      analyzer: 'snowball'
+        indexes :created_at, type: 'date'
 
-      indexes :authors do
-        indexes :first_name
-        indexes :last_name
-        indexes :full_name, type: 'multi_field' do
-          indexes :full_name
-          indexes :raw, analyzer: 'keyword'
+        indexes :authors do
+          indexes :first_name
+          indexes :last_name
+          indexes :full_name, type: 'multi_field' do
+            indexes :full_name
+            indexes :raw, analyzer: 'keyword'
+          end
         end
-      end
 
-      indexes :categories, analyzer: 'keyword'
+        indexes :categories, analyzer: 'keyword'
 
-      indexes :comments, type: 'nested' do
-        indexes :text
-        indexes :author
+        indexes :comments, type: 'nested' do
+          indexes :text
+          indexes :author
+        end
       end
     end
 
@@ -228,7 +230,7 @@ module Elasticsearch
 
           assert_equal 3, response.results.size
           assert_equal 3, response.records.size
-        end
+        end if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
 
         should "reindex a document after comments are added" do
           # Create posts
@@ -270,7 +272,7 @@ module Elasticsearch
             }
 
           assert_equal 1, response.results.size
-        end
+        end if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
 
         should "reindex a document after Post#touch" do
           # Create categories
