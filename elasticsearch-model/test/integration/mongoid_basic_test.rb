@@ -33,9 +33,11 @@ if ENV["MONGODB_AVAILABLE"]
           field :title, type: String
           attr_accessible :title if respond_to? :attr_accessible
 
-          mapping do
-            indexes :title,      type: 'string', analyzer: 'snowball'
-            indexes :created_at, type: 'date'
+          settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+            mapping do
+              indexes :title,      type: 'string', analyzer: 'snowball'
+              indexes :created_at, type: 'date'
+            end
           end
 
           def as_indexed_json(options={})
