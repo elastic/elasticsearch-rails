@@ -113,6 +113,19 @@ module Elasticsearch
           assert_equal 'Testing Coding', response.records.first.title
         end
 
+        should "allow chaining SQL commands on response.records" do
+          response = Article.search query: { match: { title: { query: 'test' } } }
+
+          assert_equal 2,      response.records.size
+          assert_equal 1,      response.records.where(title: 'Test').size
+          assert_equal 'Test', response.records.where(title: 'Test').first.title
+        end
+
+        should "allow ordering response.records in SQL" do
+          response = Article.search query: { match: { title: { query: 'test' } } }
+
+          assert_equal 'Testing Coding', response.records.order(title: :desc).first.title
+        end
       end
 
     end
