@@ -20,7 +20,7 @@ module Elasticsearch
             #
             sql_records.instance_exec(response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
-                if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+                if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
                   self.load
                 else
                   self.__send__(:exec_queries)
@@ -47,7 +47,7 @@ module Elasticsearch
             #
             sql_records.instance_exec do
               define_singleton_method(:to_a) do
-                if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+                if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
                   self.load
                 else
                   self.__send__(:exec_queries)

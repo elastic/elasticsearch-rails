@@ -230,7 +230,7 @@ module Elasticsearch
 
           assert_equal 3, response.results.size
           assert_equal 3, response.records.size
-        end if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+        end if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
 
         should "reindex a document after comments are added" do
           # Create posts
@@ -272,7 +272,7 @@ module Elasticsearch
             }
 
           assert_equal 1, response.results.size
-        end if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+        end if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
 
         should "reindex a document after Post#touch" do
           # Create categories
