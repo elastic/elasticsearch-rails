@@ -75,8 +75,20 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           indexes :bar
         end
 
+        mappings.indexes :multi, type: 'multi_field' do
+          indexes :multi, analyzer: 'snowball'
+          indexes :raw,   analyzer: 'keyword'
+        end
+
         assert_equal 'object', mappings.to_hash[:mytype][:properties][:foo][:type]
         assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo][:properties][:bar][:type]
+
+        assert_equal 'multi_field', mappings.to_hash[:mytype][:properties][:multi][:type]
+        assert_equal 'snowball', mappings.to_hash[:mytype][:properties][:multi][:fields][:multi][:analyzer]
+        assert_equal 'keyword',  mappings.to_hash[:mytype][:properties][:multi][:fields][:raw][:analyzer]
+      end
+
+      should "define multi_field properties" do
       end
     end
 
