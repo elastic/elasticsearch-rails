@@ -126,7 +126,7 @@ module Elasticsearch
         should "allow ordering response.records in SQL" do
           response = Article.search query: { match: { title: { query: 'test' } } }
 
-          if ::ActiveRecord.respond_to?(:version) && ::ActiveRecord.version.to_s > '4'
+          if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
             assert_equal 'Testing Coding', response.records.order(title: :desc).first.title
           else
             assert_equal 'Testing Coding', response.records.order('title DESC').first.title
