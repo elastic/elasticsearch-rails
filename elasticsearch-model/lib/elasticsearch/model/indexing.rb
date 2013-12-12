@@ -46,12 +46,14 @@ module Elasticsearch
           @mapping[name] = options
 
           if block_given?
-            @mapping[name][:type]       ||= 'object'
-            @mapping[name][:properties] ||= {}
+            @mapping[name][:type] ||= 'object'
+            properties = @mapping[name][:type] == 'multi_field' ? :fields : :properties
+
+            @mapping[name][properties] ||= {}
 
             previous = @mapping
             begin
-              @mapping = @mapping[name][:properties]
+              @mapping = @mapping[name][properties]
               self.instance_eval(&block)
             ensure
               @mapping = previous
