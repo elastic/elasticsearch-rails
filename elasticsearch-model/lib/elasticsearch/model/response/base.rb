@@ -4,19 +4,15 @@ module Elasticsearch
       # Common funtionality for classes in the {Elasticsearch::Model::Response} module
       #
       module Base
-        attr_reader :klass, :response, :response_object,
-                    :total, :max_score
+        attr_reader :klass, :response
 
         # @param klass    [Class] The name of the model class
         # @param response [Hash]  The full response returned from Elasticsearch client
         # @param results  [Results]  The collection of results
         #
-        def initialize(klass, response, results=nil, response_object=nil)
+        def initialize(klass, response, options={})
           @klass     = klass
-          @response_object = response_object
           @response  = response
-          @total     = response['hits']['total']
-          @max_score = response['hits']['max_score']
         end
 
         # @abstract Implement this method in specific class
@@ -31,6 +27,17 @@ module Elasticsearch
           raise NotImplemented, "Implement this method in #{klass}"
         end
 
+        # Returns the total number of hits
+        #
+        def total
+          response.response['hits']['total']
+        end
+
+        # Returns the max_score
+        #
+        def max_score
+          response.response['hits']['max_score']
+        end
       end
     end
   end

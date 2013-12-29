@@ -17,11 +17,8 @@ module Elasticsearch
 
         # @see Base#initialize
         #
-        def initialize(klass, response, results=nil, response_object=nil)
+        def initialize(klass, response, options={})
           super
-          @response = response
-          @results  = results
-          @ids = response['hits']['hits'].map { |hit| hit['_id'] }
 
           # Include module provided by the adapter in the singleton class ("metaclass")
           #
@@ -32,16 +29,28 @@ module Elasticsearch
           self
         end
 
+        # Returns the hit IDs
+        #
+        def ids
+          response.response['hits']['hits'].map { |hit| hit['_id'] }
+        end
+
+        # Returns the {Results} collection
+        #
+        def results
+          response.results
+        end
+
         # Yields [record, hit] pairs to the block
         #
         def each_with_hit(&block)
-          records.zip(@results).each(&block)
+          records.zip(results).each(&block)
         end
 
         # Yields [record, hit] pairs and returns the result
         #
         def map_with_hit(&block)
-          records.zip(@results).map(&block)
+          records.zip(results).map(&block)
         end
 
         # Delegate methods to `@records`

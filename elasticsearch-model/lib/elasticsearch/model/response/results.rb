@@ -8,9 +8,6 @@ module Elasticsearch
       #
       class Results
         include Base
-
-        attr_reader :results
-
         include Enumerable
 
         extend  Support::Forwardable
@@ -18,10 +15,15 @@ module Elasticsearch
 
         # @see Base#initialize
         #
-        def initialize(klass, response, results=nil, response_object=nil)
+        def initialize(klass, response, options={})
           super
+        end
+
+        # Returns the {Results} collection
+        #
+        def results
           # TODO: Configurable custom wrapper
-          @results   = response['hits']['hits'].map { |hit| Result.new(hit) }
+          @results  = response.response['hits']['hits'].map { |hit| Result.new(hit) }
         end
 
       end

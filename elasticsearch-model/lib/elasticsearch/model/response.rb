@@ -18,29 +18,52 @@ module Elasticsearch
 
         forward :results, :each, :empty?, :size, :slice, :[], :to_ary
 
-        def initialize(klass, search, response)
+        def initialize(klass, search, options={})
           @klass     = klass
           @search    = search
-          @response  = response
-          @took      = response['took']
-          @timed_out = response['timed_out']
-          @shards    = Hashie::Mash.new(response['_shards'])
         end
 
-        # Return the collection of "hits" from Elasticsearch
+        # Returns the Elasticsearch response
+        #
+        # @return [Hash]
+        #
+        def response
+          @response ||= search.execute!
+        end
+
+        # Returns the collection of "hits" from Elasticsearch
+        #
+        # @return [Results]
         #
         def results
-          @response ||= search.execute!
-          @results  ||= Results.new(klass, response, nil, self)
+          @results ||= Results.new(klass, self)
         end
 
-        # Return the collection of records from the database
+        # Returns the collection of records from the database
+        #
+        # @return [Records]
         #
         def records
-          @response ||= search.execute!
-          @records  ||= Records.new(klass, response, results, self)
+          @records ||= Records.new(klass, self)
         end
 
+        # Returns the "took" time
+        #
+        def took
+          response['took']
+        end
+
+        # Returns whether the response timed out
+        #
+        def timed_out
+          response['timed_out']
+        end
+
+        # Returns the statistics on shards
+        #
+        def shards
+          Hashie::Mash.new(response['_shards'])
+        end
       end
     end
   end

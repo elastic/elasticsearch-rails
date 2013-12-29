@@ -13,12 +13,12 @@ module Elasticsearch
           # Returns an `ActiveRecord::Relation` instance
           #
           def records
-            sql_records = klass.where(id: @ids)
+            sql_records = klass.where(id: ids)
 
             # Re-order records based on the order from Elasticsearch hits
             # by redefining `to_a`, unless the user has called `order()`
             #
-            sql_records.instance_exec(response['hits']['hits']) do |hits|
+            sql_records.instance_exec(response.response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
                 if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
                   self.load
