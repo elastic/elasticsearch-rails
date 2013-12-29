@@ -58,5 +58,16 @@ class Elasticsearch::Model::SearchRequestTest < Test::Unit::TestCase
       s = Elasticsearch::Model::Searching::SearchRequest.new ::DummySearchingModel, MySpecialQueryBuilder.new
       s.execute!
     end
+
+    should "pass the options to the client" do
+      @client.expects(:search).with do |params|
+        assert_equal 'foo', params[:q]
+        assert_equal 15,    params[:size]
+      end
+      .returns({})
+
+      s = Elasticsearch::Model::Searching::SearchRequest.new ::DummySearchingModel, 'foo', size: 15
+      s.execute!
+    end
   end
 end

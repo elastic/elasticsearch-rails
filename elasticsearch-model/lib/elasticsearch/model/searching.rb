@@ -36,9 +36,9 @@ module Elasticsearch
           end
 
           if body
-            @definition = { index: __index_name, type: __document_type, body: body }
+            @definition = { index: __index_name, type: __document_type, body: body }.update options
           else
-            @definition = { index: __index_name, type: __document_type, q: q }
+            @definition = { index: __index_name, type: __document_type, q: q }.update options
           end
         end
 
