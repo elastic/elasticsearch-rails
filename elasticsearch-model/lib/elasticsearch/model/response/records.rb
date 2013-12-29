@@ -17,7 +17,7 @@ module Elasticsearch
 
         # @see Base#initialize
         #
-        def initialize(klass, response, results)
+        def initialize(klass, response, results=nil, response_object=nil)
           super
           @response = response
           @results  = results

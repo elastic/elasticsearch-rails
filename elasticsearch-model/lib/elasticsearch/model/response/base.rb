@@ -4,15 +4,16 @@ module Elasticsearch
       # Common funtionality for classes in the {Elasticsearch::Model::Response} module
       #
       module Base
-        attr_reader :klass, :response,
+        attr_reader :klass, :response, :response_object,
                     :total, :max_score
 
         # @param klass    [Class] The name of the model class
         # @param response [Hash]  The full response returned from Elasticsearch client
         # @param results  [Results]  The collection of results
         #
-        def initialize(klass, response, results=nil)
+        def initialize(klass, response, results=nil, response_object=nil)
           @klass     = klass
+          @response_object = response_object
           @response  = response
           @total     = response['hits']['total']
           @max_score = response['hits']['max_score']
