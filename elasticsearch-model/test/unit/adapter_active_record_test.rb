@@ -3,10 +3,22 @@ require 'test_helper'
 class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
   context "Adapter ActiveRecord module: " do
     class ::DummyClassForActiveRecord
+      RESPONSE = Struct.new('DummyActiveRecordResponse') do
+        def response
+          { 'hits' => {'hits' => [ {'_id' => 2}, {'_id' => 1} ]} }
+        end
+      end.new
+
       def response
-        { 'hits' => {'hits' => [ {'_id' => 2}, {'_id' => 1} ]} }
+        RESPONSE
+      end
+
+      def ids
+        [2, 1]
       end
     end
+
+    RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [] } }
 
     setup do
       @records = [ stub(id: 1, inspect: '<Model-1>'), stub(id: 2, inspect: '<Model-2>') ]

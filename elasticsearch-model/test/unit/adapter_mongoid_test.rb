@@ -3,8 +3,18 @@ require 'test_helper'
 class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
   context "Adapter Mongoid module: " do
     class ::DummyClassForMongoid
+      RESPONSE = Struct.new('DummyMongoidResponse') do
+        def response
+          { 'hits' => {'hits' => [ {'_id' => 2}, {'_id' => 1} ]} }
+        end
+      end.new
+
       def response
-        { 'hits' => {'hits' => [ {'_id' => 2}, {'_id' => 1} ]} }
+        RESPONSE
+      end
+
+      def ids
+        [2, 1]
       end
     end
 

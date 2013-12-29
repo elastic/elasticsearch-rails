@@ -95,10 +95,6 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
       end
 
       should "reset the variables" do
-        assert_not_nil @response.instance_variable_get(:@response)
-        assert_not_nil @response.instance_variable_get(:@records)
-        assert_not_nil @response.instance_variable_get(:@results)
-
         @response.limit(35)
 
         assert_nil @response.instance_variable_get(:@response)
@@ -119,10 +115,6 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
       end
 
       should "reset the variables" do
-        assert_not_nil @response.instance_variable_get(:@response)
-        assert_not_nil @response.instance_variable_get(:@records)
-        assert_not_nil @response.instance_variable_get(:@results)
-
         @response.offset(35)
 
         assert_nil @response.instance_variable_get(:@response)
@@ -133,6 +125,7 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
 
     context "total" do
       should "return the number of hits" do
+        @response.expects(:results).returns(mock('results', total: 100))
         assert_equal 100, @response.total_count
       end
     end

@@ -16,9 +16,9 @@ module Elasticsearch
           # Return a `Mongoid::Criteria` instance
           #
           def records
-            criteria = klass.where(:id.in => @ids)
+            criteria = klass.where(:id.in => ids)
 
-            criteria.instance_exec(response['hits']['hits']) do |hits|
+            criteria.instance_exec(response.response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
                 self.entries.sort_by { |e| hits.index { |hit| hit['_id'].to_s == e.id.to_s } }
               end

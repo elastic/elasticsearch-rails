@@ -20,8 +20,8 @@ module Elasticsearch
             Elasticsearch::Model::Response::Results.__send__ :include, ::Kaminari::PageScopeMethods
             Elasticsearch::Model::Response::Records.__send__ :include, ::Kaminari::PageScopeMethods
 
-            Elasticsearch::Model::Response::Results.__send__ :forward, :response_object, :limit_value, :offset_value, :total_count
-            Elasticsearch::Model::Response::Records.__send__ :forward, :response_object, :limit_value, :offset_value, :total_count
+            Elasticsearch::Model::Response::Results.__send__ :forward, :response, :limit_value, :offset_value, :total_count
+            Elasticsearch::Model::Response::Records.__send__ :forward, :response, :limit_value, :offset_value, :total_count
 
             base.class_eval <<-RUBY, __FILE__, __LINE__ + 1
               # Define the `page` Kaminari method

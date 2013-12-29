@@ -96,9 +96,8 @@ module Elasticsearch
         #
         def search(query_or_payload, options={})
           search   = SearchRequest.new(self, query_or_payload, options={})
-          response = search.execute!
 
-          Response::Response.new(self, search, response)
+          Response::Response.new(self, search)
         end
 
       end

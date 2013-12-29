@@ -11,19 +11,24 @@ class Elasticsearch::Model::RecordsTest < Test::Unit::TestCase
       def foo;          'BAR';                end
     end
 
-    class DummyClass
+    class DummyModel
+      def self.index_name;    'foo'; end
+      def self.document_type; 'bar'; end
+
       def self.find(*args)
         DummyCollection.new
       end
     end
 
     RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [{'foo' => 'bar'}] } }
-    RESULTS  = Elasticsearch::Model::Response::Results.new DummyClass, RESPONSE
+    RESULTS  = Elasticsearch::Model::Response::Results.new DummyModel, RESPONSE
 
     setup do
-      @records = Elasticsearch::Model::Response::Records.new DummyClass,
-                                                             RESPONSE,
-                                                             RESULTS
+      search   = Elasticsearch::Model::Searching::SearchRequest.new DummyModel, '*'
+      search.stubs(:execute!).returns RESPONSE
+
+      response = Elasticsearch::Model::Response::Response.new DummyModel, search
+      @records = Elasticsearch::Model::Response::Records.new DummyModel, response
     end
 
     should "access the records" do
@@ -68,12 +73,11 @@ class Elasticsearch::Model::RecordsTest < Test::Unit::TestCase
 
       should "delegate the records method to the adapter" do
         Elasticsearch::Model::Adapter.expects(:from_class)
-                                     .with(DummyClass)
+                                     .with(DummyModel)
                                      .returns(DummyAdapter)
 
-        @records = Elasticsearch::Model::Response::Records.new DummyClass,
-                                                               RESPONSE,
-                                                               RESULTS
+        @records = Elasticsearch::Model::Response::Records.new DummyModel,
+                                                               RESPONSE
 
         assert_equal ['FOOBAR'], @records.records
       end

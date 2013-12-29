@@ -47,6 +47,10 @@ if ENV["MONGODB_AVAILABLE"]
 
         context "Mongoid integration" do
           setup do
+            Elasticsearch::Model::Adapter.register \
+              Elasticsearch::Model::Adapter::Mongoid,
+              lambda { |klass| !!defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
+
             MongoidArticle.__elasticsearch__.create_index! force: true
 
             MongoidArticle.delete_all

@@ -7,7 +7,6 @@ class Elasticsearch::Model::SearchingTest < Test::Unit::TestCase
 
       def self.index_name;    'foo'; end
       def self.document_type; 'bar'; end
-
     end
 
     setup do
@@ -19,13 +18,20 @@ class Elasticsearch::Model::SearchingTest < Test::Unit::TestCase
       assert_respond_to DummySearchingModel, :search
     end
 
-    should "execute the search" do
+    should "initialize the search object" do
       Elasticsearch::Model::Searching::SearchRequest
         .expects(:new).with do |klass, query, options|
           assert_equal DummySearchingModel, klass
           assert_equal 'foo', query
         end
-        .returns( mock('search', execute!: {}) )
+        .returns( stub('search') )
+
+      DummySearchingModel.search 'foo'
+    end
+
+    should "not execute the search" do
+      Elasticsearch::Model::Searching::SearchRequest
+        .expects(:new).returns( mock('search').expects(:execute!).never )
 
       DummySearchingModel.search 'foo'
     end
