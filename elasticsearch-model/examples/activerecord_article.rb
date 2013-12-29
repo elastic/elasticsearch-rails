@@ -11,6 +11,7 @@ Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.
 require 'logger'
 require 'ansi/core'
 require 'active_record'
+require 'kaminari'
 
 require 'elasticsearch/model'
 
@@ -24,6 +25,8 @@ ActiveRecord::Schema.define(version: 1) do
     t.timestamps
   end
 end
+
+Kaminari::Hooks.init
 
 class Article < ActiveRecord::Base
 end

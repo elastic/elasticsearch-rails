@@ -20,6 +20,9 @@ require 'oj'
 
 require 'active_record'
 require 'active_model'
+
+require 'kaminari'
+
 require 'elasticsearch/model'
 
 require 'elasticsearch/extensions/test/cluster'

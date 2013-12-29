@@ -27,8 +27,13 @@ require 'elasticsearch/model/response/base'
 require 'elasticsearch/model/response/result'
 require 'elasticsearch/model/response/results'
 require 'elasticsearch/model/response/records'
+require 'elasticsearch/model/response/pagination'
 
 require 'elasticsearch/model/version'
+
+if defined?(::Kaminari)
+  Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
+end
 
 module Elasticsearch
 
