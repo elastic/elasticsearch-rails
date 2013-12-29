@@ -10,7 +10,7 @@ module Elasticsearch
       # Implements Enumerable and forwards its methods to the {#results} object.
       #
       class Response
-        attr_reader :klass, :response,
+        attr_reader :klass, :search, :response,
                     :took, :timed_out, :shards
 
         include Enumerable
@@ -18,8 +18,9 @@ module Elasticsearch
 
         forward :results, :each, :empty?, :size, :slice, :[], :to_ary
 
-        def initialize(klass, response)
+        def initialize(klass, search, response)
           @klass     = klass
+          @search    = search
           @response  = response
           @took      = response['took']
           @timed_out = response['timed_out']
@@ -29,13 +30,15 @@ module Elasticsearch
         # Return the collection of "hits" from Elasticsearch
         #
         def results
-          @results ||= Results.new(klass, response)
+          @response ||= search.execute!
+          @results  ||= Results.new(klass, response)
         end
 
         # Return the collection of records from the database
         #
         def records
-          @records ||= Records.new(klass, response, results)
+          @response ||= search.execute!
+          @records  ||= Records.new(klass, response, results)
         end
 
       end

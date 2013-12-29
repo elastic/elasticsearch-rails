@@ -5,13 +5,60 @@ module Elasticsearch
     #
     module Searching
 
+      # Wraps a search request definition
+      #
+      class SearchRequest
+        attr_reader :klass, :definition
+
+        # @param klass [Class] The class of the model
+        # @param query_or_payload [String,Hash,Object] The search request definition
+        #                                              (string, JSON, Hash, or object responding to `to_hash`)
+        # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
+        #
+        def initialize(klass, query_or_payload, options={})
+          @klass   = klass
+
+          __index_name    = options[:index] || klass.index_name
+          __document_type = options[:type]  || klass.document_type
+
+          case
+            # search query: ...
+            when query_or_payload.respond_to?(:to_hash)
+              body = query_or_payload.to_hash
+
+            # search '{ "query" : ... }'
+            when query_or_payload.is_a?(String) && query_or_payload =~ /^\s*{/
+              body = query_or_payload
+
+            # search '...'
+            else
+              q = query_or_payload
+          end
+
+          if body
+            @definition = { index: __index_name, type: __document_type, body: body }
+          else
+            @definition = { index: __index_name, type: __document_type, q: q }
+          end
+        end
+
+        # Performs the request and returns the response from client
+        #
+        # @return [Hash] The response from Elasticsearch
+        #
+        def execute!
+          klass.client.search(@definition)
+        end
+      end
+
       module ClassMethods
 
-        # Provide a `search` method for the model to easily search within an index/type
+        # Provides a `search` method for the model to easily search within an index/type
         # corresponding to the model settings.
         #
-        # @param query_or_payload [String,Hash] Query, Hash or JSON payload to use as search definition
-        # @param options          [Hash]        Optional parameters to be passed to the Elasticsearch client
+        # @param query_or_payload [String,Hash,Object] The search request definition
+        #                                              (string, JSON, Hash, or object responding to `to_hash`)
+        # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
         #
         # @return [Elasticsearch::Model::Response::Response]
         #
@@ -48,24 +95,10 @@ module Elasticsearch
         #     Article.search '{"query" : { "match_all" : {} }}'
         #
         def search(query_or_payload, options={})
-          __index_name    = options[:index] || index_name
-          __document_type = options[:type]  || document_type
+          search   = SearchRequest.new(self, query_or_payload, options={})
+          response = search.execute!
 
-          case
-            # search query: ...
-            when query_or_payload.respond_to?(:to_hash)
-              response = client.search index: __index_name, type: __document_type, body: query_or_payload.to_hash
-
-            # search '{ "query" : ... }'
-            when query_or_payload.is_a?(String) && query_or_payload =~ /^\s*{/
-              response = client.search index: __index_name, type: __document_type, body: query_or_payload
-
-            # search '...'
-            else
-              response = client.search index: __index_name, type: __document_type, q: query_or_payload
-          end
-
-          Response::Response.new(self, response)
+          Response::Response.new(self, search, response)
         end
 
       end
