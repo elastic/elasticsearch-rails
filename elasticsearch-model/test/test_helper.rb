@@ -30,7 +30,7 @@ module Elasticsearch
     class IntegrationTestCase < ::Test::Unit::TestCase
       extend Elasticsearch::Extensions::Test::StartupShutdown
 
-      startup  { Elasticsearch::TestCluster.start if ENV['SERVER'] and not Elasticsearch::TestCluster.running? }
+      startup  { Elasticsearch::Extensions::Test::Cluster.start if ENV['SERVER'] and not Elasticsearch::Extensions::Test::Cluster.running? }
       shutdown { Elasticsearch::Extensions::Test::Cluster.stop if ENV['SERVER'] && started? }
       context "IntegrationTest" do; should "noop on Ruby 1.8" do; end; end if RUBY_1_8
 
