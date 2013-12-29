@@ -18,7 +18,7 @@ module Elasticsearch
 
         # @see Base#initialize
         #
-        def initialize(klass, response)
+        def initialize(klass, response, results=nil, response_object=nil)
           super
           # TODO: Configurable custom wrapper
           @results   = response['hits']['hits'].map { |hit| Result.new(hit) }

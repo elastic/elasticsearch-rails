@@ -31,14 +31,14 @@ module Elasticsearch
         #
         def results
           @response ||= search.execute!
-          @results  ||= Results.new(klass, response)
+          @results  ||= Results.new(klass, response, nil, self)
         end
 
         # Return the collection of records from the database
         #
         def records
           @response ||= search.execute!
-          @records  ||= Records.new(klass, response, results)
+          @records  ||= Records.new(klass, response, results, self)
         end
 
       end

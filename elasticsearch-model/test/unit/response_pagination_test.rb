@@ -10,11 +10,11 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
     end
 
     RESPONSE = { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'},
-                 'hits' => { 'total' => 100, 'hits' => [ {'_id' => 1} ] } }
+                 'hits' => { 'total' => 100, 'hits' => (1..100).to_a.map { |i| { _id: i } } } }
 
     setup do
-      search    = Elasticsearch::Model::Searching::SearchRequest.new ModelClass, '*'
-      @response = Elasticsearch::Model::Response::Response.new ModelClass, search, RESPONSE
+      @search    = Elasticsearch::Model::Searching::SearchRequest.new ModelClass, '*'
+      @response = Elasticsearch::Model::Response::Response.new ModelClass, @search, RESPONSE
       @response.klass.stubs(:client).returns mock('client')
     end
 
@@ -134,6 +134,32 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
     context "total" do
       should "return the number of hits" do
         assert_equal 100, @response.total_count
+      end
+    end
+
+    context "results" do
+      setup do
+        @search.stubs(:execute!).returns RESPONSE
+      end
+
+      should "return current page and total count" do
+        assert_equal 1, @response.page(1).results.current_page
+        assert_equal 100, @response.results.total_count
+
+        assert_equal 5, @response.page(5).results.current_page
+      end
+    end
+
+    context "records" do
+      setup do
+        @search.stubs(:execute!).returns RESPONSE
+      end
+
+      should "return current page and total count" do
+        assert_equal 1, @response.page(1).records.current_page
+        assert_equal 100, @response.records.total_count
+
+        assert_equal 5, @response.page(5).records.current_page
       end
     end
   end
