@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "activerecord",  "> 4.0"
 
   s.add_development_dependency "oj"
+  s.add_development_dependency "kaminari"
 
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
