@@ -71,6 +71,20 @@ namespace :test do
       Rake::Task['ci:setup:minitest'].invoke
     end
   end
+
+  namespace :server do
+    desc "Start Elasticsearch nodes for tests"
+    task :start do
+      require 'elasticsearch/extensions/test/cluster'
+      Elasticsearch::Extensions::Test::Cluster.start
+    end
+
+    desc "Stop Elasticsearch nodes for tests"
+    task :stop do
+      require 'elasticsearch/extensions/test/cluster'
+      Elasticsearch::Extensions::Test::Cluster.stop
+    end
+  end
 end
 
 desc "Generate documentation for all subprojects"
