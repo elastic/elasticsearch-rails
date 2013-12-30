@@ -243,7 +243,25 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 # * Fast black dogs: 0.02250402
 ```
 
-#### Searching with the Elasticsearch DSL
+#### Pagination
+
+You can implement pagination with the `from` and `size` search parameters. However, search results
+can be automatically paginated with the [Kaminari](https://github.com/amatsuda/kaminari) gem.
+
+If Kaminari is loaded, use the familiar paging methods:
+
+```ruby
+response.page(2).results
+response.page(2).records
+```
+
+In a Rails controller, use the the `params[:page]` parameter to paginate through results:
+
+```ruby
+@articles = Article.search(params[:q]).page(params[:page]).records
+```
+
+#### The Elasticsearch DSL
 
 In most situation, you'll want to pass the search definition
 in the Elasticsearch [domain-specific language](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
