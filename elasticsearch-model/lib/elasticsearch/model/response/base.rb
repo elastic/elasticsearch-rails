@@ -8,7 +8,7 @@ module Elasticsearch
 
         # @param klass    [Class] The name of the model class
         # @param response [Hash]  The full response returned from Elasticsearch client
-        # @param results  [Results]  The collection of results
+        # @param options  [Hash]  Optional parameters
         #
         def initialize(klass, response, options={})
           @klass     = klass
