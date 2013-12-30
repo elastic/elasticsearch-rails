@@ -90,6 +90,18 @@ module Elasticsearch
           assert   records.last_page?,    "Should be the last page"
           assert   records.out_of_range?, "Should be out of range"
         end
+
+        context "with specific model settings" do
+          teardown do
+            Article.instance_variable_set(:@_default_per_page, nil)
+          end
+        end
+
+        should "respect paginates_per" do
+          Article.paginates_per 50
+
+          assert_equal 50, Article.search('*').page(1).records.size
+        end
       end
 
     end
