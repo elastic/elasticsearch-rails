@@ -44,7 +44,7 @@ module Elasticsearch
         #
         # @example Set the batch size to 100
         #
-        #     Article.import(batch_size: 100)
+        #     Article.import batch_size: 100
         #
         # @example Process the response from Elasticsearch
         #
@@ -56,6 +56,10 @@ module Elasticsearch
         #
         #    Article.import force: true
         #
+        # @example Refresh the index after importing all batches
+        #
+        #    Article.import refresh: true
+        #
         #
         def import(options={}, &block)
           errors = 0
@@ -64,17 +68,20 @@ module Elasticsearch
             self.create_index! force: true
           end
 
+          refresh = options.delete(:refresh) || false
+
           __find_in_batches(options) do |batch|
             response = client.bulk \
-                         index: index_name,
-                         type:  document_type,
-                         body:  batch,
-                         refresh: options[:refresh]
+                         index:   index_name,
+                         type:    document_type,
+                         body:    batch
 
             yield response if block_given?
 
             errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
           end
+
+          self.refresh_index! if refresh
 
           return errors
         end
