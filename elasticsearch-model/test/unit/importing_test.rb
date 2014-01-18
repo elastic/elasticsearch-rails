@@ -80,5 +80,18 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
         assert_equal 2, response['items'].size
       end
     end
+
+    should "delete and create the index with the force option" do
+      DummyImportingModel.expects(:__find_in_batches).with do |options|
+        assert_equal 'bar', options[:foo]
+        assert_nil   options[:force]
+      end
+
+      DummyImportingModel.expects(:create_index!).with do |options|
+        assert_equal true, options[:force]
+      end
+
+      DummyImportingModel.import force: true, foo: 'bar'
+    end
   end
 end

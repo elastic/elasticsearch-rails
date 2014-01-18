@@ -52,8 +52,17 @@ module Elasticsearch
         #       puts "Got " + response['items'].select { |i| i['index']['error'] }.size.to_s + " errors"
         #     end
         #
+        # @example Delete and create the index with appropriate settings and mappings
+        #
+        #    Article.import force: true
+        #
+        #
         def import(options={}, &block)
           errors = 0
+
+          if options.delete(:force)
+            self.create_index! force: true
+          end
 
           __find_in_batches(options) do |batch|
             response = client.bulk \
