@@ -246,7 +246,7 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 #### Pagination
 
 You can implement pagination with the `from` and `size` search parameters. However, search results
-can be automatically paginated with the [Kaminari](https://github.com/amatsuda/kaminari) gem.
+can be automatically paginated with the [`kaminari`](http://rubygems.org/gems/kaminari) gem.
 
 If Kaminari is loaded, use the familiar paging methods:
 
@@ -259,6 +259,17 @@ In a Rails controller, use the the `params[:page]` parameter to paginate through
 
 ```ruby
 @articles = Article.search(params[:q]).page(params[:page]).records
+
+@articles.current_page
+# => 2
+@articles.next_page
+# => 3
+```
+To initialize and include the pagination support manually:
+
+```ruby
+Kaminari::Hooks.init
+Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
 ```
 
 #### The Elasticsearch DSL
@@ -640,7 +651,7 @@ module and its submodules for technical information.
 
 This software is licensed under the Apache 2 license, quoted below.
 
-    Copyright (c) 2013 Elasticsearch <http://www.elasticsearch.org>
+    Copyright (c) 2014 Elasticsearch <http://www.elasticsearch.org>
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
