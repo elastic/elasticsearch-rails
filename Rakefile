@@ -1,13 +1,13 @@
 require 'pathname'
 
 subprojects = %w| elasticsearch-model elasticsearch-rails |
+
 __current__ = Pathname( File.expand_path('..', __FILE__) )
 
 task :default do
   system "rake --tasks"
 end
 
-desc "List all subprojects"
 task :subprojects do
   puts '-'*80
   subprojects.each do |project|
@@ -17,31 +17,53 @@ task :subprojects do
   end
 end
 
-namespace :test do
+desc "Alias for `bundle:install`"
+task :bundle => 'bundle:install'
+
+namespace :bundle do
   desc "Run `bundle install` in all subprojects"
-  task :bundle do
+  task :install do
+    puts '-'*80
+    sh "bundle install --gemfile #{__current__}/Gemfile"
+    puts
     subprojects.each do |project|
-      sh "bundle install --gemfile #{__current__.join(project)}/Gemfile"
       puts '-'*80
+      sh "bundle install --gemfile #{__current__.join(project)}/Gemfile"
+      puts
     end
   end
+
+  desc "Remove Gemfile.lock in all subprojects"
+  task :clean do
+    sh "rm -f Gemfile.lock"
+    subprojects.each do |project|
+      sh "rm -f #{__current__.join(project)}/Gemfile.lock"
+    end
+  end
+end
+
+namespace :test do
+  task :bundle => 'bundle:install'
 
   desc "Run unit tests in all subprojects"
   task :unit do
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
     subprojects.each do |project|
-      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:unit"
       puts '-'*80
+      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:unit"
+      puts "\n"
     end
     Rake::Task['test:coveralls'].invoke if ENV['CI'] && defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
   end
 
   desc "Run integration tests in all subprojects"
   task :integration do
+    Rake::Task['elasticsearch:update'].invoke
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
     subprojects.each do |project|
-      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:integration"
       puts '-'*80
+      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:integration"
+      puts "\n"
     end
     Rake::Task['test:coveralls'].invoke if ENV['CI'] && defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
   end
@@ -50,8 +72,9 @@ namespace :test do
   task :all do
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
     subprojects.each do |project|
-      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:all"
       puts '-'*80
+      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:all"
+      puts "\n"
     end
   end
 
@@ -72,7 +95,7 @@ namespace :test do
     end
   end
 
-  namespace :server do
+  namespace :cluster do
     desc "Start Elasticsearch nodes for tests"
     task :start do
       require 'elasticsearch/extensions/test/cluster'
@@ -83,6 +106,12 @@ namespace :test do
     task :stop do
       require 'elasticsearch/extensions/test/cluster'
       Elasticsearch::Extensions::Test::Cluster.stop
+    end
+
+    task :status do
+      require 'elasticsearch/extensions/test/cluster'
+      (puts "\e[31m[!] Test cluster not running\e[0m"; exit(1)) unless Elasticsearch::Extensions::Test::Cluster.running?
+      Elasticsearch::Extensions::Test::Cluster.__print_cluster_info(ENV['TEST_CLUSTER_PORT'] || 9250)
     end
   end
 end
