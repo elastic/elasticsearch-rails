@@ -10,8 +10,9 @@ This repository contains ActiveModel, ActiveRecord and Ruby on Rails integration
 * Pagination support
 * Rails application templates
 
-_Many more features, such as automatic hooking into Rails' notifications, Elasticsearch persistence for models,
-etc. are planned and/or being worked on._
+_NOTE: This is a pre-release version: feedback welcome via Github issues, e-mail or IRC.
+       Many more features, such as automatic hooking into Rails' notifications,
+       Elasticsearch persistence for models, etc. are planned or being worked on._
 
 ## Installation
 
