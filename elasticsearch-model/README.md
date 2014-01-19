@@ -7,6 +7,7 @@ It aims to simplify integration of Ruby classes ("models"), commonly found
 e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the
 [Elasticsearch](http://www.elasticsearch.org) search and analytics engine.
 
+The library is compatible with Ruby 1.9.3 and higher.
 
 ## Installation
 

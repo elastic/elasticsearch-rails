@@ -15,6 +15,8 @@ etc. are planned and/or being worked on._
 
 ## Installation
 
+The libraries are compatible with Ruby 1.9.3 and higher.
+
 Install the `elasticsearch-model` and/or `elasticsearch-rails` package from
 [Rubygems](https://rubygems.org/gems/elasticsearch):
 

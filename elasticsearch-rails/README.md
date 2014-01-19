@@ -4,6 +4,8 @@ The `elasticsearch-rails` library is a companion for the
 the [`elasticsearch-model`](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-model)
 library, providing features suitable for Ruby on Rails applications.
 
+The library is compatible with Ruby 1.9.3 and higher.
+
 ## Installation
 
 Install the package from [Rubygems](https://rubygems.org):
