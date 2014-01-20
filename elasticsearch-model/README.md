@@ -647,6 +647,21 @@ response.records.records.class
 More examples can be found in the `examples` folder. Please see the `Elasticsearch::Model::Adapter`
 module and its submodules for technical information.
 
+## Development and Community
+
+For local development, clone the repository and run `bundle install`. See `rake -T` for a list of
+available Rake tasks for running tests, generating documentation, starting a testing cluster, etc.
+
+Bug fixes and features must be covered by unit tests.
+
+Github's pull requests and issues are used to communicate, send bug reports and code contributions.
+
+To run all tests against a test Elasticsearch cluster, use a command like this:
+
+```bash
+curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.0.RC1.tar.gz | tar xz -C tmp/
+SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/elasticsearch-1.0.0.RC1/bin/elasticsearch bundle exec rake test:all
+```
 
 ## License
 
