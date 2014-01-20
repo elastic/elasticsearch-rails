@@ -21,7 +21,7 @@ The libraries are compatible with Ruby 1.9.3 and higher.
 Install the `elasticsearch-model` and/or `elasticsearch-rails` package from
 [Rubygems](https://rubygems.org/gems/elasticsearch):
 
-    gem install elasticsearch-model elasticsearch-rails
+    gem install elasticsearch-model elasticsearch-rails --pre
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://gembundler.com):
 

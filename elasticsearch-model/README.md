@@ -13,7 +13,7 @@ The library is compatible with Ruby 1.9.3 and higher.
 
 Install the package from [Rubygems](https://rubygems.org):
 
-    gem install elasticsearch-model
+    gem install elasticsearch-model --pre
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
