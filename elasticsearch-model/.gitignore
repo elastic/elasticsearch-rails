@@ -16,5 +16,5 @@ test/tmp
 test/version_tmp
 tmp
 
-gemfiles/3.gemfile.lock
-gemfiles/4.gemfile.lock
+gemfiles/3.0.gemfile.lock
+gemfiles/4.0.gemfile.lock

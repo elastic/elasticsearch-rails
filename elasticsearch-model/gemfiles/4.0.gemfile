@@ -1,7 +1,7 @@
 # Usage:
 #
-# $ BUNDLE_GEMFILE=./gemfiles/4.gemfile bundle install
-# $ BUNDLE_GEMFILE=./gemfiles/4.gemfile bundle exec rake test:integration
+# $ BUNDLE_GEMFILE=./gemfiles/4.0.gemfile bundle install
+# $ BUNDLE_GEMFILE=./gemfiles/4.0.gemfile bundle exec rake test:integration
 
 source 'https://rubygems.org'
 
