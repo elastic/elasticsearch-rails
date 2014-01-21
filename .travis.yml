@@ -26,5 +26,9 @@ before_script:
 script:
   - SERVER=start TEST_BUILD_REF=origin/0.90 TEST_CLUSTER_COMMAND=/tmp/elasticsearch-0.90.10/bin/elasticsearch TEST_CLUSTER_NODES=1 bundle exec rake test:all
 
+gemfile:
+  - $PWD/elasticsearch-model/gemfiles/3.0.gemfile
+  - $PWD/elasticsearch-model/gemfiles/4.0.gemfile
+
 notifications:
   disable: true
