@@ -19,6 +19,9 @@ jdk:
 install:
   - curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.10.tar.gz | tar xz -C /tmp || true
 
+services:
+  - mongodb
+
 before_script:
   - rake bundle:clean
   - rake bundle:install
