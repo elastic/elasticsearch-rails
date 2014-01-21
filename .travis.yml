@@ -16,9 +16,6 @@ rvm:
 jdk:
   - openjdk7
 
-install:
-  - curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.10.tar.gz | tar xz -C /tmp || true
-
 services:
   - mongodb
 
@@ -27,7 +24,7 @@ before_script:
   - rake bundle:install
 
 script:
-  - SERVER=start TEST_BUILD_REF=origin/0.90 TEST_CLUSTER_COMMAND=/tmp/elasticsearch-0.90.10/bin/elasticsearch TEST_CLUSTER_NODES=1 bundle exec rake test:all
+  - SERVER=start bundle exec rake test:all
 
 gemfile:
   - $PWD/elasticsearch-model/gemfiles/3.0.gemfile
