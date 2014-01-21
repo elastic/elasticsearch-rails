@@ -58,7 +58,6 @@ namespace :test do
 
   desc "Run integration tests in all subprojects"
   task :integration do
-    Rake::Task['elasticsearch:update'].invoke
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
     subprojects.each do |project|
       puts '-'*80
