@@ -23,6 +23,7 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
     setup do
       @records = [ stub(id: 1, inspect: '<Model-1>'), stub(id: 2, inspect: '<Model-2>') ]
       @records.stubs(:load).returns(true)
+      @records.stubs(:exec_queries).returns(true)
     end
 
     should "have the register condition" do
