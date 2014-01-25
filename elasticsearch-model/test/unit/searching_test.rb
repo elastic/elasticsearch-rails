@@ -23,10 +23,11 @@ class Elasticsearch::Model::SearchingTest < Test::Unit::TestCase
         .expects(:new).with do |klass, query, options|
           assert_equal DummySearchingModel, klass
           assert_equal 'foo', query
+          assert_equal({default_operator: 'AND'}, options)
         end
         .returns( stub('search') )
 
-      DummySearchingModel.search 'foo'
+      DummySearchingModel.search 'foo', default_operator: 'AND'
     end
 
     should "not execute the search" do
