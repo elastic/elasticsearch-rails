@@ -95,7 +95,7 @@ module Elasticsearch
         #     Article.search '{"query" : { "match_all" : {} }}'
         #
         def search(query_or_payload, options={})
-          search   = SearchRequest.new(self, query_or_payload, options={})
+          search   = SearchRequest.new(self, query_or_payload, options)
 
           Response::Response.new(self, search)
         end
