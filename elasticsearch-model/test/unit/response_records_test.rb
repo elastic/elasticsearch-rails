@@ -20,7 +20,7 @@ class Elasticsearch::Model::RecordsTest < Test::Unit::TestCase
       end
     end
 
-    RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [{'foo' => 'bar'}] } }
+    RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [{'_id' => '1', 'foo' => 'bar'}] } }
     RESULTS  = Elasticsearch::Model::Response::Results.new DummyModel, RESPONSE
 
     setup do
@@ -28,7 +28,7 @@ class Elasticsearch::Model::RecordsTest < Test::Unit::TestCase
       search.stubs(:execute!).returns RESPONSE
 
       response = Elasticsearch::Model::Response::Response.new DummyModel, search
-      @records = Elasticsearch::Model::Response::Records.new DummyModel, response
+      @records = Elasticsearch::Model::Response::Records.new  DummyModel, response
     end
 
     should "access the records" do
@@ -56,6 +56,10 @@ class Elasticsearch::Model::RecordsTest < Test::Unit::TestCase
 
     should "have map_with_hit method" do
       assert_equal ['FOO---bar'], @records.map_with_hit { |record, hit| "#{record}---#{hit.foo}" }
+    end
+
+    should "return the IDs" do
+      assert_equal ['1'], @records.ids
     end
 
     context "with adapter" do
