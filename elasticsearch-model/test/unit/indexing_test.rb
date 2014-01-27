@@ -358,6 +358,43 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           DummyIndexingModelForRecreate.refresh_index!
         end
       end
+
+      context "with a custom index name" do
+        setup do
+          @client  = stub('client')
+          @indices = stub('indices')
+          @client.stubs(:indices).returns(@indices)
+          DummyIndexingModelForRecreate.expects(:client).returns(@client).at_least_once
+        end
+
+        should "create the custom index" do
+          @indices.expects(:exists).with do |arguments|
+            assert_equal 'custom-foo', arguments[:index]
+          end
+
+          @indices.expects(:create).with do |arguments|
+            assert_equal 'custom-foo', arguments[:index]
+          end
+
+          DummyIndexingModelForRecreate.create_index! index: 'custom-foo'
+        end
+
+        should "delete the custom index" do
+          @indices.expects(:delete).with do |arguments|
+            assert_equal 'custom-foo', arguments[:index]
+          end
+
+          DummyIndexingModelForRecreate.delete_index! index: 'custom-foo'
+        end
+
+        should "refresh the custom index" do
+          @indices.expects(:refresh).with do |arguments|
+            assert_equal 'custom-foo', arguments[:index]
+          end
+
+          DummyIndexingModelForRecreate.refresh_index! index: 'custom-foo'
+        end
+      end
     end
 
   end
