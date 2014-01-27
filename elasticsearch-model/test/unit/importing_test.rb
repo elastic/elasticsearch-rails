@@ -91,7 +91,33 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
         assert_equal true, options[:force]
       end
 
+      DummyImportingModel.expects(:index_name).returns('foo')
+      DummyImportingModel.expects(:document_type).returns('foo')
+
       DummyImportingModel.import force: true, foo: 'bar'
+    end
+
+    should "allow passing a different index / type" do
+      Elasticsearch::Model::Adapter.expects(:from_class)
+                                   .with(DummyImportingModel)
+                                   .returns(DummyImportingAdapter)
+
+      DummyImportingModel.__send__ :include, Elasticsearch::Model::Importing
+
+      client = mock('client')
+
+      client
+        .expects(:bulk)
+          .with do |options|
+            assert_equal 'my-new-index',  options[:index]
+            assert_equal 'my-other-type', options[:type]
+            true
+          end
+        .returns({'items' => [ {'index' => {} }]})
+
+      DummyImportingModel.stubs(:client).returns(client)
+
+      DummyImportingModel.import index: 'my-new-index', type: 'my-other-type'
     end
   end
 end

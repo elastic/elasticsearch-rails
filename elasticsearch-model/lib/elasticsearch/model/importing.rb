@@ -60,20 +60,24 @@ module Elasticsearch
         #
         #    Article.import refresh: true
         #
+        # @example Import the records into a different index/type than the default one
+        #
+        #    Article.import index: 'my-new-index', type: 'my-other-type'
         #
         def import(options={}, &block)
-          errors = 0
+          errors       = 0
+          refresh      = options.delete(:refresh) || false
+          target_index = options.delete(:index)   || index_name
+          target_type  = options.delete(:type)    || document_type
 
           if options.delete(:force)
-            self.create_index! force: true
+            self.create_index! force: true, index: target_index
           end
-
-          refresh = options.delete(:refresh) || false
 
           __find_in_batches(options) do |batch|
             response = client.bulk \
-                         index:   index_name,
-                         type:    document_type,
+                         index:   target_index,
+                         type:    target_type,
                          body:    batch
 
             yield response if block_given?
