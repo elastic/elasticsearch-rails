@@ -23,7 +23,30 @@ or install it from a source code checkout:
     bundle install
     rake install
 
-## Usage
+## Features
+
+### Rake Tasks
+
+To facilitate importing data from your models into Elasticsearch, require the task definition in your application,
+eg. in the `lib/tasks/elasticsearch.rake` file:
+
+```ruby
+require 'elasticsearch/rails/tasks/import'
+```
+
+To import the records from your `Article` model, run:
+
+```bash
+$ bundle exec rake environment elasticsearch:import:model CLASS='Article'
+```
+
+Run this command to display usage instructions:
+
+```bash
+$ bundle exec rake -D elasticsearch
+```
+
+### Rails Application Templates
 
 You can generate a fully working example Ruby on Rails application, with an `Article` model and a search form,
 to play with (it even downloads _Elasticsearch_ itself, generates the application skeleton and leaves you with
@@ -33,8 +56,8 @@ a _Git_ repository to explore the steps and the code):
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
 ```
 
-Run the same command with the `02-pretty` template to add features such as a custom `Article.search` method,
-result highlighting and [_Bootstrap_](http://getbootstrap.com) integration:
+Run the same command again, in the same folder, with the `02-pretty` template to add features such as
+a custom `Article.search` method, result highlighting and [_Bootstrap_](http://getbootstrap.com) integration:
 
 ```bash
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
