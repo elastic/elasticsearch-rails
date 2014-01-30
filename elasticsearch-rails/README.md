@@ -46,6 +46,34 @@ Run this command to display usage instructions:
 $ bundle exec rake -D elasticsearch
 ```
 
+### ActiveSupport Instrumentation
+
+To display information about the search request (duration, search definition) during development,
+and to include the information in the Rails log file, require the component in your `application.rb` file:
+
+```ruby
+require 'elasticsearch/rails/instrumentation'
+```
+
+You should see an output like this in your application log in development environment:
+
+    Article Search (321.3ms) { index: "articles", type: "article", body: { query: ... } }
+
+Also, the total duration of the request to Elasticsearch is displayed in the Rails request breakdown:
+
+    Completed 200 OK in 615ms (Views: 230.9ms | ActiveRecord: 0.0ms | Elasticsearch: 321.3ms)
+
+There's a special component for the [Lograge](https://github.com/roidrage/lograge) logger.
+Require the component in your `application.rb` file (and set `config.lograge.enabled`):
+
+```ruby
+require 'elasticsearch/rails/lograge'
+```
+
+You should see the duration of the request to Elasticsearch as part of each log event:
+
+    method=GET path=/search ... status=200 duration=380.89 view=99.64 db=0.00 es=279.37
+
 ### Rails Application Templates
 
 You can generate a fully working example Ruby on Rails application, with an `Article` model and a search form,

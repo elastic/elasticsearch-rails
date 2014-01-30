@@ -28,6 +28,9 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "oj"
   s.add_development_dependency "rails",  "> 3.0"
+
+  s.add_development_dependency "lograge"
+
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
