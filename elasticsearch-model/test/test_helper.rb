@@ -49,7 +49,7 @@ module Elasticsearch
         tracer = ::Logger.new(STDERR)
         tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
 
-        Elasticsearch::Model.client = Elasticsearch::Client.new host: 'localhost:9250',
+        Elasticsearch::Model.client = Elasticsearch::Client.new host: "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}",
                                                                 tracer: (ENV['QUIET'] ? nil : tracer)
       end
     end
