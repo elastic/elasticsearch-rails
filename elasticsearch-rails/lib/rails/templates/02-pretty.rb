@@ -22,6 +22,19 @@ README
 git add:    "README.rdoc"
 git commit: "-m '[02] Updated the application README'"
 
+# ----- Update application.rb ---------------------------------------------------------------------
+
+puts
+say_status  "Rubygems", "Adding Rails logger integration...\n", :yellow
+puts        '-'*80, ''; sleep 0.25
+
+insert_into_file 'config/application.rb',
+                 "\n\nrequire 'elasticsearch/rails/instrumentation'\n",
+                 after: 'Bundler.require(:default, Rails.env)'
+
+git add:    "config/application.rb"
+git commit: "-m 'Added the Rails logger integration to application.rb'"
+
 # ----- Add gems into Gemfile ---------------------------------------------------------------------
 
 puts
