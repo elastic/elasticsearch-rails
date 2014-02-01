@@ -65,26 +65,31 @@ namespace :test do
   desc "Run integration tests in all subprojects"
   task :integration do
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
-    subprojects.each do |project|
-      puts '-'*80
-      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE &&" +
-         %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE=#{ENV['TEST_BUNDLE_GEMFILE']}" : '' }|  +
-         " bundle exec rake test:integration"
-      puts "\n"
-    end
+
+    # 1/ elasticsearch-model
+    #
+    puts '-'*80
+    sh "cd #{__current__.join('elasticsearch-model')} && unset BUNDLE_GEMFILE &&" +
+       %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE=#{ENV['TEST_BUNDLE_GEMFILE']}" : '' }|  +
+       " bundle exec rake test:integration"
+    puts "\n"
+
+    # 2/ elasticsearch-rails
+    #
+    puts '-'*80
+    sh "cd #{__current__.join('elasticsearch-rails')} && unset BUNDLE_GEMFILE &&" +
+       " bundle exec rake test:integration"
+    puts "\n"
+
     Rake::Task['test:coveralls'].invoke if ENV['CI'] && defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
   end
 
   desc "Run all tests in all subprojects"
   task :all do
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
-    subprojects.each do |project|
-      puts '-'*80
-      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE &&" +
-         %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE=#{ENV['TEST_BUNDLE_GEMFILE']}" : '' }|  +
-         " bundle exec rake test:all"
-      puts "\n"
-    end
+
+    Rake::Task['test:unit'].invoke
+    Rake::Task['test:integration'].invoke
   end
 
   task :coveralls do
