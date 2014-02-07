@@ -13,7 +13,7 @@ module Elasticsearch
           # Returns an `ActiveRecord::Relation` instance
           #
           def records
-            sql_records = klass.where(id: ids)
+            sql_records = klass.where(klass.primary_key => ids)
 
             # Re-order records based on the order from Elasticsearch hits
             # by redefining `to_a`, unless the user has called `order()`
