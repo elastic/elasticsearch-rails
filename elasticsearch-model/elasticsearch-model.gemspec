@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files  = [ "README.md", "LICENSE.txt" ]
   s.rdoc_options      = [ "--charset=UTF-8" ]
 
-  s.add_dependency "elasticsearch",       '~> 0.4'
+  s.add_dependency "elasticsearch",       '> 0.4'
   s.add_dependency "hashie"
 
   s.add_development_dependency "bundler", "~> 1.3"
