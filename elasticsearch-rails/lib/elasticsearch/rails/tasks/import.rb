@@ -45,6 +45,7 @@ namespace :elasticsearch do
       klass  = eval(ENV['CLASS'].to_s)
       total  = klass.count rescue nil
       pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
+      pbar.__send__ :show if pbar
 
       unless ENV['DEBUG']
         begin
@@ -61,6 +62,7 @@ namespace :elasticsearch do
                    type:       ENV.fetch('TYPE',  nil) do |response|
         pbar.inc response['items'].size if pbar
         STDERR.flush
+        STDOUT.flush
       end
       pbar.finish if pbar
 
