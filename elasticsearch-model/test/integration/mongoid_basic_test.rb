@@ -1,17 +1,18 @@
 require 'test_helper'
 
 begin
-  require "mongoid"
+  require 'mongoid'
   session = Moped::Connection.new("localhost", 27017, 0.5)
   session.connect
   ENV["MONGODB_AVAILABLE"] = 'yes'
 rescue LoadError, Moped::Errors::ConnectionFailure => e
+  $stderr.puts "MongoDB not installed or running: #{e}"
 end
 
 if ENV["MONGODB_AVAILABLE"]
-  puts "Mongoid #{Mongoid::VERSION}", '-'*80
+  $stderr.puts "Mongoid #{Mongoid::VERSION}", '-'*80
 
-  logger = ::Logger.new(STDERR)
+  logger = ::Logger.new($stderr)
   logger.formatter = lambda { |s, d, p, m| " #{m.ansi(:faint, :cyan)}\n" }
   logger.level = ::Logger::DEBUG
 

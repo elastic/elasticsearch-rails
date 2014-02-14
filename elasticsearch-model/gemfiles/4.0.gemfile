@@ -5,7 +5,8 @@
 
 source 'https://rubygems.org'
 
-gem 'activerecord', '~> 4'
-gem 'mongoid',      '~> 4.0.0.alpha1'
-
 gemspec path: '../'
+
+gem 'activemodel',  '~> 4'
+gem 'activerecord', '~> 4'
+gem 'mongoid',      '~> 4.0.0.beta1'

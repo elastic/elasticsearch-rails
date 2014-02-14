@@ -37,6 +37,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "oj"
   s.add_development_dependency "kaminari"
+  # NOTE: Do not add Mongoid here, keep only in 3/4 files
 
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
