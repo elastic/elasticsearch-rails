@@ -6,6 +6,8 @@ require 'hashie'
 
 require 'elasticsearch/model/support/forwardable'
 
+require 'elasticsearch/model/version'
+
 require 'elasticsearch/model/client'
 
 require 'elasticsearch/model/adapter'
@@ -29,7 +31,7 @@ require 'elasticsearch/model/response/results'
 require 'elasticsearch/model/response/records'
 require 'elasticsearch/model/response/pagination'
 
-require 'elasticsearch/model/version'
+require 'elasticsearch/model/ext/active_record'
 
 if defined?(::Kaminari)
   Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
