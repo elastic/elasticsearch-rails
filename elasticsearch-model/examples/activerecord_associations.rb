@@ -3,6 +3,11 @@
 #
 # https://github.com/rails/rails/tree/master/activerecord
 # http://guides.rubyonrails.org/association_basics.html
+#
+# Run me with:
+#
+#     ruby -I lib examples/activerecord_associations.rb
+#
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
@@ -80,6 +85,8 @@ class Article < ActiveRecord::Base
   has_many                :authors, through: :authorships
   has_many                :comments
 end
+
+class Article < ActiveRecord::Base; delegate :size, to: :comments, prefix: true; end
 
 class Comment < ActiveRecord::Base
   belongs_to :article, touch: true

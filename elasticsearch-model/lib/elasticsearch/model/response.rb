@@ -14,9 +14,8 @@ module Elasticsearch
                     :took, :timed_out, :shards
 
         include Enumerable
-        extend  Support::Forwardable
 
-        forward :results, :each, :empty?, :size, :slice, :[], :to_ary
+        delegate :each, :empty?, :size, :slice, :[], :to_ary, to: :results
 
         def initialize(klass, search, options={})
           @klass     = klass

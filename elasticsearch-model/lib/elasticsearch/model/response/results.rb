@@ -10,8 +10,7 @@ module Elasticsearch
         include Base
         include Enumerable
 
-        extend  Support::Forwardable
-        forward :results, :each, :empty?, :size, :slice, :[], :to_a, :to_ary
+        delegate :each, :empty?, :size, :slice, :[], :to_a, :to_ary, to: :results
 
         # @see Base#initialize
         #

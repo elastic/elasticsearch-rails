@@ -10,8 +10,7 @@ module Elasticsearch
       class Records
         include Enumerable
 
-        extend  Support::Forwardable
-        forward :records, :each, :empty?, :size, :slice, :[], :to_a, :to_ary
+        delegate :each, :empty?, :size, :slice, :[], :to_a, :to_ary, to: :records
 
         include Base
 
