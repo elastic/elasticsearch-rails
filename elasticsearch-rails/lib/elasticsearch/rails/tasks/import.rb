@@ -15,7 +15,10 @@
 STDOUT.sync = true
 STDERR.sync = true
 
-begin; require 'ansi/progressbar' rescue LoadError; end
+begin
+  require 'ansi/progressbar'
+rescue LoadError
+end
 
 namespace :elasticsearch do
 
