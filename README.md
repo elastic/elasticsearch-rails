@@ -25,7 +25,7 @@ Install the `elasticsearch-model` and/or `elasticsearch-rails` package from
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://gembundler.com):
 
-    gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+    gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-model.git'
     gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
 
 or install it from a source code checkout:
