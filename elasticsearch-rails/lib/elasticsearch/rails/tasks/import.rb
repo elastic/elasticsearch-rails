@@ -96,6 +96,7 @@ namespace :elasticsearch do
 
         ENV['CLASS'] = klass.to_s
         Rake::Task["elasticsearch:import:model"].invoke
+        Rake::Task["elasticsearch:import:model"].reenable
         puts
       end
     end
