@@ -6,13 +6,14 @@ This repository contains ActiveModel, ActiveRecord and Ruby on Rails integration
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
 * Enumerable-based wrapper for search results
 * ActiveRecord::Relation-based wrapper for returning search results as records
-* Model methods such as `search`, `mapping`, etc
-* Pagination support
-* Rails application templates
+* Convenience model methods such as `search`, `mapping`, `import`, etc
+* Rake tasks for importing the data
+* Kaminari-based pagination support
+* Integration with Rails's instrumentation framework
+* Templates for generating example Rails application
 
-_NOTE: This is a pre-release version: feedback welcome via Github issues, e-mail or IRC.
-       Many more features, such as automatic hooking into Rails' notifications,
-       Elasticsearch persistence for models, etc. are planned or being worked on._
+Elasticsearch client and Ruby API is provided by the
+**[elasticsearch-ruby](https://github.com/elasticsearch/elasticsearch-ruby)** project.
 
 ## Installation
 
