@@ -76,10 +76,8 @@ module Searchable
     mapping do
       # ...
     end
-  end
 
-  module ClassMethods
-    def search(query)
+    def self.search(query)
       # ...
     end
   end
