@@ -123,6 +123,7 @@ gem 'mocha', group: 'test', require: 'mocha/setup'
 comment_lines 'Gemfile', /gem 'coffee/
 comment_lines 'Gemfile', /gem 'sass/
 comment_lines 'Gemfile', /gem 'uglifier/
+uncomment_lines 'Gemfile', /gem 'therubyracer/
 
 # ----- Add gems into Gemfile ---------------------------------------------------------------------
 
@@ -130,9 +131,9 @@ puts
 say_status  "Rubygems", "Adding Elasticsearch libraries into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.75
 
-gem 'elasticsearch',       git: 'git://github.com/elasticsearch/elasticsearch-ruby.git'
-gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+gem 'elasticsearch'
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
 
 # ----- Install gems ------------------------------------------------------------------------------
 
