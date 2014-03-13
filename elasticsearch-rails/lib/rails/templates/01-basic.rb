@@ -135,6 +135,23 @@ gem 'elasticsearch',       git: 'git://github.com/elasticsearch/elasticsearch-ru
 gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
 gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
 
+
+git add:    "Gemfile*"
+git commit: "-m 'Added libraries into Gemfile'"
+
+# ----- Disable asset logging in development ------------------------------------------------------
+
+puts
+say_status  "Application", "Disabling asset logging in development...\n", :yellow
+puts        '-'*80, ''; sleep 0.25
+
+environment 'config.assets.logger = false', env: 'development'
+gem 'quiet_assets',  group: "development"
+
+git add:    "Gemfile*"
+git add:    "config/"
+git commit: "-m 'Disabled asset logging in development'"
+
 # ----- Install gems ------------------------------------------------------------------------------
 
 puts
@@ -142,9 +159,6 @@ say_status  "Rubygems", "Installing Rubygems...", :yellow
 puts        '-'*80, ''
 
 run "bundle install"
-
-git add:    "Gemfile*"
-git commit: "-m 'Added libraries into Gemfile'"
 
 # ----- Generate Article resource -----------------------------------------------------------------
 
