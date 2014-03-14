@@ -30,8 +30,12 @@ module Elasticsearch
                 @results  = nil
                 @records  = nil
                 @response = nil
-                self.search.definition.update size: klass.default_per_page,
-                                              from: klass.default_per_page * ([num.to_i, 1].max - 1)
+                @page     = [num.to_i, 1].max
+                @per_page ||= klass.default_per_page
+
+                self.search.definition.update size: @per_page,
+                                              from: @per_page * (@page - 1)
+
                 self
               end
             RUBY
@@ -69,7 +73,10 @@ module Elasticsearch
             @results  = nil
             @records  = nil
             @response = nil
-            search.definition.update :size => value
+            @per_page = value
+
+            search.definition.update :size => @per_page
+            search.definition.update :from => @per_page * (@page - 1) if @page
             self
           end
 
@@ -79,6 +86,7 @@ module Elasticsearch
             @results  = nil
             @records  = nil
             @response = nil
+            @page     = nil
             search.definition.update :from => value
             self
           end

@@ -103,6 +103,33 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
       end
     end
 
+    context "with the page() and limit() methods" do
+      setup do
+        @response.records
+        @response.results
+      end
+
+      should "set the values" do
+        @response.page(3).limit(35)
+        assert_equal 35, @response.search.definition[:size]
+        assert_equal 70, @response.search.definition[:from]
+      end
+
+      should "set the values when limit is called first" do
+        @response.limit(35).page(3)
+        assert_equal 35, @response.search.definition[:size]
+        assert_equal 70, @response.search.definition[:from]
+      end
+
+      should "reset the instance variables" do
+        @response.page(3).limit(35)
+
+        assert_nil @response.instance_variable_get(:@response)
+        assert_nil @response.instance_variable_get(:@records)
+        assert_nil @response.instance_variable_get(:@results)
+      end
+    end
+
     context "offset setter" do
       setup do
         @response.records

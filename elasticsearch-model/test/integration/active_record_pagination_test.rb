@@ -102,16 +102,28 @@ module Elasticsearch
           assert_equal 12, records.size
         end
 
+        should "set the limit per request" do
+          records = ArticleForPagination.search('title:test').limit(50).page(2).records
+
+          assert_equal 18,  records.size
+          assert_equal 2,   records.current_page
+          assert_equal 1,   records.prev_page
+          assert_equal nil, records.next_page
+          assert_equal 2,   records.total_pages
+
+          assert records.last_page?, "Should be the last page"
+        end
+
         context "with specific model settings" do
           teardown do
             ArticleForPagination.instance_variable_set(:@_default_per_page, nil)
           end
-        end
 
-        should "respect paginates_per" do
-          ArticleForPagination.paginates_per 50
+          should "respect paginates_per" do
+            ArticleForPagination.paginates_per 50
 
-          assert_equal 50, ArticleForPagination.search('*').page(1).records.size
+            assert_equal 50, ArticleForPagination.search('*').page(1).records.size
+          end
         end
       end
 
