@@ -20,6 +20,10 @@ module Elasticsearch
         # Delegate methods to `@result` or `@result._source`
         #
         def method_missing(method_name, *arguments)
+          # Emulate Hashie::Mash key query method
+          if method_name[-1..-1] == '?'
+            return @result.__send__(method_name.to_sym) || (@result._source && @result._source.__send__(method_name.to_sym))
+          end
           case
           when @result.respond_to?(method_name.to_sym)
             @result.__send__ method_name.to_sym, *arguments
