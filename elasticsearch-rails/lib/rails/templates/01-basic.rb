@@ -123,6 +123,7 @@ gem 'mocha', group: 'test', require: 'mocha/setup'
 comment_lines 'Gemfile', /gem 'coffee/
 comment_lines 'Gemfile', /gem 'sass/
 comment_lines 'Gemfile', /gem 'uglifier/
+uncomment_lines 'Gemfile', /gem 'therubyracer/
 
 # ----- Add gems into Gemfile ---------------------------------------------------------------------
 
