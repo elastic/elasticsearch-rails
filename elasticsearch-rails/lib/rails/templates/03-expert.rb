@@ -82,7 +82,7 @@ if Rails.env.development?
   tracer.level =  Logger::INFO
 end
 
-Elasticsearch::Model.client Elasticsearch::Client.new tracer: tracer, host: ELASTICSEARCH_URL
+Elasticsearch::Model.client = Elasticsearch::Client.new tracer: tracer, host: ELASTICSEARCH_URL
 CODE
 
 git :add    => 'config/initializers'
