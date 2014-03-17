@@ -20,8 +20,8 @@
 #
 # =====================================================================================================
 
-require 'elasticsearch'
-client = Elasticsearch::Client.new
+require 'uri'
+require 'net/http'
 
 at_exit do
   pid = File.read("#{destination_root}/tmp/pids/elasticsearch.pid") rescue nil
@@ -41,7 +41,7 @@ git commit: "-m 'Initial commit: Clean application'"
 
 # ----- Download Elasticsearch --------------------------------------------------------------------
 
-unless (client.ping rescue false)
+unless (Net::HTTP.get(URI.parse('http://localhost:9200')) rescue false)
   COMMAND = <<-COMMAND.gsub(/^    /, '')
     curl -# -O "http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.tar.gz"
     tar -zxf elasticsearch-1.0.1.tar.gz
