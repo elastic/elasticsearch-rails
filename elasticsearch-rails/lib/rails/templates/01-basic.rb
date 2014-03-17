@@ -33,7 +33,7 @@ end
 
 run "touch tmp/.gitignore"
 
-append_to_file ".gitignore", "vendor/elasticsearch-0.90.7/\n"
+append_to_file ".gitignore", "vendor/elasticsearch-1.0.1/\n"
 
 git :init
 git add:    "."
@@ -43,10 +43,10 @@ git commit: "-m 'Initial commit: Clean application'"
 
 unless (client.ping rescue false)
   COMMAND = <<-COMMAND.gsub(/^    /, '')
-    curl -# -O "http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.7.tar.gz"
-    tar -zxf elasticsearch-0.90.7.tar.gz
-    rm  -f   elasticsearch-0.90.7.tar.gz
-    ./elasticsearch-0.90.7/bin/elasticsearch -p #{destination_root}/tmp/pids/elasticsearch.pid
+    curl -# -O "http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.tar.gz"
+    tar -zxf elasticsearch-1.0.1.tar.gz
+    rm  -f   elasticsearch-1.0.1.tar.gz
+    ./elasticsearch-1.0.1/bin/elasticsearch -d -p #{destination_root}/tmp/pids/elasticsearch.pid
   COMMAND
 
   puts        "\n"
