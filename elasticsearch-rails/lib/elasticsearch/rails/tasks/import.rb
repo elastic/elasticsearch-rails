@@ -56,16 +56,17 @@ namespace :elasticsearch do
         rescue NoMethodError; end
       end
 
-      klass.import force:      ENV.fetch('FORCE', false),
-                   batch_size: ENV.fetch('BATCH', 1000).to_i,
-                   index:      ENV.fetch('INDEX', nil),
-                   type:       ENV.fetch('TYPE',  nil) do |response|
+      total_errors = klass.import force:      ENV.fetch('FORCE', false),
+                                  batch_size: ENV.fetch('BATCH', 1000).to_i,
+                                  index:      ENV.fetch('INDEX', nil),
+                                  type:       ENV.fetch('TYPE',  nil) do |response|
         pbar.inc response['items'].size if pbar
         STDERR.flush
         STDOUT.flush
       end
       pbar.finish if pbar
 
+      puts "[IMPORT] #{total_errors} errors occurred" unless total_errors.zero?
       puts '[IMPORT] Done'
     end
 
