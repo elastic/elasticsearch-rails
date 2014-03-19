@@ -70,7 +70,7 @@ unless (Net::HTTP.get(URI.parse('http://localhost:9200')) rescue false)
       run "(#{exec})"  # Launch Elasticsearch in subshell
     end
   end
-end
+end unless ENV['RAILS_NO_ES_INSTALL']
 
 # ----- Add README --------------------------------------------------------------------------------
 
