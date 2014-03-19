@@ -279,19 +279,21 @@ git log: "--reverse --oneline pretty...basic"
 
 # ----- Start the application ---------------------------------------------------------------------
 
-require 'net/http'
-if (begin; Net::HTTP.get(URI('http://localhost:3000')); rescue Errno::ECONNREFUSED; false; rescue Exception; true; end)
-  puts        "\n"
-  say_status  "ERROR", "Some other application is running on port 3000!\n", :red
-  puts        '-'*80
+unless ENV['RAILS_NO_SERVER_START']
+  require 'net/http'
+  if (begin; Net::HTTP.get(URI('http://localhost:3000')); rescue Errno::ECONNREFUSED; false; rescue Exception; true; end)
+    puts        "\n"
+    say_status  "ERROR", "Some other application is running on port 3000!\n", :red
+    puts        '-'*80
 
-  port = ask("Please provide free port:", :bold)
-else
-  port = '3000'
+    port = ask("Please provide free port:", :bold)
+  else
+    port = '3000'
+  end
+
+  puts  "", "="*80
+  say_status  "DONE", "\e[1mStarting the application. Open http://localhost:#{port}\e[0m", :yellow
+  puts  "="*80, ""
+
+  run  "rails server --port=#{port}"
 end
-
-puts  "", "="*80
-say_status  "DONE", "\e[1mStarting the application. Open http://localhost:#{port}\e[0m", :yellow
-puts  "="*80, ""
-
-run  "rails server --port=#{port}"
