@@ -97,8 +97,8 @@ all its functionality. To prevent polluting your model namespace, this functiona
 available via the `__elasticsearch__` class and instance level proxy methods;
 see the `Elasticsearch::Model::Proxy` class documentation for technical information.
 
-The module will include important methods, such as `search`, into the includeing class or module
-only when they haven't been defined already. Following two calls are thus functionally equivalent:
+The module will include important methods, such as `search`, into the class or module only
+when they haven't been defined already. Following two calls are thus functionally equivalent:
 
 ```ruby
 Article.__elasticsearch__.search 'fox'
