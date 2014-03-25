@@ -78,20 +78,24 @@ You should see the duration of the request to Elasticsearch as part of each log 
 
 You can generate a fully working example Ruby on Rails application, with an `Article` model and a search form,
 to play with (it even downloads _Elasticsearch_ itself, generates the application skeleton and leaves you with
-a _Git_ repository to explore the steps and the code):
+a _Git_ repository to explore the steps and the code) with the
+[`01-basic.rb`](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/lib/rails/templates/01-basic.rb) template:
 
 ```bash
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
 ```
 
-Run the same command again, in the same folder, with the `02-pretty` template to add features such as
-a custom `Article.search` method, result highlighting and [_Bootstrap_](http://getbootstrap.com) integration:
+Run the same command again, in the same folder, with the
+[`02-pretty`](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb)
+template to add features such as a custom `Article.search` method, result highlighting and
+[_Bootstrap_](http://getbootstrap.com) integration:
 
 ```bash
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
 ```
 
-Run the same command with the `03-expert.rb` template to refactor the application into a more complex use case,
+Run the same command with the [`03-expert.rb`](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/lib/rails/templates/03-expert.rb)
+template to refactor the application into a more complex use case,
 with couple of hundreds of The New York Times articles as the example content.
 The template will extract the Elasticsearch integration into a `Searchable` "concern" module,
 define complex mapping, custom serialization, implement faceted navigation and suggestions as a part of
