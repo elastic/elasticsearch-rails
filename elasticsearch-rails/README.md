@@ -105,15 +105,6 @@ a complex query, and add a _Sidekiq_-based worker for updating the index in the 
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/03-expert.rb
 ```
 
-## TODO
-
-This is an initial release of the `elasticsearch-rails` library. Many more features are planned and/or
-being worked on, such as:
-
-* Rake tasks for convenient (re)indexing your models from the command line
-* Hooking into Rails' notification system to display Elasticsearch related statistics in the application log
-* Instrumentation support for NewRelic integration
-
 ## License
 
 This software is licensed under the Apache 2 license, quoted below.
