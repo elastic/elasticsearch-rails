@@ -91,8 +91,15 @@ a custom `Article.search` method, result highlighting and [_Bootstrap_](http://g
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
 ```
 
-NOTE: A third, much more complex template, demonstrating other features such as faceted navigation or
-      query suggestions is being worked on.
+Run the same command with the `03-expert.rb` template to refactor the application into a more complex use case,
+with couple of hundreds of The New York Times articles as the example content.
+The template will extract the Elasticsearch integration into a `Searchable` "concern" module,
+define complex mapping, custom serialization, implement faceted navigation and suggestions as a part of
+a complex query, and add a _Sidekiq_-based worker for updating the index in the background.
+
+```bash
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/03-expert.rb
+```
 
 ## TODO
 
