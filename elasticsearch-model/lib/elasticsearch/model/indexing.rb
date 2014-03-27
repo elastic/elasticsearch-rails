@@ -248,21 +248,6 @@ module Elasticsearch
 
       module InstanceMethods
 
-        def self.included(base)
-          # Register callback for storing changed attributes for models
-          # which implement `before_save` and `changed_attributes` methods
-          #
-          # @note This is typically triggered only when the module would be
-          #       included in the model directly, not within the proxy.
-          #
-          # @see #update_document
-          #
-          base.before_save do |instance|
-            instance.instance_variable_set(:@__changed_attributes,
-                                  Hash[ instance.changes.map { |key, value| [key, value.last] } ])
-          end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
-        end
-
         # Serializes the model instance into JSON (by calling `as_indexed_json`),
         # and saves the document into the Elasticsearch index.
         #
@@ -332,12 +317,20 @@ module Elasticsearch
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:update
         #
         def update_document(options={})
-          if changed_attributes = self.instance_variable_get(:@__changed_attributes)
+          # self.as_indexed_json.keys == ["id", "name", "notes", "created_at", "updated_at", "slug"]
+          # self.changed == ["notes", "updated_at"]
+          indexed = self.as_indexed_json.keys          # ["id", "name", "created_at", "updated_at", "suggest"]
+          included = indexed - self.attributes.keys    # ["suggest"]
+          included.select!{ |v| self.send(:"#{v}_changed?") rescue true }
+          excluded = self.changed - indexed            # ["notes"]
+          update = self.changed - excluded + included  # ["updated_at", "suggest"]
+          if update.any?
+            update_attributes = self.as_indexed_json.select{|k,v| update.include? k}
             client.update(
-              { index: index_name,
-                type:  document_type,
-                id:    self.id,
-                body:  { doc: changed_attributes } }.merge(options)
+                { index: index_name,
+                  type:  document_type,
+                  id:    self.id,
+                  body:  { doc: update_attributes } }.merge(options)
             )
           else
             index_document(options)
