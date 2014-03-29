@@ -5,6 +5,8 @@ require 'elasticsearch/persistence/version'
 require 'elasticsearch/persistence/client'
 require 'elasticsearch/persistence/repository'
 
+require 'elasticsearch/persistence/repository/class'
+
 module Elasticsearch
   module Persistence
 
