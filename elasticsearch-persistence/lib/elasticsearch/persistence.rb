@@ -7,6 +7,7 @@ require 'elasticsearch/persistence/version'
 require 'elasticsearch/persistence/client'
 require 'elasticsearch/persistence/repository/naming'
 require 'elasticsearch/persistence/repository/serialize'
+require 'elasticsearch/persistence/repository/store'
 require 'elasticsearch/persistence/repository'
 
 require 'elasticsearch/persistence/repository/class'
