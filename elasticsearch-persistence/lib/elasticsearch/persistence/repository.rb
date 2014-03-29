@@ -3,6 +3,7 @@ module Elasticsearch
 
     module Repository
       include Elasticsearch::Persistence::Client
+      include Elasticsearch::Persistence::Repository::Naming
 
       def new(options={}, &block)
         Elasticsearch::Persistence::Repository::Class.new options, &block
