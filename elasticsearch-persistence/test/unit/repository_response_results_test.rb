@@ -15,13 +15,13 @@ class Elasticsearch::Persistence::RepositoryResponseResultsTest < Test::Unit::Te
                     { "total" => 2,
                       "max_score" => 0.19,
                       "hits" =>
-                       [{"_index" => "test",
+                       [{"_index" => "my_index",
                          "_type" => "note",
                          "_id" => "1",
                          "_score" => 0.19,
                          "_source" => {"id" => 1, "title" => "Test 1"}},
 
-                         {"_index" => "test",
+                         {"_index" => "my_index",
                          "_type" => "note",
                          "_id" => "2",
                          "_score" => 0.19,

@@ -9,6 +9,7 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
 
       @client = mock
       @shoulda_subject.stubs(:klass).returns(nil)
+      @shoulda_subject.stubs(:index_name).returns('test')
       @shoulda_subject.stubs(:client).returns(@client)
     end
 
