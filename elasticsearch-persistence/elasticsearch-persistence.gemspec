@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "elasticsearch",       '> 0.4'
   s.add_dependency "active_support"
+  s.add_dependency "hashie"
 
   s.add_development_dependency "bundler", "~> 1.5"
   s.add_development_dependency "rake"
