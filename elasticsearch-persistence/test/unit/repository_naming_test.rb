@@ -49,13 +49,18 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
       end
     end
 
-    context " document class name" do
+    context "document class name" do
       should "be nil by default" do
         assert_nil subject.klass
       end
 
       should "be settable" do
         subject.klass = Foobar
+        assert_equal Foobar, subject.klass
+      end
+
+      should "be settable by DSL" do
+        subject.klass Foobar
         assert_equal Foobar, subject.klass
       end
     end
