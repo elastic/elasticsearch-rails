@@ -6,6 +6,7 @@ module Elasticsearch
       include Elasticsearch::Persistence::Repository::Naming
       include Elasticsearch::Persistence::Repository::Serialize
       include Elasticsearch::Persistence::Repository::Store
+      include Elasticsearch::Persistence::Repository::Find
 
       def new(options={}, &block)
         Elasticsearch::Persistence::Repository::Class.new options, &block
