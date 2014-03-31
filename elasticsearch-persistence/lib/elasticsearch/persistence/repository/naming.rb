@@ -3,8 +3,8 @@ module Elasticsearch
     module Repository
 
       module Naming
-        def klass
-          @klass
+        def klass name=nil
+          @klass = name || @klass
         end
 
         def klass=klass
