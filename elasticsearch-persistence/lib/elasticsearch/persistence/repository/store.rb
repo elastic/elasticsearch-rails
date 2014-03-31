@@ -7,7 +7,7 @@ module Elasticsearch
           serialized = serialize(document)
           id   = __get_id_from_document(serialized)
           type = klass || __get_type_from_class(document.class)
-          client.index( { index: 'test', type: type, id: id, body: serialized }.merge(options) )
+          client.index( { index: index_name, type: type, id: id, body: serialized }.merge(options) )
         end
 
         def delete(document, options={})
@@ -19,7 +19,7 @@ module Elasticsearch
             id   = __get_id_from_document(serialized)
             type = klass || __get_type_from_class(document.class)
           end
-          client.delete( { index: 'test', type: type, id: id }.merge(options) )
+          client.delete( { index: index_name, type: type, id: id }.merge(options) )
         end
       end
 

@@ -9,6 +9,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
       @client = mock
       @shoulda_subject.stubs(:klass).returns(nil)
+      @shoulda_subject.stubs(:index_name).returns('my_index')
       @shoulda_subject.stubs(:client).returns(@client)
     end
 
@@ -78,10 +79,11 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
       should "pass options to the client" do
         @client.expects(:exists).with do |arguments|
-          assert_equal 'bambam', arguments[:routing]
+          assert_equal 'foobarbam', arguments[:index]
+          assert_equal 'bambam',    arguments[:routing]
         end
 
-        subject.exists? '1', routing: 'bambam'
+        subject.exists? '1', index: 'foobarbam', routing: 'bambam'
       end
     end
 
@@ -155,25 +157,26 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         @client
           .expects(:get)
           .with do |arguments|
-            assert_equal 'bambam', arguments[:routing]
+            assert_equal 'foobarbam', arguments[:index]
+            assert_equal 'bambam',    arguments[:routing]
           end
           .returns({'_source' => { 'foo' => 'bar' }})
 
-        subject.__find_one '1', routing: 'bambam'
+        subject.__find_one '1', index: 'foobarbam', routing: 'bambam'
       end
     end
 
     context "'__find_many' method" do
       setup do
         @response = {"docs"=>
-        [ {"_index"=>"test",
+        [ {"_index"=>"my_index",
            "_type"=>"note",
            "_id"=>"1",
            "_version"=>1,
            "found"=>true,
            "_source"=>{"id"=>"1", "title"=>"Test 1"}},
 
-          {"_index"=>"test",
+          {"_index"=>"my_index",
            "_type"=>"note",
            "_id"=>"2",
            "_version"=>1,
@@ -241,20 +244,20 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
       should "find keep missing documents in the result as nil" do
         @response = {"docs"=>
-        [ {"_index"=>"test",
+        [ {"_index"=>"my_index",
            "_type"=>"note",
            "_id"=>"1",
            "_version"=>1,
            "found"=>true,
            "_source"=>{"id"=>"1", "title"=>"Test 1"}},
 
-          {"_index"=>"test",
+          {"_index"=>"my_index",
            "_type"=>"note",
            "_id"=>"3",
            "_version"=>1,
            "found"=>false},
 
-          {"_index"=>"test",
+          {"_index"=>"my_index",
            "_type"=>"note",
            "_id"=>"2",
            "_version"=>1,
@@ -299,11 +302,12 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         @client
           .expects(:mget)
           .with do |arguments|
-            assert_equal 'bambam', arguments[:routing]
+            assert_equal 'foobarbam', arguments[:index]
+            assert_equal 'bambam',    arguments[:routing]
           end
           .returns(@response)
 
-        subject.__find_many ['1', '2'], routing: 'bambam'
+        subject.__find_many ['1', '2'], index: 'foobarbam', routing: 'bambam'
       end
     end
 

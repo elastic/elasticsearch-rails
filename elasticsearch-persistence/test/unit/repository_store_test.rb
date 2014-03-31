@@ -6,6 +6,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
 
     setup do
       @shoulda_subject = Class.new() { include Elasticsearch::Persistence::Repository::Store }.new
+      @shoulda_subject.stubs(:index_name).returns('test')
     end
 
     context "save" do
@@ -49,11 +50,12 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
 
         client = mock
         client.expects(:index).with do |arguments|
+          assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam', arguments[:routing]
         end
         subject.expects(:client).returns(client)
 
-        subject.save({foo: 'bar'}, routing: 'bambam')
+        subject.save({foo: 'bar'}, { index: 'foobarbam', routing: 'bambam' })
       end
     end
 
@@ -109,11 +111,12 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
 
         client = mock
         client.expects(:delete).with do |arguments|
+          assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam', arguments[:routing]
         end
         subject.expects(:client).returns(client)
 
-        subject.delete('1', routing: 'bambam')
+        subject.delete('1', index: 'foobarbam', routing: 'bambam')
       end
     end
   end
