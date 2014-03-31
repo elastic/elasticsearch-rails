@@ -65,5 +65,33 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
       end
     end
 
+    context "index_name" do
+      should "default to the class name" do
+        subject.instance_eval do
+          def self.class
+            'FakeRepository'
+          end
+        end
+
+        assert_equal 'fake_repository', subject.index_name
+      end
+
+      should "be settable" do
+        subject.index_name = 'foobar1'
+        assert_equal 'foobar1', subject.index_name
+
+        subject.index_name 'foobar2'
+        assert_equal 'foobar2', subject.index_name
+      end
+    end
+
+    context "document_type" do
+      should "default to klass" do
+        assert_equal '', subject.document_type
+
+        subject.klass Foobar
+        assert_equal 'foobar', subject.document_type
+      end
+    end
   end
 end

@@ -11,6 +11,18 @@ module Elasticsearch
           @klass = klass
         end
 
+        def index_name name=nil
+          @index_name = name || @index_name || self.class.to_s.underscore.gsub(/\//, '-')
+        end
+
+        def index_name=(name)
+          @index_name = name
+        end
+
+        def document_type
+          klass.to_s.underscore
+        end
+
         def __get_klass_from_type(type)
           klass = type.classify
           klass.constantize

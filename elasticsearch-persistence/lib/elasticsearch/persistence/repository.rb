@@ -9,6 +9,8 @@ module Elasticsearch
       include Elasticsearch::Persistence::Repository::Find
       include Elasticsearch::Persistence::Repository::Search
 
+      include Elasticsearch::Model::Indexing::ClassMethods
+
       def new(options={}, &block)
         Elasticsearch::Persistence::Repository::Class.new options, &block
       end; module_function :new
