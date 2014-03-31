@@ -1,4 +1,5 @@
 require 'elasticsearch'
+require 'elasticsearch/model/indexing'
 require 'hashie'
 
 require 'active_support/inflector'

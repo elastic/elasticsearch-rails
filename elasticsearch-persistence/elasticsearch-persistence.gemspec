@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
   s.rdoc_options      = [ "--charset=UTF-8" ]
 
   s.add_dependency "elasticsearch",       '> 0.4'
-  s.add_dependency "active_support"
+  s.add_dependency "elasticsearch-model", '>= 0.1'
+  s.add_dependency "activesupport",       '> 3'
   s.add_dependency "hashie"
 
   s.add_development_dependency "bundler", "~> 1.5"
