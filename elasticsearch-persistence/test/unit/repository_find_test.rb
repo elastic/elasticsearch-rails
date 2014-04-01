@@ -8,6 +8,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       @shoulda_subject = Class.new() { include Elasticsearch::Persistence::Repository::Find }.new
 
       @client = mock
+      @shoulda_subject.stubs(:document_type).returns(nil)
       @shoulda_subject.stubs(:klass).returns(nil)
       @shoulda_subject.stubs(:index_name).returns('my_index')
       @shoulda_subject.stubs(:client).returns(@client)
@@ -48,8 +49,25 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "return whether document for klass exists" do
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(MyDocument).at_least_once
         subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
+
+        @client
+          .expects(:exists)
+          .with do |arguments|
+            assert_equal 'my_document', arguments[:type]
+            assert_equal '1', arguments[:id]
+          end
+          .returns(true)
+
+        assert_equal true, subject.exists?('1')
+      end
+
+      should "return whether document for document_type exists" do
+        subject.expects(:document_type).returns('my_document')
+        subject.expects(:klass).returns(MyDocument).at_most_once
+        subject.expects(:__get_type_from_class).never
 
         @client
           .expects(:exists)
@@ -89,6 +107,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
     context "'__find_one' method" do
       should "find document based on klass and return a deserialized object" do
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(MyDocument).at_least_once
         subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
 
@@ -105,7 +124,26 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_instance_of MyDocument, subject.__find_one('1')
       end
 
+      should "find document based on document_type and return a deserialized object" do
+        subject.expects(:document_type).returns('my_document')
+        subject.expects(:klass).returns(MyDocument).at_most_once
+        subject.expects(:__get_type_from_class).never
+
+        subject.expects(:deserialize).with({'_source' => {'foo' => 'bar'}}).returns(MyDocument.new)
+
+        @client
+          .expects(:get)
+          .with do |arguments|
+            assert_equal 'my_document', arguments[:type]
+            assert_equal '1', arguments[:id]
+          end
+          .returns({'_source' => { 'foo' => 'bar' }})
+
+        assert_instance_of MyDocument, subject.__find_one('1')
+      end
+
       should "find document and return a deserialized object" do
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(nil).at_least_once
         subject.expects(:__get_type_from_class).never
 
@@ -123,6 +161,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "raise DocumentNotFound exception when the document cannot be found" do
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(nil).at_least_once
 
         subject.expects(:deserialize).never
@@ -186,6 +225,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "find documents based on klass and return an Array of deserialized objects" do
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(MyDocument).at_least_once
         subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
 
@@ -212,7 +252,26 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_instance_of MyDocument, results[1]
       end
 
+      should "find documents based on document_type and return an Array of deserialized objects" do
+        subject.expects(:document_type).returns('my_document')
+        subject.expects(:klass).returns(MyDocument).at_most_once
+        subject.expects(:__get_type_from_class).never
+
+        subject.expects(:deserialize).twice
+
+        @client
+          .expects(:mget)
+          .with do |arguments|
+            assert_equal 'my_document', arguments[:type]
+            assert_equal ['1', '2'], arguments[:body][:ids]
+          end
+          .returns(@response)
+
+        subject.__find_many(['1', '2'])
+      end
+
       should "find documents and return an Array of deserialized objects" do
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(nil).at_least_once
         subject.expects(:__get_type_from_class).never
 
@@ -265,6 +324,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
            "_source"=>{"id"=>"2", "title"=>"Test 2"}}
         ]}
 
+        subject.expects(:document_type).returns(nil)
         subject.expects(:klass).returns(MyDocument).at_least_once
         subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
 
