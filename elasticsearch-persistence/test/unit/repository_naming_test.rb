@@ -83,6 +83,11 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
         subject.index_name 'foobar2'
         assert_equal 'foobar2', subject.index_name
       end
+
+      should "be aliased as `index`" do
+        subject.index_name = 'foobar1'
+        assert_equal 'foobar1', subject.index
+      end
     end
 
     context "document_type" do
@@ -93,6 +98,11 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
       should "default to klass" do
         subject.klass Foobar
         assert_equal 'foobar', subject.document_type
+      end
+
+      should "be aliased as `type`" do
+        subject.klass Foobar
+        assert_equal 'foobar', subject.type
       end
     end
   end
