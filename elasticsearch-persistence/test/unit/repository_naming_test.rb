@@ -104,6 +104,16 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
         subject.klass Foobar
         assert_equal 'foobar', subject.type
       end
+
+      should "be settable" do
+        subject.document_type = 'foobar'
+        assert_equal 'foobar', subject.document_type
+      end
+
+      should "be settable by DSL" do
+        subject.document_type 'foobar'
+        assert_equal 'foobar', subject.document_type
+      end
     end
   end
 end

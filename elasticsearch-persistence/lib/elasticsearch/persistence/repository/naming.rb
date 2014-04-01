@@ -19,9 +19,13 @@ module Elasticsearch
           @index_name = name
         end; alias :index= :index_name=
 
-        def document_type
-          klass ? klass.to_s.underscore : nil
+        def document_type name=nil
+          @document_type = name || @document_type || (klass ? klass.to_s.underscore : nil)
         end; alias :type :document_type
+
+        def document_type=(name)
+          @document_type = name
+        end; alias :type= :document_type=
 
         def __get_klass_from_type(type)
           klass = type.classify
