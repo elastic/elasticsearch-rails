@@ -86,9 +86,11 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
     end
 
     context "document_type" do
-      should "default to klass" do
-        assert_equal '', subject.document_type
+      should "be nil when no klass is set" do
+        assert_equal nil, subject.document_type
+      end
 
+      should "default to klass" do
         subject.klass Foobar
         assert_equal 'foobar', subject.document_type
       end
