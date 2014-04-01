@@ -13,15 +13,15 @@ module Elasticsearch
 
         def index_name name=nil
           @index_name = name || @index_name || self.class.to_s.underscore.gsub(/\//, '-')
-        end
+        end; alias :index :index_name
 
         def index_name=(name)
           @index_name = name
-        end
+        end; alias :index= :index_name=
 
         def document_type
           klass ? klass.to_s.underscore : nil
-        end
+        end; alias :type :document_type
 
         def __get_klass_from_type(type)
           klass = type.classify
