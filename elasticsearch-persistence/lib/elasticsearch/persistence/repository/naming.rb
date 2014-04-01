@@ -20,7 +20,7 @@ module Elasticsearch
         end
 
         def document_type
-          klass.to_s.underscore
+          klass ? klass.to_s.underscore : nil
         end
 
         def __get_klass_from_type(type)
