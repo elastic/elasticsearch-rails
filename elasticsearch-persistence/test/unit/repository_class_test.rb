@@ -28,6 +28,11 @@ class Elasticsearch::Persistence::RepositoryClassTest < Test::Unit::TestCase
         end
         assert_equal 101, foo
       end
+
+      should "configure the index name based on options" do
+        repository = Elasticsearch::Persistence::Repository::Class.new index: 'foobar'
+        assert_equal 'foobar', repository.index_name
+      end
     end
 
     should "include the repository methods" do

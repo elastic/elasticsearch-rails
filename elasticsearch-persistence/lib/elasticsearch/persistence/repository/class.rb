@@ -16,6 +16,7 @@ module Elasticsearch
 
         def initialize(options={}, &block)
           @options = options
+          index_name options.delete(:index)
           block.arity < 1 ? instance_eval(&block) : block.call(self) if block_given?
         end
 
