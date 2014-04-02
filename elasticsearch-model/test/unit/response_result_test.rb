@@ -27,6 +27,20 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
       assert_equal 'baz', result.bar
     end
 
+    should "delegate existence method calls to `_source`" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _source: { bar: {baz: 'blargh'} }
+
+      assert_respond_to result, :bar?
+      assert_respond_to result._source, :bar?
+
+      assert_equal true, result._source.bar?
+      assert_equal true, result.bar?
+      assert_equal false, result.baz?
+
+      assert_equal true, result.bar.baz?
+      assert_equal false, result.bar.boo?
+    end
+
     should "delegate methods to @result" do
       result = Elasticsearch::Model::Response::Result.new foo: 'bar'
 

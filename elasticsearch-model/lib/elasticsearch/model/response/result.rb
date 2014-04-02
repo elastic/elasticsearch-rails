@@ -21,7 +21,7 @@ module Elasticsearch
         #
         def method_missing(method_name, *arguments)
           case
-          when @result.respond_to?(method_name.to_sym)
+          when @result.respond_to?(method_name.to_sym) && method_name !~ /\?\z/
             @result.__send__ method_name.to_sym, *arguments
           when @result._source && @result._source.respond_to?(method_name.to_sym)
             @result._source.__send__ method_name.to_sym, *arguments
