@@ -21,10 +21,12 @@ module Elasticsearch
         #
         def method_missing(method_name, *arguments)
           case
-          when @result.respond_to?(method_name.to_sym)
-            @result.__send__ method_name.to_sym, *arguments
-          when @result._source && @result._source.respond_to?(method_name.to_sym)
-            @result._source.__send__ method_name.to_sym, *arguments
+          when method_name.to_s.end_with?('?')
+            delegate_to_source(method_name, *arguments)
+          when @result.respond_to?(method_name)
+            @result.__send__ method_name, *arguments
+          when @result._source && @result._source.respond_to?(method_name)
+            delegate_to_source(method_name, *arguments)
           else
             super
           end
@@ -43,6 +45,12 @@ module Elasticsearch
         end
 
         # TODO: #to_s, #inspect, with support for Pry
+
+        private
+
+        def delegate_to_source(method, *args)
+          @result._source.__send__ method, *args
+        end
 
       end
     end
