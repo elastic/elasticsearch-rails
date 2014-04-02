@@ -36,7 +36,6 @@ module Elasticsearch
                 self.search.definition.update size: @per_page,
                                               from: @per_page * (@page - 1)
 
-                search.definition
                 self
               end
             RUBY
@@ -78,7 +77,6 @@ module Elasticsearch
 
             search.definition.update :size => @per_page
             search.definition.update :from => @per_page * (@page - 1) if @page
-            search.definition
             self
           end
 
