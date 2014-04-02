@@ -13,9 +13,8 @@ require 'elasticsearch/persistence/repository/serialize'
 require 'elasticsearch/persistence/repository/store'
 require 'elasticsearch/persistence/repository/find'
 require 'elasticsearch/persistence/repository/search'
-require 'elasticsearch/persistence/repository'
-
 require 'elasticsearch/persistence/repository/class'
+require 'elasticsearch/persistence/repository'
 
 module Elasticsearch
   module Persistence

@@ -3,7 +3,14 @@ module Elasticsearch
     module Repository
 
       class Class
-        include Elasticsearch::Persistence::Repository
+        include Elasticsearch::Persistence::Client
+        include Elasticsearch::Persistence::Repository::Naming
+        include Elasticsearch::Persistence::Repository::Serialize
+        include Elasticsearch::Persistence::Repository::Store
+        include Elasticsearch::Persistence::Repository::Find
+        include Elasticsearch::Persistence::Repository::Search
+
+        include Elasticsearch::Model::Indexing::ClassMethods
 
         attr_reader :options
 
