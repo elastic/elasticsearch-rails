@@ -108,7 +108,7 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
       end
     end
 
-    should_eventually "configure the index name in the shortcut initializer" do
+    should "configure the index name in the shortcut initializer" do
       assert_equal 'repository', Elasticsearch::Persistence::Repository.new.index_name
     end
 

@@ -34,7 +34,7 @@ module Elasticsearch
       end
 
       def new(options={}, &block)
-        Elasticsearch::Persistence::Repository::Class.new options, &block
+        Elasticsearch::Persistence::Repository::Class.new( {index: 'repository'}.merge(options), &block )
       end; module_function :new
     end
   end
