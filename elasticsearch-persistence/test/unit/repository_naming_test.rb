@@ -88,6 +88,12 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
         subject.index_name = 'foobar1'
         assert_equal 'foobar1', subject.index
       end
+
+      should "be inferred from the host class" do
+        class ::MySpecialRepository; end
+        subject.define_singleton_method(:host) { MySpecialRepository }
+        assert_equal 'my_special_repository', subject.index_name
+      end
     end
 
     context "document_type" do

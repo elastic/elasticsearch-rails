@@ -12,7 +12,13 @@ module Elasticsearch
         end
 
         def index_name name=nil
-          @index_name = name || @index_name || self.class.to_s.underscore.gsub(/\//, '-')
+          @index_name = name || @index_name || begin
+            if respond_to?(:host) && host && host.is_a?(Module)
+              self.host.to_s.underscore.gsub(/\//, '-')
+            else
+              self.class.to_s.underscore.gsub(/\//, '-')
+            end
+          end
         end; alias :index :index_name
 
         def index_name=(name)

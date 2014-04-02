@@ -18,6 +18,10 @@ module Elasticsearch
           @options = options
           block.arity < 1 ? instance_eval(&block) : block.call(self) if block_given?
         end
+
+        def host
+          options[:host]
+        end
       end
 
     end
