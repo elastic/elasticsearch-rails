@@ -12,7 +12,7 @@ module Elasticsearch
 
     module Repository
       def self.included(base)
-        gateway = Elasticsearch::Persistence::Repository::Class.new
+        gateway = Elasticsearch::Persistence::Repository::Class.new host: base
 
         base.class_eval do
           define_method :gateway do
