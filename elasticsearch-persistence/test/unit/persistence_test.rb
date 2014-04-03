@@ -18,6 +18,15 @@ class Elasticsearch::Persistence::ModuleTest < Test::Unit::TestCase
           Elasticsearch::Persistence.client = nil
         end
       end
+
+      should "allow to set a client with DSL" do
+        begin
+          Elasticsearch::Persistence.client "Foobar"
+          assert_equal "Foobar", Elasticsearch::Persistence.client
+        ensure
+          Elasticsearch::Persistence.client = nil
+        end
+      end
     end
   end
 end

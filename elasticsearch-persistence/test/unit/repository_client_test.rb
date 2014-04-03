@@ -1,13 +1,9 @@
 require 'test_helper'
 
 class Elasticsearch::Persistence::RepositoryClientTest < Test::Unit::TestCase
-  context "A repository client" do
-    class DummyReposistory
-      include Elasticsearch::Persistence::Repository
-    end
-
+  context "The repository client" do
     setup do
-      @shoulda_subject = DummyReposistory.new
+      @shoulda_subject = Class.new() { include Elasticsearch::Persistence::Repository::Client }.new
     end
 
     should "have a default client" do
@@ -18,6 +14,15 @@ class Elasticsearch::Persistence::RepositoryClientTest < Test::Unit::TestCase
     should "allow to set a client" do
       begin
         subject.client = "Foobar"
+        assert_equal "Foobar", subject.client
+      ensure
+        subject.client = nil
+      end
+    end
+
+    should "allow to set the client with DSL" do
+      begin
+        subject.client "Foobar"
         assert_equal "Foobar", subject.client
       ensure
         subject.client = nil
