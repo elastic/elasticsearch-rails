@@ -59,6 +59,11 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
         assert_equal 'snowball', repository.mappings.to_hash[:my_dummy_model][:properties][:title][:analyzer]
       end
 
+      should "correctly delegate to the gateway" do
+        repository = DummyRepository.new
+        assert_instance_of Method, repository.method(:index)
+      end
+
       should "proxy repository methods from the instance to the gateway" do
         class DummyRepository
           include Elasticsearch::Persistence::Repository
@@ -111,6 +116,5 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
     should "configure the index name in the shortcut initializer" do
       assert_equal 'repository', Elasticsearch::Persistence::Repository.new.index_name
     end
-
   end
 end
