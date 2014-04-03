@@ -8,6 +8,10 @@ module Elasticsearch
       def respond_to?(method_name, include_private=false)
         gateway.respond_to?(method_name) || super
       end
+
+      def respond_to_missing?(method_name, *)
+        gateway.respond_to?(method_name) || super
+      end
     end
 
     module Repository

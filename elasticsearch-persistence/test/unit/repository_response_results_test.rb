@@ -63,6 +63,10 @@ class Elasticsearch::Persistence::RepositoryResponseResultsTest < Test::Unit::Te
       assert_respond_to subject, :each
     end
 
+    should "respond to missing" do
+      assert_instance_of Method, subject.method(:to_a)
+    end
+
     should "yield each object with hit" do
       @shoulda_subject = Repository::Response::Results.new \
         @repository,
