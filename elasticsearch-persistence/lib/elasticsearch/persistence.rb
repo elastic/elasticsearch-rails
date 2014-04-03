@@ -21,8 +21,8 @@ module Elasticsearch
 
     # :nodoc:
     module ClassMethods
-      def client
-        @client ||= Elasticsearch::Client.new
+      def client client=nil
+        @client = client || @client || Elasticsearch::Client.new
       end
 
       def client=(client)

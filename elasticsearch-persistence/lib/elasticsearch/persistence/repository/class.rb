@@ -3,7 +3,7 @@ module Elasticsearch
     module Repository
 
       class Class
-        include Elasticsearch::Persistence::Client
+        include Elasticsearch::Persistence::Repository::Client
         include Elasticsearch::Persistence::Repository::Naming
         include Elasticsearch::Persistence::Repository::Serialize
         include Elasticsearch::Persistence::Repository::Store
