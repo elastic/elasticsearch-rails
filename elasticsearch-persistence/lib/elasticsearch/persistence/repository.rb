@@ -35,6 +35,12 @@ module Elasticsearch
 
           include GatewayDelegation
         end
+
+        def base.method_added(name)
+          if :gateway != name && respond_to?(:gateway) && (gateway.public_methods - Object.public_methods).include?(name)
+            gateway.define_singleton_method(name, self.new.method(name).to_proc)
+          end
+        end
       end
 
       def new(options={}, &block)
