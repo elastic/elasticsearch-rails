@@ -24,7 +24,7 @@ module Elasticsearch
           case
             # search query: ...
             when query_or_payload.respond_to?(:to_hash)
-              body = query_or_payload.to_hash
+              body = query_or_payload.to_hash.deep_symbolize_keys
 
             # search '{ "query" : ... }'
             when query_or_payload.is_a?(String) && query_or_payload =~ /^\s*{/
