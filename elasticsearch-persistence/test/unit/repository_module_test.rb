@@ -86,8 +86,8 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
         assert_equal 'snowball', repository.mappings.to_hash[:my_dummy_model][:properties][:title][:analyzer]
       end
 
-      should "allow to define gateway methods in the class definition" do
-        class DummyRepository
+      should "allow to define gateway methods in the class definition via block passed to the gateway method" do
+        class DummyRepositoryWithGatewaySerialize
           include Elasticsearch::Persistence::Repository
 
           gateway do
@@ -97,7 +97,7 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
           end
         end
 
-        repository = DummyRepository.new
+        repository = DummyRepositoryWithGatewaySerialize.new
         repository.client.transport.logger = Logger.new(STDERR)
 
         client = mock
@@ -111,6 +111,30 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
 
         repository.save( id: '123', foo: 'bar' )
       end
+    end
+
+    should "allow to define gateway methods in the class definition via regular method definition" do
+      class DummyRepositoryWithDirectSerialize
+        include Elasticsearch::Persistence::Repository
+
+        def serialize(document)
+          'FAKE IN CLASS!'
+        end
+      end
+
+      repository = DummyRepositoryWithDirectSerialize.new
+      repository.client.transport.logger = Logger.new(STDERR)
+
+      client = mock
+      client.expects(:index).with do |arguments|
+        assert_equal('xxx',   arguments[:id])
+        assert_equal('FAKE IN CLASS!', arguments[:body])
+      end
+      repository.gateway.expects(:client).returns(client)
+
+      repository.gateway.expects(:__get_id_from_document).returns('xxx')
+
+      repository.save( id: '123', foo: 'bar' )
     end
 
     should "configure the index name in the shortcut initializer" do
