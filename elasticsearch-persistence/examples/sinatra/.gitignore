@@ -1,0 +1,7 @@
+.DS_Store
+Gemfile.lock
+tmp/*
+log/*
+doc/
+.yardoc
+.vagrant
