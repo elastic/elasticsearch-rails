@@ -86,7 +86,7 @@ insert_into_file 'app/models/article.rb', <<-CODE, after: 'include Elasticsearch
   end
 CODE
 
-gsub_file "test/models/article_test.rb", %r{# test "the truth" do.*?# end}m, <<-CODE
+gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", %r{# test "the truth" do.*?# end}m, <<-CODE
 
   test "has a search method delegating to __elasticsearch__" do
     Article.__elasticsearch__.expects(:search).with do |definition|
@@ -98,7 +98,7 @@ gsub_file "test/models/article_test.rb", %r{# test "the truth" do.*?# end}m, <<-
 CODE
 
 git add:    "app/models/article.rb"
-git add:    "test/models/article_test.rb"
+git add:    "test/**/article_test.rb"
 git commit: "-m 'Added an `Article.search` method'"
 
 # ----- Add loading Bootstrap assets --------------------------------------------------------------

@@ -184,6 +184,7 @@ file 'app/models/article.rb', <<-CODE
 class Article < ActiveRecord::Base
   include Elasticsearch::Model
   include Elasticsearch::Model::Callbacks
+  #{'attr_accessible :title, :content, :published_on' if Rails::VERSION::STRING < '4'}
 end
 CODE
 
@@ -236,7 +237,7 @@ resources :articles do
   end
 CODE
 
-gsub_file 'test/controllers/articles_controller_test.rb', %r{setup do.*?end}m, <<-CODE
+gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/controllers' : 'test/functional'}/articles_controller_test.rb", %r{setup do.*?end}m, <<-CODE
 setup do
     @article = articles(:one)
 
@@ -245,7 +246,7 @@ setup do
   end
 CODE
 
-inject_into_file 'test/controllers/articles_controller_test.rb', after: %r{test "should get index" do.*?end}m do
+inject_into_file "#{Rails::VERSION::STRING > '4' ? 'test/controllers' : 'test/functional'}/articles_controller_test.rb", after: %r{test "should get index" do.*?end}m do
   <<-CODE
 
 
