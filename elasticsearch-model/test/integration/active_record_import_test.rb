@@ -26,6 +26,7 @@ module Elasticsearch
 
           ImportArticle.delete_all
           ImportArticle.__elasticsearch__.create_index! force: true
+          ImportArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
 
           100.times { |i| ImportArticle.create! title: "Test #{i}" }
         end

@@ -61,6 +61,7 @@ if ENV["MONGODB_AVAILABLE"]
             MongoidArticle.create! title: 'Coding'
 
             MongoidArticle.__elasticsearch__.refresh_index!
+            MongoidArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
           end
 
           should "index and find a document" do
@@ -147,6 +148,7 @@ if ENV["MONGODB_AVAILABLE"]
               MongoidArticle.delete_all
               97.times { |i| MongoidArticle.create! title: "Test #{i}" }
               MongoidArticle.__elasticsearch__.create_index! force: true
+              MongoidArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
             end
 
             should "import all the documents" do
