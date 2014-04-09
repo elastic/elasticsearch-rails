@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "lograge"
 
+  s.add_development_dependency "minitest", "~> 4.0"
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
