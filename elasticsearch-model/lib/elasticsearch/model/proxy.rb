@@ -52,16 +52,6 @@ module Elasticsearch
             @__elasticsearch__.instance_eval(&block) if block_given?
             @__elasticsearch__
           end
-
-          # Register a callback for storing changed attributes for models which implement
-          # `before_save` and `changed_attributes` methods (when `Elasticsearch::Model` is included)
-          #
-          # @see http://api.rubyonrails.org/classes/ActiveModel/Dirty.html
-          #
-          before_save do |i|
-            i.__elasticsearch__.instance_variable_set(:@__changed_attributes,
-                                                      Hash[ i.changes.map { |key, value| [key, value.last] } ])
-          end if respond_to?(:before_save) && instance_methods.include?(:changed_attributes)
         end
       end
 

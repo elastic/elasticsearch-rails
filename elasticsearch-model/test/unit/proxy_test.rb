@@ -18,43 +18,12 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
       end
     end
 
-    class ::DummyProxyModelWithCallbacks
-      def self.before_save(&block)
-        (@callbacks ||= {})[block.hash] = block
-      end
-
-      def changed_attributes; [:foo]; end
-
-      def changes
-        {:foo => ['One', 'Two']}
-      end
-    end
-
     should "setup the class proxy method" do
       assert_respond_to DummyProxyModel, :__elasticsearch__
     end
 
     should "setup the instance proxy method" do
       assert_respond_to DummyProxyModel.new, :__elasticsearch__
-    end
-
-    should "register the hook for before_save callback" do
-      ::DummyProxyModelWithCallbacks.expects(:before_save).returns(true)
-      DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
-    end
-
-    should "set the @__changed_attributes variable before save" do
-      instance = ::DummyProxyModelWithCallbacks.new
-      instance.__elasticsearch__.expects(:instance_variable_set).with do |name, value|
-        assert_equal :@__changed_attributes, name
-        assert_equal({foo: 'Two'}, value)
-      end
-
-      ::DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
-
-      ::DummyProxyModelWithCallbacks.instance_variable_get(:@callbacks).each do |n,b|
-        instance.instance_eval(&b)
-      end
     end
 
     should "delegate methods to the target" do

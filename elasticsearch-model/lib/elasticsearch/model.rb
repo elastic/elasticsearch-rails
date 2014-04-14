@@ -95,11 +95,9 @@ module Elasticsearch
           include Elasticsearch::Model::Serializing::InstanceMethods
         end
 
-        Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval <<-CODE, __FILE__, __LINE__ + 1
-          def as_indexed_json(options={})
-            target.respond_to?(:as_indexed_json) ? target.__send__(:as_indexed_json, options) : super
-          end
-        CODE
+        def as_indexed_json(options={})
+          self.__elasticsearch__.as_indexed_json(options)
+        end
 
         # Delegate important methods to the `__elasticsearch__` proxy, unless they are defined already
         #
