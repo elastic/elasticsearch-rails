@@ -8,6 +8,7 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       @shoulda_subject = Class.new() { include Elasticsearch::Persistence::Repository::Search }.new
 
       @client = mock
+      @shoulda_subject.stubs(:document_type).returns(nil)
       @shoulda_subject.stubs(:klass).returns(nil)
       @shoulda_subject.stubs(:index_name).returns('test')
       @shoulda_subject.stubs(:client).returns(@client)
