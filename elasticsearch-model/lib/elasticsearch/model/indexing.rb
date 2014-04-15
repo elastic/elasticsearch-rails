@@ -333,11 +333,17 @@ module Elasticsearch
         #
         def update_document(options={})
           if changed_attributes = self.instance_variable_get(:@__changed_attributes)
+            attributes = if respond_to?(:as_indexed_json)
+              changed_attributes.select { |k,v| self.as_indexed_json.keys.include? k }
+            else
+              changed_attributes
+            end
+
             client.update(
               { index: index_name,
                 type:  document_type,
                 id:    self.id,
-                body:  { doc: changed_attributes } }.merge(options)
+                body:  { doc: attributes } }.merge(options)
             )
           else
             index_document(options)

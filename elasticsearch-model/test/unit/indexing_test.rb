@@ -129,6 +129,25 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
+      class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def changed_attributes; [:foo, :bar]; end
+
+        def changes
+          {:foo => ['A', 'B'], :bar => ['C', 'D']}
+        end
+
+        def as_indexed_json(options={})
+          { :foo => 'B' }
+        end
+      end
+
       should "register before_save callback when included" do
         ::DummyIndexingModelWithCallbacks.expects(:before_save).returns(true)
         ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
@@ -242,6 +261,25 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal 'bar',  payload[:type]
           assert_equal '1',    payload[:id]
           assert_equal({foo: 'bar'}, payload[:body][:doc])
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document
+      end
+
+      should "exclude attributes not contained in custom as_indexed_json during partial update" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
+
+        # Set the fake `changes` hash
+        instance.instance_variable_set(:@__changed_attributes, {foo: 'B', bar: 'D' })
+
+        client.expects(:update).with do |payload|
+          assert_equal({foo: 'B'}, payload[:body][:doc])
         end
 
         instance.expects(:client).returns(client)
