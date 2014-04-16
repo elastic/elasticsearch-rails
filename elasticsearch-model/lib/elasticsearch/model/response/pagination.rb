@@ -45,8 +45,6 @@ module Elasticsearch
           #
           def limit_value
             case
-              when search.definition[:body] && search.definition[:body][:size]
-                search.definition[:body][:size]
               when search.definition[:size]
                 search.definition[:size]
               else
@@ -58,8 +56,6 @@ module Elasticsearch
           #
           def offset_value
             case
-              when search.definition[:body] && search.definition[:body][:from]
-                search.definition[:body][:from]
               when search.definition[:from]
                 search.definition[:from]
               else

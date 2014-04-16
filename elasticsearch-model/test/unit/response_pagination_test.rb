@@ -74,12 +74,13 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
         assert_equal 50, @response.offset_value
       end
 
-      should "return the value from body" do
-        search    = Elasticsearch::Model::Searching::SearchRequest.new ModelClass, { query: { match_all: {} }, from: 10, size: 50 }
+      should "ignore the value from request body" do
+        search    = Elasticsearch::Model::Searching::SearchRequest.new ModelClass,
+                    { query: { match_all: {} }, from: 333, size: 999 }
         @response = Elasticsearch::Model::Response::Response.new ModelClass, search, RESPONSE
 
-        assert_equal 50, @response.limit_value
-        assert_equal 10, @response.offset_value
+        assert_equal Kaminari.config.default_per_page, @response.limit_value
+        assert_equal 0, @response.offset_value
       end
     end
 
