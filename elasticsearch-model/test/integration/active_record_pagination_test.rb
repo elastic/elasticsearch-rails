@@ -97,50 +97,6 @@ module Elasticsearch
           end
         end
 
-        context "with response limit" do
-          should "load valid page and have limited entries" do
-            records = Article.search('title:test').page(1).limit(35).records
-
-            assert_equal 35, records.size
-            assert_equal 1, records.current_page
-            assert_equal nil, records.prev_page
-            assert_equal 2, records.next_page
-            assert_equal 2, records.total_pages
-
-            assert   records.first_page?,   "Should be the first page"
-            assert ! records.last_page?,    "Should NOT be the last page"
-            assert ! records.out_of_range?, "Should NOT be out of range"
-          end
-
-          should "load next page" do
-            records = Article.search('title:test').page(2).limit(35).records
-
-            assert_equal 33, records.size
-            assert_equal 2, records.current_page
-            assert_equal 1, records.prev_page
-            assert_equal nil, records.next_page
-            assert_equal 2, records.total_pages
-
-            assert ! records.first_page?,   "Should NOT be the first page"
-            assert   records.last_page?,    "Should be the last page"
-            assert ! records.out_of_range?, "Should NOT be out of range"
-          end
-
-          should "not load invalid page" do
-            records = Article.search('title:test').page(3).limit(35).records
-
-            assert_equal 0, records.size
-            assert_equal 3, records.current_page
-            assert_equal 2, records.prev_page
-            assert_equal nil, records.next_page
-            assert_equal 2, records.total_pages
-
-            assert ! records.first_page?,   "Should NOT be the first page"
-            assert   records.last_page?,    "Should be the last page"
-            assert   records.out_of_range?, "Should be out of range"
-          end
-        end
-
         should "respect paginates_per" do
           Article.paginates_per 50
 
