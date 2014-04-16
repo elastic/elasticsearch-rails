@@ -81,6 +81,19 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
         assert_equal 50, @response.limit_value
         assert_equal 10, @response.offset_value
       end
+
+      should "return the value from body with object responding to `to_hash`" do
+        query = Hashie::Mash.new({
+          query: { match_all: {} },
+          size:  50,
+          from:  10
+        })
+        search    = Elasticsearch::Model::Searching::SearchRequest.new ModelClass, query
+        @response = Elasticsearch::Model::Response::Response.new ModelClass, search, RESPONSE
+
+        assert_equal 50, @response.limit_value
+        assert_equal 10, @response.offset_value
+      end
     end
 
     context "limit setter" do
