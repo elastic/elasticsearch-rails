@@ -50,7 +50,7 @@ module Elasticsearch
               when search.definition[:size]
                 search.definition[:size]
               else
-                0
+                search.klass.default_per_page
             end
           end
 

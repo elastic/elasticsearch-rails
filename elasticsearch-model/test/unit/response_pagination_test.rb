@@ -13,7 +13,7 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
                  'hits' => { 'total' => 100, 'hits' => (1..100).to_a.map { |i| { _id: i } } } }
 
     setup do
-      @search    = Elasticsearch::Model::Searching::SearchRequest.new ModelClass, '*'
+      @search   = Elasticsearch::Model::Searching::SearchRequest.new ModelClass, '*'
       @response = Elasticsearch::Model::Response::Response.new ModelClass, @search, RESPONSE
       @response.klass.stubs(:client).returns mock('client')
     end
@@ -62,7 +62,7 @@ class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
 
     context "limit/offset readers" do
       should "return the default" do
-        assert_equal 0, @response.limit_value
+        assert_equal Kaminari.config.default_per_page, @response.limit_value
         assert_equal 0, @response.offset_value
       end
 
