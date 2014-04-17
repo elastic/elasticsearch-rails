@@ -52,6 +52,19 @@ module Elasticsearch
           assert_equal 'Test', response.records.first.title
         end
 
+        should "provide access to result" do
+          response = Article.search query: { match: { title: 'test' } }, highlight: { fields: { title: {} } }
+
+          assert_equal 'Test', response.results.first.title
+
+          assert_equal true,  response.results.first.title?
+          assert_equal false, response.results.first.boo?
+
+          assert_equal true,  response.results.first.highlight?
+          assert_equal true,  response.results.first.highlight.title?
+          assert_equal false, response.results.first.highlight.boo?
+        end
+
         should "iterate over results" do
           response = Article.search('title:test')
 

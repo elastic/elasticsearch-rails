@@ -19,14 +19,14 @@ module Elasticsearch
 
         # Delegate methods to `@result` or `@result._source`
         #
-        def method_missing(method_name, *arguments)
+        def method_missing(name, *arguments)
           case
-          when method_name.to_s.end_with?('?')
-            delegate_to_source(method_name, *arguments)
-          when @result.respond_to?(method_name)
-            @result.__send__ method_name, *arguments
-          when @result._source && @result._source.respond_to?(method_name)
-            delegate_to_source(method_name, *arguments)
+          when name.to_s.end_with?('?')
+            @result.__send__(name, *arguments) || ( @result._source && @result._source.__send__(name, *arguments) )
+          when @result.respond_to?(name)
+            @result.__send__ name, *arguments
+          when @result._source && @result._source.respond_to?(name)
+            @result._source.__send__ name, *arguments
           else
             super
           end
@@ -45,13 +45,6 @@ module Elasticsearch
         end
 
         # TODO: #to_s, #inspect, with support for Pry
-
-        private
-
-        def delegate_to_source(method, *args)
-          @result._source.__send__ method, *args
-        end
-
       end
     end
   end
