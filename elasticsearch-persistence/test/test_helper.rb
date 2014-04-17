@@ -37,6 +37,10 @@ module Elasticsearch
                                               host: "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}",
                                               tracer: (ENV['QUIET'] ? nil : tracer)
       end
+
+      def teardown
+        Elasticsearch::Persistence.client.indices.delete index: '_all'
+      end
     end
   end
 end
