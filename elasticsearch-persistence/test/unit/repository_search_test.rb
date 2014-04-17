@@ -28,7 +28,22 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       subject.search foo: 'bar'
     end
 
+    should "search in type based on document_type" do
+      subject.expects(:document_type).returns('my_special_document').at_least_once
+      subject.expects(:__get_type_from_class).never
+
+      @client.expects(:search).with do |arguments|
+        assert_equal 'test',                arguments[:index]
+        assert_equal 'my_special_document', arguments[:type]
+
+        assert_equal({foo: 'bar'}, arguments[:body])
+      end
+
+      subject.search foo: 'bar'
+    end
+
     should "search across all types" do
+      subject.expects(:document_type).returns(nil).at_least_once
       subject.expects(:klass).returns(nil).at_least_once
       subject.expects(:__get_type_from_class).never
 
