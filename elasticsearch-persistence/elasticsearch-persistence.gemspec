@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake"
 
   s.add_development_dependency "elasticsearch-extensions"
+  s.add_development_dependency "oj"
 
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
