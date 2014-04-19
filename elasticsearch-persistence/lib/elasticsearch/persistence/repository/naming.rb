@@ -84,6 +84,21 @@ module Elasticsearch
         def __get_id_from_document(document)
           document[:id] || document['id'] || document[:_id] || document['_id']
         end
+
+        # Extract a document ID from the document (assuming Hash or Hash-like object)
+        #
+        # @example
+        #     options = { title: 'Test', id: 'abc123' }
+        #     repository.__extract_id_from_document options
+        #     # => "abc123"
+        #     options
+        #     # => { title: 'Test' }
+        #
+        # @api private
+        #
+        def __extract_id_from_document(document)
+          document.delete(:id) || document.delete('id') || document.delete(:_id) || document.delete('_id')
+        end
       end
 
     end

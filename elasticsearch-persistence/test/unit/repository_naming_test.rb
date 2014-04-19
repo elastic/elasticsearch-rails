@@ -49,6 +49,27 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
       end
     end
 
+    context "extract an ID from the document" do
+      should "delete the key from theHash" do
+        d1 = { :id   => 1 }
+        d2 = { :_id  => 1 }
+        d3 = { 'id'  => 1 }
+        d4 = { '_id' => 1 }
+
+        assert_equal 1, subject.__extract_id_from_document(d1)
+        assert_nil   d1[:id]
+
+        assert_equal 1, subject.__extract_id_from_document(d2)
+        assert_nil   d1[:_id]
+
+        assert_equal 1, subject.__extract_id_from_document(d3)
+        assert_nil   d1['id']
+
+        assert_equal 1, subject.__extract_id_from_document(d4)
+        assert_nil   d1['_id']
+      end
+    end
+
     context "document class name" do
       should "be nil by default" do
         assert_nil subject.klass
