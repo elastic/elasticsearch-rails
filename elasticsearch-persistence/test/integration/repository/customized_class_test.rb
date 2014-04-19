@@ -44,6 +44,20 @@ module Elasticsearch
           assert_not_nil Elasticsearch::Persistence.client.get index: 'my_notes', type: 'my_note', id: '1'
         end
 
+        should "update the document" do
+          @repository.save Note.new(id: 1, title: 'Test')
+
+          @repository.update 1, doc: { title: 'UPDATED' }
+          assert_equal 'UPDATED', @repository.find(1).attributes['title']
+        end
+
+        should "update the document with a script" do
+          @repository.save Note.new(id: 1, title: 'Test')
+
+          @repository.update 1, script: 'ctx._source.title = "UPDATED"'
+          assert_equal 'UPDATED', @repository.find(1).attributes['title']
+        end
+
         should "delete the object" do
           note = My::Note.new id: 1, title: 'Test'
           @repository.save note

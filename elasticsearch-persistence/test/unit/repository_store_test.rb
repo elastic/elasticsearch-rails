@@ -5,7 +5,10 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
     class MyDocument; end
 
     setup do
-      @shoulda_subject = Class.new() { include Elasticsearch::Persistence::Repository::Store }.new
+      @shoulda_subject = Class.new() do
+        include Elasticsearch::Persistence::Repository::Store
+        include Elasticsearch::Persistence::Repository::Naming
+      end.new
       @shoulda_subject.stubs(:index_name).returns('test')
     end
 
@@ -82,6 +85,114 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         subject.expects(:client).returns(client)
 
         subject.save({foo: 'bar'}, { index: 'foobarbam', routing: 'bambam' })
+      end
+    end
+
+    context "update" do
+      should "get the ID from first argument and :doc from options" do
+        subject.expects(:serialize).never
+        subject.expects(:document_type).returns('mydoc')
+        subject.expects(:__extract_id_from_document).never
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({doc: { foo: 'bar' }}, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update('1', doc: { foo: 'bar' })
+      end
+
+      should "get the ID from first argument and :script from options" do
+        subject.expects(:document_type).returns('mydoc')
+        subject.expects(:__extract_id_from_document).never
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1'}, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update('1', script: 'ctx._source.foo += 1')
+      end
+
+      should "get the ID from first argument and :script with :upsert from options" do
+        subject.expects(:document_type).returns('mydoc')
+        subject.expects(:__extract_id_from_document).never
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1', upsert: { foo: 1 }}, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update('1', script: 'ctx._source.foo += 1', upsert: { foo: 1 })
+      end
+
+      should "get the ID and :doc from document" do
+        subject.expects(:document_type).returns('mydoc')
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({doc: { foo: 'bar' }}, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update(id: '1', foo: 'bar')
+      end
+
+      should "get the ID and :script from document" do
+        subject.expects(:document_type).returns('mydoc')
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1'}, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update(id: '1', script: 'ctx._source.foo += 1')
+      end
+
+      should "get the ID and :script with :upsert from document" do
+        subject.expects(:document_type).returns('mydoc')
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1', upsert: { foo: 1 } }, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update(id: '1', script: 'ctx._source.foo += 1', upsert: { foo: 1 })
+      end
+
+      should "override the type from params" do
+        subject.expects(:document_type).never
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',   arguments[:id]
+          assert_equal 'foo', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1'}, arguments[:body])
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update(id: '1', script: 'ctx._source.foo += 1', type: 'foo')
+      end
+
+      should "raise an exception when passed incorrect argument" do
+        assert_raise(ArgumentError) { subject.update(MyDocument.new, foo: 'bar') }
       end
     end
 

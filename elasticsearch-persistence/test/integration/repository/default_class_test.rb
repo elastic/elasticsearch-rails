@@ -34,6 +34,25 @@ module Elasticsearch
           assert_equal 'Test', @repository.find(response['_id']).attributes['title']
         end
 
+        should "update the document" do
+          @repository.save Note.new(id: 1, title: 'Test')
+
+          @repository.update 1, type: 'note', doc: { title: 'UPDATED' }
+          assert_equal 'UPDATED', @repository.find(1).attributes['title']
+        end
+
+        should "update the document with a script" do
+          @repository.save Note.new(id: 1, title: 'Test')
+
+          @repository.update 1, type: 'note', script: 'ctx._source.title = "UPDATED"'
+          assert_equal 'UPDATED', @repository.find(1).attributes['title']
+        end
+
+        should "save the document with an upsert" do
+          @repository.update 1, type: 'note', script: 'ctx._source.clicks += 1', upsert: { clicks: 1 }
+          assert_equal 1, @repository.find(1).attributes['clicks']
+        end
+
         should "delete an object" do
           note = Note.new(id: '1', title: 'Test')
 

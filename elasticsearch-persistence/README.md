@@ -322,6 +322,22 @@ repository.save(note)
 # => {"_index"=>"notes_development", "_type"=>"my_note", "_id"=>"1", "_version"=>1, "created"=>true}
 ```
 
+The `update` method allows you to perform a partial update of a document in the repository.
+Use either a partial document:
+
+```ruby
+repository.update id: 1, title: 'UPDATED',  tags: []
+# => {"_index"=>"notes_development", "_type"=>"note", "_id"=>"1", "_version"=>2}
+```
+
+Or a script (optionally with parameters):
+
+```ruby
+repository.update 1, script: 'if (!ctx._source.tags.contains(t)) { ctx._source.tags += t }', params: { t: 'foo' }
+# => {"_index"=>"notes_development", "_type"=>"note", "_id"=>"1", "_version"=>3}
+```
+
+
 The `delete` method allows to remove objects from the repository (pass either the object itself or its ID):
 
 ```ruby
