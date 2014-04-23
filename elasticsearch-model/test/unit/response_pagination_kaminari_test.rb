@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Elasticsearch::Model::ResponsePaginationTest < Test::Unit::TestCase
+class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCase
   context "Response pagination" do
     class ModelClass
       include ::Kaminari::ConfigurationMethods

@@ -93,6 +93,47 @@ module Elasticsearch
             results.total
           end
         end
+
+        # Allow models to be paginated with the "will_paginate" gem [https://github.com/mislav/will_paginate]
+        #
+        module WillPaginate
+          def self.included(base)
+            base.__send__ :include, ::WillPaginate::CollectionMethods
+
+            methods = [:current_page, :per_page, :total_entries, :total_pages, :previous_page, :next_page, :out_of_bounds?]
+            Elasticsearch::Model::Response::Results.__send__ :delegate, *methods, to: :response
+            Elasticsearch::Model::Response::Records.__send__ :delegate, *methods, to: :response
+          end
+
+          def paginate(options)
+            page = [options[:page].to_i, 1].max
+            per_page = (options[:per_page] || klass.per_page).to_i
+
+            search.definition.update size: per_page,
+                                     from: (page - 1) * per_page
+            self
+          end
+
+          def current_page
+            search.definition[:from] / per_page + 1 if search.definition[:from] && per_page
+          end
+
+          def page(num)
+            paginate(page: num, per_page: per_page) # shorthand
+          end
+
+          def per_page(num = nil)
+            if num.nil?
+              search.definition[:size]
+            else
+              paginate(page: current_page, per_page: num) # shorthand
+            end
+          end
+
+          def total_entries
+            results.total
+          end
+        end
       end
 
     end
