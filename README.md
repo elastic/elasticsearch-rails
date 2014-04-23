@@ -8,8 +8,8 @@ This repository contains ActiveModel, ActiveRecord and Ruby on Rails integration
 * ActiveRecord::Relation-based wrapper for returning search results as records
 * Convenience model methods such as `search`, `mapping`, `import`, etc
 * Rake tasks for importing the data
-* Kaminari-based pagination support
-* Integration with Rails's instrumentation framework
+* Support for Kaminari and WillPaginate pagination
+* Integration with Rails' instrumentation framework
 * Templates for generating example Rails application
 
 Elasticsearch client and Ruby API is provided by the
