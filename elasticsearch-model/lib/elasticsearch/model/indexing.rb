@@ -37,6 +37,8 @@ module Elasticsearch
         attr_accessor :options
 
         def initialize(type, options={})
+          raise ArgumentError, "`type` is missing" if type.nil?
+
           @type    = type
           @options = options
           @mapping = {}

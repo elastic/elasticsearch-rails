@@ -47,6 +47,12 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_instance_of Elasticsearch::Model::Indexing::Mappings, DummyIndexingModel.mappings
       end
 
+      should "raise an exception when not passed type" do
+        assert_raise ArgumentError do
+          Elasticsearch::Model::Indexing::Mappings.new
+        end
+      end
+
       should "be convertible to hash" do
         mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype, { foo: 'bar' }
         assert_equal( { :mytype => { foo: 'bar', :properties => {} } }, mappings.to_hash )
