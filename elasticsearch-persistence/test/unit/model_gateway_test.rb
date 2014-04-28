@@ -1,6 +1,7 @@
 require 'test_helper'
 
 require 'elasticsearch/persistence/model'
+require 'elasticsearch/persistence/model/rails'
 
 class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
   context "The model gateway" do
@@ -74,11 +75,11 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
     end
 
     should "set IDs from hash when deserializing" do
-      assert_equal 'abc123', DummyGatewayModel.gateway.deserialize('_id' => 'abc123').id
+      assert_equal 'abc123', DummyGatewayModel.gateway.deserialize('_id' => 'abc123', '_source' => {}).id
     end
 
     should "set @persisted variable from hash when deserializing" do
-      assert DummyGatewayModel.gateway.deserialize('_id' => 'abc123').instance_variable_get(:@persisted)
+      assert DummyGatewayModel.gateway.deserialize('_id' => 'abc123', '_source' => {}).instance_variable_get(:@persisted)
     end
 
   end
