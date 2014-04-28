@@ -73,5 +73,16 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
       result.as_json(except: 'foo')
     end
 
+    should "return nil for id if it is not present in source" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _source: { uuid: 'foo-baz' }
+
+      assert_equal nil, result.id
+    end
+
+    should "delegate id to source if source responds to id" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _source: { id: 42 }
+
+      assert_equal 42, result.id
+    end
   end
 end
