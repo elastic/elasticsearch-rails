@@ -126,7 +126,7 @@ Article.__elasticsearch__.client = Elasticsearch::Client.new host: 'api.server.o
 Or configure the client for all models:
 
 ```ruby
-Elasticsearch::Model.client = Elasticsearch::Client.new log:true
+Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 ```
 
 You might want to do this during you application bootstrap process, e.g. in a Rails initializer.
