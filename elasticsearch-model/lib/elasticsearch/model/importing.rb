@@ -64,6 +64,10 @@ module Elasticsearch
         #
         #    Article.import index: 'my-new-index', type: 'my-other-type'
         #
+        # @example Pass an ActiveRecord scope to limit the imported records
+        #
+        #    Article.import scope: 'published'
+        #
         def import(options={}, &block)
           errors       = 0
           refresh      = options.delete(:refresh) || false

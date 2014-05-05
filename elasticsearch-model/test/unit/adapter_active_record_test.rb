@@ -82,13 +82,28 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
     end
 
     context "Importing" do
+      setup do
+        DummyClassForActiveRecord.__send__ :extend, Elasticsearch::Model::Adapter::ActiveRecord::Importing
+      end
+
+      should "raise an exception when passing an invalid scope" do
+        assert_raise NoMethodError do
+          DummyClassForActiveRecord.__find_in_batches(scope: :not_found_method) do; end
+        end
+      end
+
       should "implement the __find_in_batches method" do
         DummyClassForActiveRecord.expects(:find_in_batches).returns([])
-
-        DummyClassForActiveRecord.__send__ :extend, Elasticsearch::Model::Adapter::ActiveRecord::Importing
         DummyClassForActiveRecord.__find_in_batches do; end
       end
-    end
 
+      should "limit the relation to a specific scope" do
+        DummyClassForActiveRecord.expects(:find_in_batches).returns([])
+        DummyClassForActiveRecord.expects(:published).returns(DummyClassForActiveRecord)
+
+        DummyClassForActiveRecord.__find_in_batches(scope: :published) do; end
+      end
+
+    end
   end
 end
