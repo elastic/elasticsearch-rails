@@ -83,7 +83,10 @@ module Elasticsearch
           # @see http://api.rubyonrails.org/classes/ActiveRecord/Batches.html ActiveRecord::Batches.find_in_batches
           #
           def __find_in_batches(options={}, &block)
-            find_in_batches(options) do |batch|
+            import_scope = options.delete(:import_scope)
+            scope = self.respond_to?(import_scope.to_s) ? self.send(import_scope) : self
+
+            scope.find_in_batches(options) do |batch|
               batch_for_bulk = batch.map { |a| { index: { _id: a.id, data: a.__elasticsearch__.as_indexed_json } } }
               yield batch_for_bulk
             end
