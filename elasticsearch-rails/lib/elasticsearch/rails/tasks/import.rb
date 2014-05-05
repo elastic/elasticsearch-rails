@@ -35,6 +35,9 @@ namespace :elasticsearch do
 
       Set target index name:
         $ rake environment elasticsearch:import:model CLASS='Article' INDEX='articles-new'
+
+      Pass an ActiveRecord scope to limit the imported records:
+        $ rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
     DESC
     task :model do
       if ENV['CLASS'].to_s == ''
@@ -59,7 +62,8 @@ namespace :elasticsearch do
       total_errors = klass.import force:      ENV.fetch('FORCE', false),
                                   batch_size: ENV.fetch('BATCH', 1000).to_i,
                                   index:      ENV.fetch('INDEX', nil),
-                                  type:       ENV.fetch('TYPE',  nil) do |response|
+                                  type:       ENV.fetch('TYPE',  nil),
+                                  scope:      ENV.fetch('SCOPE', nil) do |response|
         pbar.inc response['items'].size if pbar
         STDERR.flush
         STDOUT.flush
