@@ -95,6 +95,18 @@ if ENV["MONGODB_AVAILABLE"]
             end
           end
 
+          should "preserve the search results order for records" do
+            response = MongoidArticle.search('title:code')
+
+            response.records.each_with_hit do |r, h|
+              assert_equal h._id, r.id.to_s
+            end
+
+            response.records.map_with_hit do |r, h|
+              assert_equal h._id, r.id.to_s
+            end
+          end
+
           should "remove document from index on destroy" do
             article = MongoidArticle.first
 
