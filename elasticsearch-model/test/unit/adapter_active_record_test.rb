@@ -16,6 +16,10 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
       def ids
         [2, 1]
       end
+
+      def self.import_scope
+        self
+      end
     end
 
     RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [] } }
@@ -82,13 +86,18 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
     end
 
     context "Importing" do
-      should "implement the __find_in_batches method" do
+      setup do
         DummyClassForActiveRecord.expects(:find_in_batches).returns([])
-
         DummyClassForActiveRecord.__send__ :extend, Elasticsearch::Model::Adapter::ActiveRecord::Importing
+      end
+
+      should "implement the __find_in_batches method" do
         DummyClassForActiveRecord.__find_in_batches do; end
       end
-    end
 
+      should "add scope to the active record import" do
+        DummyClassForActiveRecord.__find_in_batches(import_scope: :import_scope) do; end
+      end
+    end
   end
 end
