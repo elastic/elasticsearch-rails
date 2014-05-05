@@ -95,6 +95,16 @@ if ENV["MONGODB_AVAILABLE"]
             end
           end
 
+          should "zip results from records" do
+            response = MongoidArticle.search('title:code')
+
+            response.records.each_with_hit do |r, h|
+              assert_not_nil h._score
+              assert_not_nil h._source.title
+              assert_equal h._id, r._id.to_s
+            end
+          end
+
           should "remove document from index on destroy" do
             article = MongoidArticle.first
 
