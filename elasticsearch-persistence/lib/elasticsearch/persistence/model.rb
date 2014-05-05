@@ -6,6 +6,7 @@ require 'virtus'
 require 'elasticsearch/persistence'
 require 'elasticsearch/persistence/model/errors'
 require 'elasticsearch/persistence/model/store'
+require 'elasticsearch/persistence/model/find'
 
 module Elasticsearch
   module Persistence
@@ -44,6 +45,8 @@ module Elasticsearch
 
           extend  Elasticsearch::Persistence::Model::Store::ClassMethods
           include Elasticsearch::Persistence::Model::Store::InstanceMethods
+
+          extend  Elasticsearch::Persistence::Model::Find::ClassMethods
 
           class << self
             def attribute(name, type=nil, options={}, &block)
