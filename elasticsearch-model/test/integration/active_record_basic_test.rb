@@ -81,13 +81,15 @@ module Elasticsearch
           end
         end
 
-        should "zip results from records" do
+        should "preserve the search results order for records" do
           response = Article.search('title:code')
 
           response.records.each_with_hit do |r, h|
-            assert_not_nil h._score
-            assert_not_nil h._source.title
             assert_equal h._id, r.id.to_s
+          end
+
+          response.records.map_with_hit do |r, h|
+            assert_equal h._id, r._id.to_s
           end
         end
 
