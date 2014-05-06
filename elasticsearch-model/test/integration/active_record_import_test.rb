@@ -7,9 +7,12 @@ module Elasticsearch
       class ::ImportArticle < ActiveRecord::Base
         include Elasticsearch::Model
 
+        scope :popular, -> { where('views >= 50') }
+
         mapping do
           indexes :title,      type: 'string'
           indexes :views,      type: 'integer'
+          indexes :numeric,    type: 'integer'
           indexes :created_at, type: 'date'
         end
       end
@@ -19,7 +22,8 @@ module Elasticsearch
           ActiveRecord::Schema.define(:version => 1) do
             create_table :import_articles do |t|
               t.string   :title
-              t.string   :views # For the sake of invalid data sent to Elasticsearch
+              t.integer  :views
+              t.string   :numeric # For the sake of invalid data sent to Elasticsearch
               t.datetime :created_at, :default => 'NOW()'
             end
           end
@@ -28,7 +32,7 @@ module Elasticsearch
           ImportArticle.__elasticsearch__.create_index! force: true
           ImportArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
 
-          100.times { |i| ImportArticle.create! title: "Test #{i}" }
+          100.times { |i| ImportArticle.create! title: "Test #{i}", views: i }
         end
 
         should "import all the documents" do
@@ -49,8 +53,17 @@ module Elasticsearch
           assert_equal 100, ImportArticle.search('*').results.total
         end
 
+        should "import only documents from a specific scope" do
+          assert_equal 100, ImportArticle.count
+
+          assert_equal 0, ImportArticle.import(scope: 'popular')
+
+          ImportArticle.__elasticsearch__.refresh_index!
+          assert_equal 50, ImportArticle.search('*').results.total
+        end
+
         should "report and not store/index invalid documents" do
-          ImportArticle.create! title: "Test INVALID", views: "INVALID"
+          ImportArticle.create! title: "Test INVALID", numeric: "INVALID"
 
           assert_equal 101, ImportArticle.count
 
