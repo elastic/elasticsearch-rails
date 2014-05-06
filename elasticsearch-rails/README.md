@@ -40,8 +40,7 @@ To import the records from your `Article` model, run:
 $ bundle exec rake environment elasticsearch:import:model CLASS='Article'
 ```
 
-To apply scope to the records from your `Article` model first define the
-scope in `Article`:
+To limit what gets imported, define your scope:
 
 ```ruby
 class Article
@@ -49,7 +48,7 @@ class Article
 end
 ```
 
-and then identify the method as an environment variable:
+and then identify the scope as an environment variable:
 
 ```bash
 $ bundle exec rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
