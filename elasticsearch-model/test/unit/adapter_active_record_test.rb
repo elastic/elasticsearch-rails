@@ -16,10 +16,6 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
       def ids
         [2, 1]
       end
-
-      def self.published
-        self # Effectively, an nil scope for testing.
-      end
     end
 
     RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [] } }
@@ -87,17 +83,27 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
 
     context "Importing" do
       setup do
-        DummyClassForActiveRecord.expects(:find_in_batches).returns([])
         DummyClassForActiveRecord.__send__ :extend, Elasticsearch::Model::Adapter::ActiveRecord::Importing
       end
 
+      should "raise NoMethodError when calling scope that does not exist" do
+        assert_raise NoMethodError do
+          DummyClassForActiveRecord.__find_in_batches(scope: :not_found_method) do; end
+        end
+      end
+
       should "implement the __find_in_batches method" do
+        DummyClassForActiveRecord.expects(:find_in_batches).returns([])
         DummyClassForActiveRecord.__find_in_batches do; end
       end
 
       should "add scope to the active record import" do
+        DummyClassForActiveRecord.expects(:find_in_batches).returns([])
+        DummyClassForActiveRecord.expects(:published).returns(DummyClassForActiveRecord)
+
         DummyClassForActiveRecord.__find_in_batches(scope: :published) do; end
       end
+
     end
   end
 end
