@@ -84,7 +84,7 @@ module Elasticsearch
           #
           def __find_in_batches(options={}, &block)
             named_scope = options.delete(:scope)
-            scope = self.respond_to?(named_scope.to_s) ? self.send(named_scope) : self
+            scope = named_scope.nil? ? self : self.send(named_scope.to_s)
 
             scope.find_in_batches(options) do |batch|
               batch_for_bulk = batch.map { |a| { index: { _id: a.id, data: a.__elasticsearch__.as_indexed_json } } }
