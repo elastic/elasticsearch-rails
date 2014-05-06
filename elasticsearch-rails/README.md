@@ -45,14 +45,14 @@ scope in `Article`:
 
 ```ruby
 class Article
-  scope :import_scope, -> { where(deleted_at: nil) }
+  scope :published, -> { where(deleted_at: nil) }
 end
 ```
 
 and then identify the method as an environment variable:
 
 ```bash
-$ bundle exec rake environment elasticsearch:import:model CLASS='Article' SCOPE='import_scope'
+$ bundle exec rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
 ```
 
 Run this command to display usage instructions:

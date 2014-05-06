@@ -17,8 +17,8 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         [2, 1]
       end
 
-      def self.import_scope
-        self
+      def self.published
+        self # Effectively, an nil scope for testing.
       end
     end
 
@@ -96,7 +96,7 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
       end
 
       should "add scope to the active record import" do
-        DummyClassForActiveRecord.__find_in_batches(import_scope: :import_scope) do; end
+        DummyClassForActiveRecord.__find_in_batches(scope: :published) do; end
       end
     end
   end

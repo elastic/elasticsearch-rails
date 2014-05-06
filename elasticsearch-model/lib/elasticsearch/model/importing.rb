@@ -67,7 +67,7 @@ module Elasticsearch
         # @exmaple Define a scope inside your (ActiveRecord) model to customize data
         # that is imported
         #
-        #    Article.import import_scope: :import_scope
+        #    Article.import scope: :published
         #
         def import(options={}, &block)
           errors       = 0
