@@ -87,9 +87,17 @@ module Elasticsearch
             id_path = options.delete(id_path) || :id
             find_in_batches(options) do |batch|
               batch_for_bulk = batch.map do |a|
-                { index: { _id: a.send(id_path), data: a.__elasticsearch__.as_indexed_json } }
+                { index: { _id: __id_for_path(a, id_path), data: a.__elasticsearch__.as_indexed_json } }
               end
               yield batch_for_bulk
+            end
+          end
+
+          def __id_for_path(record, path)
+            if path == :id
+              record.class.primary_key
+            else
+              record.send(path)
             end
           end
         end
