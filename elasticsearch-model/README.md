@@ -194,6 +194,13 @@ response.any? { |r| r.title =~ /fox|dog/ }
 # => true
 ```
 
+To use `Array`'s methods (including any _ActiveSupport_ extensions), just call `to_a` on the object:
+
+```ruby
+response.to_a.last.title
+# "Fast black dogs"
+```
+
 #### Search results as database records
 
 Instead of returning documents from Elasticsearch, the `records` method will return a collection
