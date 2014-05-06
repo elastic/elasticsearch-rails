@@ -40,6 +40,20 @@ To import the records from your `Article` model, run:
 $ bundle exec rake environment elasticsearch:import:model CLASS='Article'
 ```
 
+To limit what gets imported, define your scope:
+
+```ruby
+class Article
+  scope :published, -> { where(deleted_at: nil) }
+end
+```
+
+and then identify the scope as an environment variable:
+
+```bash
+$ bundle exec rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
+```
+
 Run this command to display usage instructions:
 
 ```bash

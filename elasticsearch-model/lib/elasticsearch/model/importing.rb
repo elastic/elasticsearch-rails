@@ -64,6 +64,11 @@ module Elasticsearch
         #
         #    Article.import index: 'my-new-index', type: 'my-other-type'
         #
+        # @example Customize how data is imported by specifying the
+        # named scope from your (ActiveRecord) model.
+        #
+        #    Article.import scope: 'published'
+        #
         def import(options={}, &block)
           errors       = 0
           refresh      = options.delete(:refresh) || false
