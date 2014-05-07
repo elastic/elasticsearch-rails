@@ -91,11 +91,12 @@ module Elasticsearch
         #    Article.import preprocess: enrich
         #
         def import(options={}, &block)
-          errors       = 0
+          errors         = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
           target_type  = options.delete(:type)      || document_type
           transform    = options.delete(:transform) || __transform
+          return_errors  = options.delete(:return_errors) || false
 
           unless transform.respond_to?(:call)
             raise ArgumentError,
@@ -114,12 +115,16 @@ module Elasticsearch
 
             yield response if block_given?
 
-            errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+            errors += response['items'].select { |i| i['index']['error'] }
           end
 
           self.refresh_index! if refresh
 
-          return errors
+          if return_errors
+            errors
+          else
+            errors.size
+          end
         end
 
         def __batch_to_bulk(batch, transform)

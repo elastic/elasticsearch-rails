@@ -66,6 +66,26 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       assert_equal 1, DummyImportingModel.import
     end
 
+    should "return list of errors if passing option 'return_errors'" do
+      Elasticsearch::Model::Adapter.expects(:from_class)
+                                   .with(DummyImportingModel)
+                                   .returns(DummyImportingAdapter)
+
+      DummyImportingModel.__send__ :include, Elasticsearch::Model::Importing
+
+      client = mock('client')
+      error_text = 'FAILED'
+      client.expects(:bulk).returns({'items' => [ {'index' => {}}, {'index' => {'error' => error_text}} ]})
+
+      DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.stubs(:index_name).returns('foo')
+      DummyImportingModel.stubs(:document_type).returns('foo')
+
+      expected_error_element = {'index' => {'error' => error_text}}
+
+      assert_equal [expected_error_element], DummyImportingModel.import(return_errors: true)
+    end
+
     should "yield the response" do
       Elasticsearch::Model::Adapter.expects(:from_class)
                                    .with(DummyImportingModel)
