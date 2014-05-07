@@ -69,10 +69,11 @@ module Elasticsearch
         #    Article.import scope: 'published'
         #
         def import(options={}, &block)
-          errors       = 0
-          refresh      = options.delete(:refresh) || false
-          target_index = options.delete(:index)   || index_name
-          target_type  = options.delete(:type)    || document_type
+          errors         = []
+          refresh        = options.delete(:refresh) || false
+          target_index   = options.delete(:index)   || index_name
+          target_type    = options.delete(:type)    || document_type
+          return_errors  = options.delete(:return_errors) || false
 
           if options.delete(:force)
             self.create_index! force: true, index: target_index
@@ -86,12 +87,14 @@ module Elasticsearch
 
             yield response if block_given?
 
-            errors += response['items'].map { |k, v| k.values.first['error'] }.compact.length
+            errors.concat(response['items'].map { |k, v| k.values.first['error'] })
           end
 
           self.refresh_index! if refresh
 
-          return errors
+          errors.compact!
+
+          return return_errors ? errors : errors.size
         end
 
       end
