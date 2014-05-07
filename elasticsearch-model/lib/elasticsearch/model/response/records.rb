@@ -43,13 +43,13 @@ module Elasticsearch
         # Yields [record, hit] pairs to the block
         #
         def each_with_hit(&block)
-          records.zip(results).each(&block)
+          records.to_a.zip(results).each(&block)
         end
 
         # Yields [record, hit] pairs and returns the result
         #
         def map_with_hit(&block)
-          records.zip(results).map(&block)
+          records.to_a.zip(results).map(&block)
         end
 
         # Delegate methods to `@records`
