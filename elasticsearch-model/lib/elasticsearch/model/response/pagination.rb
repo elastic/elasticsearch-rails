@@ -69,7 +69,7 @@ module Elasticsearch
             @results  = nil
             @records  = nil
             @response = nil
-            @per_page = value
+            @per_page = value.to_i
 
             search.definition.update :size => @per_page
             search.definition.update :from => @per_page * (@page - 1) if @page
@@ -83,7 +83,7 @@ module Elasticsearch
             @records  = nil
             @response = nil
             @page     = nil
-            search.definition.update :from => value
+            search.definition.update :from => value.to_i
             self
           end
 
