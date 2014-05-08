@@ -17,6 +17,18 @@ module Elasticsearch
           @result = Hashie::Mash.new(attributes)
         end
 
+        # Alias `id` to `_id`
+        #
+        def id
+          @result['_id']
+        end
+
+        # Alias `type` to `_type`
+        #
+        def type
+          @result['_type']
+        end
+
         # Delegate methods to `@result` or `@result._source`
         #
         def method_missing(name, *arguments)
