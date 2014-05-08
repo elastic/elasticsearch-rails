@@ -104,6 +104,18 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         DummyClassForActiveRecord.__find_in_batches(scope: :published) do; end
       end
 
+      should "add parent identifier to the batch item" do
+        model = mock('model', id: 1, parent_id: 10, __elasticsearch__: stub(as_indexed_json: {}))
+        DummyClassForActiveRecord.expects(:find_in_batches).yields([model])
+
+        DummyClassForActiveRecord.__find_in_batches(parent: :parent_id) do; end
+      end
+
+      should "raise an exception when passing an invalid method" do
+        assert_raise NoMethodError do
+          DummyClassForActiveRecord.__find_in_batches(parent: :not_found_method) do; end
+        end
+      end
     end
   end
 end

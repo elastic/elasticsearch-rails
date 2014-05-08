@@ -48,6 +48,13 @@ pass it to the task:
 $ bundle exec rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
 ```
 
+To specify the [parent document](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping-parent-field.html) of your model, pass the method name:
+
+```bash
+$ bundle exec rake environment elasticsearch:import:model CLASS='Article' PARENT='author_id'
+```
+
+
 Run this command to display usage instructions:
 
 ```bash

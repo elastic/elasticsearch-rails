@@ -83,14 +83,24 @@ module Elasticsearch
           # @see http://api.rubyonrails.org/classes/ActiveRecord/Batches.html ActiveRecord::Batches.find_in_batches
           #
           def __find_in_batches(options={}, &block)
-            named_scope = options.delete(:scope)
+            named_scope   = options.delete(:scope)
+            parent_method = options.delete(:parent)
 
             scope = named_scope ? self.__send__(named_scope) : self
 
             scope.find_in_batches(options) do |batch|
-              batch_for_bulk = batch.map { |a| { index: { _id: a.id, data: a.__elasticsearch__.as_indexed_json } } }
+              batch_for_bulk = batch.map { |a| __itemize(a, parent_method) }
               yield batch_for_bulk
             end
+          end
+
+          def __itemize(model, parent_method = nil)
+            item = { index: { _id: model.id, data: model.__elasticsearch__.as_indexed_json } }
+
+            if  parent = parent_method && model.__send__(parent_method)
+              item[:index][:_parent] = parent
+            end
+            item
           end
         end
 
