@@ -68,6 +68,10 @@ module Elasticsearch
         #
         #    Article.import scope: 'published'
         #
+        # @example Import documents that are parent aware:
+        #
+        #    Article.import parent: 'author_id'
+        #
         def import(options={}, &block)
           errors       = 0
           refresh      = options.delete(:refresh) || false

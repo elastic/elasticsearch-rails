@@ -38,6 +38,9 @@ namespace :elasticsearch do
 
       Pass an ActiveRecord scope to limit the imported records:
         $ rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
+
+      Pass an ActiveRecord method that identifies the parent document:
+        $ rake environment elasticsearch:import:model CLASS='Article' PARENT='author_id'
     DESC
     task :model do
       if ENV['CLASS'].to_s == ''
@@ -59,11 +62,12 @@ namespace :elasticsearch do
         rescue NoMethodError; end
       end
 
-      total_errors = klass.import force:      ENV.fetch('FORCE', false),
-                                  batch_size: ENV.fetch('BATCH', 1000).to_i,
-                                  index:      ENV.fetch('INDEX', nil),
-                                  type:       ENV.fetch('TYPE',  nil),
-                                  scope:      ENV.fetch('SCOPE', nil) do |response|
+      total_errors = klass.import force:      ENV.fetch('FORCE',  false),
+                                  batch_size: ENV.fetch('BATCH',  1000).to_i,
+                                  index:      ENV.fetch('INDEX',  nil),
+                                  type:       ENV.fetch('TYPE',   nil),
+                                  parent:     ENV.fetch('PARENT', nil),
+                                  scope:      ENV.fetch('SCOPE',  nil) do |response|
         pbar.inc response['items'].size if pbar
         STDERR.flush
         STDOUT.flush
