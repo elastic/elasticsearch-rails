@@ -81,6 +81,21 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
         DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
         DummyClassForMongoid.__find_in_batches do; end
       end
+
+      context "when transforming models" do
+        setup do
+          @transform = DummyClassForMongoid.__transform
+        end
+
+        should "provide an object that responds to #call" do
+          assert_respond_to @transform, :call
+        end
+
+        should "provide basic transformation" do
+          model = mock("model", id: 1, as_indexed_json: {})
+          assert_equal @transform.call(model), { index: { _id: "1", data: {} } }
+        end
+      end
     end
 
   end

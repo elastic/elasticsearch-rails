@@ -70,16 +70,18 @@ module Elasticsearch
               items << item
 
               if items.length % options[:batch_size] == 0
-                batch_for_bulk = items.map { |a| { index: { _id: a.id.to_s, data: a.as_indexed_json } } }
-                yield batch_for_bulk
+                yield items
                 items = []
               end
             end
 
             unless items.empty?
-              batch_for_bulk = items.map { |a| { index: { _id: a.id.to_s, data: a.as_indexed_json } } }
-              yield batch_for_bulk
+              yield items
             end
+          end
+
+          def __transform
+            lambda {|a|  { index: { _id: a.id.to_s, data: a.as_indexed_json } }}
           end
         end
 

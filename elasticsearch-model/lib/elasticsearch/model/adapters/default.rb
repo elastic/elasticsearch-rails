@@ -36,6 +36,12 @@ module Elasticsearch
           def __find_in_batches(options={}, &block)
             raise NotImplemented, "Method not implemented for default adapter"
           end
+
+          # @abstract Implement this method in your adapter
+          #
+          def __transform
+            raise NotImplemented, "Method not implemented for default adapter"
+          end
         end
 
       end

@@ -10,6 +10,9 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
         def __find_in_batches(options={}, &block)
           yield if block_given?
         end
+        def __transform
+          lambda {|a|}
+        end
       end
 
       def importing_mixin
@@ -41,7 +44,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.expects(:client).returns(client)
       DummyImportingModel.expects(:index_name).returns('foo')
       DummyImportingModel.expects(:document_type).returns('foo')
-
+      DummyImportingModel.stubs(:__batch_to_bulk)
       assert_equal 0, DummyImportingModel.import
     end
 
@@ -58,6 +61,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.stubs(:client).returns(client)
       DummyImportingModel.stubs(:index_name).returns('foo')
       DummyImportingModel.stubs(:document_type).returns('foo')
+      DummyImportingModel.stubs(:__batch_to_bulk)
 
       assert_equal 1, DummyImportingModel.import
     end
@@ -75,6 +79,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.stubs(:client).returns(client)
       DummyImportingModel.stubs(:index_name).returns('foo')
       DummyImportingModel.stubs(:document_type).returns('foo')
+      DummyImportingModel.stubs(:__batch_to_bulk)
 
       DummyImportingModel.import do |response|
         assert_equal 2, response['items'].size
@@ -116,8 +121,36 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
         .returns({'items' => [ {'index' => {} }]})
 
       DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.stubs(:__batch_to_bulk)
 
       DummyImportingModel.import index: 'my-new-index', type: 'my-other-type'
+    end
+
+    should "default to the adapter's bulk transform" do
+      client = mock('client', bulk: {'items' => []})
+      transform = lambda {|a|}
+
+      DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.expects(:__transform).returns(transform)
+      DummyImportingModel.expects(:__batch_to_bulk).with(anything, transform)
+
+      DummyImportingModel.import index: 'foo', type: 'bar'
+    end
+
+    should "use the optioned transform" do
+      client = mock('client', bulk: {'items' => []})
+      transform = lambda {|a|}
+
+      DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.expects(:__batch_to_bulk).with(anything, transform)
+
+      DummyImportingModel.import index: 'foo', type: 'bar', transform: transform
+    end
+
+    should "raise an ArgumentError if transform is an object that doesn't respond to #call" do
+      assert_raise ArgumentError do
+        DummyImportingModel.import index: 'foo', type: 'bar', transform: "not_callable"
+      end
     end
   end
 end
