@@ -109,6 +109,12 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
         @response.limit("35")
         assert_equal 35, @response.search.definition[:size]
       end
+
+      should 'ignore invalid string parameters' do
+        @response.limit(35)
+        @response.limit("asdf")
+        assert_equal 35, @response.search.definition[:size]
+      end
     end
 
     context "with the page() and limit() methods" do
@@ -159,6 +165,12 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
 
       should 'coerce string parameters' do
         @response.offset("35")
+        assert_equal 35, @response.search.definition[:from]
+      end
+
+      should 'ignore invalid string parameters' do
+        @response.offset(35)
+        @response.offset("asdf")
         assert_equal 35, @response.search.definition[:from]
       end
     end

@@ -66,6 +66,7 @@ module Elasticsearch
           # Set the "limit" (`size`) value
           #
           def limit(value)
+            return if value.to_i <= 0
             @results  = nil
             @records  = nil
             @response = nil
@@ -79,6 +80,7 @@ module Elasticsearch
           # Set the "offset" (`from`) value
           #
           def offset(value)
+            return if value.to_i <= 0
             @results  = nil
             @records  = nil
             @response = nil
