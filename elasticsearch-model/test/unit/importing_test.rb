@@ -126,7 +126,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.import index: 'my-new-index', type: 'my-other-type'
     end
 
-    should "default to the adapter's bulk transform" do
+    should "use the default transform from adapter" do
       client = mock('client', bulk: {'items' => []})
       transform = lambda {|a|}
 
@@ -137,7 +137,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.import index: 'foo', type: 'bar'
     end
 
-    should "use the optioned transform" do
+    should "use the transformer from options" do
       client = mock('client', bulk: {'items' => []})
       transform = lambda {|a|}
 
@@ -147,7 +147,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.import index: 'foo', type: 'bar', transform: transform
     end
 
-    should "raise an ArgumentError if transform is an object that doesn't respond to #call" do
+    should "raise an ArgumentError if transform doesn't respond to the call method" do
       assert_raise ArgumentError do
         DummyImportingModel.import index: 'foo', type: 'bar', transform: "not_callable"
       end

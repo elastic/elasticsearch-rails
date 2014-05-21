@@ -81,6 +81,18 @@ module Elasticsearch
           ImportArticle.__elasticsearch__.refresh_index!
           assert_equal 100, ImportArticle.search('*').results.total
         end
+
+        should "transform documents with the option" do
+          assert_equal 100, ImportArticle.count
+
+          assert_equal 0, ImportArticle.import( transform: ->(a) {{ index: { data: { name: a.title, foo: 'BAR' } }}} )
+
+          ImportArticle.__elasticsearch__.refresh_index!
+          assert_contains ImportArticle.search('*').results.first._source.keys, 'name'
+          assert_contains ImportArticle.search('*').results.first._source.keys, 'foo'
+          assert_equal 100, ImportArticle.search('test').results.total
+          assert_equal 100, ImportArticle.search('bar').results.total
+        end
       end
 
     end

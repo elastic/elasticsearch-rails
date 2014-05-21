@@ -68,10 +68,10 @@ module Elasticsearch
         #
         #    Article.import scope: 'published'
         #
-        # @example Customize how each record is [bulk imported](https://github.com/elasticsearch/elasticsearch-ruby/blob/master/elasticsearch-api/lib/elasticsearch/api/actions/bulk.rb)
+        # @example Transform records during the import with a lambda
         #
-        #    transform = lambda do |article|
-        #      {index: {_id: article.id, _parent: article.author_id, data: article.__elasticsearch__.as_indexed_json}}
+        #    transform = lambda do |a|
+        #      {index: {_id: a.id, _parent: a.author_id, data: a.__elasticsearch__.as_indexed_json}}
         #    end
         #
         #    Article.import transform: transform
@@ -83,8 +83,9 @@ module Elasticsearch
           target_type  = options.delete(:type)      || document_type
           transform    = options.delete(:transform) || __transform
 
-          if !transform.respond_to?(:call)
-            raise ArgumentError, "You must pass an object that supports #call method, #{transform.class} given"
+          unless transform.respond_to?(:call)
+            raise ArgumentError,
+                  "Pass an object responding to `call` as the :transport option, #{transform.class} given"
           end
 
           if options.delete(:force)
@@ -108,7 +109,7 @@ module Elasticsearch
         end
 
         def __batch_to_bulk(batch, transform)
-          batch.map {|model| transform.call(model)}
+          batch.map { |model| transform.call(model) }
         end
       end
 

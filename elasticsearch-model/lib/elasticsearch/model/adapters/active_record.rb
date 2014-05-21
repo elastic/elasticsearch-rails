@@ -93,7 +93,7 @@ module Elasticsearch
           end
 
           def __transform
-            lambda {|model|  { index: { _id: model.id, data: model.__elasticsearch__.as_indexed_json } }}
+            lambda { |model|  { index: { _id: model.id, data: model.__elasticsearch__.as_indexed_json } } }
           end
         end
       end

@@ -113,7 +113,7 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
           assert_respond_to @transform, :call
         end
 
-        should "provide basic transformation" do
+        should "provide default transformation" do
           model = mock("model", id: 1, __elasticsearch__: stub(as_indexed_json: {}))
           assert_equal @transform.call(model), { index: { _id: 1, data: {} } }
         end
