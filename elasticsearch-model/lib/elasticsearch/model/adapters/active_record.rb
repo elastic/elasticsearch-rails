@@ -88,14 +88,15 @@ module Elasticsearch
             scope = named_scope ? self.__send__(named_scope) : self
 
             scope.find_in_batches(options) do |batch|
-              batch_for_bulk = batch.map { |a| { index: { _id: a.id, data: a.__elasticsearch__.as_indexed_json } } }
-              yield batch_for_bulk
+              yield batch
             end
           end
+
+          def __transform
+            lambda {|model|  { index: { _id: model.id, data: model.__elasticsearch__.as_indexed_json } }}
+          end
         end
-
       end
-
     end
   end
 end
