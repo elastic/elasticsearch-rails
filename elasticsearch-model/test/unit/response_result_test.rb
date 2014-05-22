@@ -73,5 +73,16 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
       result.as_json(except: 'foo')
     end
 
+    should "map the _id column to id" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _id: 42
+
+      assert_equal 42, result.id
+    end
+
+    should "map the _type column to type" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _type: 'baz'
+
+      assert_equal 'baz', result.type
+    end
   end
 end

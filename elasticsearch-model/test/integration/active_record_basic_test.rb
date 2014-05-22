@@ -72,6 +72,13 @@ module Elasticsearch
           assert_equal [1, 2],     response.records.map(&:id)
         end
 
+        should "iterate aliased id and type over results" do
+          response = Article.search('title:test')
+
+          assert_equal ['1', '2'],             response.results.map(&:id)
+          assert_equal ['article', 'article'], response.results.map(&:type)
+        end
+
         should "access results from records" do
           response = Article.search('title:test')
 
