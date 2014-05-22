@@ -70,9 +70,9 @@ module Elasticsearch
         #
         def import(options={}, &block)
           errors         = []
-          refresh        = options.delete(:refresh) || false
-          target_index   = options.delete(:index)   || index_name
-          target_type    = options.delete(:type)    || document_type
+          refresh        = options.delete(:refresh)       || false
+          target_index   = options.delete(:index)         || index_name
+          target_type    = options.delete(:type)          || document_type
           return_errors  = options.delete(:return_errors) || false
 
           if options.delete(:force)
@@ -87,14 +87,16 @@ module Elasticsearch
 
             yield response if block_given?
 
-            errors.concat(response['items'].map { |k, v| k.values.first['error'] })
+            errors += response['items'].select { |i| i['index']['error'] }
           end
 
           self.refresh_index! if refresh
 
-          errors.compact!
-
-          return return_errors ? errors : errors.size
+          if return_errors
+            errors
+          else
+            errors.size
+          end
         end
 
       end

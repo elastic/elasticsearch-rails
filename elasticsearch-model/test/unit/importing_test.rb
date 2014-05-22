@@ -77,7 +77,9 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.stubs(:index_name).returns('foo')
       DummyImportingModel.stubs(:document_type).returns('foo')
 
-      assert_equal [error_text], DummyImportingModel.import(return_errors: true)
+      expected_error_element = {'index' => {'error' => error_text}}
+
+      assert_equal [expected_error_element], DummyImportingModel.import(return_errors: true)
     end
 
     should "yield the response" do
