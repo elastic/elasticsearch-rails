@@ -23,22 +23,28 @@ The libraries are compatible with Ruby 1.9.3 and higher.
 Install the `elasticsearch-model` and/or `elasticsearch-rails` package from
 [Rubygems](https://rubygems.org/gems/elasticsearch):
 
-    gem install elasticsearch-model elasticsearch-rails
+```ruby
+gem install elasticsearch-model elasticsearch-rails
+```
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://gembundler.com):
 
-    gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-    gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+```ruby
+gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+```
 
 or install it from a source code checkout:
 
-    git clone https://github.com/elasticsearch/elasticsearch-rails.git
-    cd elasticsearch-model
-    bundle install
-    rake install
-    cd elasticsearch-rails
-    bundle install
-    rake install
+```bash
+git clone https://github.com/elasticsearch/elasticsearch-rails.git
+cd elasticsearch-model
+bundle install
+rake install
+cd elasticsearch-rails
+bundle install
+rake install
+```
 
 ## Usage
 
@@ -125,6 +131,10 @@ Article.create title: 'Test'
 * [[README]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-rails)
 * [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/test)
+
+## Testing
+
+After following the installation notes above, run `rake test:all` to run the full test suite. Elasticsearch must be running on port `9250`.
 
 ## License
 
