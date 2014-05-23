@@ -15,6 +15,20 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
       assert_raise(NoMethodError) { result.xoxo }
     end
 
+    should "return _id as #id" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _id: 42, _source: { id: 12 }
+
+      assert_equal 42, result.id
+      assert_equal 12, result._source.id
+    end
+
+    should "return _type as #type" do
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _type: 'baz', _source: { type: 'BAM' }
+
+      assert_equal 'baz', result.type
+      assert_equal 'BAM', result._source.type
+    end
+
     should "delegate method calls to `_source` when available" do
       result = Elasticsearch::Model::Response::Result.new foo: 'bar', _source: { bar: 'baz' }
 
@@ -71,18 +85,6 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
 
       result.instance_variable_get(:@result).expects(:as_json)
       result.as_json(except: 'foo')
-    end
-
-    should "map the _id column to id" do
-      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _id: 42
-
-      assert_equal 42, result.id
-    end
-
-    should "map the _type column to type" do
-      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _type: 'baz'
-
-      assert_equal 'baz', result.type
     end
   end
 end

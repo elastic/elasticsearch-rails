@@ -72,11 +72,11 @@ module Elasticsearch
           assert_equal [1, 2],     response.records.map(&:id)
         end
 
-        should "iterate aliased id and type over results" do
+        should "return _id and _type as #id and #type" do
           response = Article.search('title:test')
 
-          assert_equal ['1', '2'],             response.results.map(&:id)
-          assert_equal ['article', 'article'], response.results.map(&:type)
+          assert_equal '1',       response.results.first.id
+          assert_equal 'article', response.results.first.type
         end
 
         should "access results from records" do

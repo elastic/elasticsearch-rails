@@ -17,13 +17,13 @@ module Elasticsearch
           @result = Hashie::Mash.new(attributes)
         end
 
-        # Alias `id` to `_id`
+        # Return document `_id` as `id`
         #
         def id
           @result['_id']
         end
 
-        # Alias `type` to `_type`
+        # Return document `_type` as `_type`
         #
         def type
           @result['_type']
@@ -35,12 +35,6 @@ module Elasticsearch
           case
           when name.to_s.end_with?('?')
             @result.__send__(name, *arguments) || ( @result._source && @result._source.__send__(name, *arguments) )
-          when name.to_s == "id"
-            if @result._source && @result._source.respond_to?(name)
-              @result._source.__send__ name, *arguments
-            else
-              super
-            end
           when @result.respond_to?(name)
             @result.__send__ name, *arguments
           when @result._source && @result._source.respond_to?(name)
