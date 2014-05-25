@@ -62,6 +62,7 @@ module Elasticsearch
   #     # ...
   #
   module Model
+    METHODS = [:search, :mapping, :mappings, :settings, :index_name, :document_type, :import]
 
     # Adds the `Elasticsearch::Model` functionality to the including class.
     #
@@ -107,13 +108,9 @@ module Elasticsearch
         # Delegate important methods to the `__elasticsearch__` proxy, unless they are defined already
         #
         class << self
-          delegate :search,        to: :__elasticsearch__ unless respond_to?(:search)
-          delegate :mapping,       to: :__elasticsearch__ unless respond_to?(:mapping)
-          delegate :mappings,      to: :__elasticsearch__ unless respond_to?(:mappings)
-          delegate :settings,      to: :__elasticsearch__ unless respond_to?(:settings)
-          delegate :index_name,    to: :__elasticsearch__ unless respond_to?(:index_name)
-          delegate :document_type, to: :__elasticsearch__ unless respond_to?(:document_type)
-          delegate :import,        to: :__elasticsearch__ unless respond_to?(:import)
+          METHODS.each do |method|
+            delegate method, to: :__elasticsearch__ unless self.public_instance_methods.include?(method)
+          end
         end
 
         # Mix the importing module into the proxy

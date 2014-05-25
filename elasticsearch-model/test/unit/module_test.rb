@@ -22,6 +22,11 @@ class Elasticsearch::Model::ModuleTest < Test::Unit::TestCase
 
     context "when included in module/class, " do
       class ::DummyIncludingModel; end
+      class ::DummyIncludingModelWithSearchMethodDefined
+        def self.search(query, options={})
+          "SEARCH"
+        end
+      end
 
       should "include and set up the proxy" do
         DummyIncludingModel.__send__ :include, Elasticsearch::Model
@@ -39,6 +44,12 @@ class Elasticsearch::Model::ModuleTest < Test::Unit::TestCase
         assert_respond_to DummyIncludingModel, :index_name
         assert_respond_to DummyIncludingModel, :document_type
         assert_respond_to DummyIncludingModel, :import
+      end
+
+      should "not override existing method" do
+        DummyIncludingModelWithSearchMethodDefined.__send__ :include, Elasticsearch::Model
+
+        assert_equal 'SEARCH', DummyIncludingModelWithSearchMethodDefined.search('foo')
       end
     end
 
