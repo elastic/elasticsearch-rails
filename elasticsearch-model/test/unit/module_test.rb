@@ -20,6 +20,19 @@ class Elasticsearch::Model::ModuleTest < Test::Unit::TestCase
       end
     end
 
+    context "search" do
+      should "initialize the search object" do
+        Elasticsearch::Model::Searching::SearchRequest
+          .expects(:new).with do |klass, query, options|
+            assert_equal Elasticsearch::Model::MultipleModels, klass.class
+            assert_equal 'foo', query
+          end
+          .returns( stub('search') )
+
+          Elasticsearch::Model.search('foo', [mock('SearchableModel')])
+      end
+    end
+
     context "when included in module/class, " do
       class ::DummyIncludingModel; end
       class ::DummyIncludingModelWithSearchMethodDefined
