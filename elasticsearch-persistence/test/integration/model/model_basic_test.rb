@@ -26,6 +26,10 @@ module Elasticsearch
       end
 
       context "A basic persistence model" do
+        setup do
+          Person.gateway.create_index! force: true
+        end
+
         should "save and find the object" do
           person = Person.new name: 'John Smith', birthday: Date.parse('1970-01-01')
           person.save
@@ -93,6 +97,20 @@ module Elasticsearch
           assert_equal 2, people.size
 
           assert people.map_with_hit { |o,h| h._score }.all? { |s| s > 0 }
+        end
+
+        should "find instances in batches" do
+          100.times { |i| Person.create name: "John #{i+1}" }
+          Person.gateway.refresh_index!
+
+          @results = []
+
+          Person.find_in_batches(_source_include: 'name') do |batch|
+            @results += batch.map(&:name)
+          end
+
+          assert_equal 100, @results.size
+          assert_contains @results, 'John 1'
         end
       end
 

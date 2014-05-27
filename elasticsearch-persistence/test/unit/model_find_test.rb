@@ -34,7 +34,7 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
     end
 
     setup do
-      @gateway         = stub
+      @gateway         = stub(client: stub(), index_name: 'foo', document_type: 'bar')
       DummyFindModel.stubs(:gateway).returns(@gateway)
 
       @response = MultiJson.load <<-JSON
@@ -81,6 +81,36 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
         .returns(@response)
 
       DummyFindModel.all( { query: { match: { title: 'test' } }, routing: 'abc123' } )
+    end
+
+    should "find all records in batches" do
+      @gateway
+        .expects(:deserialize)
+        .with('_source' => {'foo' => 'bar'})
+        .returns('_source' => {'foo' => 'bar'})
+
+      @gateway.client
+        .expects(:search)
+        .with do |arguments|
+          assert_equal 'scan', arguments[:search_type]
+          assert_equal 'foo',  arguments[:index]
+          assert_equal 'bar',  arguments[:type]
+        end
+        .returns(MultiJson.load('{"_scroll_id":"abc123==", "hits":{"hits":[]}}'))
+
+      @gateway.client
+        .expects(:scroll)
+        .twice
+        .returns(MultiJson.load('{"_scroll_id":"abc456==", "hits":{"hits":[{"_source":{"foo":"bar"}}]}}'))
+        .then
+        .returns(MultiJson.load('{"_scroll_id":"abc789==", "hits":{"hits":[]}}'))
+
+      @doc = nil
+
+      result = DummyFindModel.find_in_batches { |batch| @doc = batch.first['_source']['foo'] }
+
+      assert_equal 'abc789==', result
+      assert_equal 'bar',      @doc
     end
 
   end
