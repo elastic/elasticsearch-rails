@@ -11,8 +11,24 @@ require 'elasticsearch/persistence/model/find'
 module Elasticsearch
   module Persistence
 
+    # When included, extends a plain Ruby class with persistence-related features via the ActiveRecord pattern
+    #
+    # @example Include the repository in a custom class
+    #
+    #     require 'elasticsearch/persistence/model'
+    #
+    #     class MyObject
+    #       include Elasticsearch::Persistence::Repository
+    #     end
+    #
     module Model
+
+      # Utility methods for {Elasticsearch::Persistence::Model}
+      #
       module Utils
+
+        # Return Elasticsearch type based on passed Ruby class (used in the `attribute` method)
+        #
         def lookup_type(type)
           case
             when type == String
@@ -49,6 +65,9 @@ module Elasticsearch
           extend  Elasticsearch::Persistence::Model::Find::ClassMethods
 
           class << self
+
+            # Re-define the Virtus' `attribute` method, to configure Elasticsearch mapping as well
+            #
             def attribute(name, type=nil, options={}, &block)
               mapping = options.delete(:mapping) || {}
               super
@@ -60,12 +79,16 @@ module Elasticsearch
               gateway.mapping(&block) if block_given?
             end
 
+            # Return the {Repository::Class} instance
+            #
             def gateway(&block)
               @gateway ||= Elasticsearch::Persistence::Repository::Class.new host: self
               block.arity < 1 ? @gateway.instance_eval(&block) : block.call(@gateway) if block_given?
               @gateway
             end
 
+            # Delegate methods to repository
+            #
             delegate :settings,
                      :mappings,
                      :mapping,
@@ -79,6 +102,8 @@ module Elasticsearch
               to: :gateway
           end
 
+          # Configure the repository based on the model (set up index_name, etc)
+          #
           gateway do
             klass         base
             index_name    base.model_name.collection.gsub(/\//, '-')
@@ -96,6 +121,8 @@ module Elasticsearch
             end
           end
 
+          # Set up common attributes
+          #
           attribute :id,         String, writer: :private
           attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
           attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }

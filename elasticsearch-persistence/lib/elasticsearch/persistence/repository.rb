@@ -17,9 +17,11 @@ module Elasticsearch
       end
     end
 
-    # When included, creates an instance of the {Repository::Class} class as a "gateway"
+    # When included, creates an instance of the {Repository::Class Repository} class as a "gateway"
     #
     # @example Include the repository in a custom class
+    #
+    #     require 'elasticsearch/persistence'
     #
     #     class MyRepository
     #       include Elasticsearch::Persistence::Repository
