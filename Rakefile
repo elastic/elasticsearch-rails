@@ -1,6 +1,6 @@
 require 'pathname'
 
-subprojects = %w| elasticsearch-model elasticsearch-rails |
+subprojects = %w| elasticsearch-model elasticsearch-rails elasticsearch-persistence |
 
 __current__ = Pathname( File.expand_path('..', __FILE__) )
 
