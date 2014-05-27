@@ -8,9 +8,8 @@ module Elasticsearch
       #
       #     repository = Elasticsearch::Persistence::Repository::Class.new
       #     # => #<Elasticsearch::Persistence::Repository::Class ...>
-      #     # > repository.save(my_object)
+      #     repository.save(my_object)
       #     # => {"_index"=> ... }
-      #
       #
       # @example Shortcut use
       #
@@ -22,6 +21,7 @@ module Elasticsearch
       #     repository = Elasticsearch::Persistence::Repository.new do
       #       index 'my_notes'
       #     end
+      #
       #     # => #<Elasticsearch::Persistence::Repository::Class ...>
       #     # > repository.save(my_object)
       #     # => {"_index"=> ... }
@@ -35,7 +35,7 @@ module Elasticsearch
       #     repository = MyRepository.new
       #
       #     repository.gateway.client.info
-      #     => {"status"=>200, "name"=>"Venom", ... }
+      #     # => {"status"=>200, "name"=>"Venom", ... }
       #
       class Class
         include Elasticsearch::Persistence::Repository::Client
@@ -58,6 +58,8 @@ module Elasticsearch
         # Return the "host" class, if this repository is a gateway hosted in another class
         #
         # @return [nil, Class]
+        #
+        # @api private
         #
         def host
           options[:host]

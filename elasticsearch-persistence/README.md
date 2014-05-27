@@ -1,7 +1,6 @@
 # Elasticsearch::Persistence
 
-This library provides a persistence layer for Ruby domain objects in Elasticsearch,
-using the Repository and ActiveRecord patterns.
+Persistence layer for Ruby domain objects in Elasticsearch, using the Repository and ActiveRecord patterns.
 
 The library is compatible with Ruby 1.9.3 (or higher) and Elasticsearch 1.0 (or higher).
 
@@ -31,7 +30,7 @@ The `Elasticsearch::Persistence::Repository` module provides an implementation o
 to save, delete, find and search objects stored in Elasticsearch, as well as configure
 mappings and settings for the index.
 
-Let's have a simple, plain old Ruby object (PORO):
+Let's have a simple plain old Ruby object (PORO):
 
 ```ruby
 class Note
@@ -415,11 +414,19 @@ results.response._shards.failed
 # => 0
 ```
 
+#### Example Application
+
+An example Sinatra application is available in
+[`examples/sinatra/application.rb`](examples/sinatra/application.rb),
+and demonstrates a rich set of features of the repository.
+
+
 ### The ActiveRecord Pattern
 
-_Work in progress_. The ActiveRecord [pattern](http://www.martinfowler.com/eaaCatalog/activeRecord.html) will work
-in a very similar way as `Tire::Model::Persistence`, allowing a drop-in replacement of an Elasticsearch-backed model
-in Ruby on Rails applications.
+[_Work in progress_](https://github.com/elasticsearch/elasticsearch-rails/pull/91).
+The ActiveRecord [pattern](http://www.martinfowler.com/eaaCatalog/activeRecord.html) will work
+in a very similar way as `Tire::Model::Persistence`, allowing a drop-in replacement of
+an Elasticsearch-backed model in Ruby on Rails applications.
 
 ## License
 

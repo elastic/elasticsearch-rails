@@ -2,6 +2,9 @@ module Elasticsearch
   module Persistence
     module Repository
 
+      # Wraps the Elasticsearch Ruby
+      # [client](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch#usage)
+      #
       module Client
 
         # Get or set the default client for this repository

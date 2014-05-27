@@ -8,6 +8,12 @@ module Elasticsearch
 
         # Store the serialized object in Elasticsearch
         #
+        # @example
+        #     repository.save(myobject)
+        #     => {"_index"=>"...", "_type"=>"...", "_id"=>"...", "_version"=>1, "created"=>true}
+        #
+        # @return {Hash} The response from Elasticsearch
+        #
         def save(document, options={})
           serialized = serialize(document)
           id   = __get_id_from_document(serialized)
@@ -16,6 +22,18 @@ module Elasticsearch
         end
 
         # Update the serialized object in Elasticsearch with partial data or script
+        #
+        # @example Update the document with partial data
+        #
+        #     repository.update id: 1, title: 'UPDATED',  tags: []
+        #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>2}
+        #
+        # @example Update the document with a script
+        #
+        #     repository.update 1, script: 'ctx._source.views += 1'
+        #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>3}
+        #
+        # @return {Hash} The response from Elasticsearch
         #
         def update(document, options={})
           case
@@ -51,6 +69,13 @@ module Elasticsearch
         end
 
         # Remove the serialized object or document with specified ID from Elasticsearch
+        #
+        # @example Remove the document with ID 1
+        #
+        #     repository.delete(1)
+        #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>4}
+        #
+        # @return {Hash} The response from Elasticsearch
         #
         def delete(document, options={})
           if document.is_a?(String) || document.is_a?(Integer)

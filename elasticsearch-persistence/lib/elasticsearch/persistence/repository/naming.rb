@@ -2,6 +2,8 @@ module Elasticsearch
   module Persistence
     module Repository
 
+      # Wraps all naming-related features of the repository (index name, the domain object class, etc)
+      #
       module Naming
 
         # Get or set the class used to initialize domain objects when deserializing them
@@ -52,6 +54,9 @@ module Elasticsearch
         #     repository.__get_klass_from_type 'note'
         #     => Note
         #
+        # @return [Class] The class corresponding to the passed type
+        # @raise [NameError] if the class cannot be found
+        #
         # @api private
         #
         def __get_klass_from_type(type)
@@ -66,6 +71,8 @@ module Elasticsearch
         # @example
         #     repository.__get_type_from_class Note
         #     => "note"
+        #
+        # @return [String] The type corresponding to the passed class
         #
         # @api private
         #
@@ -86,6 +93,8 @@ module Elasticsearch
         end
 
         # Extract a document ID from the document (assuming Hash or Hash-like object)
+        #
+        # @note Calling this method will *remove* the `id` or `_id` key from the passed object.
         #
         # @example
         #     options = { title: 'Test', id: 'abc123' }
