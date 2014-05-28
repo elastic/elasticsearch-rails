@@ -127,6 +127,10 @@ module Elasticsearch
           attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
           attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
 
+          def to_s
+            "#<#{self.class} #{attributes.to_hash.inspect.gsub(/:(\w+)=>/, '\1: ')}>"
+          end
+
           def set_id(id)
             self.id = id
           end
