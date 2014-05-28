@@ -113,5 +113,11 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
       assert_equal 'bar',      @doc
     end
 
+    should "return an Enumerator for find in batches" do
+      assert_nothing_raised do
+        assert_instance_of Enumerator, DummyFindModel.find_in_batches
+      end
+    end
+
   end
 end

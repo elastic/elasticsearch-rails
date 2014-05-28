@@ -45,9 +45,16 @@ module Elasticsearch
           #
           #      Person.find_in_batches( _source_include: 'name') { |_| puts _.response.hits.hits.map(&:to_hash) }
           #
-          # @return [String] The `scroll_id` for the request
+          # @example Leave out the block to return an Enumerator instance
+          #
+          #      Person.find_in_batches(size: 100).map { |batch| batch.size }
+          #      # => [100, 100, 100, ... ]
+          #
+          # @return [String,Enumerator] The `scroll_id` for the request or Enumerator when the block is not passed
           #
           def find_in_batches(options={}, &block)
+            return to_enum(:find_in_batches, options) unless block_given?
+
             search_params = options.extract!(
               :index,
               :type,
