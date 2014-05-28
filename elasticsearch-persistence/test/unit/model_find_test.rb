@@ -83,39 +83,66 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
       DummyFindModel.all( { query: { match: { title: 'test' } }, routing: 'abc123' } )
     end
 
-    should "find all records in batches" do
-      @gateway
+    context "finding via scan/scroll" do
+      setup do
+        @gateway
         .expects(:deserialize)
         .with('_source' => {'foo' => 'bar'})
         .returns('_source' => {'foo' => 'bar'})
 
-      @gateway.client
-        .expects(:search)
-        .with do |arguments|
-          assert_equal 'scan', arguments[:search_type]
-          assert_equal 'foo',  arguments[:index]
-          assert_equal 'bar',  arguments[:type]
+        @gateway.client
+          .expects(:search)
+          .with do |arguments|
+            assert_equal 'scan', arguments[:search_type]
+            assert_equal 'foo',  arguments[:index]
+            assert_equal 'bar',  arguments[:type]
+          end
+          .returns(MultiJson.load('{"_scroll_id":"abc123==", "hits":{"hits":[]}}'))
+
+        @gateway.client
+          .expects(:scroll)
+          .twice
+          .returns(MultiJson.load('{"_scroll_id":"abc456==", "hits":{"hits":[{"_source":{"foo":"bar"}}]}}'))
+          .then
+          .returns(MultiJson.load('{"_scroll_id":"abc789==", "hits":{"hits":[]}}'))
+      end
+
+      should "find all records in batches" do
+        @doc = nil
+        result = DummyFindModel.find_in_batches { |batch| @doc = batch.first['_source']['foo'] }
+
+        assert_equal 'abc789==', result
+        assert_equal 'bar',      @doc
+      end
+
+      should "return an Enumerator for find in batches" do
+        @doc = nil
+        assert_nothing_raised do
+          e = DummyFindModel.find_in_batches
+          assert_instance_of Enumerator, e
+
+          e.each { |batch| @doc = batch.first['_source']['foo'] }
+          assert_equal 'bar',      @doc
         end
-        .returns(MultiJson.load('{"_scroll_id":"abc123==", "hits":{"hits":[]}}'))
+      end
 
-      @gateway.client
-        .expects(:scroll)
-        .twice
-        .returns(MultiJson.load('{"_scroll_id":"abc456==", "hits":{"hits":[{"_source":{"foo":"bar"}}]}}'))
-        .then
-        .returns(MultiJson.load('{"_scroll_id":"abc789==", "hits":{"hits":[]}}'))
+      should "find each" do
+        @doc = nil
+        result = DummyFindModel.find_each { |doc| @doc = doc['_source']['foo'] }
 
-      @doc = nil
+        assert_equal 'abc789==', result
+        assert_equal 'bar',      @doc
+      end
 
-      result = DummyFindModel.find_in_batches { |batch| @doc = batch.first['_source']['foo'] }
+      should "return an Enumerator for find each" do
+        @doc = nil
+        assert_nothing_raised do
+          e = DummyFindModel.find_each
+          assert_instance_of Enumerator, e
 
-      assert_equal 'abc789==', result
-      assert_equal 'bar',      @doc
-    end
-
-    should "return an Enumerator for find in batches" do
-      assert_nothing_raised do
-        assert_instance_of Enumerator, DummyFindModel.find_in_batches
+          e.each { |doc| @doc = doc['_source']['foo'] }
+          assert_equal 'bar',      @doc
+        end
       end
     end
 

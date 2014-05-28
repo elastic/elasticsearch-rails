@@ -100,16 +100,33 @@ module Elasticsearch
         end
 
         should "find instances in batches" do
-          100.times { |i| Person.create name: "John #{i+1}" }
+          50.times { |i| Person.create name: "John #{i+1}" }
+          Person.gateway.refresh_index!
+
+          @batches = 0
+          @results = []
+
+          Person.find_in_batches(_source_include: 'name') do |batch|
+            @batches += 1
+            @results += batch.map(&:name)
+          end
+
+          assert_equal  3, @batches
+          assert_equal 50, @results.size
+          assert_contains @results, 'John 1'
+        end
+
+        should "find each instance" do
+          50.times { |i| Person.create name: "John #{i+1}" }
           Person.gateway.refresh_index!
 
           @results = []
 
-          Person.find_in_batches(_source_include: 'name') do |batch|
-            @results += batch.map(&:name)
+          Person.find_each(_source_include: 'name') do |person|
+            @results << person.name
           end
 
-          assert_equal 100, @results.size
+          assert_equal 50, @results.size
           assert_contains @results, 'John 1'
         end
       end

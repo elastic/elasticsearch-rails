@@ -25,8 +25,12 @@ module Elasticsearch
           #
           # You can restrict the models being returned with a query.
           #
-          # The full {Persistence::Repository::Response::Result} instance is yielded to the passed
-          # block in each batch, so you can access any of its properties. Calling `to_a` will
+          # The {http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions#search-instance_method Search API}
+          # options are passed to the search method as parameters, all remaining options are passed
+          # as the `:body` parameter.
+          #
+          # The full {Persistence::Repository::Response::Results} instance is yielded to the passed
+          # block in each batch, so you can access any of its properties; calling `to_a` will
           # convert the object to an Array of model instances.
           #
           # @example Return all models in batches of 20 x number of primary shards
@@ -101,6 +105,40 @@ module Elasticsearch
             end
 
             return response['_scroll_id']
+          end
+
+          # Iterate effectively over models using the `find_in_batches` method.
+          #
+          # All the options are passed to `find_in_batches` and each result is yielded to the passed block.
+          #
+          # @example Print out the people's names by scrolling through the index
+          #
+          #     Person.find_each { |person| puts person.name }
+          #
+          #     # # GET http://localhost:9200/people/person/_search?scroll=5m&search_type=scan&size=20
+          #     # # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhbj...
+          #     # Test 0
+          #     # Test 1
+          #     # Test 2
+          #     # ...
+          #     # # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhbj...
+          #     # Test 20
+          #     # Test 21
+          #     # Test 22
+          #
+          # @example Leave out the block to return an Enumerator instance
+          #
+          #     Person.find_each.select { |person| person.name =~ /John/ }
+          #     # => => [#<Person {id: "NkltJP5vRxqk9_RMP7SU8Q", name: "John Smith",  ...}>]
+          #
+          # @return [String,Enumerator] The `scroll_id` for the request or Enumerator when the block is not passed
+          #
+          def find_each(options = {})
+            return to_enum(:find_each, options) unless block_given?
+
+            find_in_batches(options) do |batch|
+              batch.each { |result| yield result }
+            end
           end
         end
       end
