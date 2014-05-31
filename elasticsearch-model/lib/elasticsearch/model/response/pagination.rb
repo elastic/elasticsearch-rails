@@ -102,9 +102,13 @@ module Elasticsearch
 
             # Include the paging methods in results and records
             #
-            methods = [:current_page, :per_page, :total_entries, :total_pages, :previous_page, :next_page, :out_of_bounds?]
+            methods = [:current_page, :offset, :per_page, :total_entries, :total_pages, :previous_page, :next_page, :out_of_bounds?]
             Elasticsearch::Model::Response::Results.__send__ :delegate, *methods, to: :response
             Elasticsearch::Model::Response::Records.__send__ :delegate, *methods, to: :response
+          end
+
+          def offset
+            (current_page - 1) * per_page
           end
 
           # Main pagination method
