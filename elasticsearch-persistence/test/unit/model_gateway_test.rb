@@ -34,7 +34,6 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
     should "define common attributes" do
       d = DummyGatewayModel.new
 
-      assert_respond_to d, :id
       assert_respond_to d, :updated_at
       assert_respond_to d, :created_at
     end

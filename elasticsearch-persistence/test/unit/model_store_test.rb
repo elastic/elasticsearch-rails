@@ -3,6 +3,7 @@ require 'test_helper'
 require 'active_model'
 require 'virtus'
 
+require 'elasticsearch/persistence/model/base'
 require 'elasticsearch/persistence/model/errors'
 require 'elasticsearch/persistence/model/store'
 
@@ -18,6 +19,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
 
       include Virtus.model
 
+      include Elasticsearch::Persistence::Model::Base::InstanceMethods
       extend  Elasticsearch::Persistence::Model::Store::ClassMethods
       include Elasticsearch::Persistence::Model::Store::InstanceMethods
 
@@ -25,13 +27,10 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
       define_model_callbacks :create, :save, :update, :destroy
       define_model_callbacks :find, :touch, only: :after
 
-      attribute :id,    String, writer: :private
       attribute :title, String
       attribute :count, Integer, default: 0
       attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
       attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
-
-      def set_id(id); self.id = id; end
     end
 
     setup do
@@ -136,6 +135,38 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         d = DummyStoreModelWithCallback.new name: 'Test'
         d.save
       end
+
+      should "save the model to its own index" do
+        @gateway.expects(:save)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc'})
+
+        d = DummyStoreModel.new name: 'Test'
+        d.instance_variable_set(:@_index, 'my_custom_index')
+        d.instance_variable_set(:@_type,  'my_custom_type')
+        d.save
+      end
+
+      should "set the meta attributes from response" do
+        @gateway.expects(:save)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
+
+        d = DummyStoreModel.new name: 'Test'
+        d.instance_variable_set(:@_index, 'my_custom_index')
+        d.instance_variable_set(:@_type,  'my_custom_type')
+        d.save
+
+        assert_equal 'foo', d._index
+        assert_equal 'bar', d._type
+        assert_equal '100', d._version
+      end
     end
 
     context "when destroying," do
@@ -188,6 +219,24 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         d = DummyStoreModelWithCallback.new name: 'Test'
         d.expects(:persisted?).returns(true)
         d.expects(:freeze).returns(d)
+
+        d.destroy
+      end
+
+      should "remove the model from its own index" do
+        @gateway.expects(:delete)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc'})
+
+        d = DummyStoreModel.new name: 'Test'
+        d.instance_variable_set(:@_index, 'my_custom_index')
+        d.instance_variable_set(:@_type,  'my_custom_type')
+        d.expects(:persisted?).returns(true)
+        d.expects(:freeze).returns(d)
+
         d.destroy
       end
     end
@@ -259,6 +308,42 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         d.expects(:persisted?).returns(true)
         d.update name: 'Update'
       end
+
+      should "update the model in its own index" do
+        @gateway.expects(:update)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc'})
+
+        d = DummyStoreModel.new name: 'Test'
+        d.instance_variable_set(:@_index, 'my_custom_index')
+        d.instance_variable_set(:@_type,  'my_custom_type')
+        d.expects(:persisted?).returns(true)
+
+        d.update name: 'Update'
+      end
+
+      should "set the meta attributes from response" do
+        @gateway.expects(:update)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
+
+        d = DummyStoreModel.new name: 'Test'
+        d.instance_variable_set(:@_index, 'my_custom_index')
+        d.instance_variable_set(:@_type,  'my_custom_type')
+        d.expects(:persisted?).returns(true)
+
+        d.update name: 'Update'
+
+        assert_equal 'foo', d._index
+        assert_equal 'bar', d._type
+        assert_equal '100', d._version
+      end
     end
 
     context "when incrementing," do
@@ -276,6 +361,26 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
 
         assert_equal 1, subject.count
       end
+
+      should "set the meta attributes from response" do
+        subject.expects(:persisted?).returns(true)
+
+        @gateway.expects(:update)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
+
+        subject.instance_variable_set(:@_index, 'my_custom_index')
+        subject.instance_variable_set(:@_type,  'my_custom_type')
+
+        subject.increment :count
+
+        assert_equal 'foo', subject._index
+        assert_equal 'bar', subject._type
+        assert_equal '100', subject._version
+      end
     end
 
     context "when decrement," do
@@ -292,6 +397,26 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         assert subject.decrement :count
 
         assert_equal -1, subject.count
+      end
+
+      should "set the meta attributes from response" do
+        subject.expects(:persisted?).returns(true)
+
+        @gateway.expects(:update)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
+
+        subject.instance_variable_set(:@_index, 'my_custom_index')
+        subject.instance_variable_set(:@_type,  'my_custom_type')
+
+        subject.decrement :count
+
+        assert_equal 'foo', subject._index
+        assert_equal 'bar', subject._type
+        assert_equal '100', subject._version
       end
     end
 
@@ -341,6 +466,26 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         d = DummyStoreModelWithCallback.new name: 'Test'
         d.expects(:persisted?).returns(true)
         d.touch
+      end
+
+      should "set the meta attributes from response" do
+        subject.expects(:persisted?).returns(true)
+
+        @gateway.expects(:update)
+          .with do |model, options|
+            assert_equal 'my_custom_index', options[:index]
+            assert_equal 'my_custom_type',  options[:type]
+          end
+          .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
+
+        subject.instance_variable_set(:@_index, 'my_custom_index')
+        subject.instance_variable_set(:@_type,  'my_custom_type')
+
+        subject.touch
+
+        assert_equal 'foo', subject._index
+        assert_equal 'bar', subject._type
+        assert_equal '100', subject._version
       end
     end
 

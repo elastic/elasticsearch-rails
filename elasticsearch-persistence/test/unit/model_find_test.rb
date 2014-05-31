@@ -24,13 +24,10 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
       define_model_callbacks :create, :save, :update, :destroy
       define_model_callbacks :find, :touch, only: :after
 
-      attribute :id,    String, writer: :private
       attribute :title, String
       attribute :count, Integer, default: 0
       attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
       attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
-
-      def set_id(id); self.id = id; end
     end
 
     setup do

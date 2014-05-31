@@ -46,10 +46,20 @@ module Elasticsearch
           def save(options={})
             return false unless valid?
             run_callbacks :save do
-              response = self.class.gateway.save(self, options.merge(id: self.id))
+              options.update id: self.id
+              options.update index: self._index if self._index
+              options.update type:  self._type  if self._type
+
+              response = self.class.gateway.save(self, options)
+
               self[:updated_at] = Time.now.utc
+
+              @_id       = response['_id']
+              @_index    = response['_index']
+              @_type     = response['_type']
+              @_version  = response['_version']
               @persisted = true
-              set_id(response['_id']) if respond_to?(:set_id)
+
               response
             end
           end
@@ -67,7 +77,11 @@ module Elasticsearch
             raise DocumentNotPersisted, "Object not persisted: #{self.inspect}" unless persisted?
 
             run_callbacks :destroy do
+              options.update index: self._index if self._index
+              options.update type:  self._type  if self._type
+
               response = self.class.gateway.delete(self.id, options)
+
               @destroyed = true
               @persisted = false
               self.freeze
@@ -88,9 +102,18 @@ module Elasticsearch
             raise DocumentNotPersisted, "Object not persisted: #{self.inspect}" unless persisted?
 
             run_callbacks :update do
+              options.update index: self._index if self._index
+              options.update type:  self._type  if self._type
+
               attributes.update( { updated_at: Time.now.utc } )
+
               response = self.class.gateway.update(self.id, { doc: attributes}.merge(options))
+
               self.attributes = self.attributes.merge(attributes)
+              @_index    = response['_index']
+              @_type     = response['_type']
+              @_version  = response['_version']
+
               response
             end
           end; alias :update_attributes :update
@@ -110,8 +133,17 @@ module Elasticsearch
           def increment(attribute, value=1, options={})
             raise DocumentNotPersisted, "Object not persisted: #{self.inspect}" unless persisted?
 
+            options.update index: self._index if self._index
+            options.update type:  self._type  if self._type
+
             response = self.class.gateway.update(self.id, { script: "ctx._source.#{attribute} += #{value}"}.merge(options))
+
             self[attribute] += value
+
+            @_index    = response['_index']
+            @_type     = response['_type']
+            @_version  = response['_version']
+
             response
           end
 
@@ -130,8 +162,16 @@ module Elasticsearch
           def decrement(attribute, value=1, options={})
             raise DocumentNotPersisted, "Object not persisted: #{self.inspect}" unless persisted?
 
+            options.update index: self._index if self._index
+            options.update type:  self._type  if self._type
+
             response = self.class.gateway.update(self.id, { script: "ctx._source.#{attribute} = ctx._source.#{attribute} - #{value}"}.merge(options))
             self[attribute] -= value
+
+            @_index    = response['_index']
+            @_type     = response['_type']
+            @_version  = response['_version']
+
             response
           end
 
@@ -152,9 +192,18 @@ module Elasticsearch
             raise ArgumentError, "Object does not have '#{attribute}' attribute" unless respond_to?(attribute)
 
             run_callbacks :touch do
+              options.update index: self._index if self._index
+              options.update type:  self._type  if self._type
+
               value = Time.now.utc
               response = self.class.gateway.update(self.id, { doc: { attribute => value.iso8601 }}.merge(options))
+
               self[attribute] = value
+
+              @_index    = response['_index']
+              @_type     = response['_type']
+              @_version  = response['_version']
+
               response
             end
           end

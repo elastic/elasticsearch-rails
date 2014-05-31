@@ -4,6 +4,7 @@ require 'active_model'
 require 'virtus'
 
 require 'elasticsearch/persistence'
+require 'elasticsearch/persistence/model/base'
 require 'elasticsearch/persistence/model/errors'
 require 'elasticsearch/persistence/model/store'
 require 'elasticsearch/persistence/model/find'
@@ -22,29 +23,6 @@ module Elasticsearch
     #     end
     #
     module Model
-
-      # Utility methods for {Elasticsearch::Persistence::Model}
-      #
-      module Utils
-
-        # Return Elasticsearch type based on passed Ruby class (used in the `attribute` method)
-        #
-        def lookup_type(type)
-          case
-            when type == String
-              'string'
-            when type == Integer
-              'integer'
-            when type == Float
-              'float'
-            when type == Date || type == Time || type == DateTime
-              'date'
-            when type == Virtus::Attribute::Boolean
-              'boolean'
-          end
-        end; module_function :lookup_type
-      end
-
       def self.included(base)
         base.class_eval do
           include ActiveModel::Naming
@@ -58,6 +36,8 @@ module Elasticsearch
           extend  ActiveModel::Callbacks
           define_model_callbacks :create, :save, :update, :destroy
           define_model_callbacks :find, :touch, only: :after
+
+          include Elasticsearch::Persistence::Model::Base::InstanceMethods
 
           extend  Elasticsearch::Persistence::Model::Store::ClassMethods
           include Elasticsearch::Persistence::Model::Store::InstanceMethods
@@ -115,7 +95,14 @@ module Elasticsearch
 
             def deserialize(document)
               object = klass.new document['_source']
-              object.set_id document['_id']
+
+              # Set the meta attributes when fetching the document from Elasticsearch
+              #
+              object.instance_variable_set :@_id,    document['_id']
+              object.instance_variable_set :@_index, document['_index']
+              object.instance_variable_set :@_type,  document['_type']
+              object.instance_variable_set :@_version,  document['_version']
+
               object.instance_variable_set(:@persisted, true)
               object
             end
@@ -123,17 +110,8 @@ module Elasticsearch
 
           # Set up common attributes
           #
-          attribute :id,         String, writer: :private
           attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
           attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
-
-          def to_s
-            "#<#{self.class} #{attributes.to_hash.inspect.gsub(/:(\w+)=>/, '\1: ')}>"
-          end
-
-          def set_id(id)
-            self.id = id
-          end
         end
 
       end
