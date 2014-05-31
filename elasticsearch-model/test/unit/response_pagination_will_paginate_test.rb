@@ -30,6 +30,7 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
       @expected_methods = [
         # methods needed by WillPaginate::CollectionMethods
         :current_page,
+        :offset,
         :per_page,
         :total_entries,
 
@@ -63,6 +64,13 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
           @response.klass.stubs(:find).returns([])
           assert_respond_to @response.records, method
         end
+      end
+    end
+
+    context "#offset method" do
+      should "calculate offset using current_page and per_page" do
+        @response.per_page(3).page(3)
+        assert_equal 6, @response.offset
       end
     end
 
