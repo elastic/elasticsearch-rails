@@ -1,9 +1,9 @@
 # Elasticsearch
 
-This repository contains ActiveModel, ActiveRecord and Ruby on Rails integrations for
-[Elasticsearch](http://elasticsearch.org):
+This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
+* _Repository Pattern_ based persistence layer for Ruby objects
 * Enumerable-based wrapper for search results
 * ActiveRecord::Relation-based wrapper for returning search results as records
 * Convenience model methods such as `search`, `mapping`, `import`, etc
@@ -41,13 +41,16 @@ or install it from a source code checkout:
 
 ## Usage
 
-This project is split into two separate gems:
+This project is split into three separate gems:
 
 * [**`elasticsearch-model`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-model),
-  which contains model-related features such as setting up indices, `search` method, pagination, etc
+  which contains search integration for Ruby/Rails models such as ActiveRecord::Base and Mongoid,
+
+* [**`elasticsearch-persistence`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-persistence),
+  which provides standalone persistence layer for Ruby/Rails objects and models
 
 * [**`elasticsearch-rails`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails),
-  which contains features for Ruby on Rails applications
+  which contains various features for Ruby on Rails applications
 
 Example of a basic integration into an ActiveRecord-based model:
 
@@ -64,19 +67,42 @@ Article.import
 @articles = Article.search('foobar').records
 ```
 
+Example of using Elasticsearch as a repository for a Ruby model:
+
+```ruby
+require 'virtus'
+class Article
+  include Virtus.model
+  attribute :title, String
+end
+
+require 'elasticsearch/persistence'
+repository = Elasticsearch::Persistence::Repository.new
+
+repository.save Article.new(title: 'Test')
+# POST http://localhost:9200/repository/article [status:201, request:0.760s, query:n/a]
+# => {"_index"=>"repository", "_type"=>"article", "_id"=>"Ak75E0U9Q96T5Y999_39NA", ...}
+```
+
 You can generate a fully working Ruby on Rails application with a single command:
 
 ```bash
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
 ```
 
-Please refer to each library documentation for detailed information and examples.
+**Please refer to each library documentation for detailed information and examples.**
 
 ### Model
 
 * [[README]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-model/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-model/)
 * [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-model/test)
+
+### Persistence
+
+* [[README]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-persistence/README.md)
+* [[Documentation]](http://rubydoc.info/gems/elasticsearch-persistence/)
+* [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-persistence/test)
 
 ### Rails
 
