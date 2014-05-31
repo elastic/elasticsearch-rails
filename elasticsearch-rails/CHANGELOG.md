@@ -1,4 +1,6 @@
-# 0.1.2
+## 0.1.3
+
+## 0.1.2
 
 * Allow passing an ActiveRecord scope to the importing Rake task
 

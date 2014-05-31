@@ -1,3 +1,5 @@
+## 0.1.3
+
 ## 0.1.2
 
 * Properly delegate existence methods like `result.foo?` to `result._source.foo`
