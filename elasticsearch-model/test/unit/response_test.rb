@@ -48,6 +48,11 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       assert response.empty?
     end
 
+    should "raise an error calling records on MultipleModels" do
+      response = Elasticsearch::Model::Response::Response.new Elasticsearch::Model::MultipleModels.new, @search
+      assert_raises(NotImplementedError) { response.records }
+    end
+
     should "be initialized lazily" do
       @search.expects(:execute!).never
 

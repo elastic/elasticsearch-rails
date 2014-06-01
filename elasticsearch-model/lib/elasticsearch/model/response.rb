@@ -43,6 +43,7 @@ module Elasticsearch
         # @return [Records]
         #
         def records
+          raise NotImplementedError, "Method not implemented for multiple model search" if klass.instance_of? MultipleModels
           @records ||= Records.new(klass, self)
         end
 

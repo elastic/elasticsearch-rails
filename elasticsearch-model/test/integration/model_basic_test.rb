@@ -51,6 +51,13 @@ module Elasticsearch
           assert_equal response.results.total, 2
         end
 
+        should "raise an error when calling records on the response" do
+          response = Elasticsearch::Model.search('test white', [ArticleModel, AuthorModel])
+          assert_raises(NotImplementedError) do
+            response.records
+          end
+        end
+
         should "search across all models" do
           MultipleModels.any_instance.expects(:__searchable_models).returns([ArticleModel, AuthorModel])
 
