@@ -25,6 +25,16 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       assert_equal 'OK',        response.shards.one
     end
 
+    should "wrap the raw Hash response in Hashie::Mash" do
+      @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
+      @search.stubs(:execute!).returns({'hits' => { 'hits' => [] }, 'aggregations' => { 'dates' => 'FOO' }})
+
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+
+      assert_respond_to response.response, :aggregations
+      assert_equal 'FOO', response.response.aggregations.dates
+    end
+
     should "load and access the results" do
       @search.expects(:execute!).returns(RESPONSE)
 

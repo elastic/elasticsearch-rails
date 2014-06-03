@@ -27,7 +27,9 @@ module Elasticsearch
         # @return [Hash]
         #
         def response
-          @response ||= search.execute!
+          @response ||= begin
+            Hashie::Mash.new(search.execute!)
+          end
         end
 
         # Returns the collection of "hits" from Elasticsearch
