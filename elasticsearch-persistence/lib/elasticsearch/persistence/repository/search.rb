@@ -53,6 +53,31 @@ module Elasticsearch
           end
           Response::Results.new(self, response)
         end
+
+        # Return the number of domain object in the index
+        #
+        # @example Return the number of all domain objects
+        #
+        #     repository.count
+        #     # => 2
+        #
+        # @example Return the count of domain object matching a simple query
+        #
+        #     repository.count('fox or dog')
+        #     # => 1
+        #
+        # @example Return the count of domain object matching a query in the Elasticsearch DSL
+        #
+        #    repository.search(query: { match: { title: 'fox dog' } })
+        #    # => 1
+        #
+        # @return [Integer]
+        #
+        def count(query_or_definition=nil, options={})
+          query_or_definition ||= { query: { match_all: {} } }
+          response = search query_or_definition, options.update(search_type: 'count')
+          response.response.hits.total
+        end
       end
 
     end

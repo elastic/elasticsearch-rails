@@ -21,6 +21,29 @@ module Elasticsearch
             gateway.search( { query: { match_all: {} }, size: 10_000 }.merge(options) )
           end
 
+          # Returns the number of models
+          #
+          # @example Return the count of all models
+          #
+          #     Person.count
+          #     # => 2
+          #
+          # @example Return the count of models matching a simple query
+          #
+          #     Person.count('fox or dog')
+          #     # => 1
+          #
+          # @example Return the count of models matching a query in the Elasticsearch DSL
+          #
+          #    Person.search(query: { match: { title: 'fox dog' } })
+          #    # => 1
+          #
+          # @return [Integer]
+          #
+          def count(query_or_definition=nil, options={})
+            gateway.count( query_or_definition, options )
+          end
+
           # Returns all models efficiently via the Elasticsearch's scan/scroll API
           #
           # You can restrict the models being returned with a query.
