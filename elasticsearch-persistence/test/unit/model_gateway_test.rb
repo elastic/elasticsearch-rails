@@ -89,5 +89,11 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
       assert DummyGatewayModel.gateway.deserialize('_id' => 'abc123', '_source' => {}).instance_variable_get(:@persisted)
     end
 
+    should "allow to access the raw hit from results as Hashie::Mash" do
+      assert_equal 0.42, DummyGatewayModel.gateway.deserialize('_score' => 0.42, '_source' => {}).hit._score
+    end
+
+
+
   end
 end

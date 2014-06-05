@@ -91,12 +91,16 @@ module Elasticsearch
           Person.create name: 'Mary Smith'
           Person.gateway.refresh_index!
 
-          people = Person.search query: { match: { name: 'smith' } }
+          people = Person.search query: { match: { name: 'smith' } },
+                                 highlight: { fields: { name: {} } }
 
           assert_equal 2, people.total
           assert_equal 2, people.size
 
           assert people.map_with_hit { |o,h| h._score }.all? { |s| s > 0 }
+
+          assert_not_nil people.first.hit
+          assert_match /smith/i, people.first.hit.highlight['name'].first
         end
 
         should "find instances in batches" do

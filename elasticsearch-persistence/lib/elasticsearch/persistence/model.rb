@@ -45,7 +45,6 @@ module Elasticsearch
           extend  Elasticsearch::Persistence::Model::Find::ClassMethods
 
           class << self
-
             # Re-define the Virtus' `attribute` method, to configure Elasticsearch mapping as well
             #
             def attribute(name, type=nil, options={}, &block)
@@ -98,10 +97,15 @@ module Elasticsearch
 
               # Set the meta attributes when fetching the document from Elasticsearch
               #
-              object.instance_variable_set :@_id,    document['_id']
-              object.instance_variable_set :@_index, document['_index']
-              object.instance_variable_set :@_type,  document['_type']
-              object.instance_variable_set :@_version,  document['_version']
+              object.instance_variable_set :@_id,      document['_id']
+              object.instance_variable_set :@_index,   document['_index']
+              object.instance_variable_set :@_type,    document['_type']
+              object.instance_variable_set :@_version, document['_version']
+
+              # Store the "hit" information (highlighting, score, ...)
+              #
+              object.instance_variable_set :@hit,
+                 Hashie::Mash.new(document.except('_index', '_type', '_id', '_version', '_source'))
 
               object.instance_variable_set(:@persisted, true)
               object
@@ -112,6 +116,8 @@ module Elasticsearch
           #
           attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
           attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
+
+          attr_reader :hit
         end
 
       end
