@@ -36,6 +36,9 @@ module Elasticsearch
       class Mappings
         attr_accessor :options, :type
 
+        # @private
+        TYPES_WITH_EMBEDDED_PROPERTIES = %w(object nested)
+
         def initialize(type, options={})
           raise ArgumentError, "`type` is missing" if type.nil?
 
@@ -49,7 +52,7 @@ module Elasticsearch
 
           if block_given?
             @mapping[name][:type] ||= 'object'
-            properties = @mapping[name][:type] == 'multi_field' ? :fields : :properties
+            properties = TYPES_WITH_EMBEDDED_PROPERTIES.include?(@mapping[name][:type]) ? :properties : :fields
 
             @mapping[name][properties] ||= {}
 
