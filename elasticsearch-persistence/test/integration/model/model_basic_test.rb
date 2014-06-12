@@ -30,6 +30,23 @@ module Elasticsearch
           Person.gateway.create_index! force: true
         end
 
+        should "save the object with custom ID" do
+          person = Person.new id: 1, name: 'Number One'
+          person.save
+
+          document = Person.find(1)
+          assert_not_nil document
+          assert_equal 'Number One', document.name
+        end
+
+        should "create the object with custom ID" do
+          person = Person.create id: 1, name: 'Number One'
+
+          document = Person.find(1)
+          assert_not_nil document
+          assert_equal 'Number One', document.name
+        end
+
         should "save and find the object" do
           person = Person.new name: 'John Smith', birthday: Date.parse('1970-01-01')
           person.save
