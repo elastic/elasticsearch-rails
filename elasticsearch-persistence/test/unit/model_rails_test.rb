@@ -12,7 +12,8 @@ class ::MyRailsModel
   include Elasticsearch::Persistence::Model::Rails
 
   attribute :name, String, mapping: { analyzer: 'string' }
-  attribute :published_on, DateTime
+  attribute :published_at, DateTime
+  attribute :published_on, Date
 end
 
 class Application < Rails::Application
@@ -62,15 +63,25 @@ class Elasticsearch::Persistence::ModelRailsTest < Test::Unit::TestCase
     end
 
     should "parse DateTime from Rails forms" do
-      params = { "published_on(1i)"=>"2014",
-                 "published_on(2i)"=>"1",
-                 "published_on(3i)"=>"1",
-                 "published_on(4i)"=>"12",
-                 "published_on(5i)"=>"00"
+      params = { "published_at(1i)"=>"2014",
+                 "published_at(2i)"=>"1",
+                 "published_at(3i)"=>"1",
+                 "published_at(4i)"=>"12",
+                 "published_at(5i)"=>"00"
                 }
 
       m = MyRailsModel.new params
-      assert_equal "2014-01-01T12:00:00+00:00", m.published_on.iso8601
+      assert_equal "2014-01-01T12:00:00+00:00", m.published_at.iso8601
+    end
+
+    should "parse Date from Rails forms" do
+      params = { "published_on(1i)"=>"2014",
+                 "published_on(2i)"=>"1",
+                 "published_on(3i)"=>"1"
+                }
+
+      m = MyRailsModel.new params
+      assert_equal "2014-01-01", m.published_on.iso8601
     end
 
   end

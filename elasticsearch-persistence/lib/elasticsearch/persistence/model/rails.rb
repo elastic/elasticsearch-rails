@@ -24,8 +24,8 @@ module Elasticsearch
             def initialize(attributes={})
               day = attributes.select { |p| p =~ /\([1-3]/ }.reduce({}) { |sum, item| (sum[item.first.gsub(/\(.+\)/, '')] ||= '' )<< item.last+'-'; sum  }
               time = attributes.select { |p| p =~ /\([4-6]/ }.reduce({}) { |sum, item| (sum[item.first.gsub(/\(.+\)/, '')] ||= '' )<< item.last+':'; sum  }
-              unless day.empty? && time.empty?
-                attributes.update day.reduce({}) { |sum, item| sum[item.first] = item.last + ' ' + time[item.first]; sum }
+              unless day.empty?
+                attributes.update day.reduce({}) { |sum, item| sum[item.first] = item.last; sum[item.first] += ' ' + time[item.first] unless time.empty?; sum }
               end
 
               super(attributes)
