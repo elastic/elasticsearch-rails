@@ -27,7 +27,7 @@ module Elasticsearch
 
       context "A basic persistence model" do
         setup do
-          Person.gateway.create_index! force: true
+          Person.create_index! force: true
         end
 
         should "save the object with custom ID" do

@@ -78,6 +78,8 @@ module Elasticsearch
                      :search,
                      :find,
                      :exists?,
+                     :create_index!,
+                     :refresh_index!,
               to: :gateway
           end
 
