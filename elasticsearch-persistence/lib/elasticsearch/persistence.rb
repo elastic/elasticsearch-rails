@@ -56,6 +56,25 @@ module Elasticsearch
   #     # 2014-04-04 22:15:25 +0200: > {"foo":"bar"}
   #     # 2014-04-04 22:15:25 +0200: < {"_index":"my_notes","_type":"note","_id":"-d28yXLFSlusnTxb13WIZQ", ...}
   #
+  # == Model
+  #
+  # The active record pattern allows to use the interface familiar from ActiveRecord models:
+  #
+  #     require 'elasticsearch/persistence'
+  #
+  #     class Article
+  #       attribute :title, String, mapping: { analyzer: 'snowball' }
+  #     end
+  #
+  #     article = Article.new id: 1, title: 'Test'
+  #     article.save
+  #
+  #     Article.find(1)
+  #
+  #     article.update_attributes title: 'Update'
+  #
+  #     article.destroy
+  #
   module Persistence
 
     # :nodoc:

@@ -423,10 +423,182 @@ and demonstrates a rich set of features of the repository.
 
 ### The ActiveRecord Pattern
 
-[_Work in progress_](https://github.com/elasticsearch/elasticsearch-rails/pull/91).
-The ActiveRecord [pattern](http://www.martinfowler.com/eaaCatalog/activeRecord.html) will work
-in a very similar way as `Tire::Model::Persistence`, allowing a drop-in replacement of
-an Elasticsearch-backed model in Ruby on Rails applications.
+The `Elasticsearch::Persistence::Model` module provides an implementation of the
+active record [pattern](http://www.martinfowler.com/eaaCatalog/activeRecord.html),
+with a familiar interface for using Elasticsearch as a persistence layer in
+Ruby on Rails applications.
+
+All the methods are documented with comprehensive examples in the source code,
+available also online at <http://rubydoc.info/gems/elasticsearch-persistence/Elasticsearch/Persistence/Model>.
+
+#### Model Definition
+
+The integration is implemented by including the module in a Ruby class.
+The model attribute definition support is implemented with the
+[_Virtus_](https://github.com/solnic/virtus) Rubygem, and the
+naming, validation, etc. features with the
+[_ActiveModel_](https://github.com/rails/rails/tree/master/activemodel) Rubygem.
+
+```ruby
+class Article
+  include Elasticsearch::Persistence::Model
+
+  # Define a plain `title` attribute
+  #
+  attribute :title,  String
+
+  # Define an `author` attribute, with multiple analyzers for this field
+  #
+  attribute :author, String, mapping: { fields: {
+                               author: { type: 'string'},
+                               raw:    { type: 'string', analyzer: 'keyword' }
+                             } }
+
+
+  # Define a `views` attribute, with default value
+  #
+  attribute :views,  Integer, default: 0, mapping: { type: 'integer' }
+
+  # Validate the presence of the `title` attribute
+  #
+  validates :title, presence: true
+
+  # Execute code after saving the model.
+  #
+  after_save { puts "Successfuly saved: #{self}" }
+end
+```
+
+Attribute validations works like for any other _ActiveModel_-compatible implementation:
+
+```ruby
+article = Article.new                                                                                             # => #<Article { ... }>
+
+article.valid?
+# => false
+
+article.errors.to_a
+# => ["Title can't be blank"]
+```
+
+#### Persistence
+
+We can create a new article in the database...
+
+```ruby
+Article.create id: 1, title: 'Test', author: 'John'
+# PUT http://localhost:9200/articles/article/1 [status:201, request:0.015s, query:n/a]
+```
+
+... and find it:
+
+```ruby
+article = Article.find(1)
+# => #<Article { ... }>
+
+article._index
+# => "articles"
+
+article.id
+# => "1"
+
+article.title
+# => "Test"
+```
+
+To update the model, either update the attribute and save the model:
+
+```ruby
+article.title = 'Updated'
+
+article.save
+=> {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_version"=>2, "created"=>false}
+```
+
+... or use the `update_attributes` method:
+
+```ruby
+article.update_attributes title: 'Test', author: 'Mary'
+# => {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_version"=>3}
+```
+
+The implementation supports the familiar interface for updating model timestamps:
+
+```ruby
+article.touch
+# => => { ... "_version"=>4}
+```
+
+... and numeric attributes:
+
+```ruby
+article.views
+# => 0
+
+article.increment :views
+article.views
+# => 1
+```
+
+Any callbacks defined in the model will be triggered during the persistence operations:
+
+```ruby
+article.save
+# Successfuly saved: #<Article {...}>
+```
+
+The model also supports familiar `find_in_batches` and `find_each` methods to efficiently
+retrieve big collections of model instance, using the Elasticsearch's _Scan API_:
+
+```ruby
+Article.find_each(_source_include: 'title') { |a| puts "===> #{a.title.upcase}" }
+# GET http://localhost:9200/articles/article/_search?scroll=5m&search_type=scan&size=20
+# GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhb...
+# ===> TEST
+# GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhb...
+# => "c2Nhb..."
+```
+
+#### Search
+
+The model class provides a `search` method to retrieve model instances with a regular
+search definition, including highlighting, aggregations, etc:
+
+```ruby
+results = Article.search query: { match: { title: 'test' } },
+                         aggregations: {  authors: { terms: { field: 'author.raw' } } },
+                         highlight: { fields: { title: {} } }
+
+puts results.first.title
+# Test
+
+puts results.first.hit.highlight['title']
+# <em>Test</em>
+
+puts results.response.aggregations.authors.buckets.each { |b| puts "#{b['key']} : #{b['doc_count']}" }
+# John : 1
+```
+
+#### Rails Compatibility
+
+The model instances are fully compatible with Rails' conventions and helpers:
+
+```ruby
+url_for article
+# => "http://localhost:3000/articles/1"
+
+div_for article
+# => '<div class="article" id="article_1"></div>'
+```
+
+... as well as form values for dates and times:
+
+```ruby
+article = Article.new "title" => "Date", "published(1i)"=>"2014", "published(2i)"=>"1", "published(3i)"=>"1"
+
+article.published.iso8601
+# => "2014-01-01"
+```
 
 ## License
 
