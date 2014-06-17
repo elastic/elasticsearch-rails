@@ -128,10 +128,10 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           (@callbacks ||= {})[block.hash] = block
         end
 
-        def changed_attributes; [:foo]; end
+        def changed_attributes; ["foo"]; end
 
         def changes
-          {:foo => ['One', 'Two']}
+          {"foo" => ['One', 'Two']}
         end
       end
 
@@ -143,14 +143,14 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           (@callbacks ||= {})[block.hash] = block
         end
 
-        def changed_attributes; [:foo, :bar]; end
+        def changed_attributes; ['foo', 'bar']; end
 
         def changes
-          {:foo => ['A', 'B'], :bar => ['C', 'D']}
+          {'foo' => ['A', 'B'], 'bar' => ['C', 'D']}
         end
 
         def as_indexed_json(options={})
-          { :foo => 'B' }
+          { 'foo' => 'B' }
         end
       end
 
@@ -163,7 +163,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacks.new
         instance.expects(:instance_variable_set).with do |name, value|
           assert_equal :@__changed_attributes, name
-          assert_equal({foo: 'Two'}, value)
+          assert_equal({'foo' => 'Two'}, value)
         end
 
         ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
@@ -260,13 +260,13 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacks.new
 
         # Set the fake `changes` hash
-        instance.instance_variable_set(:@__changed_attributes, {foo: 'bar'})
+        instance.instance_variable_set(:@__changed_attributes, {'foo' => 'bar'})
 
         client.expects(:update).with do |payload|
           assert_equal 'foo',  payload[:index]
           assert_equal 'bar',  payload[:type]
           assert_equal '1',    payload[:id]
-          assert_equal({foo: 'bar'}, payload[:body][:doc])
+          assert_equal({'foo' => 'bar'}, payload[:body][:doc])
         end
 
         instance.expects(:client).returns(client)
@@ -282,10 +282,10 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
 
         # Set the fake `changes` hash
-        instance.instance_variable_set(:@__changed_attributes, {foo: 'B', bar: 'D' })
+        instance.instance_variable_set(:@__changed_attributes, {'foo' => 'B', 'bar' => 'D' })
 
         client.expects(:update).with do |payload|
-          assert_equal({foo: 'B'}, payload[:body][:doc])
+          assert_equal({'foo' => 'B'}, payload[:body][:doc])
         end
 
         instance.expects(:client).returns(client)
