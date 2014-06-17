@@ -606,6 +606,25 @@ The library provides a Rails ORM generator:
 rails generate scaffold Person name:String email:String birthday:Date --orm=elasticsearch
 ```
 
+#### Example application
+
+A fully working Ruby on Rails application can be generated with the following command:
+
+```bash
+rails new music --force --skip --skip-bundle --skip-active-record --template https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/template.rb
+```
+
+The application demonstrates:
+
+* How to set up model attributes with custom mappings
+* How to configure model relationships with Elasticsearch's parent/child
+* How to configure models to use a common index, and create the index with proper mappings
+* How to use Elasticsearch's completion suggester to drive auto-complete functionality
+* How to use Elasticsearch-persisted model in Rails' views and forms
+* How to write controller tests
+
+The source files for the application are available in the [`examples/music`](examples/music) folder.
+
 ## License
 
 This software is licensed under the Apache 2 license, quoted below.

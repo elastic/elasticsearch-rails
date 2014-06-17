@@ -1,0 +1,57 @@
+<header>
+  <h1>
+    Artists
+    <%= button_to 'New Artist', new_artist_path, method: 'get', tabindex: 5 %>
+  </h1>
+</header>
+
+<section id="searchbox">
+<%= form_tag search_path, method: 'get' do %>
+  <input type="text" name="q" value="<%= params[:q] %>" id="q" autofocus="autofocus" placeholder="start typing to search..." tabindex="0" />
+<% end %>
+</section>
+
+<section class="artists">
+  <% @artists.each do |artist| %>
+    <%= div_for artist, class: 'result clearfix' do %>
+      <h2>
+        <%= link_to artist do %>
+          <span class="name"><%= artist.name %></span>
+          <small><%= pluralize artist.album_count, 'album' %></small>
+        <% end %>
+      </h2>
+      <div class="actions clearfix">
+        <%= button_to 'Edit', edit_artist_path(artist), method: 'get' %>
+        <%= button_to 'Destroy', artist, method: :delete, data: { confirm: 'Are you sure?' } %>
+      </div>
+    <% end %>
+  <% end %>
+</section>
+
+<% if @artists.empty? %>
+<section class="no-results">
+  <p>The search hasn't returned any results...</p>
+</section>
+<% end %>
+
+<script>
+$.widget( "custom.suggest", $.ui.autocomplete, {
+    _renderMenu: function( ul, items ) {
+      $.each( items, function( index, item ) {
+        var category = ul.append( "<li class='ui-autocomplete-category'>" + item.label + "</li>" );
+
+        $.each( item.value, function( index, item ) {
+          var li = $('<li class="ui-autocomplete-item"><a href="<%= Rails.application.config.relative_url_root %>'+ item.payload.url +'">'+ item.text +'</a></li>').data('ui-autocomplete-item', item )
+          category.append(li)
+        } )
+      });
+    }
+  });
+
+$( "#q" ).suggest({
+  source: '<%= suggest_path %>',
+  select: function(event, ui) {
+    document.location.href = '<%= Rails.application.config.relative_url_root %>'+ui.item.payload.url
+  }
+});
+</script>

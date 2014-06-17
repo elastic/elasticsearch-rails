@@ -1,0 +1,8 @@
+<%= simple_form_for @artist do |f| %>
+  <%= f.input :name %>
+  <%= f.input :profile, as: :text %>
+  <%= f.input :date, as: :date %>
+  <%= f.input :members, hint: 'Separate names by comma', input_html: { value: f.object.members.join(', ') } %>
+
+  <%= f.button :submit %>
+<% end %>
