@@ -600,6 +600,12 @@ article.published.iso8601
 # => "2014-01-01"
 ```
 
+The library provides a Rails ORM generator:
+
+```bash
+rails generate scaffold Person name:String email:String birthday:Date --orm=elasticsearch
+```
+
 ## License
 
 This software is licensed under the Apache 2 license, quoted below.
