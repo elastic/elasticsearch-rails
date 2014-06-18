@@ -416,10 +416,14 @@ results.response._shards.failed
 
 #### Example Application
 
-An example Sinatra application is available in
-[`examples/sinatra/application.rb`](examples/sinatra/application.rb),
-and demonstrates a rich set of features of the repository.
+An example Sinatra application is available in [`examples/notes/application.rb`](examples/notes/application.rb),
+and demonstrates a rich set of features:
 
+* How to create and configure a custom repository class
+* How to work with a plain Ruby class as the domain object
+* How to integrate the repository with a Sinatra application
+* How to write complex search definitions, including pagination, highlighting and aggregations
+* How to use search results in the application view
 
 ### The ActiveRecord Pattern
 
