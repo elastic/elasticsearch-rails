@@ -492,7 +492,7 @@ class Article
 end
 ```
 
-Attribute validations works like for any other _ActiveModel_-compatible implementation:
+Attribute validations work like for any other _ActiveModel_-compatible implementation:
 
 ```ruby
 article = Article.new                                                                                             # => #<Article { ... }>
@@ -535,7 +535,7 @@ To update the model, either update the attribute and save the model:
 article.title = 'Updated'
 
 article.save
-=> {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_version"=>2, "created"=>false}
+# => {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_version"=>2, "created"=>false}
 ```
 
 ... or use the `update_attributes` method:
@@ -571,7 +571,7 @@ article.save
 ```
 
 The model also supports familiar `find_in_batches` and `find_each` methods to efficiently
-retrieve big collections of model instance, using the Elasticsearch's _Scan API_:
+retrieve big collections of model instances, using the Elasticsearch's _Scan API_:
 
 ```ruby
 Article.find_each(_source_include: 'title') { |a| puts "===> #{a.title.upcase}" }
@@ -604,7 +604,7 @@ puts results.response.aggregations.authors.buckets.each { |b| puts "#{b['key']} 
 
 #### Accessing the Repository Gateway
 
-The Elasticsearch integration is implemented by embedding the repository object in the model.
+The integration with Elasticsearch is implemented by embedding the repository object in the model.
 You can access it through the `gateway` method:
 
 ```ruby
@@ -634,7 +634,7 @@ article.published.iso8601
 # => "2014-01-01"
 ```
 
-The library provides a Rails ORM generator:
+The library provides a Rails ORM generator to facilitate building the application scaffolding:
 
 ```bash
 rails generate scaffold Person name:String email:String birthday:Date --orm=elasticsearch
@@ -645,16 +645,16 @@ rails generate scaffold Person name:String email:String birthday:Date --orm=elas
 A fully working Ruby on Rails application can be generated with the following command:
 
 ```bash
-rails new music --force --skip --skip-bundle --skip-active-record --template https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/template.rb
+rails new music --force --skip --skip-bundle --skip-active-record --template https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/template.rb
 ```
 
 The application demonstrates:
 
 * How to set up model attributes with custom mappings
-* How to configure model relationships with Elasticsearch's parent/child
+* How to define model relationships with Elasticsearch's parent/child
 * How to configure models to use a common index, and create the index with proper mappings
 * How to use Elasticsearch's completion suggester to drive auto-complete functionality
-* How to use Elasticsearch-persisted model in Rails' views and forms
+* How to use Elasticsearch-persisted models in Rails' views and forms
 * How to write controller tests
 
 The source files for the application are available in the [`examples/music`](examples/music) folder.
