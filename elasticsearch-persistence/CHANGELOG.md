@@ -1,3 +1,7 @@
+## 0.1.4
+
+* Added the Elasticsearch::Persistence::Model feature
+
 ## 0.1.3
 
 * Released the "elasticsearch-persistence" Rubygem
