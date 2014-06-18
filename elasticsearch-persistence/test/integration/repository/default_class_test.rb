@@ -96,6 +96,12 @@ module Elasticsearch
           assert_equal 2, results.size
         end
 
+        should "count notes" do
+          @repository.save Note.new(title: 'Test')
+          @repository.client.indices.refresh index: @repository.index_name
+          assert_equal 1, @repository.count
+        end
+
         should "save and find a plain hash" do
           @repository.save id: 1, title: 'Hash'
           result = @repository.find(1)

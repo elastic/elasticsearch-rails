@@ -164,6 +164,14 @@ module Elasticsearch
             assert_equal 'Testing Coding', response.records.order('title DESC').first.title
           end
         end
+
+        should "allow dot access to response" do
+          response = Article.search query: { match: { title: { query: 'test' } } },
+                                    aggregations: { dates: { date_histogram: { field: 'created_at', interval: 'hour' } } }
+
+          response.response.respond_to?(:aggregations)
+          assert_equal 2, response.response.aggregations.dates.buckets.first.doc_count
+        end
       end
 
     end

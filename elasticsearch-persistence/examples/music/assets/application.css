@@ -1,0 +1,226 @@
+/*
+ *= require_tree .
+ *= require_self
+ *= require ui-lightness/jquery-ui-1.10.4.custom.min.css
+ */
+
+.clearfix {
+  *zoom: 1;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, sans-serif !important;
+  margin: 2em 4em;
+}
+
+header {
+  margin: 0;
+  padding: 0 0 1em 0;
+  border-bottom: 1px solid #666;
+}
+
+header h1 {
+  color: #999;
+  font-weight: 100;
+  text-transform: uppercase;
+  margin: 0; padding: 0;
+}
+
+header a {
+  color: #0b6aff;
+  text-decoration: none;
+}
+
+header .back {
+  font-size: 100%;
+  margin: 0 0.5em 0 -0.5em;
+}
+
+h1 form {
+  float: right;
+}
+
+#searchbox {
+  border-bottom: 1px solid #666;
+}
+
+#searchbox input {
+  color: #444;
+  font-size: 100%;
+  font-weight: 100;
+  border: none;
+  padding: 1em 0 1em 0;
+  width: 100%;
+}
+
+#searchbox input:focus {
+  outline-width: 0;
+}
+
+.actions form {
+  float: right;
+  position: relative;
+  top: 0.2em;
+}
+
+.no-results {
+  font-weight: 200;
+  font-size: 200%;
+}
+
+.result,
+.artist {
+  padding: 1em 0 1em 0;
+  margin: 0;
+  border-bottom: 1px solid #999;
+}
+
+.result:hover,
+.artist:hover {
+  background: #f9f9f9;
+}
+
+.result h2,
+.artist h2 {
+  color: #444;
+  margin: 0;
+  padding: 0;
+}
+
+.artist h2 {
+  float: left;
+}
+
+.result h2 a,
+.artist h2 a {
+  color: #444;
+}
+
+.result h2 small,
+.artist h2 small {
+  font-size: 70%;
+  font-weight: 100;
+  margin-left: 0.5em;
+}
+
+.result h2 a,
+.artist h2 a {
+  text-decoration: none;
+}
+
+.result h2 a:hover name,
+.artist h2 a:hover .name {
+  text-decoration: underline;
+}
+
+.result .small {
+  font-size: 90%;
+  font-weight: 200;
+  padding: 0;
+  margin: 0.25em 0 0.25em 0;
+}
+
+.result .small .label {
+  color: #999;
+  font-size: 80%;
+  min-width: 5em;
+  display: inline-block;
+}
+
+.artist-info {
+  color: #5f5f5f;
+  text-transform: uppercase;
+  font-weight: 200;
+  border-bottom: 1px solid #666;
+  padding: 0 0 1em 0;
+  margin: 0 0 1em 0;
+}
+
+.artist-profile {
+  color: #999;
+  font-size: 95%;
+  font-weight: 100;
+  text-transform: none;
+  padding: 0;
+  margin: 0.25em 0 0 0;
+}
+
+.album {
+  margin: 0 0 4em 0;
+}
+
+.album .cover {
+  float: left;
+  width: 150px;
+}
+
+.album .cover img {
+  border: 1px solid rgba(0,0,0,0.15);
+  box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.05);
+}
+
+.album .content {
+  float: left;
+  margin-left: 25px;
+}
+
+.album .content ul {
+  float: left;
+  margin: 0 2em 0 0;
+  padding: 0;
+  min-width: 18em;
+}
+
+.album .content ul li {
+  line-height: 1.5em;
+  padding: 0.5em 0 0.5em 0;
+  border-bottom:1px solid #f8f8f8;
+  list-style: none;
+}
+
+.album .content ul li .counter {
+  color: #999;
+  font-style: normal;
+  font-size: 80%;
+  font-weight: 100;
+  margin-right: 0.5em;
+}
+
+.album h3 {
+  margin: 0; padding: 0;
+  border-bottom: 2px solid #e0e0e0;
+  padding: 0 0 0.5em 0;
+  margin: 0 0 1em 0;
+}
+
+.album h3 .title {
+  text-transform: uppercase;
+  font-weight: 200;
+}
+
+.album small {
+  color: #a3a3a3;
+  font-weight: 200;
+}
+
+.album .info {
+  float: right;
+}
+
+em[class^=hl] {
+  font-style: normal;
+  background: #e6efff;
+  padding: 0.15em 0.35em;
+  border-radius: 5px;
+}
