@@ -583,6 +583,17 @@ puts results.response.aggregations.authors.buckets.each { |b| puts "#{b['key']} 
 # John : 1
 ```
 
+#### Accessing the Repository Gateway
+
+The Elasticsearch integration is implemented by embedding the repository object in the model.
+You can access it through the `gateway` method:
+
+```ruby
+Artist.gateway.client.info
+# GET http://localhost:9200/ [status:200, request:0.011s, query:n/a]
+# => {"status"=>200, "name"=>"Lightspeed", ...}
+```
+
 #### Rails Compatibility
 
 The model instances are fully compatible with Rails' conventions and helpers:
