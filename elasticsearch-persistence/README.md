@@ -435,6 +435,25 @@ Ruby on Rails applications.
 All the methods are documented with comprehensive examples in the source code,
 available also online at <http://rubydoc.info/gems/elasticsearch-persistence/Elasticsearch/Persistence/Model>.
 
+#### Installation/Usage
+
+To use the library in a Rails application, add it to your `Gemfile` with a `require` statement:
+
+```ruby
+gem "elasticsearch-persistence", require: 'elasticsearch/persistence/model'
+```
+
+To use the library without Bundler, install it, and require the file:
+
+```bash
+gem install elasticsearch-persistence
+```
+
+```ruby
+# In your code
+require 'elasticsearch/persistence/model'
+```
+
 #### Model Definition
 
 The integration is implemented by including the module in a Ruby class.
