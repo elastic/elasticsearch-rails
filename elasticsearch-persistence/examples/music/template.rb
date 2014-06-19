@@ -4,7 +4,7 @@
 #
 # This file creates a fully working Rails application with support for storing and retrieving models
 # in Elasticsearch, using the `elasticsearch-persistence` gem
-# (https://github.com/elasticsearch/elasticsearch-rails/tree/persistence-model/elasticsearch-persistence).
+# (https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-persistence).
 #
 # Requirements:
 # -------------
@@ -173,9 +173,9 @@ if ENV['LOCAL']
   copy_file File.expand_path('../vendor/assets/jquery-ui-1.10.4.custom.min.css', __FILE__),
             'vendor/assets/stylesheets/ui-lightness/jquery-ui-1.10.4.custom.min.css'
 else
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/vendor/assets/jquery-ui-1.10.4.custom.min.js',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/vendor/assets/jquery-ui-1.10.4.custom.min.js',
       'vendor/assets/javascripts/jquery-ui-1.10.4.custom.min.js'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/vendor/assets/jquery-ui-1.10.4.custom.min.css',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/vendor/assets/jquery-ui-1.10.4.custom.min.css',
       'vendor/assets/stylesheets/ui-lightness/jquery-ui-1.10.4.custom.min.css'
 end
 
@@ -217,11 +217,11 @@ if ENV['LOCAL']
   copy_file File.expand_path('../album.rb', __FILE__), 'app/models/album.rb'
   copy_file File.expand_path('../suggester.rb', __FILE__), 'app/models/suggester.rb'
 else
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/artist.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/artist.rb',
       'app/models/artist.rb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/album.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/album.rb',
       'app/models/album.rb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/suggester.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/suggester.rb',
       'app/models/suggester.rb'
 end
 
@@ -242,15 +242,15 @@ if ENV['LOCAL']
   copy_file File.expand_path('../artists/artists_controller_test.rb', __FILE__),
             'test/controllers/artists_controller_test.rb'
 else
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/artists/artists_controller.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/artists/artists_controller.rb',
       'app/controllers/artists_controller.rb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/artists/index.html.erb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/artists/index.html.erb',
       'app/views/artists/index.html.erb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/artists/show.html.erb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/artists/show.html.erb',
       'app/views/artists/show.html.erb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/artists/_form.html.erb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/artists/_form.html.erb',
       'app/views/artists/_form.html.erb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/artists/artists_controller_test.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/artists/artists_controller_test.rb',
       'test/controllers/artists_controller_test.rb'
 end
 
@@ -267,13 +267,13 @@ if ENV['LOCAL']
   copy_file File.expand_path('../search/search_controller_test.rb', __FILE__),
             'test/controllers/search_controller_test.rb'
 else
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/search/search_controller.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/search/search_controller.rb',
       'app/controllers/search_controller.rb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/search/search_helper.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/search/search_helper.rb',
       'app/helpers/search_helper.rb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/search/index.html.erb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/search/index.html.erb',
       'app/views/search/index.html.erb'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/search/search_controller_test.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/search/search_controller_test.rb',
       'test/controllers/search_controller_test.rb'
 end
 
@@ -301,13 +301,13 @@ if ENV['LOCAL']
   copy_file File.expand_path('../assets/form.css', __FILE__),         'app/assets/stylesheets/form.css'
   copy_file File.expand_path('../assets/blank_cover.png', __FILE__),  'public/images/blank_cover.png'
 else
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/assets/application.css',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/application.css',
       'app/assets/stylesheets/application.css'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/assets/autocomplete.css',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/autocomplete.css',
       'app/assets/stylesheets/autocomplete.css'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/assets/form.css',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/form.css',
       'app/assets/stylesheets/form.css'
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/assets/blank_cover.png',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/blank_cover.png',
       'public/images/blank_cover.png'
 end
 
@@ -343,7 +343,7 @@ puts        '-'*80, ''; sleep 0.25
 if ENV['LOCAL']
   copy_file File.expand_path('../index_manager.rb', __FILE__),  'lib/index_manager.rb'
 else
-  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/persistence-model/elasticsearch-persistence/examples/music/index_manager.rb',
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/index_manager.rb',
       'lib/index_manager.rb'
 end
 
