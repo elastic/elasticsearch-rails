@@ -3,7 +3,8 @@
 This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
-* _Repository Pattern_ based persistence layer for Ruby objects
+* _Repository pattern_ based persistence layer for Ruby objects
+* _Active Record pattern_ based persistence layer for Ruby models
 * Enumerable-based wrapper for search results
 * ActiveRecord::Relation-based wrapper for returning search results as records
 * Convenience model methods such as `search`, `mapping`, `import`, etc
@@ -67,7 +68,14 @@ Article.import
 @articles = Article.search('foobar').records
 ```
 
-Example of using Elasticsearch as a repository for a Ruby model:
+You can generate a simple Ruby on Rails application with a single command
+(see the [other available templates](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails#rails-application-templates)):
+
+```bash
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
+```
+
+Example of using Elasticsearch as a repository for a Ruby domain object:
 
 ```ruby
 require 'virtus'
@@ -80,14 +88,22 @@ require 'elasticsearch/persistence'
 repository = Elasticsearch::Persistence::Repository.new
 
 repository.save Article.new(title: 'Test')
-# POST http://localhost:9200/repository/article [status:201, request:0.760s, query:n/a]
+# POST http://localhost:9200/repository/article
 # => {"_index"=>"repository", "_type"=>"article", "_id"=>"Ak75E0U9Q96T5Y999_39NA", ...}
 ```
 
-You can generate a fully working Ruby on Rails application with a single command:
+Example of using Elasticsearch as a persistence layer for a Ruby model:
 
-```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
+```ruby
+require 'elasticsearch/persistence/model'
+class Article
+  include Elasticsearch::Persistence::Model
+  attribute :title, String, mapping: { analyzer: 'snowball' }
+end
+
+Article.create title: 'Test'
+# POST http://localhost:9200/articles/article
+# => #<Article {title: "Test", id: "lUOQ9lhHToWa7oYPxwjqPQ", ...}>
 ```
 
 **Please refer to each library documentation for detailed information and examples.**
