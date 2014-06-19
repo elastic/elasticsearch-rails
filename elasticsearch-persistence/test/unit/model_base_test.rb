@@ -27,6 +27,13 @@ class Elasticsearch::Persistence::ModelBaseTest < Test::Unit::TestCase
       assert_equal 2, m.id
     end
 
+    should "set the ID using setter method" do
+      m = DummyBaseModel.new id: 1
+      m.id = 2
+
+      assert_equal 2, m.id
+    end
+
     should "have ID in attributes" do
       m = DummyBaseModel.new id: 1, name: 'Test'
       assert_equal 1, m.attributes[:id]

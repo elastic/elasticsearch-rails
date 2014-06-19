@@ -25,6 +25,12 @@ module Elasticsearch
             @_id
           end; alias :_id :id
 
+          # Set the document `_id`
+          #
+          def id=(value)
+            @_id = value
+          end; alias :_id= :id=
+
           # Return the document `_index`
           #
           def _index
