@@ -20,9 +20,8 @@ class Elasticsearch::Rails::InstrumentationTest < Test::Unit::TestCase
 
     setup do
       @search   = Elasticsearch::Model::Searching::SearchRequest.new ::DummyInstrumentationModel, '*'
-      @response = Elasticsearch::Model::Response::Response.new ::DummyInstrumentationModel, @search
 
-      @client = stub('client', search: @response)
+      @client = stub('client', search: RESPONSE)
       DummyInstrumentationModel.stubs(:client).returns(@client)
 
       Elasticsearch::Rails::Instrumentation::Railtie.run_initializers
