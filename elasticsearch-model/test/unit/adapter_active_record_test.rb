@@ -16,6 +16,16 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
       def ids
         [2, 1]
       end
+
+      class << self
+        def augment_collection(batch)
+          batch
+        end
+
+        def find_in_batches(options={}, &block)
+          yield block
+        end
+      end
     end
 
     RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [] } }
@@ -102,6 +112,13 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         DummyClassForActiveRecord.expects(:published).returns(DummyClassForActiveRecord)
 
         DummyClassForActiveRecord.__find_in_batches(scope: :published) do; end
+      end
+
+      should "preprocess the batch if option provided" do
+        DummyClassForActiveRecord.expects(:augment_collection)
+        DummyClassForActiveRecord.__find_in_batches(preprocess: :augment_collection) do
+          # noop
+        end
       end
 
       context "when transforming models" do
