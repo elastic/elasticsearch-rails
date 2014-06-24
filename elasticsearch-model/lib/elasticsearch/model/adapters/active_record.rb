@@ -84,7 +84,7 @@ module Elasticsearch
           #
           def __find_in_batches(options={}, &block)
             named_scope = options.delete(:scope)
-            preprocess = options.delete(:preprocess)
+            preprocess = options.delete(:batch_transform)
 
             scope = named_scope ? self.__send__(named_scope) : self
 

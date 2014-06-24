@@ -116,7 +116,7 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
 
       should "preprocess the batch if option provided" do
         DummyClassForActiveRecord.expects(:augment_collection)
-        DummyClassForActiveRecord.__find_in_batches(preprocess: :augment_collection) do
+        DummyClassForActiveRecord.__find_in_batches(batch_transform: :augment_collection) do
           # noop
         end
       end
