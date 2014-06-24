@@ -85,7 +85,7 @@ module Elasticsearch
 
           unless transform.respond_to?(:call)
             raise ArgumentError,
-                  "Pass an object responding to `call` as the :transport option, #{transform.class} given"
+                  "Pass an object responding to `call` as the :transform option, #{transform.class} given"
           end
 
           if options.delete(:force)
