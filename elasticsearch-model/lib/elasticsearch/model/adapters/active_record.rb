@@ -68,10 +68,27 @@ module Elasticsearch
           # @see http://guides.rubyonrails.org/active_record_callbacks.html
           #
           def self.included(base)
+            base.extend ClassMethods
+
             base.class_eval do
               after_commit lambda { __elasticsearch__.index_document  },  on: :create
-              after_commit lambda { __elasticsearch__.update_document },  on: :update
               after_commit lambda { __elasticsearch__.delete_document },  on: :destroy
+              after_commit :__index_on_update,  on: :update
+            end
+
+          end
+
+          def __index_on_update
+            self.class.index_on_update? ? __elasticsearch__.index_document : __elasticsearch__.update_document
+          end
+
+          module ClassMethods
+            def index_on_update!
+              @index_on_update = true
+            end
+
+            def index_on_update?
+              !!@index_on_update
             end
           end
         end
