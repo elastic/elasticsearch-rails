@@ -19,11 +19,15 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
 
       class << self
         def augment_collection(batch)
-          batch
+          # This might update the batch with content from an external system (like Quickbooks).
+          # Performing that external query in batch might be required for performance/throttling reasons.
+
+          # This is just a silly example for the test.
+          batch.collect { |b| b.to_s + '!' }
         end
 
         def find_in_batches(options={}, &block)
-          yield block
+          yield [:a, :b]
         end
       end
     end
@@ -115,9 +119,11 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
       end
 
       should "preprocess the batch if option provided" do
-        DummyClassForActiveRecord.expects(:augment_collection)
-        DummyClassForActiveRecord.__find_in_batches(batch_transform: :augment_collection) do
-          # noop
+        DummyClassForActiveRecord.__find_in_batches(preprocess: :augment_collection) do |batch|
+          batch.each do |b|
+            # the example augment collection method adds an '!' to the end of each element
+            assert_equal b[-1], '!'
+          end
         end
       end
 
