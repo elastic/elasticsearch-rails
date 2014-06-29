@@ -48,7 +48,7 @@ This project is split into three separate gems:
   which contains search integration for Ruby/Rails models such as ActiveRecord::Base and Mongoid,
 
 * [**`elasticsearch-persistence`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-persistence),
-  which provides standalone persistence layer for Ruby/Rails objects and models
+  which provides a standalone persistence layer for Ruby/Rails objects and models
 
 * [**`elasticsearch-rails`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails),
   which contains various features for Ruby on Rails applications
