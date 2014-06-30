@@ -40,7 +40,9 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         assert_instance_of Module, Elasticsearch::Model::Adapter::ActiveRecord::Records
 
         instance = DummyClassForActiveRecord.new
-        instance.expects(:klass).returns(mock('class', primary_key: :some_key, where: @records)).at_least_once
+        mock_class = mock('class', primary_key: :some_key, where: @records)
+        mock_class.expects(:unscoped).returns(mock_class)
+        instance.expects(:klass).returns(mock_class).at_least_once
 
         assert_equal @records, instance.records
       end
@@ -55,7 +57,9 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         @records.instance_variable_set(:@records, @records)
 
         instance = DummyClassForActiveRecord.new
-        instance.expects(:klass).returns(mock('class', primary_key: :some_key, where: @records)).at_least_once
+        mock_class = mock('class', primary_key: :some_key, where: @records)
+        mock_class.expects(:unscoped).returns(mock_class)
+        instance.expects(:klass).returns(mock_class).at_least_once
 
         assert_equal [1, 2], @records.        to_a.map(&:id)
         assert_equal [2, 1], instance.records.to_a.map(&:id)
@@ -65,7 +69,9 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         @records.instance_variable_set(:@records, @records)
 
         instance = DummyClassForActiveRecord.new
-        instance.expects(:klass).returns(stub('class', primary_key: :some_key, where: @records)).at_least_once
+        stub_class = stub('class', primary_key: :some_key, where: @records)
+        stub_class.stubs(:unscoped).returns(stub_class)
+        instance.expects(:klass).returns(stub_class).at_least_once
         instance.records.expects(:order).returns(@records)
 
         assert_equal [2, 1], instance.records.    to_a.map(&:id)
