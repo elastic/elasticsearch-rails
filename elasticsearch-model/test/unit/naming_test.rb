@@ -40,6 +40,20 @@ class Elasticsearch::Model::NamingTest < Test::Unit::TestCase
       d = DummyNamingModel.new
       d.index_name 'foobar_d'
       assert_equal 'foobar_d', d.index_name
+
+      modifier = 'r'
+      d.index_name Proc.new{ "foobar_#{modifier}" }
+      assert_equal 'foobar_r', d.index_name
+
+      modifier = 'z'
+      assert_equal 'foobar_z', d.index_name
+
+      modifier = 'f'
+      d.index_name { "foobar_#{modifier}" }
+      assert_equal 'foobar_f', d.index_name
+
+      modifier = 't'
+      assert_equal 'foobar_t', d.index_name
     end
 
     should "set the index_name with setter" do
@@ -51,6 +65,19 @@ class Elasticsearch::Model::NamingTest < Test::Unit::TestCase
       assert_equal 'foobar_index_s', d.index_name
 
       assert_equal 'foobar_index_S', DummyNamingModel.index_name
+
+      modifier2 = 'y'
+      DummyNamingModel.index_name = Proc.new{ "foobar_index_#{modifier2}" }
+      assert_equal 'foobar_index_y', DummyNamingModel.index_name
+
+      modifier = 'r'
+      d.index_name = Proc.new{ "foobar_index_#{modifier}" }
+      assert_equal 'foobar_index_r', d.index_name
+
+      modifier = 'z'
+      assert_equal 'foobar_index_z', d.index_name
+
+      assert_equal 'foobar_index_y', DummyNamingModel.index_name
     end
 
     should "set and return the document_type" do

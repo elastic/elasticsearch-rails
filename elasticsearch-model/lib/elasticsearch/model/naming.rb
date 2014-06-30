@@ -15,14 +15,30 @@ module Elasticsearch
         #       index_name "articles-#{Rails.env}"
         #     end
         #
+        # @example Set the index name for the `Article` model and reevaluate it on each call
+        #
+        #     class Article
+        #       index_name { "articles-#{Time.now.year}" }
+        #     end
+        #
         # @example Directly set the index name for the `Article` model
         #
         #     Article.index_name "articles-#{Rails.env}"
         #
-        # TODO: Dynamic names a la Tire -- `Article.index_name { "articles-#{Time.now.year}" }`
+        # @example Directly set the index name for the `Article` model and reevaluate it on each call
         #
-        def index_name name=nil
-          @index_name = name || @index_name || self.model_name.collection.gsub(/\//, '-')
+        #     Article.index_name { "articles-#{Time.now.year}" }
+        #
+        def index_name name=nil, &block
+          if name || block_given?
+            return (@index_name = name || block)
+          end
+
+          if @index_name.respond_to?(:call)
+            @index_name.call
+          else
+            @index_name || self.model_name.collection.gsub(/\//, '-')
+          end
         end
 
         # Set the index name
@@ -67,8 +83,16 @@ module Elasticsearch
         #     @article.index_name "articles-#{@article.user_id}"
         #     @article.__elasticsearch__.update_document
         #
-        def index_name name=nil
-          @index_name = name || @index_name || self.class.index_name
+        def index_name name=nil, &block
+          if name || block_given?
+            return (@index_name = name || block)
+          end
+
+          if @index_name.respond_to?(:call)
+            @index_name.call
+          else
+            @index_name || self.class.index_name
+          end
         end
 
         # Set the index name
