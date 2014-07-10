@@ -295,6 +295,24 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         instance.update_document
       end
+
+      should "get attributes from as_indexed_json during partial update" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
+
+        instance.instance_variable_set(:@__changed_attributes, {foo: {ru:'B'} })
+
+        client.expects(:update).with do |payload|
+          assert_equal({foo: 'B'}, payload[:body][:doc])
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document
+      end
     end
 
     context "Re-creating the index" do
