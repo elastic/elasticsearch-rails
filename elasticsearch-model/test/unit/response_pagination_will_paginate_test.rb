@@ -33,6 +33,7 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
         :offset,
         :per_page,
         :total_entries,
+        :length,
 
         # methods defined by WillPaginate::CollectionMethods
         :total_pages,
@@ -71,6 +72,12 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
       should "calculate offset using current_page and per_page" do
         @response.per_page(3).page(3)
         assert_equal 6, @response.offset
+      end
+    end
+    context "#length method" do
+      should "return count of paginated results" do
+        @response.per_page(3).page(3)
+        assert_equal 3, @response.length
       end
     end
 
