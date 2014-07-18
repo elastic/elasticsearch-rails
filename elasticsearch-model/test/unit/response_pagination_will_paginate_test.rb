@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'will_paginate'
 require 'will_paginate/collection'
-require 'pry'
+
 class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::TestCase
   context "Response pagination" do
     class ModelClass
