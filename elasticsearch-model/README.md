@@ -507,7 +507,8 @@ Article.first.__elasticsearch__.as_indexed_json
 # => {"id"=>1, "title"=>"Quick brown fox"}
 ```
 
-If you want to customize the serialization, just implement the `as_indexed_json` method yourself:
+If you want to customize the serialization, just implement the `as_indexed_json` method yourself,
+for instance with the [`as_json`](http://api.rubyonrails.org/classes/ActiveModel/Serializers/JSON.html#method-i-as_json) method:
 
 ```ruby
 class Article
@@ -523,6 +524,9 @@ Article.first.as_indexed_json
 ```
 
 The re-defined method will be used in the indexing methods, such as `index_document`.
+
+Please note that in Rails 3, you need to either set `include_root_in_json: false`, or prevent adding
+the "root" in the JSON representation with other means.
 
 #### Relationships and Associations
 
