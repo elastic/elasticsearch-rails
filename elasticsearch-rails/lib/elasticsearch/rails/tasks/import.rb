@@ -39,7 +39,7 @@ namespace :elasticsearch do
       Pass an ActiveRecord scope to limit the imported records:
         $ rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
     DESC
-    task :model do
+    task :model => :environment do
       if ENV['CLASS'].to_s == ''
         puts '='*90, 'USAGE', '='*90, import_model_desc, ""
         exit(1)
@@ -79,7 +79,8 @@ namespace :elasticsearch do
 
         $ rake environment elasticsearch:import:all DIR=app/models
     DESC
-    task :all do
+
+    task :all => :environment do
       dir    = ENV['DIR'].to_s != '' ? ENV['DIR'] : Rails.root.join("app/models")
 
       puts "[IMPORT] Loading models from: #{dir}"
