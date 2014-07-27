@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "yard"
   s.add_development_dependency "ruby-prof"
   s.add_development_dependency "pry"
-  s.add_development_dependency "ci_reporter"
+  s.add_development_dependency "ci_reporter", "~> 1.9"
 
   if defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
     s.add_development_dependency "simplecov"
