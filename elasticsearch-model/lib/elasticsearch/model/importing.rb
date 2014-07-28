@@ -76,6 +76,20 @@ module Elasticsearch
         #
         #    Article.import transform: transform
         #
+        # @example Update the batch before yielding it
+        #
+        #     class Article
+        #       # ...
+        #       def enrich(batch)
+        #         batch.each do |item|
+        #           item.metadata = MyAPI.get_metadata(item.id)
+        #         end
+        #         batch
+        #       end
+        #     end
+        #
+        #    Article.import preprocess: enrich
+        #
         def import(options={}, &block)
           errors       = 0
           refresh      = options.delete(:refresh)   || false

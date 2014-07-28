@@ -78,7 +78,8 @@ module Elasticsearch
 
         module Importing
 
-          # Fetch batches of records from the database
+          # Fetch batches of records from the database (used by the import method)
+          #
           #
           # @see http://api.rubyonrails.org/classes/ActiveRecord/Batches.html ActiveRecord::Batches.find_in_batches
           #

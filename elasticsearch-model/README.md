@@ -146,6 +146,9 @@ Article.import
 # => 0
 ```
 
+It's possible to import only records from a specific `scope`, or transform the batch with the `transform`
+and `preprocess` options -- look for examples in the method documentation.
+
 No errors were reported during importing, so... let's search the index!
 
 
@@ -656,28 +659,6 @@ response.records.records.class
 
 More examples can be found in the `examples` folder. Please see the `Elasticsearch::Model::Adapter`
 module and its submodules for technical information.
-
-#### Customizing `Elasticsearch::Model::Adapter::ActiveRecord`
-
-If you need to integrate with an external service (such as Quickbooks) to get content during an import, you might need to run each batch of records through a preprocessor before importing. Use the `preprocess` option to specify the method used to preprocess each batch:
-
-```ruby
-class PurchaseOrder
-  # Queries the external service in batch
-  # to improve performance and reduce requests.
-  def add_content_from_quickbooks(batch)
-    quickbooks_purchase_orders = Hash[QuickbooksPurchaseOrder.where(id: batch.collect(&:quickbooks_id)).collect { |qpo| [qpo.id, qpo] }]
-    batch.each do |purchase_order|
-      purchase_order.in_quickbooks = quickbooks_purchase_orders[purchase_order.quickbooks_id]
-    end
-    batch
-  end
-end
-
-PurchaseOrder.import(preprocess: :add_content_from_quickbooks)
-
-```
-
 
 ## Development and Community
 
