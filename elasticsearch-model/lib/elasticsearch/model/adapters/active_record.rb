@@ -84,11 +84,12 @@ module Elasticsearch
           #
           def __find_in_batches(options={}, &block)
             named_scope = options.delete(:scope)
+            preprocess = options.delete(:preprocess)
 
             scope = named_scope ? self.__send__(named_scope) : self
 
             scope.find_in_batches(options) do |batch|
-              yield batch
+              yield (preprocess ? self.__send__(preprocess, batch) : batch)
             end
           end
 
