@@ -393,7 +393,9 @@ module Elasticsearch
         def update_document(options={})
           if changed_attributes = self.instance_variable_get(:@__changed_attributes)
             attributes = if respond_to?(:as_indexed_json)
-              self.as_indexed_json.select { |k,v| changed_attributes.keys.map(&:to_s).include? k.to_s }
+              indexed_json = self.as_indexed_json
+              (self.attributes.keys - changed_attributes.keys).map(&:to_s).each{ |k| indexed_json.delete(k) }
+              indexed_json
             else
               changed_attributes
             end

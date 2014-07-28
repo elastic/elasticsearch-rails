@@ -186,6 +186,8 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           (@callbacks ||= {})[block.hash] = block
         end
 
+        def attributes; { :_id => 1, :foo => 'B', :bar => 'D', :baz => 'F' }; end
+
         def changed_attributes; [:foo, :bar]; end
 
         def changes
@@ -193,7 +195,32 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
 
         def as_indexed_json(options={})
-          { :foo => 'B' }
+          { :foo => 'B', :bar => 'D' }
+        end
+      end
+
+      class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJsonWithDerivedAttribute
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def attributes; { :_id => 1, :foo => 'B', :bar => 'D', :baz => 'F' }; end
+
+        def changed_attributes; [:foo, :bar]; end
+
+        def changes
+          {:foo => ['A', 'B'], :bar => ['C', 'D']}
+        end
+
+        def as_indexed_json(options={})
+          { :foo => 'B', :bar => 'D', :qux => derived_value }
+        end
+
+        def derived_value
+          'E'
         end
       end
 
@@ -356,6 +383,26 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:update).with do |payload|
           assert_equal({'foo' => 'BAR'}, payload[:body][:doc])
+          true
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document
+      end
+
+      should "include derived attributes from custom as_indexed_json during partial update" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJsonWithDerivedAttribute.new
+
+        # Set the fake `changes` hash
+        instance.instance_variable_set(:@__changed_attributes, {foo: 'B'})
+
+        client.expects(:update).with do |payload|
+          assert_equal({foo: 'B', qux: 'E'}, payload[:body][:doc])
           true
         end
 
