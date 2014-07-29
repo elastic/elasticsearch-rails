@@ -132,9 +132,21 @@ Article.create title: 'Test'
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-rails)
 * [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/test)
 
-## Testing
+## Running the Test Suite
 
-After following the installation notes above, run `rake test:all` to run the full test suite. Elasticsearch must be running on port `9250`.
+You can run unit and integration tests for each sub-project by running the respective Rake tasks in their folders.
+
+You can also unit, integration, or both tests in the top level directory for each sub-project:
+
+    rake bundle:clean
+    rake bundle:install
+    bundle exec rake test:all
+
+The test suite expects an Elasticsearch cluster running on port 9250, and **will delete all the data**. You can launch an isolated, in-memory Elasticsearch cluster with the following Rake task:
+
+    TEST_CLUSTER_COMMAND=/tmp/builds/elasticsearch-2.0.0-SNAPSHOT/bin/elasticsearch TEST_CLUSTER_NODES=1 bundle exec rake test:cluster:start
+
+See more information in the documentation  for the [`elasticsearch-extensions`](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-extensions#testcluster) gem.
 
 ## License
 
