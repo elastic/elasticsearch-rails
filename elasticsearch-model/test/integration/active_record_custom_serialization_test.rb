@@ -13,7 +13,8 @@ module Elasticsearch
         end
 
         def as_indexed_json(options={})
-          as_json(options.merge root: false).slice('title')
+          # as_json(options.merge root: false).slice('title')
+          { title: self.title }
         end
       end
 
