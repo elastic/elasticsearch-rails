@@ -153,6 +153,25 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           { :foo => 'B' }
         end
       end
+      
+      class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJsonMixed
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def changed_attributes; [:foo, :bar]; end
+
+        def changes
+          {:foo => ['A', 'B'], 'bar' => ['C', 'D']}
+        end
+
+        def as_indexed_json(options={})
+          { 'foo' => 'B', :bar => 'D' }
+        end
+      end
 
       should "register before_save callback when included" do
         ::DummyIndexingModelWithCallbacks.expects(:before_save).returns(true)
@@ -286,6 +305,25 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:update).with do |payload|
           assert_equal({foo: 'B'}, payload[:body][:doc])
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document
+      end
+      
+      should "accept strings and symbols for as_indexed_json, because as_json(methods: [:foo, :bar]) in rails 3.2 returns symbols instead of strings" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJsonMixed.new
+
+        # Set the fake `changes` hash
+        instance.instance_variable_set(:@__changed_attributes, {foo: 'B', bar: 'D' })
+
+        client.expects(:update).with do |payload|
+          assert_equal({foo: 'B', bar: 'D'}, payload[:body][:doc])
         end
 
         instance.expects(:client).returns(client)
