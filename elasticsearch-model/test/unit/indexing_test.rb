@@ -285,7 +285,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance.instance_variable_set(:@__changed_attributes, {'foo' => 'B', 'bar' => 'D' })
 
         client.expects(:update).with do |payload|
-          assert_equal({'foo' => 'B'}, payload[:body][:doc])
+          assert_equal({:foo => 'B'}, payload[:body][:doc])
         end
 
         instance.expects(:client).returns(client)
@@ -300,10 +300,12 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         client   = mock('client')
         instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
 
-        instance.instance_variable_set(:@__changed_attributes, {foo: {ru:'B'} })
+        instance.instance_variable_set(:@__changed_attributes, { 'foo' => { 'bar' => 'BAR'} })
+        # Overload as_indexed_json
+        instance.expects(:as_indexed_json).returns({ 'foo' => 'BAR' })
 
         client.expects(:update).with do |payload|
-          assert_equal({foo: 'B'}, payload[:body][:doc])
+          assert_equal({'foo' => 'BAR'}, payload[:body][:doc])
         end
 
         instance.expects(:client).returns(client)

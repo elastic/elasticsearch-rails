@@ -336,11 +336,7 @@ module Elasticsearch
         def update_document(options={})
           if changed_attributes = self.instance_variable_get(:@__changed_attributes)
             attributes = if respond_to?(:as_indexed_json)
-              json = self.as_indexed_json
-              changed_attributes.inject({}) do |memo,(key,value)|
-                memo[key] = json[key] if json.keys.include? key
-                memo
-              end
+              self.as_indexed_json.select { |k,v| changed_attributes.keys.map(&:to_s).include? k.to_s }
             else
               changed_attributes
             end
