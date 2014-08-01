@@ -98,7 +98,7 @@ repository.delete(note)
 => {"found"=>true, "_index"=>"repository", "_type"=>"note", "_id"=>"1", "_version"=>2}
 ```
 
-The repository module provides a number of features and facilities to configure and customize the behaviour:
+The repository module provides a number of features and facilities to configure and customize the behavior:
 
 * Configuring the Elasticsearch [client](https://github.com/elasticsearch/elasticsearch-ruby#usage) being used
 * Setting the index name, document type, and object class for deserialization
@@ -126,7 +126,7 @@ repository = Elasticsearch::Persistence::Repository.new do
   # Set a custom document type
   type  :my_note
 
-  # Specify the class to inicialize when deserializing documents
+  # Specify the class to initialize when deserializing documents
   klass Note
 
   # Configure the settings and mappings for the Elasticsearch index
@@ -494,7 +494,7 @@ class Article
 
   # Execute code after saving the model.
   #
-  after_save { puts "Successfuly saved: #{self}" }
+  after_save { puts "Successfully saved: #{self}" }
 end
 ```
 
@@ -573,7 +573,7 @@ Any callbacks defined in the model will be triggered during the persistence oper
 
 ```ruby
 article.save
-# Successfuly saved: #<Article {...}>
+# Successfully saved: #<Article {...}>
 ```
 
 The model also supports familiar `find_in_batches` and `find_each` methods to efficiently
