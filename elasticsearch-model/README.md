@@ -422,7 +422,7 @@ class Article
 end
 ```
 
-For ActiveRecord-based models, you need to hook into the `after_commit` callback, to protect
+For ActiveRecord-based models, use the `after_commit` callback to protect
 your data against inconsistencies caused by transaction rollbacks:
 
 ```ruby
