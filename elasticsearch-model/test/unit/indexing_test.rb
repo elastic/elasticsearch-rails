@@ -195,6 +195,27 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
 
         def as_indexed_json(options={})
+          { :foo => 'B' }
+        end
+      end
+
+      class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJsonMultiValue
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def attributes; { :_id => 1, :foo => 'B', :bar => 'D', :baz => 'F' }; end
+
+        def changed_attributes; [:foo, :bar]; end
+
+        def changes
+          {:foo => ['A', 'B'], :bar => ['C', 'D']}
+        end
+
+        def as_indexed_json(options={})
           { :foo => 'B', :bar => 'D' }
         end
       end
