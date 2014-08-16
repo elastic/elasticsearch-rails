@@ -50,7 +50,7 @@ module DataMapperAdapter
   #
   module Records
     def records
-      klass.all(id: ids) # in ruby 2.1.2 you have to make these into integers
+      klass.all(id: ids)
     end
 
     # ...
