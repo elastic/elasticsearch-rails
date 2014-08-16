@@ -674,7 +674,7 @@ module DataMapperAdapter
   #
   module Records
     def records
-      klass.all(id: @ids)
+      klass.all(id: ids)
     end
 
     # ...
