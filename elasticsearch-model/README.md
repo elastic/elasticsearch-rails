@@ -146,8 +146,8 @@ Article.import
 # => 0
 ```
 
-It's possible to import only records from a specific `scope`, or transform the batch with the `transform`
-and `preprocess` options -- look for examples in the method documentation.
+It's possible to import only records from a specific `scope`, transform the batch with the `transform`
+and `preprocess` options, or re-create the index by deleting it and creating it with correct mapping with the `force` option -- look for examples in the method documentation.
 
 No errors were reported during importing, so... let's search the index!
 
