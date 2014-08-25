@@ -59,7 +59,6 @@ namespace :test do
       sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:unit"
       puts "\n"
     end
-    Rake::Task['test:coveralls'].invoke if ENV['CI'] && defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
   end
 
   desc "Run integration tests in all subprojects"
@@ -80,8 +79,6 @@ namespace :test do
     sh "cd #{__current__.join('elasticsearch-rails')} && unset BUNDLE_GEMFILE &&" +
        " bundle exec rake test:integration"
     puts "\n"
-
-    Rake::Task['test:coveralls'].invoke if ENV['CI'] && defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
   end
 
   desc "Run all tests in all subprojects"
@@ -90,12 +87,6 @@ namespace :test do
 
     Rake::Task['test:unit'].invoke
     Rake::Task['test:integration'].invoke
-  end
-
-  task :coveralls do
-    require 'coveralls/rake/task'
-    Coveralls::RakeTask.new
-    Rake::Task['coveralls:push'].invoke
   end
 
   task :ci_reporter do
