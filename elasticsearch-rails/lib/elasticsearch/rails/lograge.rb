@@ -9,6 +9,10 @@ module Elasticsearch
       #
       #     require 'elasticsearch/rails/lograge'
       #
+      # If you're using custom lograge options, add the following to config.lograge.custom_options
+      #
+      #     es: event.payload[:elasticsearch_runtime]
+      #
       # You should see the full duration of the request to Elasticsearch as part of each log event:
       #
       #     method=GET path=/search ... status=200 duration=380.89 view=99.64 db=0.00 es=279.37
