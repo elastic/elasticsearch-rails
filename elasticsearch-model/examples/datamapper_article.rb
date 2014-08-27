@@ -55,6 +55,16 @@ module DataMapperAdapter
 
     # ...
   end
+
+  module Callbacks
+    def self.included(model)
+      model.class_eval do
+        after(:create) { __elasticsearch__.index_document  }
+        after(:save) { __elasticsearch__.update_document }
+        after(:destroy) { __elasticsearch__.delete_document }
+      end
+    end
+  end
 end
 
 # Register the adapter
