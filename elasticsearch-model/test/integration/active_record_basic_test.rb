@@ -128,6 +128,19 @@ module Elasticsearch
           assert_equal 1, response.records.size
         end
 
+         should "allow specific updates to be made to the document directly" do
+          article = Article.first
+
+          article.update_document_attributes({title: 'green grass'})
+
+          Article.__elasticsearch__.refresh_index!
+
+          response = Article.search 'title:green'
+
+          assert_equal 1, response.results.size
+          assert_equal 1, response.records.size
+        end
+
         should "return results for a DSL search" do
           response = Article.search query: { match: { title: { query: 'test' } } }
 
