@@ -90,13 +90,18 @@ module Elasticsearch
         #
         #    Article.import preprocess: enrich
         #
+        # @example Return an array of error elements instead of the number of errors, eg.
+        #          to try importing these records again
+        #
+        #    Article.import return: 'errors'
+        #
         def import(options={}, &block)
-          errors         = []
+          errors       = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
           target_type  = options.delete(:type)      || document_type
           transform    = options.delete(:transform) || __transform
-          return_errors  = options.delete(:return_errors) || false
+          return_value = options.delete(:return)    || 'count'
 
           unless transform.respond_to?(:call)
             raise ArgumentError,
@@ -115,15 +120,16 @@ module Elasticsearch
 
             yield response if block_given?
 
-            errors += response['items'].select { |i| i['index']['error'] }
+            errors +=  response['items'].select { |k, v| k.values.first['error'] }
           end
 
           self.refresh_index! if refresh
 
-          if return_errors
-            errors
-          else
-            errors.size
+          case return_value
+            when 'errors'
+              errors
+            else
+              errors.size
           end
         end
 
