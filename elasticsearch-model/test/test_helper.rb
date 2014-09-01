@@ -10,7 +10,8 @@ at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks }
 
 puts '-'*80
 
-require 'test/unit'
+require 'minitest/autorun'
+begin; require 'test/unit'; rescue LoadError; end
 require 'shoulda-context'
 require 'mocha/setup'
 require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || RUBY_1_8
@@ -27,6 +28,12 @@ require 'elasticsearch/model'
 
 require 'elasticsearch/extensions/test/cluster'
 require 'elasticsearch/extensions/test/startup_shutdown'
+
+module Test
+  module Unit
+    class TestCase < MiniTest::Unit::TestCase; end
+  end
+end unless defined?(::Test::Unit::TestCase)
 
 module Elasticsearch
   module Test

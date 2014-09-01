@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "will_paginate"
   # NOTE: Do not add Mongoid here, keep only in 3/4 files
 
-  s.add_development_dependency "minitest", "~> 4.0"
+  s.add_development_dependency "minitest", "~> 4"
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
