@@ -51,7 +51,7 @@
 <div class="col-md-12">
   <p class="alert alert-warning">
     No documents have been found.
-    <% if suggestions.present? %>
+    <% if suggestions['suggest_title'].present? || suggestions['suggest_body'].present? %>
       Maybe you mean
       <%= suggestions.map { |k,v| v.first['options'] }.flatten.map {|v| v['text']}.uniq.map do |term|
         link_to term, search_path(params.merge q: term)
