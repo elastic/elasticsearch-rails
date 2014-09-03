@@ -18,6 +18,8 @@ jdk:
 
 env:
   - TEST_BUNDLE_GEMFILE=$PWD/elasticsearch/elasticsearch-rails/elasticsearch-model/gemfiles/3.0.gemfile
+  - TEST_BUNDLE_GEMFILE=$PWD/elasticsearch/elasticsearch-rails/elasticsearch-model/gemfiles/3.1.gemfile
+  - TEST_BUNDLE_GEMFILE=$PWD/elasticsearch/elasticsearch-rails/elasticsearch-model/gemfiles/3.2.gemfile
   - TEST_BUNDLE_GEMFILE=$PWD/elasticsearch/elasticsearch-rails/elasticsearch-model/gemfiles/4.0.gemfile
 
 services:

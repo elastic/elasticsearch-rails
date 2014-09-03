@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.9.3"
 
   s.add_dependency "elasticsearch",       '> 0.4'
-  s.add_dependency "activesupport",       '> 3'
+  s.add_dependency "activesupport",       '>= 3'
   s.add_dependency "hashie"
 
   s.add_development_dependency "bundler", "~> 1.3"
@@ -33,8 +33,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "elasticsearch-extensions"
 
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "activemodel",   "> 3.0"
-  s.add_development_dependency "activerecord",  "> 4.0"
+  s.add_development_dependency "activemodel",   ">= 3"
+  s.add_development_dependency "activerecord",  ">= 3"
 
   s.add_development_dependency "oj"
   s.add_development_dependency "kaminari"

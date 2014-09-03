@@ -1,0 +1,14 @@
+# Usage:
+#
+# $ BUNDLE_GEMFILE=./gemfiles/3.1.gemfile bundle install
+# $ BUNDLE_GEMFILE=./gemfiles/3.1.gemfile bundle exec rake test:integration
+
+source 'https://rubygems.org'
+
+gemspec path: '../'
+
+gem 'activemodel',  '~> 3.1.0'
+gem 'activerecord', '~> 3.1.0'
+gem 'actionpack',   '~> 3.1.0'
+
+gem 'mongoid',      '~> 2.5.2'

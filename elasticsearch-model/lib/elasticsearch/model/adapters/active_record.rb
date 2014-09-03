@@ -20,11 +20,7 @@ module Elasticsearch
             #
             sql_records.instance_exec(response.response['hits']['hits']) do |hits|
               define_singleton_method :to_a do
-                if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
-                  self.load
-                else
-                  self.__send__(:exec_queries)
-                end
+                super()
                 @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
               end
             end
@@ -47,11 +43,7 @@ module Elasticsearch
             #
             sql_records.instance_exec do
               define_singleton_method(:to_a) do
-                if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
-                  self.load
-                else
-                  self.__send__(:exec_queries)
-                end
+                super()
                 @records
               end
             end
