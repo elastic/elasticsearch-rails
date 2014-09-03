@@ -73,7 +73,14 @@ namespace :test do
        " bundle exec rake test:integration"
     puts "\n"
 
-    # 2/ elasticsearch-rails
+    # 2/ elasticsearch-persistence
+    #
+    puts '-'*80
+    sh "cd #{__current__.join('elasticsearch-persistence')} && unset BUNDLE_GEMFILE &&" +
+       " bundle exec rake test:integration"
+    puts "\n"
+
+    # 3/ elasticsearch-rails
     #
     puts '-'*80
     sh "cd #{__current__.join('elasticsearch-rails')} && unset BUNDLE_GEMFILE &&" +
