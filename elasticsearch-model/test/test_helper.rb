@@ -46,7 +46,7 @@ module Elasticsearch
       def setup
         ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" )
         logger = ::Logger.new(STDERR)
-        logger.formatter = lambda { |s, d, p, m| "#{m.ansi(:faint, :cyan)}\n" }
+        logger.formatter = lambda { |s, d, p, m| "\e[2;36m#{m}\e[0m\n" }
         ActiveRecord::Base.logger = logger unless ENV['QUIET']
 
         ActiveRecord::LogSubscriber.colorize_logging = false
