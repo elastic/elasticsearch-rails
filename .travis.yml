@@ -16,20 +16,17 @@ rvm:
 jdk:
   - openjdk7
 
-env:
-  - TEST_BUNDLE_GEMFILE=$PWD/elasticsearch/elasticsearch-rails/elasticsearch-model/gemfiles/3.0.gemfile
-  - TEST_BUNDLE_GEMFILE=$PWD/elasticsearch/elasticsearch-rails/elasticsearch-model/gemfiles/4.0.gemfile
-
 services:
   - mongodb
 
 before_script:
   - ls -la /usr/share/elasticsearch/bin/elasticsearch
+  - echo $PWD
   - rake bundle:clean
   - rake bundle:install
 
 script:
-  - SERVER=launch TEST_CLUSTER_COMMAND=/usr/share/elasticsearch/bin/elasticsearch TEST_BUNDLE_GEMFILE=$TEST_BUNDLE_GEMFILE bundle exec rake test:all
+  - SERVER=launch TEST_CLUSTER_COMMAND=/usr/share/elasticsearch/bin/elasticsearch TEST_CLUSTER_PARAMS='-Des.default.path.conf=/etc/elasticsearch/' bundle exec rake test:all
 
 notifications:
   disable: true
