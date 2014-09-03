@@ -1,23 +1,23 @@
 require 'test_helper'
+require 'active_record'
 
 module Elasticsearch
   module Model
     class ActiveRecordNamespacedModelIntegrationTest < Elasticsearch::Test::IntegrationTestCase
-
-      module ::MyNamespace
-        class Article < ActiveRecord::Base
-          include Elasticsearch::Model
-          include Elasticsearch::Model::Callbacks
-
-          mapping { indexes :title }
-        end
-      end
-
       context "Namespaced ActiveRecord model integration" do
         setup do
           ActiveRecord::Schema.define(:version => 1) do
             create_table :articles do |t|
               t.string   :title
+            end
+          end
+
+          module ::MyNamespace
+            class Article < ActiveRecord::Base
+              include Elasticsearch::Model
+              include Elasticsearch::Model::Callbacks
+
+              mapping { indexes :title }
             end
           end
 

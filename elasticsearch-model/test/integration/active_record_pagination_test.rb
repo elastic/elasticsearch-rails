@@ -1,26 +1,24 @@
 require 'test_helper'
+require 'active_record'
 
 module Elasticsearch
   module Model
     class ActiveRecordPaginationTest < Elasticsearch::Test::IntegrationTestCase
-
-      class ::ArticleForPagination < ActiveRecord::Base
-        include Elasticsearch::Model
-
-        scope :published, -> { where(published: true) }
-
-        settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-          mapping do
-            indexes :title,      type: 'string', analyzer: 'snowball'
-            indexes :created_at, type: 'date'
-          end
-        end
-      end
-
-      Kaminari::Hooks.init
-
       context "ActiveRecord pagination" do
         setup do
+          class ::ArticleForPagination < ActiveRecord::Base
+            include Elasticsearch::Model
+
+            scope :published, -> { where(published: true) }
+
+            settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+              mapping do
+                indexes :title,      type: 'string', analyzer: 'snowball'
+                indexes :created_at, type: 'date'
+              end
+            end
+          end
+
           ActiveRecord::Schema.define(:version => 1) do
             create_table ::ArticleForPagination.table_name do |t|
               t.string   :title
@@ -28,6 +26,8 @@ module Elasticsearch
               t.boolean  :published
             end
           end
+
+          Kaminari::Hooks.init
 
           ArticleForPagination.delete_all
           ArticleForPagination.__elasticsearch__.create_index! force: true

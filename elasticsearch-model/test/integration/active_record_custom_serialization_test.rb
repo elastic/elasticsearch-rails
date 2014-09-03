@@ -1,25 +1,25 @@
 require 'test_helper'
+require 'active_record'
 
 module Elasticsearch
   module Model
     class ActiveRecordCustomSerializationTest < Elasticsearch::Test::IntegrationTestCase
-
-      class ::ArticleWithCustomSerialization < ActiveRecord::Base
-        include Elasticsearch::Model
-        include Elasticsearch::Model::Callbacks
-
-        mapping do
-          indexes :title
-        end
-
-        def as_indexed_json(options={})
-          # as_json(options.merge root: false).slice('title')
-          { title: self.title }
-        end
-      end
-
       context "ActiveRecord model with custom JSON serialization" do
         setup do
+          class ::ArticleWithCustomSerialization < ActiveRecord::Base
+            include Elasticsearch::Model
+            include Elasticsearch::Model::Callbacks
+
+            mapping do
+              indexes :title
+            end
+
+            def as_indexed_json(options={})
+              # as_json(options.merge root: false).slice('title')
+              { title: self.title }
+            end
+          end
+
           ActiveRecord::Schema.define(:version => 1) do
             create_table ArticleWithCustomSerialization.table_name do |t|
               t.string   :title

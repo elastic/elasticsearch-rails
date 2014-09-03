@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_record'
 
 class Question < ActiveRecord::Base
   include Elasticsearch::Model
