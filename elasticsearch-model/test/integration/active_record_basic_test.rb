@@ -1,29 +1,29 @@
 require 'test_helper'
+require 'active_record'
 
 puts "ActiveRecord #{ActiveRecord::VERSION::STRING}", '-'*80
 
 module Elasticsearch
   module Model
     class ActiveRecordBasicIntegrationTest < Elasticsearch::Test::IntegrationTestCase
-
-      class ::Article < ActiveRecord::Base
-        include Elasticsearch::Model
-        include Elasticsearch::Model::Callbacks
-
-        settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-          mapping do
-            indexes :title,      type: 'string', analyzer: 'snowball'
-            indexes :created_at, type: 'date'
-          end
-        end
-      end
-
       context "ActiveRecord basic integration" do
         setup do
           ActiveRecord::Schema.define(:version => 1) do
             create_table :articles do |t|
               t.string   :title
               t.datetime :created_at, :default => 'NOW()'
+            end
+          end
+
+          class ::Article < ActiveRecord::Base
+            include Elasticsearch::Model
+            include Elasticsearch::Model::Callbacks
+
+            settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+              mapping do
+                indexes :title,      type: 'string', analyzer: 'snowball'
+                indexes :created_at, type: 'date'
+              end
             end
           end
 

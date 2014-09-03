@@ -19,7 +19,6 @@ require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || RUBY_1_8
 require 'ansi'
 require 'oj'
 
-require 'active_record'
 require 'active_model'
 
 require 'kaminari'

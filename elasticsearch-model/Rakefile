@@ -22,10 +22,16 @@ namespace :test do
     # test.warning = true
   end
 
-  Rake::TestTask.new(:integration) do |test|
+  Rake::TestTask.new(:run_integration) do |test|
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
     test.libs << 'lib' << 'test'
     test.test_files = FileList["test/integration/**/*_test.rb"]
+  end
+
+  desc "Run integration tests against ActiveModel 3 and 4"
+  task :integration do
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
   end
 
   Rake::TestTask.new(:all) do |test|

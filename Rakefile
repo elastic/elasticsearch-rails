@@ -69,7 +69,7 @@ namespace :test do
     #
     puts '-'*80
     sh "cd #{__current__.join('elasticsearch-model')} && unset BUNDLE_GEMFILE &&" +
-       %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE=#{ENV['TEST_BUNDLE_GEMFILE']}" : '' }|  +
+       %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE='#{ENV['TEST_BUNDLE_GEMFILE']}'" : '' }|  +
        " bundle exec rake test:integration"
     puts "\n"
 

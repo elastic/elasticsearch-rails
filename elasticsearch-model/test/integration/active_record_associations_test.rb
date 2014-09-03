@@ -1,91 +1,5 @@
 require 'test_helper'
-
-# ----- Models definition -------------------------------------------------------------------------
-
-class Category < ActiveRecord::Base
-  has_and_belongs_to_many :posts
-end
-
-class Author < ActiveRecord::Base
-  has_many :authorships
-
-  def full_name
-    [first_name, last_name].compact.join(' ')
-  end
-end
-
-class Authorship < ActiveRecord::Base
-  belongs_to :author
-  belongs_to :post, touch: true
-end
-
-class Comment < ActiveRecord::Base
-  belongs_to :post, touch: true
-end
-
-class Post < ActiveRecord::Base
-  has_and_belongs_to_many :categories, after_add:    [ lambda { |a,c| a.__elasticsearch__.index_document } ],
-                                       after_remove: [ lambda { |a,c| a.__elasticsearch__.index_document } ]
-  has_many                :authorships
-  has_many                :authors, through: :authorships
-  has_many                :comments
-end
-
-# ----- Search integration via Concern module -----------------------------------------------------
-
-module Searchable
-  extend ActiveSupport::Concern
-
-  included do
-    include Elasticsearch::Model
-    include Elasticsearch::Model::Callbacks
-
-    # Set up the mapping
-    #
-    settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-      mapping do
-        indexes :title,      analyzer: 'snowball'
-        indexes :created_at, type: 'date'
-
-        indexes :authors do
-          indexes :first_name
-          indexes :last_name
-          indexes :full_name, type: 'multi_field' do
-            indexes :full_name
-            indexes :raw, analyzer: 'keyword'
-          end
-        end
-
-        indexes :categories, analyzer: 'keyword'
-
-        indexes :comments, type: 'nested' do
-          indexes :text
-          indexes :author
-        end
-      end
-    end
-
-    # Customize the JSON serialization for Elasticsearch
-    #
-    def as_indexed_json(options={})
-      {
-        title: title,
-        text:  text,
-        categories: categories.map(&:title),
-        authors:    authors.as_json(methods: [:full_name], only: [:full_name, :first_name, :last_name]),
-        comments:   comments.as_json(only: [:text, :author])
-      }
-    end
-
-    # Update document in the index after touch
-    #
-    after_touch() { __elasticsearch__.index_document }
-  end
-end
-
-# Include the search integration
-#
-Post.__send__ :include, Searchable
+require 'active_record'
 
 module Elasticsearch
   module Model
@@ -132,6 +46,93 @@ module Elasticsearch
               t.timestamps
             end
           end
+
+          # ----- Models definition -------------------------------------------------------------------------
+
+          class Category < ActiveRecord::Base
+            has_and_belongs_to_many :posts
+          end
+
+          class Author < ActiveRecord::Base
+            has_many :authorships
+
+            def full_name
+              [first_name, last_name].compact.join(' ')
+            end
+          end
+
+          class Authorship < ActiveRecord::Base
+            belongs_to :author
+            belongs_to :post, touch: true
+          end
+
+          class Comment < ActiveRecord::Base
+            belongs_to :post, touch: true
+          end
+
+          class Post < ActiveRecord::Base
+            has_and_belongs_to_many :categories, after_add:    [ lambda { |a,c| a.__elasticsearch__.index_document } ],
+                                                 after_remove: [ lambda { |a,c| a.__elasticsearch__.index_document } ]
+            has_many                :authorships
+            has_many                :authors, through: :authorships
+            has_many                :comments
+          end
+
+          # ----- Search integration via Concern module -----------------------------------------------------
+
+          module Searchable
+            extend ActiveSupport::Concern
+
+            included do
+              include Elasticsearch::Model
+              include Elasticsearch::Model::Callbacks
+
+              # Set up the mapping
+              #
+              settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+                mapping do
+                  indexes :title,      analyzer: 'snowball'
+                  indexes :created_at, type: 'date'
+
+                  indexes :authors do
+                    indexes :first_name
+                    indexes :last_name
+                    indexes :full_name, type: 'multi_field' do
+                      indexes :full_name
+                      indexes :raw, analyzer: 'keyword'
+                    end
+                  end
+
+                  indexes :categories, analyzer: 'keyword'
+
+                  indexes :comments, type: 'nested' do
+                    indexes :text
+                    indexes :author
+                  end
+                end
+              end
+
+              # Customize the JSON serialization for Elasticsearch
+              #
+              def as_indexed_json(options={})
+                {
+                  title: title,
+                  text:  text,
+                  categories: categories.map(&:title),
+                  authors:    authors.as_json(methods: [:full_name], only: [:full_name, :first_name, :last_name]),
+                  comments:   comments.as_json(only: [:text, :author])
+                }
+              end
+
+              # Update document in the index after touch
+              #
+              after_touch() { __elasticsearch__.index_document }
+            end
+          end
+
+          # Include the search integration
+          #
+          Post.__send__ :include, Searchable
 
           # ----- Reset the index -----------------------------------------------------------------
 
