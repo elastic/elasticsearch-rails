@@ -1,4 +1,12 @@
-## 0.1.3
+## 0.1.5
+
+* Improved documentation
+* Fixes and improvements to the "will_paginate" integration
+* Added a `:preprocess` option to the `import` method
+* Changed, that attributes are fetched from `as_indexed_json` in the `update_document` method
+* Added an option to the import method to return an array of error messages instead of just count
+* Fixed many problems with dependency hell
+* Fixed tests so they run on Ruby 2.2
 
 ## 0.1.2
 

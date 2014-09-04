@@ -1,4 +1,6 @@
-## 0.1.3
+## 0.1.5
+
+* Fixed an exception when no suggestions were returned in the `03-expert` example application template
 
 ## 0.1.2
 
