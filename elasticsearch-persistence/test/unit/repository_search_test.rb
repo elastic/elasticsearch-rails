@@ -21,8 +21,8 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       @client.expects(:search).with do |arguments|
         assert_equal 'test',        arguments[:index]
         assert_equal 'my_document', arguments[:type]
-
-        assert_equal({foo: 'bar'}, arguments[:body])
+        assert_equal({foo: 'bar'},  arguments[:body])
+        true
       end
 
       subject.search foo: 'bar'
@@ -35,8 +35,8 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       @client.expects(:search).with do |arguments|
         assert_equal 'test',                arguments[:index]
         assert_equal 'my_special_document', arguments[:type]
-
-        assert_equal({foo: 'bar'}, arguments[:body])
+        assert_equal({foo: 'bar'},          arguments[:body])
+        true
       end
 
       subject.search foo: 'bar'
@@ -50,8 +50,8 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       @client.expects(:search).with do |arguments|
         assert_equal 'test', arguments[:index]
         assert_equal nil,    arguments[:type]
-
         assert_equal({foo: 'bar'}, arguments[:body])
+        true
       end
 
       assert_instance_of Elasticsearch::Persistence::Repository::Response::Results,
@@ -64,6 +64,7 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
 
       @client.expects(:search).twice.with do |arguments|
         assert_equal 'bambam', arguments[:routing]
+        true
       end
 
       assert_instance_of Elasticsearch::Persistence::Repository::Response::Results,
@@ -78,6 +79,7 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
 
       @client.expects(:search).with do |arguments|
         assert_equal 'foobar', arguments[:q]
+        true
       end
 
       assert_instance_of Elasticsearch::Persistence::Repository::Response::Results,
@@ -104,6 +106,7 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
         .with do |query_or_definition, options|
           assert_equal 'bar', query_or_definition[:query][:match][:foo]
           assert_equal true, options[:ignore_unavailable]
+          true
         end
         .returns(Elasticsearch::Persistence::Repository::Response::Results.new( subject, {'hits' => { 'total' => 1 }}))
 

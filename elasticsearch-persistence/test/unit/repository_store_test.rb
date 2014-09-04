@@ -25,6 +25,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
           assert_equal({foo: 'bar'}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -43,6 +44,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
           assert_equal({foo: 'bar'}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -64,6 +66,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
           assert_equal({foo: 'bar'}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -81,6 +84,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         client.expects(:index).with do |arguments|
           assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam', arguments[:routing]
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -99,6 +103,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',     arguments[:id]
           assert_equal 'mydoc', arguments[:type]
           assert_equal({doc: { foo: 'bar' }}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -114,6 +119,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',     arguments[:id]
           assert_equal 'mydoc', arguments[:type]
           assert_equal({script: 'ctx._source.foo += 1'}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -129,6 +135,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',     arguments[:id]
           assert_equal 'mydoc', arguments[:type]
           assert_equal({script: 'ctx._source.foo += 1', upsert: { foo: 1 }}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -143,6 +150,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',     arguments[:id]
           assert_equal 'mydoc', arguments[:type]
           assert_equal({doc: { foo: 'bar' }}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -157,6 +165,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',     arguments[:id]
           assert_equal 'mydoc', arguments[:type]
           assert_equal({script: 'ctx._source.foo += 1'}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -171,6 +180,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',     arguments[:id]
           assert_equal 'mydoc', arguments[:type]
           assert_equal({script: 'ctx._source.foo += 1', upsert: { foo: 1 } }, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -185,6 +195,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
           assert_equal '1',   arguments[:id]
           assert_equal 'foo', arguments[:type]
           assert_equal({script: 'ctx._source.foo += 1'}, arguments[:body])
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -208,6 +219,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         client.expects(:delete).with do |arguments|
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -225,6 +237,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         client.expects(:delete).with do |arguments|
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -245,6 +258,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         client.expects(:delete).with do |arguments|
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -262,6 +276,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         client.expects(:delete).with do |arguments|
           assert_equal 'my_document', arguments[:type]
           assert_equal '1', arguments[:id]
+          true
         end
         subject.expects(:client).returns(client)
 
@@ -277,6 +292,7 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         client.expects(:delete).with do |arguments|
           assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam', arguments[:routing]
+          true
         end
         subject.expects(:client).returns(client)
 

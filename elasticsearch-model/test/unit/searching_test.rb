@@ -24,6 +24,7 @@ class Elasticsearch::Model::SearchingTest < Test::Unit::TestCase
           assert_equal DummySearchingModel, klass
           assert_equal 'foo', query
           assert_equal({default_operator: 'AND'}, options)
+          true
         end
         .returns( stub('search') )
 

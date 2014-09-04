@@ -58,6 +58,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal '1', arguments[:id]
+            true
           end
           .returns(true)
 
@@ -74,6 +75,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal '1', arguments[:id]
+            true
           end
           .returns(true)
 
@@ -89,6 +91,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal '_all', arguments[:type]
             assert_equal '1', arguments[:id]
+            true
           end
           .returns(true)
 
@@ -99,6 +102,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         @client.expects(:exists).with do |arguments|
           assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam',    arguments[:routing]
+          true
         end
 
         subject.exists? '1', index: 'foobarbam', routing: 'bambam'
@@ -118,6 +122,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal '1', arguments[:id]
+            true
           end
           .returns({'_source' => { 'foo' => 'bar' }})
 
@@ -136,6 +141,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal '1', arguments[:id]
+            true
           end
           .returns({'_source' => { 'foo' => 'bar' }})
 
@@ -154,6 +160,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal '_all', arguments[:type]
             assert_equal '1', arguments[:id]
+            true
           end
           .returns({'_source' => { 'foo' => 'bar' }})
 
@@ -198,6 +205,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'foobarbam', arguments[:index]
             assert_equal 'bambam',    arguments[:routing]
+            true
           end
           .returns({'_source' => { 'foo' => 'bar' }})
 
@@ -244,6 +252,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal ['1', '2'], arguments[:body][:ids]
+            true
           end
           .returns(@response)
 
@@ -264,6 +273,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal ['1', '2'], arguments[:body][:ids]
+            true
           end
           .returns(@response)
 
@@ -290,6 +300,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal '_all', arguments[:type]
             assert_equal ['1', '2'], arguments[:body][:ids]
+            true
           end
           .returns(@response)
 
@@ -343,6 +354,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'my_document', arguments[:type]
             assert_equal ['1', '3', '2'], arguments[:body][:ids]
+            true
           end
           .returns(@response)
 
@@ -364,6 +376,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           .with do |arguments|
             assert_equal 'foobarbam', arguments[:index]
             assert_equal 'bambam',    arguments[:routing]
+            true
           end
           .returns(@response)
 

@@ -104,6 +104,7 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
         client.expects(:index).with do |arguments|
           assert_equal('xxx',   arguments[:id])
           assert_equal('FAKE!', arguments[:body])
+          true
         end
         repository.gateway.expects(:client).returns(client)
 
@@ -129,6 +130,7 @@ class Elasticsearch::Persistence::RepositoryModuleTest < Test::Unit::TestCase
       client.expects(:index).with do |arguments|
         assert_equal('xxx',   arguments[:id])
         assert_equal('FAKE IN CLASS!', arguments[:body])
+        true
       end
       repository.gateway.expects(:client).returns(client)
 

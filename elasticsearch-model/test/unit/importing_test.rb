@@ -108,10 +108,12 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.expects(:__find_in_batches).with do |options|
         assert_equal 'bar', options[:foo]
         assert_nil   options[:force]
+        true
       end
 
       DummyImportingModel.expects(:create_index!).with do |options|
         assert_equal true, options[:force]
+        true
       end
 
       DummyImportingModel.expects(:index_name).returns('foo')

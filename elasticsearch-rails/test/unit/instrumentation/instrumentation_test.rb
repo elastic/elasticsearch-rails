@@ -19,7 +19,7 @@ class Elasticsearch::Rails::InstrumentationTest < Test::Unit::TestCase
     RESPONSE = { 'took' => '5ms', 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [] } }
 
     setup do
-      @search   = Elasticsearch::Model::Searching::SearchRequest.new ::DummyInstrumentationModel, '*'
+      @search = Elasticsearch::Model::Searching::SearchRequest.new ::DummyInstrumentationModel, '*'
 
       @client = stub('client', search: RESPONSE)
       DummyInstrumentationModel.stubs(:client).returns(@client)
@@ -40,6 +40,7 @@ class Elasticsearch::Rails::InstrumentationTest < Test::Unit::TestCase
         assert_equal "search.elasticsearch", name
         assert_equal 'DummyInstrumentationModel', payload[:klass]
         assert_equal @query, payload[:search][:body]
+        true
       end
 
       s = ::DummyInstrumentationModel.search @query
@@ -55,6 +56,6 @@ class Elasticsearch::Rails::InstrumentationTest < Test::Unit::TestCase
       assert_not_nil logged
       assert_match /DummyInstrumentationModel Search \(\d+\.\d+ms\)/,  logged
       assert_match /body\: \{query\: \{match\: \{moo\: "bam"\}\}\}\}/, logged
-    end
+    end unless defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
   end
 end

@@ -93,6 +93,7 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
             assert_equal 'scan', arguments[:search_type]
             assert_equal 'foo',  arguments[:index]
             assert_equal 'bar',  arguments[:type]
+            true
           end
           .returns(MultiJson.load('{"_scroll_id":"abc123==", "hits":{"hits":[]}}'))
 

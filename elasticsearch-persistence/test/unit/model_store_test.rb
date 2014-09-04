@@ -76,6 +76,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |object, options|
             assert_equal subject, object
             assert_equal nil, options[:id]
+            true
           end
           .returns({'_id' => 'abc123'})
 
@@ -97,7 +98,8 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
       end
 
       should "save the model and update the timestamp" do
-        Time.expects(:now).returns(Time.parse('2014-01-01T00:00:00Z')).at_least_once
+        now = Time.parse('2014-01-01T00:00:00Z')
+        Time.expects(:now).returns(now).at_least_once
         @gateway
           .expects(:save)
           .returns({'_id' => 'abc123'})
@@ -111,6 +113,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .expects(:save)
           .with do |object, options|
             assert_equal 'ABC', options[:routing]
+            true
           end
           .returns({'_id' => 'abc123'})
 
@@ -141,6 +144,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc'})
 
@@ -155,6 +159,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 
@@ -192,6 +197,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .expects(:delete)
           .with do |object, options|
             assert_equal 'ABC', options[:routing]
+            true
           end
           .returns({'_id' => 'abc123'})
 
@@ -228,6 +234,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc'})
 
@@ -251,6 +258,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |id, options|
             assert_equal 'abc123', id
             assert_equal 'UPDATED', options[:doc][:title]
+            true
           end
           .returns({'_id' => 'abc123', 'version' => 2})
 
@@ -268,6 +276,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |id, options|
             assert_equal 'abc123', id
             assert_equal 'EXEC', options[:script]
+            true
           end
           .returns({'_id' => 'abc123', 'version' => 2})
 
@@ -281,6 +290,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .expects(:update)
           .with do |object, options|
             assert_equal 'ABC', options[:routing]
+            true
           end
           .returns({'_id' => 'abc123'})
 
@@ -314,6 +324,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc'})
 
@@ -330,6 +341,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 
@@ -354,6 +366,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .expects(:update)
           .with do |id, options|
             assert_equal 'ctx._source.count += 1', options[:script]
+            true
           end
           .returns({'_id' => 'abc123', 'version' => 2})
 
@@ -369,6 +382,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 
@@ -391,6 +405,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .expects(:update)
           .with do |id, options|
             assert_equal 'ctx._source.count = ctx._source.count - 1', options[:script]
+            true
           end
           .returns({'_id' => 'abc123', 'version' => 2})
 
@@ -406,6 +421,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 
@@ -428,12 +444,14 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
 
       should "update updated_at by default" do
         subject.expects(:persisted?).returns(true)
-        Time.expects(:now).returns(Time.parse('2014-01-01T00:00:00Z')).at_least_once
+        now = Time.parse('2014-01-01T00:00:00Z')
+        Time.expects(:now).returns(now).at_least_once
 
         @gateway
           .expects(:update)
           .with do |id, options|
             assert_equal '2014-01-01T00:00:00Z', options[:doc][:updated_at]
+            true
           end
           .returns({'_id' => 'abc123', 'version' => 2})
 
@@ -443,12 +461,14 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
 
       should "update a custom attribute by default" do
         subject.expects(:persisted?).returns(true)
-        Time.expects(:now).returns(Time.parse('2014-01-01T00:00:00Z')).at_least_once
+        now = Time.parse('2014-01-01T00:00:00Z')
+        Time.expects(:now).returns(now).at_least_once
 
         @gateway
           .expects(:update)
           .with do |id, options|
             assert_equal '2014-01-01T00:00:00Z', options[:doc][:created_at]
+            true
           end
           .returns({'_id' => 'abc123', 'version' => 2})
 
@@ -475,6 +495,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           .with do |model, options|
             assert_equal 'my_custom_index', options[:index]
             assert_equal 'my_custom_type',  options[:type]
+            true
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 

@@ -48,6 +48,7 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
       instance.__elasticsearch__.expects(:instance_variable_set).with do |name, value|
         assert_equal :@__changed_attributes, name
         assert_equal({foo: 'Two'}, value)
+        true
       end
 
       ::DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy

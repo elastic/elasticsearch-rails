@@ -91,6 +91,7 @@ gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/articl
   test "has a search method delegating to __elasticsearch__" do
     Article.__elasticsearch__.expects(:search).with do |definition|
       assert_equal 'foo', definition[:query][:multi_match][:query]
+      true
     end
 
     Article.search 'foo'

@@ -10,11 +10,17 @@ at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks }
 
 puts '-'*80
 
-require 'minitest/autorun'
-begin; require 'test/unit'; rescue LoadError; end
+if defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
+  require 'test-unit'
+  require 'mocha/test_unit'
+else
+  require 'minitest/autorun'
+  require 'mocha/mini_test'
+end
+
 require 'shoulda-context'
-require 'mocha/setup'
-require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || RUBY_1_8
+
+require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
 
 require 'ansi'
 require 'oj'
@@ -27,12 +33,6 @@ require 'elasticsearch/model'
 
 require 'elasticsearch/extensions/test/cluster'
 require 'elasticsearch/extensions/test/startup_shutdown'
-
-module Test
-  module Unit
-    class TestCase < MiniTest::Unit::TestCase; end
-  end
-end unless defined?(::Test::Unit::TestCase)
 
 module Elasticsearch
   module Test

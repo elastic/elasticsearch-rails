@@ -8,10 +8,17 @@ require 'simplecov' and SimpleCov.start { add_filter "/test|test_/" } if ENV["CO
 # MUST be called before requiring `test/unit`.
 at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks } if ENV['SERVER']
 
-require 'test/unit'
+if defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
+  require 'test-unit'
+  require 'mocha/test_unit'
+else
+  require 'minitest/autorun'
+  require 'mocha/mini_test'
+end
+
 require 'shoulda-context'
-require 'mocha/setup'
-require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || RUBY_1_8
+
+require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
 
 require 'ansi'
 require 'oj'

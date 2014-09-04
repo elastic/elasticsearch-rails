@@ -164,6 +164,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance.expects(:instance_variable_set).with do |name, value|
           assert_equal :@__changed_attributes, name
           assert_equal({foo: 'Two'}, value)
+          true
         end
 
         ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
@@ -182,6 +183,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal 'bar',  payload[:type]
           assert_equal '1',    payload[:id]
           assert_equal 'JSON', payload[:body]
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -199,6 +201,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:index).with do |payload|
           assert_equal 'A',  payload[:parent]
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -218,6 +221,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal 'foo',  payload[:index]
           assert_equal 'bar',  payload[:type]
           assert_equal '1',    payload[:id]
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -234,6 +238,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:delete).with do |payload|
           assert_equal 'A',  payload[:parent]
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -267,6 +272,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal 'bar',  payload[:type]
           assert_equal '1',    payload[:id]
           assert_equal({foo: 'bar'}, payload[:body][:doc])
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -286,6 +292,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:update).with do |payload|
           assert_equal({:foo => 'B'}, payload[:body][:doc])
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -306,6 +313,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:update).with do |payload|
           assert_equal({'foo' => 'BAR'}, payload[:body][:doc])
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -356,6 +364,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal 'dummy_indexing_model_for_recreates', payload[:index]
           assert_equal 1,         payload[:body][:settings][:index][:number_of_shards]
           assert_equal 'keyword', payload[:body][:mappings][:dummy_indexing_model_for_recreate][:properties][:foo][:analyzer]
+          true
         end.returns({})
 
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
@@ -434,10 +443,12 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         should "create the custom index" do
           @indices.expects(:exists).with do |arguments|
             assert_equal 'custom-foo', arguments[:index]
+            true
           end
 
           @indices.expects(:create).with do |arguments|
             assert_equal 'custom-foo', arguments[:index]
+            true
           end
 
           DummyIndexingModelForRecreate.create_index! index: 'custom-foo'
@@ -446,6 +457,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         should "delete the custom index" do
           @indices.expects(:delete).with do |arguments|
             assert_equal 'custom-foo', arguments[:index]
+            true
           end
 
           DummyIndexingModelForRecreate.delete_index! index: 'custom-foo'
@@ -454,6 +466,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         should "refresh the custom index" do
           @indices.expects(:refresh).with do |arguments|
             assert_equal 'custom-foo', arguments[:index]
+            true
           end
 
           DummyIndexingModelForRecreate.refresh_index! index: 'custom-foo'

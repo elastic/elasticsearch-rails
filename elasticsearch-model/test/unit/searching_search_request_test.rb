@@ -18,6 +18,7 @@ class Elasticsearch::Model::SearchRequestTest < Test::Unit::TestCase
     should "pass the search definition as a simple query" do
       @client.expects(:search).with do |params|
         assert_equal 'foo', params[:q]
+        true
       end
       .returns({})
 
@@ -28,6 +29,7 @@ class Elasticsearch::Model::SearchRequestTest < Test::Unit::TestCase
     should "pass the search definition as a Hash" do
       @client.expects(:search).with do |params|
         assert_equal( {foo: 'bar'}, params[:body] )
+        true
       end
       .returns({})
 
@@ -38,6 +40,7 @@ class Elasticsearch::Model::SearchRequestTest < Test::Unit::TestCase
     should "pass the search definition as a JSON string" do
       @client.expects(:search).with do |params|
         assert_equal( '{"foo":"bar"}', params[:body] )
+        true
       end
       .returns({})
 
@@ -52,6 +55,7 @@ class Elasticsearch::Model::SearchRequestTest < Test::Unit::TestCase
 
       @client.expects(:search).with do |params|
         assert_equal( {foo: 'bar'}, params[:body] )
+        true
       end
       .returns({})
 
@@ -63,6 +67,7 @@ class Elasticsearch::Model::SearchRequestTest < Test::Unit::TestCase
       @client.expects(:search).with do |params|
         assert_equal 'foo', params[:q]
         assert_equal 15,    params[:size]
+        true
       end
       .returns({})
 

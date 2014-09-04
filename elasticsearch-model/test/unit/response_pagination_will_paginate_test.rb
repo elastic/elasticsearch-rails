@@ -88,6 +88,7 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
             .with do |definition|
               assert_equal 0, definition[:from]
               assert_equal 33, definition[:size]
+              true
             end
           .returns(RESPONSE)
 
@@ -105,6 +106,7 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
             .with do |definition|
               assert_equal 33, definition[:from]
               assert_equal 33, definition[:size]
+              true
             end
           .returns(RESPONSE)
 
@@ -122,6 +124,7 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
             .with do |definition|
               assert_equal 18, definition[:from]
               assert_equal 9, definition[:size]
+              true
             end
           .returns(RESPONSE)
 
@@ -133,12 +136,13 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
         assert_equal 9, @response.search.definition[:size]
       end
 
-      should "searches for page 1 if specified page is < 1" do
+      should "search for first page if specified page is < 1" do
         @response.klass.client
           .expects(:search)
             .with do |definition|
               assert_equal 0, definition[:from]
               assert_equal 33, definition[:size]
+              true
             end
           .returns(RESPONSE)
 

@@ -34,6 +34,7 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
             .with do |definition|
               assert_equal 25, definition[:from]
               assert_equal 25, definition[:size]
+              true
             end
           .returns(RESPONSE)
 
@@ -51,6 +52,7 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
             .with do |definition|
               assert_equal 75, definition[:from]
               assert_equal 25, definition[:size]
+              true
             end
           .returns(RESPONSE)
 

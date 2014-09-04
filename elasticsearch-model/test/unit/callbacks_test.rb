@@ -22,6 +22,7 @@ class Elasticsearch::Model::CallbacksTest < Test::Unit::TestCase
       ::DummyCallbacksModel.expects(:__send__).with do |method, parameter|
         assert_equal :include, method
         assert_equal DummyCallbacksAdapter::CallbacksMixin, parameter
+        true
       end
 
       Elasticsearch::Model::Callbacks.included(DummyCallbacksModel)
