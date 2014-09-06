@@ -351,7 +351,7 @@ module Elasticsearch
             index_document(options)
           end
         end
-        
+
         # Allows for partial update of a document by manually supplying the changes
         #
         # @param attributes [Hash] Required attributes to be updated
@@ -361,7 +361,7 @@ module Elasticsearch
         #
         #     @article = Article.first
         #     @article.title = "New title"
-        #     @article.__elasticsearch__.update_document_attributes(@article.changes)
+        #     @article.__elasticsearch__.update_document_attributes({title: "New title"})
         #
         # @return [Hash] The response from Elasticsearch
         #
