@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "elasticsearch-extensions"
 
-  s.add_development_dependency "minitest", "~> 4"
+  s.add_development_dependency "minitest", "~> 4.2"
   s.add_development_dependency "test-unit" if defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
