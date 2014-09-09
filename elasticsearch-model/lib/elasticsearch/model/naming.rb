@@ -15,7 +15,7 @@ module Elasticsearch
         #       index_name "articles-#{Rails.env}"
         #     end
         #
-        # @example Set the index name for the `Article` model and reevaluate it on each call
+        # @example Set the index name for the `Article` model and re-evaluate it on each call
         #
         #     class Article
         #       index_name { "articles-#{Time.now.year}" }
@@ -25,9 +25,6 @@ module Elasticsearch
         #
         #     Article.index_name "articles-#{Rails.env}"
         #
-        # @example Directly set the index name for the `Article` model and reevaluate it on each call
-        #
-        #     Article.index_name { "articles-#{Time.now.year}" }
         #
         def index_name name=nil, &block
           if name || block_given?
