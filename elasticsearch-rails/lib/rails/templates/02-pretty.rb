@@ -218,7 +218,7 @@ insert_into_file 'app/views/articles/index.html.erb', after: '</table>' do
   CODE
 end
 
-generate "kaminari:views", "bootstrap", "--force"
+generate "kaminari:views", "bootstrap2", "--force"
 
 gsub_file 'app/views/kaminari/_paginator.html.erb', %r{<ul>}, '<ul class="pagination">'
 
