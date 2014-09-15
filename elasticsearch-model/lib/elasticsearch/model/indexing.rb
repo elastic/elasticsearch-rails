@@ -351,6 +351,29 @@ module Elasticsearch
             index_document(options)
           end
         end
+
+        # Allows for partial update of a document by manually supplying the changes
+        #
+        # @param attributes [Hash] Required attributes to be updated
+        # @param options [Hash] Optional arguments for passing to the client
+        #
+        # @example update just the title
+        #
+        #     @article = Article.first
+        #     @article.title = "New title"
+        #     @article.__elasticsearch__.update_document_attributes({title: "New title"})
+        #
+        # @return [Hash] The response from Elasticsearch
+        #
+        #
+        def update_document_attributes(attributes,options={})
+          client.update(
+            { index: index_name,
+              type:  document_type,
+              id:    self.id,
+              body:  { doc: attributes } }.merge(options)
+          )
+        end
       end
 
     end
