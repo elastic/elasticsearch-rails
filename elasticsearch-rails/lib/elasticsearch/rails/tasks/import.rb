@@ -60,7 +60,7 @@ namespace :elasticsearch do
         rescue NoMethodError; end
       end
 
-      total_errors = klass.import force:      ENV.fetch('FORCE', false),
+      total_errors = klass.__elasticsearch__.import force:      ENV.fetch('FORCE', false),
                                   batch_size: ENV.fetch('BATCH', 1000).to_i,
                                   index:      ENV.fetch('INDEX', nil),
                                   type:       ENV.fetch('TYPE',  nil),
