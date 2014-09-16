@@ -68,6 +68,10 @@ module Elasticsearch
         #
         #    Article.import scope: 'published'
         #
+        # @example Pass an ActiveRecord query to limit the imported records
+        #
+        #    Article.import query: -> { where(author_id: author_id) }
+        #
         # @example Transform records during the import with a lambda
         #
         #    transform = lambda do |a|

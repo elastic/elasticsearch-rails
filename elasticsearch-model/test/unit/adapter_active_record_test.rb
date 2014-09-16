@@ -104,6 +104,13 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         DummyClassForActiveRecord.__find_in_batches(scope: :published) do; end
       end
 
+      should "limit the relation to a specific query" do
+        DummyClassForActiveRecord.expects(:find_in_batches).returns([])
+        DummyClassForActiveRecord.expects(:where).returns(DummyClassForActiveRecord)
+
+        DummyClassForActiveRecord.__find_in_batches(query: -> { where(color: "red") }) do; end
+      end
+
       should "preprocess the batch if option provided" do
         class << DummyClassForActiveRecord
           # Updates/transforms the batch while fetching it from the database
