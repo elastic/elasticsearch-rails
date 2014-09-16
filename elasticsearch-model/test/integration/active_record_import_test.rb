@@ -62,6 +62,15 @@ module Elasticsearch
           assert_equal 50, ImportArticle.search('*').results.total
         end
 
+        should "import only documents from a specific query" do
+          assert_equal 100, ImportArticle.count
+
+          assert_equal 0, ImportArticle.import(query: -> { where('views >= 30') })
+
+          ImportArticle.__elasticsearch__.refresh_index!
+          assert_equal 70, ImportArticle.search('*').results.total
+        end
+
         should "report and not store/index invalid documents" do
           ImportArticle.create! title: "Test INVALID", numeric: "INVALID"
 

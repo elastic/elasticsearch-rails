@@ -84,10 +84,13 @@ module Elasticsearch
           # @see http://api.rubyonrails.org/classes/ActiveRecord/Batches.html ActiveRecord::Batches.find_in_batches
           #
           def __find_in_batches(options={}, &block)
+            query = options.delete(:query)
             named_scope = options.delete(:scope)
             preprocess = options.delete(:preprocess)
 
-            scope = named_scope ? self.__send__(named_scope) : self
+            scope = self
+            scope = scope.__send__(named_scope) if named_scope
+            scope = scope.instance_exec(&query) if query
 
             scope.find_in_batches(options) do |batch|
               yield (preprocess ? self.__send__(preprocess, batch) : batch)
