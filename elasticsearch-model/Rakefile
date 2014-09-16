@@ -34,10 +34,12 @@ namespace :test do
     sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
   end
 
-  Rake::TestTask.new(:all) do |test|
+  desc "Run unit and integration tests"
+  task :all do
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
-    test.libs << 'lib' << 'test'
-    test.test_files = FileList["test/unit/**/*_test.rb", "test/integration/**/*_test.rb"]
+
+    Rake::Task['test:unit'].invoke
+    Rake::Task['test:integration'].invoke
   end
 end
 
