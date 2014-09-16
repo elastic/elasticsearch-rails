@@ -317,6 +317,8 @@ module Elasticsearch
         #
         # When the changed attributes are not available, performs full re-index of the record.
         #
+        # See the {#update_document_attributes} method for updating specific attributes directly.
+        #
         # @param options [Hash] Optional arguments for passing to the client
         #
         # @example Update a document corresponding to the record
@@ -352,21 +354,21 @@ module Elasticsearch
           end
         end
 
-        # Allows for partial update of a document by manually supplying the changes
+        # Perform a _partial_ update of specific document attributes
+        # (without consideration for changed attributes as in {#update_document})
         #
-        # @param attributes [Hash] Required attributes to be updated
-        # @param options [Hash] Optional arguments for passing to the client
+        # @param attributes [Hash] Attributes to be updated
+        # @param options    [Hash] Optional arguments for passing to the client
         #
-        # @example update just the title
+        # @example Update the `title` attribute
         #
         #     @article = Article.first
         #     @article.title = "New title"
-        #     @article.__elasticsearch__.update_document_attributes({title: "New title"})
+        #     @article.__elasticsearch__.update_document_attributes title: "New title"
         #
         # @return [Hash] The response from Elasticsearch
         #
-        #
-        def update_document_attributes(attributes,options={})
+        def update_document_attributes(attributes, options={})
           client.update(
             { index: index_name,
               type:  document_type,

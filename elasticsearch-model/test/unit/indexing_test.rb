@@ -324,30 +324,12 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance.update_document
       end
 
-      should "have the update_document_attributes method" do
-        client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
-
-        client.expects(:update).with do |payload|
-          assert_equal 'foo',  payload[:index]
-          assert_equal 'bar',  payload[:type]
-          assert_equal '1',    payload[:id]
-        end
-
-        instance.expects(:client).returns(client)
-        instance.expects(:index_name).returns('foo')
-        instance.expects(:document_type).returns('bar')
-        instance.expects(:id).returns('1')
-
-        instance.update_document_attributes({})
-      end
-
-      should "update only the supplied attributes" do
+      should "update only the specific attributes" do
         client   = mock('client')
         instance = ::DummyIndexingModelWithCallbacks.new
 
         # Set the fake `changes` hash
-        instance.instance_variable_set(:@__changed_attributes, {foo: 'bar'})
+        instance.instance_variable_set(:@__changed_attributes, {author: 'john'})
 
         client.expects(:update).with do |payload|
           assert_equal 'foo',  payload[:index]
@@ -361,7 +343,27 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance.expects(:document_type).returns('bar')
         instance.expects(:id).returns('1')
 
-        instance.update_document_attributes({title: "green"})
+        instance.update_document_attributes title: "green"
+      end
+
+      should "pass options to the update_document_attributes method" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        client.expects(:update).with do |payload|
+          assert_equal 'foo',  payload[:index]
+          assert_equal 'bar',  payload[:type]
+          assert_equal '1',    payload[:id]
+          assert_equal({title: 'green'}, payload[:body][:doc])
+          assert_equal true,   payload[:refresh]
+        end
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document_attributes( { title: "green" }, { refresh: true } )
       end
     end
 

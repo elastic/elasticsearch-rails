@@ -128,14 +128,19 @@ module Elasticsearch
           assert_equal 1, response.records.size
         end
 
-         should "allow specific updates to be made to the document directly" do
+         should "update specific attributes" do
           article = Article.first
 
-          article.update_document_attributes({title: 'green grass'})
+          response = Article.search 'title:special'
+
+          assert_equal 0, response.results.size
+          assert_equal 0, response.records.size
+
+          article.__elasticsearch__.update_document_attributes title: 'special'
 
           Article.__elasticsearch__.refresh_index!
 
-          response = Article.search 'title:green'
+          response = Article.search 'title:special'
 
           assert_equal 1, response.results.size
           assert_equal 1, response.records.size
