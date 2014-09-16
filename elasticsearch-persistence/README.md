@@ -602,7 +602,32 @@ puts results.response.aggregations.authors.buckets.each { |b| puts "#{b['key']} 
 # John : 1
 ```
 
-#### Accessing the Repository Gateway
+#### The Elasticsearch Client
+
+The module will set up a [client](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch),
+connected to `localhost:9200`, by default.
+
+To use a client with different configuration:
+
+```ruby
+Elasticsearch::Persistence.client = Elasticsearch::Client.new log: true
+```
+
+To set up a specific client for a specific model:
+
+```ruby
+Article.client = Elasticsearch::Client.new host: 'api.server.org'
+```
+
+You might want to do this during you application bootstrap process, e.g. in a Rails initializer.
+
+Please refer to the
+[`elasticsearch-transport`](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-transport)
+library documentation for all the configuration options, and to the
+[`elasticsearch-api`](http://rubydoc.info/gems/elasticsearch-api) library documentation
+for information about the Ruby client API.
+
+#### Accessing the Repository Gateway and the Client
 
 The integration with Elasticsearch is implemented by embedding the repository object in the model.
 You can access it through the `gateway` method:
