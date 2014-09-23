@@ -224,12 +224,28 @@ module Elasticsearch
 
           delete_index!(options.merge index: target_index) if options[:force]
 
-          unless ( self.client.indices.exists(index: target_index) rescue false )
+          unless index_exists?(index: target_index)
             self.client.indices.create index: target_index,
                                        body: {
                                          settings: self.settings.to_hash,
                                          mappings: self.mappings.to_hash }
           end
+        end
+
+        # Returns true if the index exists
+        #
+        # @example Check whether the model's index exists
+        #
+        #     Article.__elasticsearch__.index_exists?
+        #
+        # @example Check whether a specific index exists
+        #
+        #     Article.__elasticsearch__.index_exists? index: 'my-index'
+        #
+        def index_exists?(options={})
+          target_index = options[:index] || self.index_name
+
+          self.client.indices.exists(index: target_index) rescue false
         end
 
         # Deletes the index with corresponding name

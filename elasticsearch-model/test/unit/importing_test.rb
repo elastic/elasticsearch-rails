@@ -44,6 +44,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.expects(:client).returns(client)
       DummyImportingModel.expects(:index_name).returns('foo')
       DummyImportingModel.expects(:document_type).returns('foo')
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.stubs(:__batch_to_bulk)
       assert_equal 0, DummyImportingModel.import
     end
@@ -61,6 +62,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.stubs(:client).returns(client)
       DummyImportingModel.stubs(:index_name).returns('foo')
       DummyImportingModel.stubs(:document_type).returns('foo')
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.stubs(:__batch_to_bulk)
 
       assert_equal 1, DummyImportingModel.import
@@ -79,6 +81,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.stubs(:client).returns(client)
       DummyImportingModel.stubs(:index_name).returns('foo')
       DummyImportingModel.stubs(:document_type).returns('foo')
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.stubs(:__batch_to_bulk)
 
       assert_equal [{'index' => {'error' => 'FAILED'}}], DummyImportingModel.import(return: 'errors')
@@ -97,6 +100,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       DummyImportingModel.stubs(:client).returns(client)
       DummyImportingModel.stubs(:index_name).returns('foo')
       DummyImportingModel.stubs(:document_type).returns('foo')
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.stubs(:__batch_to_bulk)
 
       DummyImportingModel.import do |response|
@@ -104,22 +108,42 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       end
     end
 
-    should "delete and create the index with the force option" do
-      DummyImportingModel.expects(:__find_in_batches).with do |options|
-        assert_equal 'bar', options[:foo]
-        assert_nil   options[:force]
-        true
+    context "when the index does not exist" do
+      should "raise an exception" do
+        Elasticsearch::Model::Adapter.expects(:from_class)
+                                     .with(DummyImportingModel)
+                                     .returns(DummyImportingAdapter)
+
+        DummyImportingModel.__send__ :include, Elasticsearch::Model::Importing
+
+        DummyImportingModel.expects(:index_name).returns('foo')
+        DummyImportingModel.expects(:document_type).returns('foo')
+        DummyImportingModel.expects(:index_exists?).returns(false)
+
+        assert_raise ArgumentError do
+          DummyImportingModel.import
+        end
       end
+    end
 
-      DummyImportingModel.expects(:create_index!).with do |options|
-        assert_equal true, options[:force]
-        true
+    context "with the force option" do
+      should "delete and create the index" do
+        DummyImportingModel.expects(:__find_in_batches).with do |options|
+          assert_equal 'bar', options[:foo]
+          assert_nil   options[:force]
+          true
+        end
+
+        DummyImportingModel.expects(:create_index!).with do |options|
+          assert_equal true, options[:force]
+          true
+        end
+
+        DummyImportingModel.expects(:index_name).returns('foo')
+        DummyImportingModel.expects(:document_type).returns('foo')
+
+        DummyImportingModel.import force: true, foo: 'bar'
       end
-
-      DummyImportingModel.expects(:index_name).returns('foo')
-      DummyImportingModel.expects(:document_type).returns('foo')
-
-      DummyImportingModel.import force: true, foo: 'bar'
     end
 
     should "allow passing a different index / type" do
@@ -141,6 +165,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
         .returns({'items' => [ {'index' => {} }]})
 
       DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.stubs(:__batch_to_bulk)
 
       DummyImportingModel.import index: 'my-new-index', type: 'my-other-type'
@@ -151,6 +176,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       transform = lambda {|a|}
 
       DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.expects(:__transform).returns(transform)
       DummyImportingModel.expects(:__batch_to_bulk).with(anything, transform)
 
@@ -162,6 +188,7 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       transform = lambda {|a|}
 
       DummyImportingModel.stubs(:client).returns(client)
+      DummyImportingModel.stubs(:index_exists?).returns(true)
       DummyImportingModel.expects(:__batch_to_bulk).with(anything, transform)
 
       DummyImportingModel.import index: 'foo', type: 'bar', transform: transform
