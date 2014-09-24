@@ -1,6 +1,7 @@
 require 'test_helper'
 
 require 'elasticsearch/persistence/model'
+require 'elasticsearch/persistence/model/rails'
 
 module Elasticsearch
   module Persistence
@@ -8,6 +9,7 @@ module Elasticsearch
 
       class ::Person
         include Elasticsearch::Persistence::Model
+        include Elasticsearch::Persistence::Model::Rails
 
         settings index: { number_of_shards: 1 }
 
@@ -79,6 +81,30 @@ module Elasticsearch
 
           assert_equal 'UPDATED', person.name
           assert_equal 'UPDATED', Person.find(person.id).name
+        end
+
+        should "create the model with correct Date form Rails' form attributes" do
+          params = { "birthday(1i)"=>"2014",
+                     "birthday(2i)"=>"1",
+                     "birthday(3i)"=>"1"
+                   }
+          person = Person.create params.merge(name: 'TEST')
+
+          assert_equal Date.parse('2014-01-01'), person.birthday
+          assert_equal Date.parse('2014-01-01'), Person.find(person.id).birthday
+        end
+
+        should_eventually "update the model with correct Date form Rails' form attributes" do
+          params = { "birthday(1i)"=>"2014",
+                     "birthday(2i)"=>"1",
+                     "birthday(3i)"=>"1"
+                   }
+          person = Person.create params.merge(name: 'TEST')
+
+          person.update params.merge('birthday(1i)' => '2015')
+
+          assert_equal Date.parse('2015-01-01'), person.birthday
+          assert_equal Date.parse('2015-01-01'), Person.find(person.id).birthday
         end
 
         should "increment an object attribute" do
