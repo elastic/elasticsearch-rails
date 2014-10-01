@@ -1,3 +1,10 @@
+## 0.1.6
+
+* Improved documentation
+* Added dynamic getter/setter (block/proc) for `MyModel.index_name`
+* Added the `update_document_attributes` method
+* Added, that records to import can be limited by the `query` option
+
 ## 0.1.5
 
 * Improved documentation
