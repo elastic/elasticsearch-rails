@@ -102,6 +102,19 @@ module Elasticsearch
           assert_equal 12, records.size
         end
 
+        should "respect sort" do
+          search = ArticleForPagination.search({ query: { match: { title: 'test' } }, sort: [ { id: 'desc' } ] })
+
+          records = search.page(2).records
+          assert_equal 43, records.first.id         # 68 - 25 = 42
+
+          records = search.page(3).records
+          assert_equal 18, records.first.id         # 68 - (2 * 25) = 18
+
+          records = search.page(2).per(5).records
+          assert_equal 63, records.first.id         # 68 - 5 = 63
+        end
+
         should "set the limit per request" do
           records = ArticleForPagination.search('title:test').limit(50).page(2).records
 
