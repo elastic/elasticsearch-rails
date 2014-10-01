@@ -8,7 +8,7 @@ module Elasticsearch
       # Wraps a search request definition
       #
       class SearchRequest
-        attr_reader :klass, :definition
+        attr_reader :klass, :definition, :options
 
         # @param klass [Class] The class of the model
         # @param query_or_payload [String,Hash,Object] The search request definition
@@ -17,6 +17,7 @@ module Elasticsearch
         #
         def initialize(klass, query_or_payload, options={})
           @klass   = klass
+          @options = options
 
           __index_name    = options[:index] || klass.index_name
           __document_type = options[:type]  || klass.document_type
