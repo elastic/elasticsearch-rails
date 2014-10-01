@@ -75,7 +75,6 @@ module Elasticsearch
                      :document_type=,
                      :index_name,
                      :index_name=,
-                     :search,
                      :find,
                      :exists?,
                      :create_index!,

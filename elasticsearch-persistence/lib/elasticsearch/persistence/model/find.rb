@@ -3,7 +3,17 @@ module Elasticsearch
     module Model
 
       module Find
+        class SearchRequest < Elasticsearch::Model::Searching::SearchRequest
+          def execute!
+            klass.gateway.search(definition[:body] || definition[:q], options)
+          end
+        end
+
         module ClassMethods
+
+          def search(query_or_definition, options={})
+            SearchRequest.new(self, query_or_definition, options).execute!
+          end
 
           # Returns all models (up to 10,000)
           #
@@ -17,8 +27,9 @@ module Elasticsearch
           #     Person.all query: { match: { last_name: 'Smith'  } }
           #     # => [#<Person:0x007ff1d8fb04b0 ... ]
           #
-          def all(options={})
-            gateway.search( { query: { match_all: {} }, size: 10_000 }.merge(options) )
+          def all(query={ query: { match_all: {} } }, options={})
+            query[:size] ||= 10_000
+            search(query, options)
           end
 
           # Returns the number of models

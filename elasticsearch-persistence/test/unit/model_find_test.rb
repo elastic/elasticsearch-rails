@@ -31,8 +31,11 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
     end
 
     setup do
-      @gateway         = stub(client: stub(), index_name: 'foo', document_type: 'bar')
+      @gateway = stub(client: stub(), index_name: 'foo', document_type: 'bar')
       DummyFindModel.stubs(:gateway).returns(@gateway)
+
+      DummyFindModel.stubs(:index_name).returns('foo')
+      DummyFindModel.stubs(:document_type).returns('bar')
 
       @response = MultiJson.load <<-JSON
         {
@@ -63,21 +66,21 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
     end
 
     should "find all records" do
-      @gateway
-        .expects(:search)
-        .with({ query: { match_all: {} }, size: 10_000 })
+      DummyFindModel
+        .stubs(:search)
+        .with({ query: { match_all: {} }, size: 10_000 }, {})
         .returns(@response)
 
       DummyFindModel.all
     end
 
     should "pass options when finding all records" do
-      @gateway
+      DummyFindModel
         .expects(:search)
-        .with({ query: { match: { title: 'test' } }, size: 10_000, routing: 'abc123' })
+        .with({ query: { match: { title: 'test' } }, size: 10_000 }, { routing: 'abc123' })
         .returns(@response)
 
-      DummyFindModel.all( { query: { match: { title: 'test' } }, routing: 'abc123' } )
+      DummyFindModel.all( { query: { match: { title: 'test' } } }, { routing: 'abc123' } )
     end
 
     context "finding via scan/scroll" do
