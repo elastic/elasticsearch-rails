@@ -21,16 +21,20 @@ module Elasticsearch
           require 'elasticsearch/rails/instrumentation/log_subscriber'
           require 'elasticsearch/rails/instrumentation/controller_runtime'
 
-          config.lograge.custom_options = lambda do |event|
-            { es: event.payload[:elasticsearch_runtime].to_f.round(2) }
-          end
-
           Elasticsearch::Model::Searching::SearchRequest.class_eval do
             include Elasticsearch::Rails::Instrumentation::Publishers::SearchRequest
-          end
+          end if defined?(Elasticsearch::Model::Searching::SearchRequest)
+
+          Elasticsearch::Persistence::Model::Find::SearchRequest.class_eval do
+            include Elasticsearch::Rails::Instrumentation::Publishers::SearchRequest
+          end if defined?(Elasticsearch::Persistence::Model::Find::SearchRequest)
 
           ActiveSupport.on_load(:action_controller) do
             include Elasticsearch::Rails::Instrumentation::ControllerRuntime
+          end
+
+          config.lograge.custom_options = lambda do |event|
+            { es: event.payload[:elasticsearch_runtime].to_f.round(2) }
           end
         end
       end
