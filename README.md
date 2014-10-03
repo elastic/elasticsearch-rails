@@ -30,8 +30,8 @@ gem install elasticsearch-model elasticsearch-rails
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://gembundler.com):
 
 ```ruby
-gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+gem 'elasticsearch-model', github: 'elasticsearch/elasticsearch-rails'
+gem 'elasticsearch-rails', github: 'elasticsearch/elasticsearch-rails'
 ```
 
 or install it from a source code checkout:
