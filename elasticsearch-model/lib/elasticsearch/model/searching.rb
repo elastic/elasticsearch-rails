@@ -79,7 +79,8 @@ module Elasticsearch
         #                    fields: {
         #                      title: {}
         #                    }
-        #                  }
+        #                  },
+        #                  size: 50
         #
         #     response.results.first.title
         #     # => "Foo"
