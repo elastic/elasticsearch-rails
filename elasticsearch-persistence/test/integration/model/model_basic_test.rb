@@ -129,6 +129,17 @@ module Elasticsearch
           assert found.updated_at > updated_at, [found.updated_at, updated_at].inspect
         end
 
+        should "find all instances" do
+          Person.create name: 'John Smith'
+          Person.create name: 'Mary Smith'
+          Person.gateway.refresh_index!
+
+          people = Person.all
+
+          assert_equal 2, people.total
+          assert_equal 2, people.size
+        end
+
         should "find instances by search" do
           Person.create name: 'John Smith'
           Person.create name: 'Mary Smith'
