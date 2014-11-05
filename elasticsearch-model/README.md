@@ -129,7 +129,7 @@ Or configure the client for all models:
 Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 ```
 
-You might want to do this during you application bootstrap process, e.g. in a Rails initializer.
+You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
 
 Please refer to the
 [`elasticsearch-transport`](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-transport)
