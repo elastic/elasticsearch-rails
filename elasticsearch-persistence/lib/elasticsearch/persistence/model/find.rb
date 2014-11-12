@@ -5,7 +5,7 @@ module Elasticsearch
       module Find
         class SearchRequest < Elasticsearch::Model::Searching::SearchRequest
           def execute!
-            klass.gateway.search(definition[:body] || definition[:q], options)
+            klass.gateway.search(definition[:body] || definition[:q])
           end
         end
 
