@@ -23,6 +23,11 @@ or install it from a source code checkout:
 
 ## Usage
 
+Depending on your usage choose either of the following patterns:
+
+* [Repository Pattern](#the-repository-pattern)
+* [ActiveRecord Pattern](#the-activerecord-pattern)
+
 ### The Repository Pattern
 
 The `Elasticsearch::Persistence::Repository` module provides an implementation of the
