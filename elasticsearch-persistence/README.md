@@ -23,12 +23,18 @@ or install it from a source code checkout:
 
 ## Usage
 
+The library provides two different patterns for adding persistence to your Ruby objects:
+
+* [Repository Pattern](#the-repository-pattern)
+* [ActiveRecord Pattern](#the-activerecord-pattern)
+
 ### The Repository Pattern
 
 The `Elasticsearch::Persistence::Repository` module provides an implementation of the
 [repository pattern](http://martinfowler.com/eaaCatalog/repository.html) and allows
 to save, delete, find and search objects stored in Elasticsearch, as well as configure
-mappings and settings for the index.
+mappings and settings for the index. It's an unobtrusive and decoupled way of adding
+persistence to your Ruby objects.
 
 Let's have a simple plain old Ruby object (PORO):
 
