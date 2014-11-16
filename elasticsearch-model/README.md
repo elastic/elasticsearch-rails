@@ -149,7 +149,40 @@ Article.import
 It's possible to import only records from a specific `scope` or `query`, transform the batch with the `transform`
 and `preprocess` options, or re-create the index by deleting it and creating it with correct mapping with the `force` option -- look for examples in the method documentation.
 
-No errors were reported during importing, so... let's search the index!
+
+#### Speeding up import
+
+If you have a lot of records with complicated indexing, you may find that importing takes quite a while. `#import` is great for starting out but is not optimized. There are generally two ways to speed things up:
+
+1. Use batching and threads/forks to perform multiple imports at once
+2. Bulk import and preload associations
+
+An example of #2 is as follows:
+
+```ruby
+    def self.bulk_import
+      self.preload(:tags,:files).find_in_batches do |indexables|
+        bulk_index(indexables)
+      end
+    end
+    
+    def self.bulk_index(indexables)
+      self.__elasticsearch__.client.bulk({
+        index: self.__elasticsearch__.index_name,
+        type: self.__elasticsearch__.document_type,
+        body: prepare_records(indexables)
+      })
+    end
+
+    def self.prepare_records(indexables)
+      indexables.map do |indexable|
+        { index: { _id: indexable.id, data: indexable.as_indexed_json } }
+      end
+    end
+
+```
+
+You are encouraged to experiment and adapt the import proccess to work best with your indexing needs. 
 
 
 ### Searching
