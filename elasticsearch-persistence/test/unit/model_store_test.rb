@@ -311,6 +311,43 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         assert subject.update( {}, { script: 'EXEC' } )
       end
 
+      should "not update an invalid model" do
+        subject.expects(:persisted?).returns(true)
+        subject.expects(:id).returns('abc123').at_least_once
+
+        @gateway
+          .expects(:update)
+          .never
+
+        subject.instance_eval do
+          def valid?; false; end;
+        end
+
+        assert ! subject.update
+        assert ! subject.persisted?
+      end
+
+      should "skip the validation with the :validate option" do
+        subject.expects(:persisted?).returns(true)
+        subject.expects(:id).returns('abc123').at_least_once
+
+        @gateway
+          .expects(:update)
+          .with do |object, options|
+            assert_equal subject, object
+            assert_equal nil, options[:id]
+            true
+          end
+          .returns({'_id' => 'abc123'})
+
+        subject.instance_eval do
+          def valid?; false; end;
+        end
+
+        assert subject.update validate: false
+        assert subject.persisted?
+      end
+
       should "pass the options to gateway" do
         subject.expects(:persisted?).returns(true)
 
