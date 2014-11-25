@@ -66,17 +66,25 @@ module Elasticsearch
             options[:batch_size] ||= 1_000
             items = []
 
-            all.each do |item|
+            query = options.delete(:query)
+            named_scope = options.delete(:scope)
+            preprocess = options.delete(:preprocess)
+
+            scope = scoped.batch_size(options[:batch_size])
+            scope = scope.__send__(named_scope) if named_scope
+            scope = scope.instance_exec(&query) if query
+
+            scope.each do |item|
               items << item
 
               if items.length % options[:batch_size] == 0
-                yield items
+                yield (preprocess ? self.__send__(preprocess, items) : items)
                 items = []
               end
             end
 
             unless items.empty?
-              yield items
+              yield (preprocess ? self.__send__(preprocess, items) : items)
             end
           end
 
