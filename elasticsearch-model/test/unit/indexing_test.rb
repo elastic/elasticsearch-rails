@@ -336,6 +336,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal 'bar',  payload[:type]
           assert_equal '1',    payload[:id]
           assert_equal({title: 'green'}, payload[:body][:doc])
+          true
         end
 
         instance.expects(:client).returns(client)
@@ -356,6 +357,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           assert_equal '1',    payload[:id]
           assert_equal({title: 'green'}, payload[:body][:doc])
           assert_equal true,   payload[:refresh]
+          true
         end
 
         instance.expects(:client).returns(client)
