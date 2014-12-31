@@ -23,6 +23,8 @@ services:
 before_script:
   - ls -la /usr/share/elasticsearch/bin/elasticsearch
   - echo $PWD
+  - gem uninstall bundler -axI
+  - gem install bundler -v 1.6.2
   - rake bundle:clean
   - rake bundle:install
 
