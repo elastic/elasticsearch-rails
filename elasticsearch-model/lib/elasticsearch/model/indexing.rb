@@ -187,17 +187,10 @@ module Elasticsearch
           delete_index!(options.merge index: target_index) if options[:force]
 
           unless ( self.client.indices.exists(index: target_index) rescue false )
-            begin
-              self.client.indices.create index: target_index,
-                                         body: {
-                                           settings: self.settings.to_hash,
-                                           mappings: self.mappings.to_hash }
-            rescue Exception => e
-              unless e.class.to_s =~ /NotFound/ && options[:force]
-                STDERR.puts "[!!!] Error when creating the index: #{e.class}", "#{e.message}"
-              end
-            end
-          else
+            self.client.indices.create index: target_index,
+                                       body: {
+                                         settings: self.settings.to_hash,
+                                         mappings: self.mappings.to_hash }
           end
         end
 
@@ -217,8 +210,10 @@ module Elasticsearch
           begin
             self.client.indices.delete index: target_index
           rescue Exception => e
-            unless e.class.to_s =~ /NotFound/ && options[:force]
-              STDERR.puts "[!!!] Error when deleting the index: #{e.class}", "#{e.message}"
+            if e.class.to_s =~ /NotFound/ && options[:force]
+              STDERR.puts "[!!!] Index does not exist (#{e.class})"
+            else
+              raise e
             end
           end
         end
@@ -241,8 +236,10 @@ module Elasticsearch
           begin
             self.client.indices.refresh index: target_index
           rescue Exception => e
-            unless e.class.to_s =~ /NotFound/ && options[:force]
-              STDERR.puts "[!!!] Error when refreshing the index: #{e.class}", "#{e.message}"
+            if e.class.to_s =~ /NotFound/ && options[:force]
+              STDERR.puts "[!!!] Index does not exist (#{e.class})"
+            else
+              raise e
             end
           end
         end

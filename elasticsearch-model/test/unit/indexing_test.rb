@@ -12,6 +12,8 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
       end
     end
 
+    class NotFound < Exception; end
+
     context "Settings class" do
       should "be convertible to hash" do
         hash     = { foo: 'bar' }
@@ -382,19 +384,40 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
-      should "delete the index without raising exception" do
+      should "delete the index without raising exception when the index is not found" do
         client  = stub('client')
         indices = stub('indices')
         client.stubs(:indices).returns(indices)
 
-        indices.expects(:delete).returns({}).then.raises(Exception).at_least_once
+        indices.expects(:delete).returns({}).then.raises(NotFound).at_least_once
 
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
-        assert_nothing_raised do
-          DummyIndexingModelForRecreate.delete_index!
-          DummyIndexingModelForRecreate.delete_index!
-        end
+        assert_nothing_raised { DummyIndexingModelForRecreate.delete_index! force: true }
+      end
+
+      should "raise an exception without the force option" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:delete).raises(NotFound)
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client)
+
+        assert_raise { DummyIndexingModelForRecreate.delete_index! }
+      end
+
+      should "raise a regular exception when deleting the index" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:delete).raises(Exception)
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client)
+
+        assert_raise { DummyIndexingModelForRecreate.delete_index! force: true }
       end
 
       should "create the index with correct settings and mappings when it doesn't exist" do
@@ -430,19 +453,18 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_nothing_raised { DummyIndexingModelForRecreate.create_index! }
       end
 
-      should "not raise exception during index creation" do
+      should "raise exception during index creation" do
         client  = stub('client')
         indices = stub('indices')
         client.stubs(:indices).returns(indices)
 
+        indices.expects(:delete).returns({})
         indices.expects(:exists).returns(false)
-        indices.expects(:create).raises(Exception).at_least_once
+        indices.expects(:create).raises(Exception)
 
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
-        assert_nothing_raised do
-          DummyIndexingModelForRecreate.create_index!
-        end
+        assert_raise { DummyIndexingModelForRecreate.create_index! force: true }
       end
 
       should "delete the index first with the force option" do
@@ -461,7 +483,19 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
-      should "refresh the index without raising exception" do
+      should "refresh the index without raising exception with the force option" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:refresh).returns({}).then.raises(NotFound).at_least_once
+
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        assert_nothing_raised { DummyIndexingModelForRecreate.refresh_index! force: true }
+      end
+
+      should "raise a regular exception when refreshing the index" do
         client  = stub('client')
         indices = stub('indices')
         client.stubs(:indices).returns(indices)
@@ -470,10 +504,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
-        assert_nothing_raised do
-          DummyIndexingModelForRecreate.refresh_index!
-          DummyIndexingModelForRecreate.refresh_index!
-        end
+        assert_nothing_raised { DummyIndexingModelForRecreate.refresh_index! force: true }
       end
 
       context "with a custom index name" do
