@@ -23,13 +23,13 @@ services:
 before_script:
   - ls -la /usr/share/elasticsearch/bin/elasticsearch
   - echo $PWD
-  - gem uninstall bundler -axI
-  - gem install bundler -v 1.6.2
   - rake bundle:clean
   - rake bundle:install
 
 script:
   - SERVER=launch TEST_CLUSTER_COMMAND=/usr/share/elasticsearch/bin/elasticsearch TEST_CLUSTER_PARAMS='-Des.default.path.conf=/etc/elasticsearch/ -Des.default.path.logs==/var/log/elasticsearch/' bundle exec rake test:all
+
+install: "gem uninstall bundler -axI && gem install bundler -v 1.6.2"
 
 notifications:
   disable: true
