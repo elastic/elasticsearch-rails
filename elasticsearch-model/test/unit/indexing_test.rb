@@ -405,19 +405,19 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         DummyIndexingModelForRecreate.expects(:client).returns(client)
 
-        assert_raise { DummyIndexingModelForRecreate.delete_index! }
+        assert_raise(NotFound) { DummyIndexingModelForRecreate.delete_index! }
       end
 
       should "raise a regular exception when deleting the index" do
         client  = stub('client')
-        indices = stub('indices')
-        client.stubs(:indices).returns(indices)
 
+        indices = stub('indices')
         indices.expects(:delete).raises(Exception)
+        client.stubs(:indices).returns(indices)
 
         DummyIndexingModelForRecreate.expects(:client).returns(client)
 
-        assert_raise { DummyIndexingModelForRecreate.delete_index! force: true }
+        assert_raise(Exception) { DummyIndexingModelForRecreate.delete_index! force: true }
       end
 
       should "create the index with correct settings and mappings when it doesn't exist" do
@@ -464,7 +464,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
-        assert_raise { DummyIndexingModelForRecreate.create_index! force: true }
+        assert_raise(Exception) { DummyIndexingModelForRecreate.create_index! force: true }
       end
 
       should "delete the index first with the force option" do
