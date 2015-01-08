@@ -256,7 +256,8 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 
 You can implement pagination with the `from` and `size` search parameters. However, search results
 can be automatically paginated with the [`kaminari`](http://rubygems.org/gems/kaminari) or
-[`will_paginate`](https://github.com/mislav/will_paginate) gems.
+[`will_paginate`](https://github.com/mislav/will_paginate) gems. Note that the respective Gem has 
+to be loaded before Elasticsearch::Model so the callbacks are executed.
 
 If Kaminari or WillPaginate is loaded, use the familiar paging methods:
 
