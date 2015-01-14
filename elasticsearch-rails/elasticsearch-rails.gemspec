@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "elasticsearch-model"
 
   s.add_development_dependency "oj"
-  s.add_development_dependency "rails",  "> 3.0"
+  s.add_development_dependency "rails",  ">= 3.1"
 
   s.add_development_dependency "lograge"
 

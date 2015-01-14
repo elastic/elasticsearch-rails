@@ -616,7 +616,7 @@ Elasticsearch::Persistence.client = Elasticsearch::Client.new log: true
 To set up a specific client for a specific model:
 
 ```ruby
-Article.client = Elasticsearch::Client.new host: 'api.server.org'
+Article.gateway.client = Elasticsearch::Client.new host: 'api.server.org'
 ```
 
 You might want to do this during you application bootstrap process, e.g. in a Rails initializer.
