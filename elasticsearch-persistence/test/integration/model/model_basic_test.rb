@@ -51,7 +51,7 @@ module Elasticsearch
 
         should "save and find the object" do
           person = Person.new name: 'John Smith', birthday: Date.parse('1970-01-01')
-          person.save
+          assert person.save
 
           assert_not_nil person.id
           document = Person.find(person.id)
@@ -61,6 +61,20 @@ module Elasticsearch
           assert_equal 'John Smith', Person.find(person.id).name
 
           assert_not_nil Elasticsearch::Persistence.client.get index: 'people', type: 'person', id: person.id
+        end
+
+        should "not save an invalid object" do
+          person = Person.new name: nil
+          assert ! person.save
+        end
+
+        should "save an invalid object with the :validate option" do
+          person = Person.new name: nil, salary: 100
+          assert person.save validate: false
+
+          assert_not_nil person.id
+          document = Person.find(person.id)
+          assert_equal 100, document.salary
         end
 
         should "delete the object" do

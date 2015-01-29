@@ -44,7 +44,10 @@ module Elasticsearch
           # @return [Hash,FalseClass] The Elasticsearch response as a Hash or `false`
           #
           def save(options={})
-            return false unless valid?
+            unless options.delete(:validate) == false
+              return false unless valid?
+            end
+
             run_callbacks :save do
               options.update id: self.id
               options.update index: self._index if self._index
