@@ -432,15 +432,15 @@ class Article < ActiveRecord::Base
   include Elasticsearch::Model
 
   after_commit on: [:create] do
-    index_document if self.published?
+    __elasticsearch__.index_document if self.published?
   end
 
   after_commit on: [:update] do
-    update_document if self.published?
+    __elasticsearch__.update_document if self.published?
   end
 
   after_commit on: [:destroy] do
-    delete_document if self.published?
+    __elasticsearch__.delete_document if self.published?
   end
 end
 ```
