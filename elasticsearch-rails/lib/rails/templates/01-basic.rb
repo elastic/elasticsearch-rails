@@ -115,7 +115,6 @@ end
 
 # ----- Auxiliary gems ----------------------------------------------------------------------------
 
-gem 'turn',  group: 'test'
 gem 'mocha', group: 'test', require: 'mocha/setup'
 
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
