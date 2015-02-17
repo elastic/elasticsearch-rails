@@ -131,7 +131,6 @@ module Elasticsearch
     end
 
     module ClassMethods
-
       # Get the client common for all models
       #
       # @example Get the client
@@ -180,6 +179,24 @@ module Elasticsearch
         models = Multimodel.new(models)
         request = Searching::SearchRequest.new(models, query_or_payload, options)
         Response::Response.new(models, request)
+      end
+
+      # Check if inheritance is enabled
+      #
+      # @note Inheritance is disabled by default.
+      #
+      def inheritance_enabled
+        @inheritance_enabled ||= false
+      end
+
+      # Enable inheritance of index_name and document_type
+      #
+      # @example Enable inheritance
+      #
+      #     Elasticsearch::Model.inheritance_enabled = true
+      #
+      def inheritance_enabled=(inheritance_enabled)
+        @inheritance_enabled = inheritance_enabled
       end
     end
     extend ClassMethods
