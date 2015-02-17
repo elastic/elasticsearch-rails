@@ -86,6 +86,14 @@ insert_into_file 'app/models/article.rb', <<-CODE, after: 'include Elasticsearch
   end
 CODE
 
+insert_into_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", <<-CODE, after: /class ArticleTest < ActiveSupport::TestCase$/
+
+  teardown do
+    Article.__elasticsearch__.unstub(:search)
+  end
+
+CODE
+
 gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", %r{# test "the truth" do.*?# end}m, <<-CODE
 
   test "has a search method delegating to __elasticsearch__" do
