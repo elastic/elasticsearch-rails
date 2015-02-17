@@ -149,6 +149,24 @@ module Elasticsearch
         @client = client
       end
 
+      # Check if inheritance is enabled
+      #
+      # @note Inheritance is disabled by default.
+      #
+      def inheritance_enabled
+        @inheritance_enabled ||= false
+      end
+
+      # Enable inheritance of index_name and document_type
+      #
+      # @example Enable inheritance
+      #
+      #     Elasticsearch::Model.inheritance_enabled = true
+      #
+      def inheritance_enabled=(inheritance_enabled)
+        @inheritance_enabled = inheritance_enabled
+      end
+
     end
     extend ClassMethods
 
