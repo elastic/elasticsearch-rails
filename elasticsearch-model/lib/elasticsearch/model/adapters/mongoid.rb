@@ -66,7 +66,7 @@ module Elasticsearch
             options[:batch_size] ||= 1_000
             items = []
 
-            all.each do |item|
+            all.no_timeout.each do |item|
               items << item
 
               if items.length % options[:batch_size] == 0
