@@ -11,6 +11,7 @@ module Elasticsearch
           ActiveRecord::Schema.define(:version => 1) do
             create_table :articles do |t|
               t.string   :title
+              t.string   :body
               t.datetime :created_at, :default => 'NOW()'
             end
           end
@@ -22,6 +23,7 @@ module Elasticsearch
             settings index: { number_of_shards: 1, number_of_replicas: 0 } do
               mapping do
                 indexes :title,      type: 'string', analyzer: 'snowball'
+                indexes :body,       type: 'string'
                 indexes :created_at, type: 'date'
               end
             end
@@ -30,9 +32,9 @@ module Elasticsearch
           Article.delete_all
           Article.__elasticsearch__.create_index! force: true
 
-          ::Article.create! title: 'Test'
-          ::Article.create! title: 'Testing Coding'
-          ::Article.create! title: 'Coding'
+          ::Article.create! title: 'Test',           body: ''
+          ::Article.create! title: 'Testing Coding', body: ''
+          ::Article.create! title: 'Coding',         body: ''
 
           Article.__elasticsearch__.refresh_index!
         end
@@ -142,6 +144,29 @@ module Elasticsearch
 
           response = Article.search 'title:special'
 
+          assert_equal 1, response.results.size
+          assert_equal 1, response.records.size
+        end
+
+        should "update document when save is called multiple times in a transaction" do
+          article = Article.first
+          response = Article.search 'body:dummy'
+
+          assert_equal 0, response.results.size
+          assert_equal 0, response.records.size
+
+          ActiveRecord::Base.transaction do
+            article.body = 'dummy'
+            article.save
+
+            article.title = 'special'
+            article.save
+          end
+
+          article.__elasticsearch__.update_document
+          Article.__elasticsearch__.refresh_index!
+
+          response = Article.search 'body:dummy'
           assert_equal 1, response.results.size
           assert_equal 1, response.records.size
         end
