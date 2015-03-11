@@ -17,7 +17,7 @@
 # Usage:
 # ------
 #
-#     $ time rails new music --force --skip --skip-bundle --skip-active-record --template /Users/karmi/Contracts/Elasticsearch/Projects/Clients/Ruby/elasticsearch-rails/elasticsearch-persistence/examples/music/template.rb
+#     $ time rails new music --force --skip --skip-bundle --skip-active-record --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-persistence/examples/music/template.rb
 #
 # =====================================================================================================
 
