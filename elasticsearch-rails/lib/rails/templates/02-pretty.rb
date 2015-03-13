@@ -29,8 +29,8 @@ say_status  "Rubygems", "Adding Rails logger integration...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
 insert_into_file 'config/application.rb',
-                 "\n\nrequire 'elasticsearch/rails/instrumentation'\n",
-                 after: 'Bundler.require(:default, Rails.env)'
+                 "\n\nrequire 'elasticsearch/rails/instrumentation'",
+                 after: /Bundler\.require.+$/
 
 git add:    "config/application.rb"
 git commit: "-m 'Added the Rails logger integration to application.rb'"
@@ -43,7 +43,7 @@ puts        '-'*80, ''; sleep 0.25
 
 # NOTE: Kaminari has to be loaded before Elasticsearch::Model so the callbacks are executed
 #
-insert_into_file 'Gemfile', <<-CODE, before: 'gem "elasticsearch"'
+insert_into_file 'Gemfile', <<-CODE, before: /gem ["']elasticsearch["'].+$/
 
 # NOTE: Kaminari has to be loaded before Elasticsearch::Model so the callbacks are executed
 gem 'kaminari'
@@ -84,6 +84,14 @@ insert_into_file 'app/models/article.rb', <<-CODE, after: 'include Elasticsearch
       }
     )
   end
+CODE
+
+insert_into_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", <<-CODE, after: /class ArticleTest < ActiveSupport::TestCase$/
+
+  teardown do
+    Article.__elasticsearch__.unstub(:search)
+  end
+
 CODE
 
 gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", %r{# test "the truth" do.*?# end}m, <<-CODE

@@ -115,7 +115,6 @@ end
 
 # ----- Auxiliary gems ----------------------------------------------------------------------------
 
-gem 'turn',  group: 'test'
 gem 'mocha', group: 'test', require: 'mocha/setup'
 
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
@@ -209,8 +208,9 @@ inject_into_file 'app/controllers/articles_controller.rb', before: %r|^\s*# GET 
   CODE
 end
 
-inject_into_file 'app/views/articles/index.html.erb', after: %r{<h1>Listing articles</h1>} do
+inject_into_file 'app/views/articles/index.html.erb', after: %r{<h1>Listing articles</h1>}i do
   <<-CODE
+
 
   <hr>
 
@@ -221,7 +221,6 @@ inject_into_file 'app/views/articles/index.html.erb', after: %r{<h1>Listing arti
   <% end %>
 
   <hr>
-
   CODE
 end
 

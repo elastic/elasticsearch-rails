@@ -12,19 +12,19 @@ class Suggester
       body: {
         artists: {
           text: @term,
-          completion: { field: 'suggest_name' }
+          completion: { field: 'suggest_name', size: 25 }
         },
         members: {
           text: @term,
-          completion: { field: 'suggest_member' }
+          completion: { field: 'suggest_member', size: 25 }
         },
         albums: {
           text: @term,
-          completion: { field: 'suggest_title' }
+          completion: { field: 'suggest_title', size: 25 }
         },
         tracks: {
           text: @term,
-          completion: { field: 'suggest_track' }
+          completion: { field: 'suggest_track', size: 25 }
         }
       }
     end
