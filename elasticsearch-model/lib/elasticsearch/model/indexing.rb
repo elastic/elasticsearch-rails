@@ -153,7 +153,24 @@ module Elasticsearch
         #
         #     # => {:index=>{:number_of_shards=>1}}
         #
+        # You can specify a YAML file with settings
+        #
+        # @example Define index settings from YAML file
+        #
+        #     # config/elasticsearch/articles.yml:
+        #     #
+        #     # index:
+        #     #   number_of_shards: 1
+        #     #
+        #
+        #     Article.settings "config/elasticsearch/articles.yml"
+        #
+        #     Article.settings.to_hash
+        #
+        #     # => { "index" => { "number_of_shards" => 1 } }
+        #
         def settings(settings={}, &block)
+          settings = YAML.load_file(settings) if settings.is_a?(String)
           @settings ||= Settings.new(settings)
 
           @settings.settings.update(settings) unless settings.empty?

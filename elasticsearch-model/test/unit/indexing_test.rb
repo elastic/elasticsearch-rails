@@ -28,11 +28,18 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_instance_of Elasticsearch::Model::Indexing::Settings, DummyIndexingModel.settings
       end
 
-      should "update and return the index settings" do
+      should "update and return the index settings from a hash" do
         DummyIndexingModel.settings foo: 'boo'
         DummyIndexingModel.settings bar: 'bam'
 
         assert_equal( {foo: 'boo', bar: 'bam'},  DummyIndexingModel.settings.to_hash)
+      end
+
+      should "update and return the index settings from a yml file" do
+        DummyIndexingModel.settings "test/support/model.yml"
+        DummyIndexingModel.settings bar: 'bam'
+
+        assert_equal( {foo: 'boo', bar: 'bam', 'baz' => 'qux'}, DummyIndexingModel.settings.to_hash)
       end
 
       should "evaluate the block" do
