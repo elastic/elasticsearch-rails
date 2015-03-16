@@ -201,8 +201,6 @@ puts        '-'*80, ''; sleep 0.25
 create_file 'app/controllers/search_controller.rb' do
   <<-CODE.gsub(/^  /, '')
   class SearchController < ApplicationController
-    respond_to :json, :html
-
     def index
       options = {
         category:       params[:c],
@@ -213,10 +211,7 @@ create_file 'app/controllers/search_controller.rb' do
         comments:       params[:comments]
       }
       @articles = Article.search(params[:q], options).page(params[:page]).results
-
-      respond_with @articles
     end
-
   end
 
   CODE
