@@ -154,6 +154,8 @@ class Article < ActiveRecord::Base
 end
 CODE
 
+gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", %r{assert_equal 'foo', definition\[:query\]\[:multi_match\]\[:query\]}, "assert_equal 'foo', definition.to_hash[:query][:bool][:should][0][:multi_match][:query]"
+
 # copy_file File.expand_path('../searchable.rb', __FILE__), 'app/models/concerns/searchable.rb'
 get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/searchable.rb',
     'app/models/concerns/searchable.rb'
@@ -170,7 +172,7 @@ insert_into_file "app/models/article.rb", after: "ActiveRecord::Base" do
   CODE
 end
 
-git add:    "app/models/"
+git add:    "app/models/ test/models"
 git commit: "-m 'Refactored the Elasticsearch integration into a concern\n\nSee:\n\n* http://37signals.com/svn/posts/3372-put-chubby-models-on-a-diet-with-concerns\n* http://joshsymonds.com/blog/2012/10/25/rails-concerns-v-searchable-with-elasticsearch/'"
 
 # ----- Add Sidekiq indexer -----------------------------------------------------------------------
