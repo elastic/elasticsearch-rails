@@ -64,146 +64,151 @@ module Searchable
       hash
     end
 
-    # Search in title and content fields for `query`, include highlights in response
+    # Return documents matching the user's query, include highlights and aggregations in response,
+    # and implement a "cross" faceted navigation
     #
-    # @param query [String] The user query
+    # @param q [String] The user query
     # @return [Elasticsearch::Model::Response::Response]
     #
-    def self.search(query, options={})
+    def self.search(q, options={})
+      @search_definition = Elasticsearch::DSL::Search.search do
+        query do
 
-      # Prefill and set the filters (top-level `filter` and `facet_filter` elements)
-      #
-      __set_filters = lambda do |key, f|
+          # If a user query is present...
+          #
+          unless q.blank?
+            bool do
 
-        @search_definition[:filter][:and] ||= []
-        @search_definition[:filter][:and]  |= [f]
+              # ... search in `title`, `abstract` and `content`, boosting `title`
+              #
+              should do
+                multi_match do
+                  query    q
+                  fields   ['title^10', 'abstract^2', 'content']
+                  operator 'and'
+                end
+              end
 
-        @search_definition[:facets][key.to_sym][:facet_filter][:and] ||= []
-        @search_definition[:facets][key.to_sym][:facet_filter][:and]  |= [f]
-      end
+              # ... search in comment body if user checked the comments checkbox
+              #
+              if q.present? && options[:comments]
+                should do
+                  nested do
+                    path :comments
+                    query do
+                      multi_match do
+                        query q
+                        fields   'body'
+                        operator 'and'
+                      end
+                    end
+                  end
+                end
+              end
+            end
 
-      @search_definition = {
-        query: {},
+          # ... otherwise, just return all articles
+          else
+            match_all
+          end
+        end
 
-        highlight: {
-          pre_tags: ['<em class="label label-highlight">'],
-          post_tags: ['</em>'],
-          fields: {
-            title:    { number_of_fragments: 0 },
-            abstract: { number_of_fragments: 0 },
-            content:  { fragment_size: 50 }
-          }
-        },
+        # Filter the search results based on user selection
+        #
+        post_filter do
+          bool do
+            must { term categories: options[:category] } if options[:category]
+            must { match_all } if options.keys.none? { |k| [:c, :a, :w].include? k }
+            must { term 'authors.full_name.raw' => options[:author] } if options[:author]
+            must { range published_on: { gte: options[:published_week], lte: "#{options[:published_week]}||+1w" } } if options[:published_week]
+          end
+        end
 
-        filter: {},
+        # Return top categories for faceted navigation
+        #
+        aggregation :categories do
+          # Filter the aggregation with any selected `author` and `published_week`
+          #
+          f = Elasticsearch::DSL::Search::Filters::Bool.new
+          f.must { match_all }
+          f.must { term 'authors.full_name.raw' => options[:author] } if options[:author]
+          f.must { range published_on: { gte: options[:published_week], lte: "#{options[:published_week]}||+1w" } } if options[:published_week]
 
-        facets: {
-          categories: {
-            terms: {
-              field: 'categories'
-            },
-            facet_filter: {}
-          },
-          authors: {
-            terms: {
-              field: 'authors.full_name.raw'
-            },
-            facet_filter: {}
-          },
-          published: {
-            date_histogram: {
-              field: 'published_on',
-              interval: 'week'
-            },
-            facet_filter: {}
-          }
-        }
-      }
+          filter f.to_hash do
+            aggregation :categories do
+              terms field: 'categories'
+            end
+          end
+        end
 
-      unless query.blank?
-        @search_definition[:query] = {
-          bool: {
-            should: [
-              { multi_match: {
-                  query: query,
-                  fields: ['title^10', 'abstract^2', 'content'],
-                  operator: 'and'
-                }
-              }
-            ]
-          }
-        }
-      else
-        @search_definition[:query] = { match_all: {} }
-        @search_definition[:sort]  = { published_on: 'desc' }
-      end
+        # Return top authors for faceted navigation
+        #
+        aggregation :authors do
+          # Filter the aggregation with any selected `category` and `published_week`
+          #
+          f = Elasticsearch::DSL::Search::Filters::Bool.new
+          f.must { match_all }
+          f.must { term categories: options[:category] } if options[:category]
+          f.must { range published_on: { gte: options[:published_week], lte: "#{options[:published_week]}||+1w" } } if options[:published_week]
 
-      if options[:category]
-        f = { term: { categories: options[:category] } }
+          filter f do
+            aggregation :authors do
+              terms field: 'authors.full_name.raw'
+            end
+          end
+        end
 
-        __set_filters.(:authors, f)
-        __set_filters.(:published, f)
-      end
+        # Return the published date ranges for faceted navigation
+        #
+        aggregation :published do
+          # Filter the aggregation with any selected `author` and `category`
+          #
+          f = Elasticsearch::DSL::Search::Filters::Bool.new
+          f.must { match_all }
+          f.must { term 'authors.full_name.raw' => options[:author] } if options[:author]
+          f.must { term categories: options[:category] } if options[:category]
 
-      if options[:author]
-        f = { term: { 'authors.full_name.raw' => options[:author] } }
+          filter f do
+            aggregation :published do
+              date_histogram do
+                field    'published_on'
+                interval 'week'
+              end
+            end
+          end
+        end
 
-        __set_filters.(:categories, f)
-        __set_filters.(:published, f)
-      end
+        # Highlight the snippets in results
+        #
+        highlight do
+          fields title:    { number_of_fragments: 0 },
+                 abstract: { number_of_fragments: 0 },
+                 content:  { fragment_size: 50 }
 
-      if options[:published_week]
-        f = {
-          range: {
-            published_on: {
-              gte: options[:published_week],
-              lte: "#{options[:published_week]}||+1w"
-            }
-          }
-        }
+          field  'comments.body', fragment_size: 50 if q.present? && options[:comments]
 
-        __set_filters.(:categories, f)
-        __set_filters.(:authors, f)
-      end
+          pre_tags  '<em class="label label-highlight">'
+          post_tags '</em>'
+        end
 
-      if query.present? && options[:comments]
-        @search_definition[:query][:bool][:should] ||= []
-        @search_definition[:query][:bool][:should] << {
-          nested: {
-            path: 'comments',
-            query: {
-              multi_match: {
-                query: query,
-                fields: ['body'],
-                operator: 'and'
-              }
-            }
-          }
-        }
-        @search_definition[:highlight][:fields].update 'comments.body' => { fragment_size: 50 }
-      end
+        case
+          # By default, sort by relevance, but when a specific sort option is present, use it ...
+          #
+          when options[:sort]
+            sort options[:sort].to_sym => 'desc'
+            track_scores true
+          #
+          # ... when there's no user query, sort on published date
+          #
+          when q.blank?
+            sort published_on: 'desc'
+        end
 
-      if options[:sort]
-        @search_definition[:sort]  = { options[:sort] => 'desc' }
-        @search_definition[:track_scores] = true
-      end
-
-      unless query.blank?
-        @search_definition[:suggest] = {
-          text: query,
-          suggest_title: {
-            term: {
-              field: 'title.tokenized',
-              suggest_mode: 'always'
-            }
-          },
-          suggest_body: {
-            term: {
-              field: 'content.tokenized',
-              suggest_mode: 'always'
-            }
-          }
-        }
+        # Return suggestions unless there's no query from the user
+        unless q.blank?
+          suggest :suggest_title, text: q, term: { field: 'title.tokenized', suggest_mode: 'always' }
+          suggest :suggest_body,  text: q, term: { field: 'content.tokenized', suggest_mode: 'always' }
+        end
       end
 
       __elasticsearch__.search(@search_definition)

@@ -30,6 +30,7 @@ say_status  "Rubygems", "Adding Rubygems into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
 gem "oj"
+gem "elasticsearch-dsl", git: "git://github.com/elasticsearch/elasticsearch-ruby.git", branch: 'dsl'
 
 git add:    "Gemfile*"
 git commit: "-m 'Added Ruby gems'"
