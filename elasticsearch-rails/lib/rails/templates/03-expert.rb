@@ -217,6 +217,10 @@ create_file 'app/controllers/search_controller.rb' do
   CODE
 end
 
+copy_file File.expand_path('../search_controller_test.rb', __FILE__), 'test/controllers/search_controller_test.rb'
+# get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/search_controller_test.rb',
+    'test/controllers/search_controller_test.rb'
+
 route "get '/search', to: 'search#index', as: 'search'"
 gsub_file 'config/routes.rb', %r{root to: 'articles#index'$}, "root to: 'search#index'"
 
@@ -228,7 +232,7 @@ get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elastics
 get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/search.css',
     'app/assets/stylesheets/search.css'
 
-git add:    "app/controllers/ config/routes.rb"
+git add:    "app/controllers/ test/controllers/ config/routes.rb"
 git add:    "app/views/search/ app/assets/stylesheets/search.css"
 git commit: "-m 'Added SearchController#index'"
 
