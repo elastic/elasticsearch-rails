@@ -63,19 +63,19 @@ class SearchControllerTest < ActionController::TestCase
     assert_equal 'one', suggestions['suggest_title'][0]['text']
   end
 
-  test "should return facets" do
+  test "should return aggregations" do
     get :index, q: 'one'
     assert_response :success
 
-    facets = assigns(:articles).response.response['facets']
+    aggregations = assigns(:articles).response.response['aggregations']
 
-    assert_equal 2, facets['categories']['terms'].size
-    assert_equal 2, facets['authors']['terms'].size
-    assert_equal 2, facets['published']['entries'].size
+    assert_equal 2, aggregations['categories']['categories']['buckets'].size
+    assert_equal 2, aggregations['authors']['authors']['buckets'].size
+    assert_equal 2, aggregations['published']['published']['buckets'].size
 
-    assert_equal 'One', facets['categories']['terms'][0]['term']
-    assert_equal 'John Smith', facets['authors']['terms'][0]['term']
-    assert_equal 1425254400000, facets['published']['entries'][0]['time']
+    assert_equal 'John Smith', aggregations['authors']['authors']['buckets'][0]['key']
+    assert_equal 'One', aggregations['categories']['categories']['buckets'][0]['key']
+    assert_equal '2015-03-02T00:00:00.000Z', aggregations['published']['published']['buckets'][0]['key_as_string']
   end
 
   test "should sort on the published date" do
@@ -104,13 +104,13 @@ class SearchControllerTest < ActionController::TestCase
 
     assert_equal 2, assigns(:articles).size
 
-    facets = assigns(:articles).response.response['facets']
+    aggregations = assigns(:articles).response.response['aggregations']
 
-    assert_equal 1, facets['authors']['terms'].size
-    assert_equal 1, facets['published']['entries'].size
+    assert_equal 1, aggregations['authors']['authors']['buckets'].size
+    assert_equal 1, aggregations['published']['published']['buckets'].size
 
     # Do NOT filter the category facet
-    assert_equal 2, facets['categories']['terms'].size
+    assert_equal 2, aggregations['categories']['categories']['buckets'].size
   end
 
   test "should filter search results and the category and published date facets when user selects a category" do
@@ -119,12 +119,12 @@ class SearchControllerTest < ActionController::TestCase
 
     assert_equal 1, assigns(:articles).size
 
-    facets = assigns(:articles).response.response['facets']
+    aggregations = assigns(:articles).response.response['aggregations']
 
-    assert_equal 1, facets['categories']['terms'].size
-    assert_equal 1, facets['published']['entries'].size
+    assert_equal 1, aggregations['categories']['categories']['buckets'].size
+    assert_equal 1, aggregations['published']['published']['buckets'].size
 
     # Do NOT filter the authors facet
-    assert_equal 2, facets['authors']['terms'].size
+    assert_equal 2, aggregations['authors']['authors']['buckets'].size
   end
 end
