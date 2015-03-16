@@ -115,7 +115,7 @@ end
 
 # ----- Auxiliary gems ----------------------------------------------------------------------------
 
-gem 'mocha', group: 'test', require: 'mocha/setup'
+gem 'mocha', group: 'test', require: 'mocha/api'
 
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
 
