@@ -8,10 +8,13 @@ require 'elasticsearch/model/version'
 
 require 'elasticsearch/model/client'
 
+require 'elasticsearch/model/multimodel'
+
 require 'elasticsearch/model/adapter'
 require 'elasticsearch/model/adapters/default'
 require 'elasticsearch/model/adapters/active_record'
 require 'elasticsearch/model/adapters/mongoid'
+require 'elasticsearch/model/adapters/multiple'
 
 require 'elasticsearch/model/importing'
 require 'elasticsearch/model/indexing'
@@ -63,6 +66,50 @@ module Elasticsearch
   #
   module Model
     METHODS = [:search, :mapping, :mappings, :settings, :index_name, :document_type, :import]
+
+
+    # Keeps a registry of the classes that include `Elasticsearch::Model`
+    #
+    class Registry < Array
+
+      # Add the class of a model to the registry
+      #
+      def self.add(klass)
+        __instance.add(klass)
+      end
+
+      # List all the registered models
+      #
+      # @return [Class]
+      #
+      def self.all
+        __instance.models
+      end
+
+      # Returns the unique instance of the registry
+      #
+      # @api private
+      #
+      def self.__instance
+        @instance ||= new
+      end
+
+      def initialize
+        @models = []
+      end
+
+      # Adds a model to the registry
+      #
+      def add(klass)
+        @models << klass
+      end
+
+      # Gets a copy of the registered models
+      #
+      def models
+        @models.dup
+      end
+    end
 
     # Adds the `Elasticsearch::Model` functionality to the including class.
     #
@@ -119,6 +166,9 @@ module Elasticsearch
           include Elasticsearch::Model::Importing::ClassMethods
           include Adapter.from_class(base).importing_mixin
         end
+
+        # Add to the registry if it's a class (and not in intermediate module)
+        Registry.add(base) if base.is_a?(Class)
       end
     end
 
@@ -149,6 +199,28 @@ module Elasticsearch
         @client = client
       end
 
+      # Search across models which include Elasticsearch::Model
+      #
+      # @param query_or_payload [String,Hash,Object] The search request definition
+      #                                              (string, JSON, Hash, or object responding to `to_hash`)
+      # @param models [Array] The list of Model objects to search
+      # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
+      #
+      # @return [Elasticsearch::Model::Response::Response]
+      #
+      # @example Search across specified models
+      #
+      #     Elasticsearch::Model.search('foo', [Author, Article])
+      #
+      # @example Search across all models
+      #
+      #     Elasticsearch::Model.search('foo')
+      #
+      def search(query_or_payload, models=[], options={})
+        models = Multimodel.new(models)
+        request = Searching::SearchRequest.new(models, query_or_payload, options)
+        Response::Response.new(models, request)
+      end
     end
     extend ClassMethods
 
