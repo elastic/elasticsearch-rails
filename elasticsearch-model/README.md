@@ -172,6 +172,12 @@ response.results.first._source.title
 # => "Quick brown fox"
 ```
 
+Or if we want to perform the search across different models:
+
+```ruby
+Elasticsearch::Model.search 'fox dogs', [Article, Comment]
+```
+
 #### Search results
 
 The returned `response` object is a rich wrapper around the JSON returned from Elasticsearch,
@@ -216,7 +222,17 @@ response.records.to_a
 ```
 
 The returned object is the genuine collection of model instances returned by your database,
-i.e. `ActiveRecord::Relation` for ActiveRecord, or `Mongoid::Criteria` in case of MongoDB. This allows you to
+i.e. `ActiveRecord::Relation` for ActiveRecord, or `Mongoid::Criteria` in case of MongoDB.
+When the search is performed across different models, an Array of model instances is returned.
+
+```ruby
+Elasticsearch::Model.search('fox', [Article, Comment]).records
+# Article Load (0.3ms)  SELECT "articles".* FROM "articles" WHERE "articles"."id" IN (1)
+# Comment Load (0.2ms)  SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (1,5)
+# => [#<Article id: 1, title: "Quick brown fox">, #<Comment id: 1, body: "I like foxes">,  #<Comment id: 5, body: "Michael J.Fox is my favorite actor">]
+```
+
+In the case of searching a single model, this allows you to
 chain other methods on top of search results, as you would normally do:
 
 ```ruby
