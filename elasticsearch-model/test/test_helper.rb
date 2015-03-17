@@ -61,3 +61,33 @@ module Elasticsearch
     end
   end
 end
+
+class Mongo
+  def self.setup!
+    begin
+      require 'mongoid'
+      session = Moped::Connection.new("localhost", 27017, 0.5)
+      session.connect
+      ENV['MONGODB_AVAILABLE'] = 'yes'
+    rescue LoadError, Moped::Errors::ConnectionFailure => e
+      $stderr.puts "MongoDB not installed or running: #{e}"
+    end
+  end
+
+  def self.available?
+    !!ENV['MONGODB_AVAILABLE']
+  end
+
+  def self.connect_to(source)
+    $stderr.puts "Mongoid #{Mongoid::VERSION}", '-'*80
+
+    logger = ::Logger.new($stderr)
+    logger.formatter = lambda { |s, d, p, m| " #{m.ansi(:faint, :cyan)}\n" }
+    logger.level = ::Logger::DEBUG
+
+    Mongoid.logger = logger unless ENV['QUIET']
+    Moped.logger   = logger unless ENV['QUIET']
+
+    Mongoid.connect_to source
+  end
+end
