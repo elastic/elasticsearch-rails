@@ -34,7 +34,7 @@ module Elasticsearch
           if @index_name.respond_to?(:call)
             @index_name.call
           else
-            @index_name || self.model_name.collection.gsub(/\//, '-')
+            @index_name || implicit(:index_name)
           end
         end
 
@@ -58,7 +58,7 @@ module Elasticsearch
         #     Article.document_type "my-article"
         #
         def document_type name=nil
-          @document_type = name || @document_type || self.model_name.element
+          @document_type = name || @document_type || implicit(:document_type)
         end
 
 
@@ -69,6 +69,30 @@ module Elasticsearch
         def document_type=(name)
           @document_type = name
         end
+
+        private
+
+          def implicit(prop)
+            value = nil
+
+            if Elasticsearch::Model.inheritance_enabled
+              self.ancestors.each do |klass|
+                next if klass == self
+                break if value = klass.respond_to?(prop) && klass.send(prop)
+              end
+            end
+
+            value || self.send("default_#{prop}")
+          end
+
+          def default_index_name
+            self.model_name.collection.gsub(/\//, '-')
+          end
+
+          def default_document_type
+            self.model_name.element
+          end
+
       end
 
       module InstanceMethods
