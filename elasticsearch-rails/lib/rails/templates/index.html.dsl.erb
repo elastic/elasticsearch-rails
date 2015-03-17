@@ -1,0 +1,160 @@
+<div class="col-md-12">
+  <h1 class="text-right"><%= link_to 'Search New York Times articles', root_path %></h1>
+
+  <%= form_tag search_path, method: 'get', role: 'search' do %>
+    <div class="input-group">
+      <%= text_field_tag :q, params[:q], class: 'form-control', placeholder: 'Search...' %>
+
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-default">
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </span>
+    </div>
+
+    <div id="form-options" class="clearfix">
+      <div class="btn-group pull-left">
+        <label class="checkbox-inline">
+          <%= check_box_tag 'comments', 'y', params[:comments] == 'y', onclick: "$(this).closest('form').submit()" %>
+          Search in comments?
+        </label>
+        <% params.slice(:a, :c, :s).each do |name, value| %>
+          <%= hidden_field_tag name, value %>
+        <% end %>
+      </div>
+
+      <div class="btn-group pull-right">
+        <p style="float: left; margin: 0.1em 0 0 0"><small>Displaying <%= (params[:page] || 1).to_i.ordinalize %> page with <%= @articles.size %> articles
+                   of <strong>total <%= @articles.total %></strong></small></p>
+
+        <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown" style="margin-left: 0.5em">
+          <% sort = case
+              when params[:s] then params[:s]
+              when params[:q].blank? then 'published_on'
+              else 'relevancy'
+             end
+          %>
+          sorted by <%= sort.humanize.downcase %> <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><%= link_to "Sort by published on", search_path(params.except(:controller, :action).merge(s: 'published_on')), class: 'btn-xs' %></li>
+          <li><%= link_to "Sort by relevancy",    search_path(params.except(:controller, :action).merge(s: nil)), class: 'btn-xs' %></li>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <hr>
+</div>
+
+<% if @articles.size < 1 && (suggestions = @articles.response.response['suggest']) && suggestions.present?  %>
+<div class="col-md-12">
+  <p class="alert alert-warning">
+    No documents have been found.
+    <% if suggestions['suggest_title'].present? || suggestions['suggest_body'].present? %>
+      Maybe you mean
+      <%= suggestions.map { |k,v| v.first['options'] }.flatten.map {|v| v['text']}.uniq.map do |term|
+        link_to term, search_path(params.except(:controller, :action).merge q: term)
+      end.to_sentence(last_word_connector: ' or ').html_safe %>?
+    <% end %>
+  </p>
+</div>
+<% end %>
+
+<div id="facets" class="col-md-3">
+  <% unless @articles.size < 1 %>
+
+    <div class="categories panel panel-default">
+      <p class="panel-heading"><%= link_to 'All Sections &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(c: nil))%></p>
+
+      <div class="list-group">
+        <% @articles.response.response['aggregations']['categories']['categories']['buckets'].each do |c| %>
+        <%=
+          link_to search_path(params.except(:controller, :action).merge(c: c['key'])),
+                  class: "list-group-item#{' active' if params[:c] == c['key']}" do
+                    c['key'].titleize.html_safe + content_tag(:small, c['doc_count'], class: 'badge').html_safe
+          end
+        %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="authors panel panel-default">
+      <p class="panel-heading"><%= link_to 'All Authors &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(a: nil))%></p>
+
+      <div class="list-group">
+        <% @articles.response.response['aggregations']['authors']['authors']['buckets'].each do |a| %>
+        <%=
+          link_to search_path(params.except(:controller, :action).merge(a: a['key'])),
+                  class: "list-group-item#{' active' if params[:a] == a['key']}" do
+                    a['key'].titleize.html_safe + content_tag(:small, a['doc_count'], class: 'badge').html_safe
+          end
+        %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="authors panel panel-default">
+      <p class="panel-heading"><%= link_to 'Any Date &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(w: nil))%></p>
+
+      <div class="list-group">
+        <% @articles.response.response['aggregations']['published']['published']['buckets'].each do |w| %>
+        <%=
+          __start = Time.at(w['key']/1000)
+          __end   = __start.end_of_week
+          __date  = __start.to_date.to_s(:iso)
+
+          link_to search_path(params.except(:controller, :action).merge(w: __date)),
+                  class: "list-group-item#{' active' if params[:w] == __date}" do
+                    "#{__start.to_date.to_s(:short)} &mdash; #{__end.to_date.to_s(:short)}".html_safe + \
+                    content_tag(:small, w['doc_count'], class: 'badge').html_safe
+          end
+        %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="col-md-9">
+  <div id="results">
+    <% @articles.each do |article|  %>
+      <div class="result">
+        <h3 class="title">
+          <%= (article.try(:highlight).try(:title) ? article.highlight.title.join.html_safe : article.title) %>
+          <small class="category"><%= article.categories.to_sentence %></small>
+        </h3>
+
+        <p class="body">
+          <% if article.try(:highlight).try(:abstract) %>
+            <%= article.highlight.abstract.join.html_safe %>
+          <% else  %>
+            <%= article.try(:highlight).try(:content) ? article.highlight.content.join('&hellip;').html_safe : article.abstract %>
+          <% end  %>
+        </p>
+
+        <% if comments = article.try(:highlight) && article.highlight['comments.body'] %>
+        <p class="comments">
+          Comments: <%= comments.join('&hellip;').html_safe %>
+        </p>
+        <% end  %>
+
+        <p class="text-muted">
+          <small>Authors: <%= article.authors.map(&:full_name).to_sentence %></small> |
+          <small>Published: <%= article.published_on %></small> |
+          <small>Score: <%= article._score %></small>
+        </p>
+      </div>
+    <% end %>
+  </div>
+
+  <ul class="pager">
+    <li class="previous"><%= link_to_previous_page @articles, 'Previous Page', params: params.slice(:q, :c, :a, :comments) %></li>
+    <li class="next"><%= link_to_next_page     @articles, 'Next Page', params: params.slice(:q, :c, :a, :comments) %></li>
+  </ul>
+
+</div>
+
+<div class="footer <%= @articles.size < 1 ? 'col-md-12' : 'col-md-9 col-md-offset-3' %>">
+  <p><small>Content provided by <a href="http://nytimes.com"><em>The New York Times</em></a>.</small></p>
+</div>
