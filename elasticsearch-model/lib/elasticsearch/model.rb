@@ -19,6 +19,7 @@ require 'elasticsearch/model/naming'
 require 'elasticsearch/model/serializing'
 require 'elasticsearch/model/searching'
 require 'elasticsearch/model/callbacks'
+require 'elasticsearch/model/setup'
 
 require 'elasticsearch/model/proxy'
 
@@ -97,6 +98,7 @@ module Elasticsearch
           include Elasticsearch::Model::Naming::InstanceMethods
           include Elasticsearch::Model::Indexing::InstanceMethods
           include Elasticsearch::Model::Serializing::InstanceMethods
+          include Elasticsearch::Model::Setup::ClassMethods
         end
 
         Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval <<-CODE, __FILE__, __LINE__ + 1
