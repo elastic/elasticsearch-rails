@@ -34,6 +34,45 @@ module Elasticsearch
         def load_path= load_path
           @load_path = load_path
         end
+
+        # Get the name of the settings file for a specific model class.
+        # Defaults to its document_type.
+        #
+        # @example Get the settings file name for `Article`
+        #
+        #     Article.__elasticsearch__.settings_file_name
+        #     # => 'article'
+        #
+        def settings_file_name
+          @settings_file_name ||= document_type
+        end
+
+        # Set a custom name for the settings file for a specific model class.
+        #
+        # @example Set `article-customized` as the settings file name for
+        # `Article`
+        #
+        #     Article.__elasticsearch__.settings_file_name = 'article-customized'
+        #     Article.__elasticsearch__.settings_file_name
+        #     # => 'article-customized'
+        #
+        def settings_file_name= name
+          @settings_file_name = name
+        end
+
+        # Searches in all the load paths for a settings file in either
+        # json or yml format. Returns the last one found.
+        #
+        # @example Discover `config/elasticsearch/article.yml`
+        #
+        #     Article.discover_settings_file
+        #
+        #     # => 'config/elasticsearch/article.yml
+        #
+        def discover_settings_file
+          paths = @load_path.collect {|path| "#{path}/*.{yml,json}"}
+          Dir.glob(paths).last
+        end
       end
     end
   end
