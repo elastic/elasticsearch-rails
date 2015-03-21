@@ -90,6 +90,34 @@ class Article
 end
 ```
 
+#### Configuration files
+
+Elasticseach-model will automatically load settings and mappings included in
+a .yml or .json file named after the `document_type` that exists in
+`config/elasticsearch` for any specific class.
+
+```yml
+# In: config/elasticsearch/article.yml
+#
+settings:
+  number_of_shards: 7
+  analyzer:
+    my-analyzer:
+      tokenizer: "whitespace"
+mappings:
+  article:
+    properties:
+      name:
+        analyzer: "my-analyzer"
+```
+```ruby
+Article.settings
+# => {"number_of_shards"=>7, "analyzer"=>{"my-analyzer"=>{"tokenizer"=>"whitespace"}}}
+
+Article.mappings
+# => {"article"=>{"properties"=>{"name"=>{"analyzer"=>"my-analyzer"}}}}
+```
+
 #### The `__elasticsearch__` Proxy
 
 The `Elasticsearch::Model` module contains a big amount of class and instance methods to provide

@@ -19,6 +19,7 @@ require 'elasticsearch/model/naming'
 require 'elasticsearch/model/serializing'
 require 'elasticsearch/model/searching'
 require 'elasticsearch/model/callbacks'
+require 'elasticsearch/model/setup'
 
 require 'elasticsearch/model/proxy'
 
@@ -90,6 +91,7 @@ module Elasticsearch
           include Elasticsearch::Model::Naming::ClassMethods
           include Elasticsearch::Model::Indexing::ClassMethods
           include Elasticsearch::Model::Searching::ClassMethods
+          include Elasticsearch::Model::Setup::ClassMethods
         end
 
         Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval do
@@ -119,6 +121,11 @@ module Elasticsearch
           include Elasticsearch::Model::Importing::ClassMethods
           include Adapter.from_class(base).importing_mixin
         end
+
+        #
+        # Attempt to automatically configure indexes from settings files
+        #
+        __elasticsearch__.load_settings_from_file!
       end
     end
 
