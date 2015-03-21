@@ -1,0 +1,7 @@
+settings:
+  foo: bar
+mappings:
+  dummy_setup_model:
+    properties:
+      baz: qux
+

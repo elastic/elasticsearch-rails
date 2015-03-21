@@ -5,6 +5,7 @@ class Elasticsearch::Model::SetupTest < Test::Unit::TestCase
     class ::DummySetupModel
       extend ActiveModel::Naming
       extend Elasticsearch::Model::Naming::ClassMethods
+      extend Elasticsearch::Model::Indexing::ClassMethods
       extend Elasticsearch::Model::Setup::ClassMethods
     end
 
@@ -42,6 +43,28 @@ class Elasticsearch::Model::SetupTest < Test::Unit::TestCase
 
           assert_equal "test/support/json/dummy_setup_module.json",
               DummySetupModel.discover_settings_file
+        end
+      end
+    end
+
+    context "load settings from file" do
+      context "YAML" do
+        should "load settings and mappings from .yml file" do
+          DummySetupModel.load_path = ['test/support/yml']
+          DummySetupModel.load_settings_from_file!
+          assert_equal({"foo" => "bar"}, DummySetupModel.settings.to_hash)
+          assert_equal({"dummy_setup_model"=>{"properties"=>{"baz"=>"qux"}}},
+                           DummySetupModel.mappings.to_hash)
+        end
+      end
+
+      context "JSON" do
+        should "load settings and mappings from .yml file" do
+          DummySetupModel.load_path = ['test/support/json']
+          DummySetupModel.load_settings_from_file!
+          assert_equal({"foo" => "bar"}, DummySetupModel.settings.to_hash)
+          assert_equal({"dummy_setup_model"=>{"properties"=>{"baz"=>"qux"}}},
+                           DummySetupModel.mappings.to_hash)
         end
       end
     end

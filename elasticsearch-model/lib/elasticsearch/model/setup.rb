@@ -73,6 +73,37 @@ module Elasticsearch
           paths = @load_path.collect {|path| "#{path}/*.{yml,json}"}
           Dir.glob(paths).last
         end
+
+        # Load the index settings and mappings from the file found by
+        # `discover_settings_file`.
+        #
+        # @example Load settings from config/elasticsearch/article.yml
+        #
+        #   # config/elasticsearch/article.yml
+        #   #
+        #   # settings:
+        #   #   foo:
+        #   #     "bar"
+        #   #
+        #
+        #   Article.__elasticsearch__.load_settings_from_file!
+        #   Article.settings.to_hash
+        #   # => {"foo" => "bar"}
+        #
+        def load_settings_from_file!
+          if discover_settings_file
+            file = File.open(discover_settings_file)
+            settings_from_file = {}
+            case File.extname(file.path)
+            when ".yml"
+              settings_from_file = YAML.load(file.read)
+            when ".json"
+              settings_from_file = JSON.parse(file.read)
+            end
+            settings settings_from_file["settings"]
+            @mapping = settings_from_file["mappings"]
+          end
+        end
       end
     end
   end
