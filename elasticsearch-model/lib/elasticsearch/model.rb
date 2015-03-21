@@ -91,6 +91,7 @@ module Elasticsearch
           include Elasticsearch::Model::Naming::ClassMethods
           include Elasticsearch::Model::Indexing::ClassMethods
           include Elasticsearch::Model::Searching::ClassMethods
+          include Elasticsearch::Model::Setup::ClassMethods
         end
 
         Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval do
@@ -98,7 +99,6 @@ module Elasticsearch
           include Elasticsearch::Model::Naming::InstanceMethods
           include Elasticsearch::Model::Indexing::InstanceMethods
           include Elasticsearch::Model::Serializing::InstanceMethods
-          include Elasticsearch::Model::Setup::ClassMethods
         end
 
         Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval <<-CODE, __FILE__, __LINE__ + 1

@@ -32,7 +32,7 @@ class Elasticsearch::Model::SetupTest < Test::Unit::TestCase
         should "discover .yml settings file" do
           DummySetupModel.load_path = ['test/support/yml']
 
-          assert_equal "test/support/yml/dummy_setup_module.yml",
+          assert_equal "test/support/yml/dummy_setup_model.yml",
               DummySetupModel.discover_settings_file
         end
       end
@@ -41,7 +41,7 @@ class Elasticsearch::Model::SetupTest < Test::Unit::TestCase
         should "discover .json settings file" do
           DummySetupModel.load_path = ['test/support/json']
 
-          assert_equal "test/support/json/dummy_setup_module.json",
+          assert_equal "test/support/json/dummy_setup_model.json",
               DummySetupModel.discover_settings_file
         end
       end

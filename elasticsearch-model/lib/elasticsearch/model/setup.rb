@@ -70,7 +70,7 @@ module Elasticsearch
         #     # => 'config/elasticsearch/article.yml
         #
         def discover_settings_file
-          paths = @load_path.collect {|path| "#{path}/*.{yml,json}"}
+          paths = load_path.collect {|path| "#{path}/#{settings_file_name}.{yml,json}"}
           Dir.glob(paths).last
         end
 
