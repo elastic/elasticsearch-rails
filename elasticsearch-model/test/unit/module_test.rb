@@ -21,8 +21,12 @@ class Elasticsearch::Model::ModuleTest < Test::Unit::TestCase
     end
 
     context "when included in module/class, " do
-      class ::DummyIncludingModel; end
+      class ::DummyIncludingModel
+        extend ActiveModel::Naming
+      end
+
       class ::DummyIncludingModelWithSearchMethodDefined
+        extend ActiveModel::Naming
         def self.search(query, options={})
           "SEARCH"
         end
@@ -52,6 +56,5 @@ class Elasticsearch::Model::ModuleTest < Test::Unit::TestCase
         assert_equal 'SEARCH', DummyIncludingModelWithSearchMethodDefined.search('foo')
       end
     end
-
   end
 end

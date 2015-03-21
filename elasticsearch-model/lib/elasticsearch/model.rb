@@ -121,6 +121,11 @@ module Elasticsearch
           include Elasticsearch::Model::Importing::ClassMethods
           include Adapter.from_class(base).importing_mixin
         end
+
+        #
+        # Attempt to automatically configure indexes from settings files
+        #
+        __elasticsearch__.load_settings_from_file!
       end
     end
 
