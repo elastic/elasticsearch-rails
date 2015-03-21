@@ -3,12 +3,10 @@ module Elasticsearch
     # Provides the necessary support to set up index options (mappings, settings)
     # via configuriation file .yml or .json
     #
-    # @see ClassMethods#settings
-    # @see ClassMethods#mapping
-    #
-    # @see InstanceMethods#index_document
-    # @see InstanceMethods#update_document
-    # @see InstanceMethods#delete_document
+    # @see ClassMethods#discover_settings_file
+    # @see ClassMethods#load_path
+    # @see ClassMethods#load_settings_from_file!
+    # @see ClassMethods#settings_file_name
     #
     module Setup
       module ClassMethods
@@ -66,7 +64,6 @@ module Elasticsearch
         # @example Discover `config/elasticsearch/article.yml`
         #
         #     Article.discover_settings_file
-        #
         #     # => 'config/elasticsearch/article.yml
         #
         def discover_settings_file
