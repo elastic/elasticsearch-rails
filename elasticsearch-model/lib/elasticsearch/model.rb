@@ -70,7 +70,7 @@ module Elasticsearch
 
     # Keeps a registry of the classes that include `Elasticsearch::Model`
     #
-    class Registry < Array
+    class Registry
 
       # Add the class of a model to the registry
       #

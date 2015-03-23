@@ -97,6 +97,10 @@ module Elasticsearch
           # A simple class-level memoization over the `_index` and `_type` properties of the hit is applied.
           # Hence querying the Model Registry is done the minimal amount of times.
           #
+          # Event though memoization happens at the class level, the side effect of a race condition will only be
+          # to iterate over models one extra time, so we can consider the method thread-safe, and don't include
+          # any Mutex.synchronize around the method implementaion
+          #
           # @see Elasticsearch::Model::Registry
           #
           # @return Class
@@ -106,7 +110,7 @@ module Elasticsearch
           def __type(hit)
             @@__types ||= {}
             @@__types[[hit[:_index], hit[:_type]].join("::")] ||= begin
-              Registry.all.detect { |model| model.index_name == hit[:_index] && model.document_type == hit[:_type] }
+              models.detect { |model| model.index_name == hit[:_index] && model.document_type == hit[:_type] }
             end
           end
 
