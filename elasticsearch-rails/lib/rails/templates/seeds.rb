@@ -53,4 +53,5 @@ end
 
 # Remove any jobs from the "elasticsearch" Sidekiq queue
 #
+require 'sidekiq/api'
 Sidekiq::Queue.new("elasticsearch").clear
