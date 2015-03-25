@@ -145,7 +145,7 @@ module Elasticsearch
       #
       # @example Configure (set) the client for all models
       #
-      #     Elasticsearch::Model.client Elasticsearch::Client.new host: 'http://localhost:9200', tracer: true
+      #     Elasticsearch::Model.client = Elasticsearch::Client.new host: 'http://localhost:9200', tracer: true
       #     => #<Elasticsearch::Transport::Client:0x007f96a6dd0d80 @transport=... >
       #
       # @note You have to set the client before you call Elasticsearch methods on the model,
