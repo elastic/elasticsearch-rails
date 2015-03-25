@@ -154,6 +154,8 @@ class Article < ActiveRecord::Base
 end
 CODE
 
+gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/article_test.rb", %r{assert_equal 'foo', definition\[:query\]\[:multi_match\]\[:query\]}, "assert_equal 'foo', definition.to_hash[:query][:bool][:should][0][:multi_match][:query]"
+
 # copy_file File.expand_path('../searchable.rb', __FILE__), 'app/models/concerns/searchable.rb'
 get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/searchable.rb',
     'app/models/concerns/searchable.rb'
@@ -170,7 +172,7 @@ insert_into_file "app/models/article.rb", after: "ActiveRecord::Base" do
   CODE
 end
 
-git add:    "app/models/"
+git add:    "app/models/ test/models"
 git commit: "-m 'Refactored the Elasticsearch integration into a concern\n\nSee:\n\n* http://37signals.com/svn/posts/3372-put-chubby-models-on-a-diet-with-concerns\n* http://joshsymonds.com/blog/2012/10/25/rails-concerns-v-searchable-with-elasticsearch/'"
 
 # ----- Add Sidekiq indexer -----------------------------------------------------------------------
@@ -199,8 +201,6 @@ puts        '-'*80, ''; sleep 0.25
 create_file 'app/controllers/search_controller.rb' do
   <<-CODE.gsub(/^  /, '')
   class SearchController < ApplicationController
-    respond_to :json, :html
-
     def index
       options = {
         category:       params[:c],
@@ -211,14 +211,15 @@ create_file 'app/controllers/search_controller.rb' do
         comments:       params[:comments]
       }
       @articles = Article.search(params[:q], options).page(params[:page]).results
-
-      respond_with @articles
     end
-
   end
 
   CODE
 end
+
+copy_file File.expand_path('../search_controller_test.rb', __FILE__), 'test/controllers/search_controller_test.rb'
+# get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/search_controller_test.rb',
+    'test/controllers/search_controller_test.rb'
 
 route "get '/search', to: 'search#index', as: 'search'"
 gsub_file 'config/routes.rb', %r{root to: 'articles#index'$}, "root to: 'search#index'"
@@ -231,7 +232,7 @@ get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elastics
 get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/search.css',
     'app/assets/stylesheets/search.css'
 
-git add:    "app/controllers/ config/routes.rb"
+git add:    "app/controllers/ test/controllers/ config/routes.rb"
 git add:    "app/views/search/ app/assets/stylesheets/search.css"
 git commit: "-m 'Added SearchController#index'"
 
