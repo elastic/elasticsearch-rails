@@ -110,7 +110,7 @@ module Elasticsearch
           def __type(hit)
             @@__types ||= {}
             @@__types[[hit[:_index], hit[:_type]].join("::")] ||= begin
-              models.detect { |model| model.index_name == hit[:_index] && model.document_type == hit[:_type] }
+              Registry.all.detect { |model| model.index_name == hit[:_index] && model.document_type == hit[:_type] }
             end
           end
 
