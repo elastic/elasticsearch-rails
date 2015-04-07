@@ -9,7 +9,7 @@ module Elasticsearch
       module Mongoid
 
         Adapter.register self,
-                         lambda { |klass| !!defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
+                         lambda { |klass| !!defined?(::Mongoid::Document) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Mongoid::Document) }
 
         module Records
 

@@ -7,7 +7,7 @@ module Elasticsearch
       module ActiveRecord
 
         Adapter.register self,
-                         lambda { |klass| !!defined?(::ActiveRecord::Base) && klass.ancestors.include?(::ActiveRecord::Base) }
+                         lambda { |klass| !!defined?(::ActiveRecord::Base) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::ActiveRecord::Base) }
 
         module Records
           # Returns an `ActiveRecord::Relation` instance
