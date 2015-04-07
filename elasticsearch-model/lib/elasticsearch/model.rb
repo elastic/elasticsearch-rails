@@ -19,6 +19,7 @@ require 'elasticsearch/model/naming'
 require 'elasticsearch/model/serializing'
 require 'elasticsearch/model/searching'
 require 'elasticsearch/model/callbacks'
+require 'elasticsearch/model/multiple_models'
 
 require 'elasticsearch/model/proxy'
 
@@ -147,6 +148,29 @@ module Elasticsearch
       #
       def client=(client)
         @client = client
+      end
+
+      # Search across models which include Elasticsearch::Model
+      #
+      # @param query_or_payload [String,Hash,Object] The search request definition
+      #                                              (string, JSON, Hash, or object responding to `to_hash`)
+      # @param models [Array] The list of Model objects to search
+      # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
+      #
+      # @return [Elasticsearch::Model::Response::Response]
+      #
+      # @example Search across specified models
+      #
+      #     Elasticsearch::Model.search('foo', [Author, Article])
+      #
+      # @example Search across all models
+      #
+      #     Elasticsearch::Model.search('foo')
+      #
+      def search(query_or_payload, models=[], options={})
+        models = MultipleModels.new(models)
+        search = Searching::SearchRequest.new(models, query_or_payload, options)
+        Response::Response.new(models, search)
       end
 
     end

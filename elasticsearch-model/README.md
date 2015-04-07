@@ -172,6 +172,19 @@ response.results.first._source.title
 # => "Quick brown fox"
 ```
 
+We can also search across multiple models:
+
+```ruby
+response = Elasticsearch::Model.search('fox', [Article, Author])
+
+response.results.first._index
+# => "articles"
+
+response.results.last._index
+# => "authors"
+
+```
+
 #### Search results
 
 The returned `response` object is a rich wrapper around the JSON returned from Elasticsearch,
@@ -251,6 +264,8 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 # * Quick brown fox: 0.02250402
 # * Fast black dogs: 0.02250402
 ```
+
+**NOTE**: A multiple-model search `response` does not currently support the `records` method.
 
 #### Pagination
 
