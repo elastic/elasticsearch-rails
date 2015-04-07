@@ -1,4 +1,4 @@
-#     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/04-dsl.rb
+#     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/04-dsl.rb
 
 # (See: 01-basic.rb, 02-pretty.rb, 03-expert.rb)
 
@@ -15,13 +15,16 @@ README
 git add:    "README.rdoc"
 git commit: "-m '[03] Updated the application README'"
 
+run 'rm -f app/assets/stylesheets/*.scss'
+run 'rm -f app/assets/javascripts/*.coffee'
+
 # ----- Add gems into Gemfile ---------------------------------------------------------------------
 
 puts
 say_status  "Rubygems", "Adding Rubygems into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-gem "elasticsearch-dsl", git: "git://github.com/elasticsearch/elasticsearch-ruby.git", branch: 'dsl'
+gem "elasticsearch-dsl", git: "git://github.com/elastic/elasticsearch-ruby.git"
 
 git add:    "Gemfile*"
 git commit: "-m 'Added the `elasticsearch-dsl` gem'"
@@ -32,13 +35,13 @@ run "bundle install"
 
 # ----- Change the search definition implementation and associated views and tests ----------------
 
-copy_file File.expand_path('../searchable.dsl.rb', __FILE__), 'app/models/concerns/searchable.rb', force: true
-# get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb',
-#     'app/models/concerns/searchable.rb'
+# copy_file File.expand_path('../searchable.dsl.rb', __FILE__), 'app/models/concerns/searchable.rb', force: true
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb',
+    'app/models/concerns/searchable.rb'
 
-copy_file File.expand_path('../index.html.dsl.erb', __FILE__), 'app/views/search/index.html.erb', force: true
-# get 'https://raw.github.com/elasticsearch/elasticsearch-rails/templates/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb',
-#     'app/views/search/index.html.erb'
+# copy_file File.expand_path('../index.html.dsl.erb', __FILE__), 'app/views/search/index.html.erb', force: true
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb',
+    'app/views/search/index.html.erb'
 
 gsub_file "test/controllers/search_controller_test.rb", %r{test "should return facets" do.*?end}m, <<-CODE
 test "should return aggregations" do
@@ -92,7 +95,7 @@ test "should filter search results and the category and published date facets wh
 CODE
 
 git add:    "app/models/concerns/ app/views/search/ test/controllers/search_controller_test.rb"
-git commit: "-m 'Updated the Article.search method to use the Ruby DSL; Updated the views and tests'"
+git commit: "-m 'Updated the Article.search method to use the Ruby DSL and updated the associated views and tests'"
 
 # ----- Print Git log -----------------------------------------------------------------------------
 
