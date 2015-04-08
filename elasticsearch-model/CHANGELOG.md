@@ -1,3 +1,11 @@
+## 0.1.7
+
+* Improved examples and instructions in README and code annotations
+* Prevented index methods to swallow all exceptions
+* Added the `:validate` option to the `save` method for models
+* Added support for searching across multiple models (elastic/elasticsearch-rails#345),
+  including documentation, examples and tests
+
 ## 0.1.6
 
 * Improved documentation
