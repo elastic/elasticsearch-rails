@@ -172,12 +172,6 @@ response.results.first._source.title
 # => "Quick brown fox"
 ```
 
-To search across multiple models, use the module method:
-
-```ruby
-Elasticsearch::Model.search 'fox dogs', [Article, Comment]
-```
-
 #### Search results
 
 The returned `response` object is a rich wrapper around the JSON returned from Elasticsearch,
@@ -258,6 +252,8 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 # * Quick brown fox: 0.02250402
 # * Fast black dogs: 0.02250402
 ```
+
+#### Searching multiple models
 
 It is possible to search across multiple models with the module method:
 
