@@ -2,125 +2,106 @@ module Elasticsearch
   module Model
     module Adapter
 
-      # An adapter to be used for deserializing results from multiple models, retrieved through
-      # Elasticsearch::Model.search
+      # An adapter to be used for deserializing results from multiple models,
+      # retrieved through `Elasticsearch::Model.search`
       #
       # @see Elasticsearch::Model.search
       #
       module Multiple
-
         Adapter.register self, lambda { |klass| klass.is_a? Multimodel }
 
         module Records
-
-          # Returns an Array, which elements are the model instances represented
-          # by the search results.
+          # Returns a collection of model instances, possibly of different classes (ActiveRecord, Mongoid, ...)
           #
-          # This means that if the models queried are a Mixture of ActiveRecord, Mongoid, or
-          # POROs, the elements contained in this array will also be instances of those models
-          #
-          # Ranking of results across multiple indexes is preserved, and queries made to the different
-          # model's datasources are minimal.
-          #
-          # Internally, it gets the results, as ranked by elasticsearch.
-          # Then results are grouped by _type
-          # Then the model corresponding to each _type is queried to retrieve the records
-          # Finally records are rearranged in the same way results were ranked.
-          #
-          # @return [ElasticSearch::Model]
+          # @note The order of results in the Elasticsearch response is preserved
           #
           def records
-            @_records ||= begin
-              result = []
-              by_type = __records_by_type
-              __hits.each do |hit|
-                result << by_type[__type(hit)][hit[:_id]]
-              end
-              result.compact
+            records_by_type = __records_by_type
+
+            response.response["hits"]["hits"].map do |hit|
+              records_by_type[ __type_for_hit(hit) ][ hit[:_id] ]
             end
           end
 
-          # Returns the record representation of the results retrieved from Elasticsearch, grouped
-          # by model type
+          # Returns the collection of records grouped by class based on `_type`
           #
-          # @example
-          # {Series  =>
-          #   {"1"=> #<Series id: 1, series_name: "The Who S01", created_at: "2015-02-23 17:18:28">},
+          # Example:
           #
-          # "Title =>
-          #   {"1"=> #<Title id: 1, name: "Who Strikes Back", created_at: "2015-02-23 17:18:28">}}
+          # {
+          #   Foo  => {"1"=> #<Foo id: 1, title: "ABC"}, ...},
+          #   Bar  => {"1"=> #<Bar id: 1, name: "XYZ"}, ...}
+          # }
           #
           # @api private
           #
           def __records_by_type
-            array = __ids_by_type.map do |klass, ids|
-              records = __type_records(klass, ids)
-              ids = records.map(&:id).map(&:to_s)
-              [klass, Hash[ids.zip(records)]]
+            result = __ids_by_type.map do |klass, ids|
+              records = __records_for_klass(klass, ids)
+              ids     = records.map(&:id).map(&:to_s)
+              [ klass, Hash[ids.zip(records)] ]
             end
-            Hash[array]
+
+            Hash[result]
           end
 
-          # Returns the records for a specific type
+          # Returns the collection of records for a specific type based on passed `klass`
           #
           # @api private
           #
-          def __type_records(klass, ids)
-            if (adapter = Adapter.adapters[ActiveRecord]) && adapter.call(klass)
-              klass.where(klass.primary_key => ids)
-            elsif (adapter = Adapter.adapters[Mongoid]) && adapter.call(klass)
-              klass.where(:id.in => ids)
-            else
-              klass.find(ids)
+          def __records_for_klass(klass, ids)
+            adapter = __adapter_name_for_klass(klass)
+
+            case adapter
+              when Elasticsearch::Model::Adapter::ActiveRecord
+                klass.where(klass.primary_key => ids)
+              when Elasticsearch::Model::Adapter::Mongoid
+                klass.where(:id.in => ids)
+              else
+                klass.find(ids)
             end
           end
 
-
-          # @return A Hash containing for each type, the ids to retrieve
+          # Returns the record IDs grouped by class based on type `_type`
           #
-          # @example {Series =>["1"], Title =>["1", "5"]}
+          # Example:
+          #
+          #   { Foo => ["1"], Bar => ["1", "5"] }
           #
           # @api private
           #
           def __ids_by_type
             ids_by_type = {}
-            __hits.each do |hit|
-              type = __type(hit)
+
+            response.response["hits"]["hits"].each do |hit|
+              type = __type_for_hit(hit)
               ids_by_type[type] ||= []
               ids_by_type[type] << hit[:_id]
             end
             ids_by_type
           end
 
-          # Returns the class of the model associated to a certain hit
-          #
-          # A simple class-level memoization over the `_index` and `_type` properties of the hit is applied.
-          # Hence querying the Model Registry is done the minimal amount of times.
-          #
-          # Event though memoization happens at the class level, the side effect of a race condition will only be
-          # to iterate over models one extra time, so we can consider the method thread-safe, and don't include
-          # any Mutex.synchronize around the method implementaion
+          # Returns the class of the model corresponding to a specific `hit` in Elasticsearch results
           #
           # @see Elasticsearch::Model::Registry
           #
-          # @return Class
-          #
           # @api private
           #
-          def __type(hit)
+          def __type_for_hit(hit)
             @@__types ||= {}
-            @@__types[[hit[:_index], hit[:_type]].join("::")] ||= begin
-              Registry.all.detect { |model| model.index_name == hit[:_index] && model.document_type == hit[:_type] }
+
+            @@__types[ "#{hit[:_index]}::#{hit[:_type]}" ] ||= begin
+              Registry.all.detect do |model|
+                model.index_name == hit[:_index] && model.document_type == hit[:_type]
+              end
             end
           end
 
-
-          # Memoizes and returns the hits from the response
+          # Returns the adapter registered for a particular `klass` or `nil` if not available
           #
           # @api private
           #
-          def __hits
-            @__hits ||= response.response["hits"]["hits"]
+          def __adapter_name_for_klass(klass)
+            Adapter.adapters.select { |name, checker| checker.call(klass) }.keys.first
           end
         end
       end

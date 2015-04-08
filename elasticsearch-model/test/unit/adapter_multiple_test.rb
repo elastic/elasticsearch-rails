@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Elasticsearch::Model::MultipleTest < Test::Unit::TestCase
 
-  context "Adapter multiple module" do
+  context "Adapter for multiple models" do
 
     class ::DummyOne
       include Elasticsearch::Model
@@ -81,13 +81,13 @@ class Elasticsearch::Model::MultipleTest < Test::Unit::TestCase
       @multimodel = Elasticsearch::Model::Multimodel.new(DummyOne, DummyTwo, Namespace::DummyTwo)
     end
 
-    context "Records" do
+    context "when returning records" do
       setup do
         @multimodel.class.send :include, Elasticsearch::Model::Adapter::Multiple::Records
-        @multimodel.expects(:__hits).at_least_once.returns(HITS)
+        @multimodel.expects(:response).at_least_once.returns(stub(response: { 'hits' => { 'hits' => HITS } }))
       end
 
-      should "keep global order among models" do
+      should "keep the order from response" do
         assert_instance_of Module, Elasticsearch::Model::Adapter::Multiple::Records
         records = @multimodel.records
 

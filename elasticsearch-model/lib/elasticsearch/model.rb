@@ -67,50 +67,6 @@ module Elasticsearch
   module Model
     METHODS = [:search, :mapping, :mappings, :settings, :index_name, :document_type, :import]
 
-
-    # Keeps a registry of the classes that include `Elasticsearch::Model`
-    #
-    class Registry
-
-      # Add the class of a model to the registry
-      #
-      def self.add(klass)
-        __instance.add(klass)
-      end
-
-      # List all the registered models
-      #
-      # @return [Class]
-      #
-      def self.all
-        __instance.models
-      end
-
-      # Returns the unique instance of the registry
-      #
-      # @api private
-      #
-      def self.__instance
-        @instance ||= new
-      end
-
-      def initialize
-        @models = []
-      end
-
-      # Adds a model to the registry
-      #
-      def add(klass)
-        @models << klass
-      end
-
-      # Gets a copy of the registered models
-      #
-      def models
-        @models.dup
-      end
-    end
-
     # Adds the `Elasticsearch::Model` functionality to the including class.
     #
     # * Creates the `__elasticsearch__` class and instance methods, pointing to the proxy object
@@ -199,20 +155,22 @@ module Elasticsearch
         @client = client
       end
 
-      # Search across models which include Elasticsearch::Model
+      # Search across multiple models
+      #
+      # By default, all models which include the `Elasticsearch::Model` module are searched
       #
       # @param query_or_payload [String,Hash,Object] The search request definition
       #                                              (string, JSON, Hash, or object responding to `to_hash`)
-      # @param models [Array] The list of Model objects to search
+      # @param models [Array] The Array of Model objects to search
       # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
       #
       # @return [Elasticsearch::Model::Response::Response]
       #
-      # @example Search across specified models
+      # @example Search across specific models
       #
       #     Elasticsearch::Model.search('foo', [Author, Article])
       #
-      # @example Search across all models
+      # @example Search across all models which include the `Elasticsearch::Model` module
       #
       #     Elasticsearch::Model.search('foo')
       #

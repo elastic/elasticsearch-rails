@@ -172,7 +172,7 @@ response.results.first._source.title
 # => "Quick brown fox"
 ```
 
-Or if we want to perform the search across different models:
+To search across multiple models, use the module method:
 
 ```ruby
 Elasticsearch::Model.search 'fox dogs', [Article, Comment]
@@ -223,17 +223,8 @@ response.records.to_a
 
 The returned object is the genuine collection of model instances returned by your database,
 i.e. `ActiveRecord::Relation` for ActiveRecord, or `Mongoid::Criteria` in case of MongoDB.
-When the search is performed across different models, an Array of model instances is returned.
 
-```ruby
-Elasticsearch::Model.search('fox', [Article, Comment]).records
-# Article Load (0.3ms)  SELECT "articles".* FROM "articles" WHERE "articles"."id" IN (1)
-# Comment Load (0.2ms)  SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (1,5)
-# => [#<Article id: 1, title: "Quick brown fox">, #<Comment id: 1, body: "I like foxes">,  #<Comment id: 5, body: "Michael J.Fox is my favorite actor">]
-```
-
-In the case of searching a single model, this allows you to
-chain other methods on top of search results, as you would normally do:
+This allows you to chain other methods on top of search results, as you would normally do:
 
 ```ruby
 response.records.where(title: 'Quick brown fox').to_a
@@ -267,6 +258,26 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 # * Quick brown fox: 0.02250402
 # * Fast black dogs: 0.02250402
 ```
+
+It is possible to search across multiple models with the module method:
+
+```ruby
+Elasticsearch::Model.search('fox', [Article, Comment]).results.to_a.map(&:to_hash)
+# => [
+#      {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_score"=>0.35136628, "_source"=>...},
+#      {"_index"=>"comments", "_type"=>"comment", "_id"=>"1", "_score"=>0.35136628, "_source"=>...}
+#    ]
+
+Elasticsearch::Model.search('fox', [Article, Comment]).records.to_a
+# Article Load (0.3ms)  SELECT "articles".* FROM "articles" WHERE "articles"."id" IN (1)
+# Comment Load (0.2ms)  SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (1,5)
+# => [#<Article id: 1, title: "Quick brown fox">, #<Comment id: 1, body: "Fox News">,  ...]
+```
+
+By default, all models which include the `Elasticsearch::Model` module are searched.
+
+NOTE: It is _not_ possible to chain other methods on top of the `records` object, since it
+      is a heterogenous collection, with models potentially backed by different databases.
 
 #### Pagination
 

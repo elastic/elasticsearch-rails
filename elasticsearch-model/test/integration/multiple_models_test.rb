@@ -5,7 +5,7 @@ Mongo.setup!
 
 module Elasticsearch
   module Model
-    class MultipleModelsIntegraton < Elasticsearch::Test::IntegrationTestCase
+    class MultipleModelsIntegration < Elasticsearch::Test::IntegrationTestCase
       context "Multiple models" do
         setup do
           ActiveRecord::Schema.define(:version => 1) do
@@ -74,25 +74,23 @@ module Elasticsearch
           assert_equal 'The greatest Series', response.records[1].name
         end
 
-        should "provide access to result" do
+        should "provide access to results" do
           q = {query: {query_string: {query: 'A great *'}}, highlight: {fields: {name: {}}}}
           response = Elasticsearch::Model.search(q, [Series, Episode])
 
-          first_result, second_result = *response.results
+          assert_equal 'A great Episode', response.results[0].name
+          assert_equal true,              response.results[0].name?
+          assert_equal false,             response.results[0].boo?
+          assert_equal true,              response.results[0].highlight?
+          assert_equal true,              response.results[0].highlight.name?
+          assert_equal false,             response.results[0].highlight.boo?
 
-          assert_equal 'A great Episode', first_result.name
-          assert_equal true, first_result.name?
-          assert_equal false, first_result.boo?
-          assert_equal true, first_result.highlight?
-          assert_equal true, first_result.highlight.name?
-          assert_equal false, first_result.highlight.boo?
-
-          assert_equal 'A great Series', second_result.name
-          assert_equal true, second_result.name?
-          assert_equal false, second_result.boo?
-          assert_equal true, second_result.highlight?
-          assert_equal true, second_result.highlight.name?
-          assert_equal false, second_result.highlight.boo?
+          assert_equal 'A great Series', response.results[1].name
+          assert_equal true,             response.results[1].name?
+          assert_equal false,            response.results[1].boo?
+          assert_equal true,             response.results[1].highlight?
+          assert_equal true,             response.results[1].highlight.name?
+          assert_equal false,            response.results[1].highlight.boo?
         end
 
         if Mongo.available?
