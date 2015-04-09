@@ -34,7 +34,7 @@ module Elasticsearch
           if @index_name.respond_to?(:call)
             @index_name.call
           else
-            @index_name || self.model_name.collection.gsub(/\//, '-')
+            @index_name || self.base_model_name.collection.gsub(/\//, '-')
           end
         end
 
@@ -58,7 +58,7 @@ module Elasticsearch
         #     Article.document_type "my-article"
         #
         def document_type name=nil
-          @document_type = name || @document_type || self.model_name.element
+          @document_type = name || @document_type || self.base_model_name.element
         end
 
 
@@ -68,6 +68,13 @@ module Elasticsearch
         #
         def document_type=(name)
           @document_type = name
+        end
+
+        private
+
+        # Get the base class's model_name
+        def base_model_name
+          respond_to?(:base_class) ? base_class.model_name : model_name
         end
       end
 
