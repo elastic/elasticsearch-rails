@@ -76,7 +76,9 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
 
     context "Importing" do
       should "implement the __find_in_batches method" do
-        DummyClassForMongoid.expects(:all).returns([])
+        relation = mock()
+        relation.stubs(:no_timeout).returns([])
+        DummyClassForMongoid.expects(:all).returns(relation)
 
         DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
         DummyClassForMongoid.__find_in_batches do; end
