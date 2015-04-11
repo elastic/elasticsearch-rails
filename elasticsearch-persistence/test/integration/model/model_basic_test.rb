@@ -12,6 +12,7 @@ module Elasticsearch
         include Elasticsearch::Persistence::Model::Rails
 
         settings index: { number_of_shards: 1 }
+        document_type 'human_being'
 
         attribute :name, String,
                   mapping: { fields: {
@@ -60,7 +61,7 @@ module Elasticsearch
           assert_equal 'John Smith', document.name
           assert_equal 'John Smith', Person.find(person.id).name
 
-          assert_not_nil Elasticsearch::Persistence.client.get index: 'people', type: 'person', id: person.id
+          assert_not_nil Elasticsearch::Persistence.client.get index: 'people', type: 'human_being', id: person.id
         end
 
         should "not save an invalid object" do

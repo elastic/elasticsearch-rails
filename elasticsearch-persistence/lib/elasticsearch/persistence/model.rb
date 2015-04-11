@@ -71,7 +71,6 @@ module Elasticsearch
             delegate :settings,
                      :mappings,
                      :mapping,
-                     :document_type,
                      :document_type=,
                      :index_name,
                      :index_name=,
@@ -80,6 +79,13 @@ module Elasticsearch
                      :create_index!,
                      :refresh_index!,
               to: :gateway
+
+            # forward document type to mappings when set
+            def document_type(type = nil)
+              return gateway.document_type unless type
+              gateway.document_type type
+              mapping.type = type
+            end
           end
 
           # Configure the repository based on the model (set up index_name, etc)
