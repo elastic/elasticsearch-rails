@@ -20,28 +20,28 @@ module Elasticsearch
             end
           end
 
-          class ::Episode < ActiveRecord::Base
-            include Elasticsearch::Model
-            include Elasticsearch::Model::Callbacks
+          module ::NameSearch
+            extend ActiveSupport::Concern
 
-            settings index: {number_of_shards: 1, number_of_replicas: 0} do
-              mapping do
-                indexes :name, type: 'string', analyzer: 'snowball'
-                indexes :created_at, type: 'date'
+            included do
+              include Elasticsearch::Model
+              include Elasticsearch::Model::Callbacks
+
+              settings index: {number_of_shards: 1, number_of_replicas: 0} do
+                mapping do
+                  indexes :name, type: 'string', analyzer: 'snowball'
+                  indexes :created_at, type: 'date'
+                end
               end
             end
           end
 
-          class ::Series < ActiveRecord::Base
-            include Elasticsearch::Model
-            include Elasticsearch::Model::Callbacks
+          class ::Episode < ActiveRecord::Base
+            include NameSearch
+          end
 
-            settings index: {number_of_shards: 1, number_of_replicas: 0} do
-              mapping do
-                indexes :name, type: 'string', analyzer: 'snowball'
-                indexes :created_at, type: 'date'
-              end
-            end
+          class ::Series < ActiveRecord::Base
+            include NameSearch
           end
 
           [::Episode, ::Series].each do |model|
@@ -56,7 +56,7 @@ module Elasticsearch
         end
 
         should "find matching documents across multiple models" do
-          response = Elasticsearch::Model.search("greatest", [Series, Episode])
+          response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
 
           assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
@@ -75,22 +75,31 @@ module Elasticsearch
         end
 
         should "provide access to results" do
-          q = {query: {query_string: {query: 'A great *'}}, highlight: {fields: {name: {}}}}
-          response = Elasticsearch::Model.search(q, [Series, Episode])
+          response = Elasticsearch::Model.search("\"A great Episode\"^2 OR \"A great Series\"", [Series, Episode])
 
           assert_equal 'A great Episode', response.results[0].name
           assert_equal true,              response.results[0].name?
           assert_equal false,             response.results[0].boo?
-          assert_equal true,              response.results[0].highlight?
-          assert_equal true,              response.results[0].highlight.name?
-          assert_equal false,             response.results[0].highlight.boo?
 
           assert_equal 'A great Series', response.results[1].name
           assert_equal true,             response.results[1].name?
           assert_equal false,            response.results[1].boo?
-          assert_equal true,             response.results[1].highlight?
-          assert_equal true,             response.results[1].highlight.name?
-          assert_equal false,            response.results[1].highlight.boo?
+        end
+
+        should "only retrieve records for existing results" do
+          ::Series.find_by_name("The greatest Series").delete
+          response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
+
+          assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
+
+          assert_equal 2, response.results.size
+          assert_equal 1, response.records.size
+
+          assert_instance_of Elasticsearch::Model::Response::Result, response.results.first
+          assert_instance_of Episode, response.records.first
+
+          assert_equal 'The greatest Episode', response.results[0].name
+          assert_equal 'The greatest Episode', response.records[0].name
         end
 
         if Mongo.available?
@@ -128,7 +137,7 @@ module Elasticsearch
             end
 
             should "find matching documents across multiple models" do
-              response = Elasticsearch::Model.search("greatest", [Episode, Image])
+              response = Elasticsearch::Model.search("\"greatest Episode\" OR \"greatest Image\"^2", [Episode, Image])
 
               assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 

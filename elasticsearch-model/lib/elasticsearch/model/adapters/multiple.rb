@@ -18,9 +18,11 @@ module Elasticsearch
           def records
             records_by_type = __records_by_type
 
-            response.response["hits"]["hits"].map do |hit|
+            records = response.response["hits"]["hits"].map do |hit|
               records_by_type[ __type_for_hit(hit) ][ hit[:_id] ]
             end
+
+            records.compact
           end
 
           # Returns the collection of records grouped by class based on `_type`
@@ -49,14 +51,13 @@ module Elasticsearch
           # @api private
           #
           def __records_for_klass(klass, ids)
-            adapter = __adapter_name_for_klass(klass)
+            adapter = __adapter_for_klass(klass)
 
-            case adapter
-              when Elasticsearch::Model::Adapter::ActiveRecord
+            if Elasticsearch::Model::Adapter::ActiveRecord.equal?(adapter)
                 klass.where(klass.primary_key => ids)
-              when Elasticsearch::Model::Adapter::Mongoid
+            elsif Elasticsearch::Model::Adapter::Mongoid.equal?(adapter)
                 klass.where(:id.in => ids)
-              else
+            else
                 klass.find(ids)
             end
           end
@@ -100,7 +101,7 @@ module Elasticsearch
           #
           # @api private
           #
-          def __adapter_name_for_klass(klass)
+          def __adapter_for_klass(klass)
             Adapter.adapters.select { |name, checker| checker.call(klass) }.keys.first
           end
         end
