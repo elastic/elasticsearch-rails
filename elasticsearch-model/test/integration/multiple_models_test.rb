@@ -56,7 +56,7 @@ module Elasticsearch
         end
 
         should "find matching documents across multiple models" do
-          response = Elasticsearch::Model.search("greatest", [Series, Episode])
+          response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
 
           assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
@@ -75,22 +75,15 @@ module Elasticsearch
         end
 
         should "provide access to results" do
-          q = {query: {query_string: {query: 'A great *'}}, highlight: {fields: {name: {}}}}
-          response = Elasticsearch::Model.search(q, [Series, Episode])
+          response = Elasticsearch::Model.search("\"A great Episode\"^2 OR \"A great Series\"", [Series, Episode])
 
           assert_equal 'A great Episode', response.results[0].name
           assert_equal true,              response.results[0].name?
           assert_equal false,             response.results[0].boo?
-          assert_equal true,              response.results[0].highlight?
-          assert_equal true,              response.results[0].highlight.name?
-          assert_equal false,             response.results[0].highlight.boo?
 
           assert_equal 'A great Series', response.results[1].name
           assert_equal true,             response.results[1].name?
           assert_equal false,            response.results[1].boo?
-          assert_equal true,             response.results[1].highlight?
-          assert_equal true,             response.results[1].highlight.name?
-          assert_equal false,            response.results[1].highlight.boo?
         end
 
         should "only retrieve records for existing results" do
@@ -144,7 +137,7 @@ module Elasticsearch
             end
 
             should "find matching documents across multiple models" do
-              response = Elasticsearch::Model.search("greatest", [Episode, Image])
+              response = Elasticsearch::Model.search("\"greatest Episode\" OR \"greatest Image\"^2", [Episode, Image])
 
               assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
