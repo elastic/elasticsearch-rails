@@ -20,28 +20,28 @@ module Elasticsearch
             end
           end
 
-          class ::Episode < ActiveRecord::Base
-            include Elasticsearch::Model
-            include Elasticsearch::Model::Callbacks
+          module ::NameSearch
+            extend ActiveSupport::Concern
 
-            settings index: {number_of_shards: 1, number_of_replicas: 0} do
-              mapping do
-                indexes :name, type: 'string', analyzer: 'snowball'
-                indexes :created_at, type: 'date'
+            included do
+              include Elasticsearch::Model
+              include Elasticsearch::Model::Callbacks
+
+              settings index: {number_of_shards: 1, number_of_replicas: 0} do
+                mapping do
+                  indexes :name, type: 'string', analyzer: 'snowball'
+                  indexes :created_at, type: 'date'
+                end
               end
             end
           end
 
-          class ::Series < ActiveRecord::Base
-            include Elasticsearch::Model
-            include Elasticsearch::Model::Callbacks
+          class ::Episode < ActiveRecord::Base
+            include NameSearch
+          end
 
-            settings index: {number_of_shards: 1, number_of_replicas: 0} do
-              mapping do
-                indexes :name, type: 'string', analyzer: 'snowball'
-                indexes :created_at, type: 'date'
-              end
-            end
+          class ::Series < ActiveRecord::Base
+            include NameSearch
           end
 
           [::Episode, ::Series].each do |model|
@@ -91,6 +91,22 @@ module Elasticsearch
           assert_equal true,             response.results[1].highlight?
           assert_equal true,             response.results[1].highlight.name?
           assert_equal false,            response.results[1].highlight.boo?
+        end
+
+        should "only retrieve records for existing results" do
+          ::Series.find_by_name("The greatest Series").delete
+          response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
+
+          assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
+
+          assert_equal 2, response.results.size
+          assert_equal 1, response.records.size
+
+          assert_instance_of Elasticsearch::Model::Response::Result, response.results.first
+          assert_instance_of Episode, response.records.first
+
+          assert_equal 'The greatest Episode', response.results[0].name
+          assert_equal 'The greatest Episode', response.records[0].name
         end
 
         if Mongo.available?
