@@ -128,7 +128,7 @@ module Elasticsearch
           assert_equal 1, response.records.size
         end
 
-         should "update specific attributes" do
+        should "update specific attributes" do
           article = Article.first
 
           response = Article.search 'title:special'
