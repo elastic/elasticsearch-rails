@@ -56,7 +56,7 @@ module Elasticsearch
         end
 
         should "find matching documents across multiple models" do
-          response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
+          response = Elasticsearch::Model.search(%q<"The greatest Episode"^2 OR "The greatest Series">, [Series, Episode])
 
           assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
@@ -75,7 +75,7 @@ module Elasticsearch
         end
 
         should "provide access to results" do
-          response = Elasticsearch::Model.search("\"A great Episode\"^2 OR \"A great Series\"", [Series, Episode])
+          response = Elasticsearch::Model.search(%q<"A great Episode"^2 OR "A great Series">, [Series, Episode])
 
           assert_equal 'A great Episode', response.results[0].name
           assert_equal true,              response.results[0].name?
@@ -89,7 +89,7 @@ module Elasticsearch
         should "only retrieve records for existing results" do
           ::Series.find_by_name("The greatest Series").delete
           ::Series.__elasticsearch__.refresh_index!
-          response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
+          response = Elasticsearch::Model.search(%q<"The greatest Episode"^2 OR "The greatest Series">, [Series, Episode])
 
           assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
@@ -138,7 +138,7 @@ module Elasticsearch
             end
 
             should "find matching documents across multiple models" do
-              response = Elasticsearch::Model.search("\"greatest Episode\" OR \"greatest Image\"^2", [Episode, Image])
+              response = Elasticsearch::Model.search(%q<"greatest Episode" OR "greatest Image"^2>, [Episode, Image])
 
               assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
 
