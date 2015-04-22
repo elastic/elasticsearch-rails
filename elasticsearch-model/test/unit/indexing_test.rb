@@ -36,7 +36,14 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
       end
 
       should "update and return the index settings from a yml file" do
-        DummyIndexingModel.settings "test/support/model.yml"
+        DummyIndexingModel.settings File.open("test/support/model.yml")
+        DummyIndexingModel.settings bar: 'bam'
+
+        assert_equal( {foo: 'boo', bar: 'bam', 'baz' => 'qux'}, DummyIndexingModel.settings.to_hash)
+      end
+
+      should "update and return the index settings from a json file" do
+        DummyIndexingModel.settings File.open("test/support/model.json")
         DummyIndexingModel.settings bar: 'bam'
 
         assert_equal( {foo: 'boo', bar: 'bam', 'baz' => 'qux'}, DummyIndexingModel.settings.to_hash)

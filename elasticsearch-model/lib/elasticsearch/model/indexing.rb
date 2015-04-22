@@ -153,7 +153,8 @@ module Elasticsearch
         #
         #     # => {:index=>{:number_of_shards=>1}}
         #
-        # You can specify a YAML file with settings
+        # You can read settings from any object that responds to :read
+        # as long as its return value can be parsed as either YAML or JSON.
         #
         # @example Define index settings from YAML file
         #
@@ -163,14 +164,28 @@ module Elasticsearch
         #     #   number_of_shards: 1
         #     #
         #
-        #     Article.settings "config/elasticsearch/articles.yml"
+        #     Article.settings File.open("config/elasticsearch/articles.yml")
+        #
+        #     Article.settings.to_hash
+        #
+        #     # => { "index" => { "number_of_shards" => 1 } }
+        #
+        #
+        # @example Define index settings from JSON file
+        #
+        #     # config/elasticsearch/articles.json:
+        #     #
+        #     # { "index": { "number_of_shards": 1 } }
+        #     #
+        #
+        #     Article.settings File.open("config/elasticsearch/articles.json")
         #
         #     Article.settings.to_hash
         #
         #     # => { "index" => { "number_of_shards" => 1 } }
         #
         def settings(settings={}, &block)
-          settings = YAML.load_file(settings) if settings.is_a?(String)
+          settings = YAML.load(settings.read) if settings.respond_to?(:read)
           @settings ||= Settings.new(settings)
 
           @settings.settings.update(settings) unless settings.empty?
@@ -181,6 +196,10 @@ module Elasticsearch
           else
             @settings
           end
+        end
+
+        def load_settings_from_io(settings)
+          YAML.load(settings.read)
         end
 
         # Creates an index with correct name, automatically passing
