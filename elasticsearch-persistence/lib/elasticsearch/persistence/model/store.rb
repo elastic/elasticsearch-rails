@@ -102,6 +102,9 @@ module Elasticsearch
           # @return [Hash] The Elasticsearch response as a Hash
           #
           def update(attributes={}, options={})
+            unless options.delete(:validate) == false
+              return false unless valid?
+            end
             raise DocumentNotPersisted, "Object not persisted: #{self.inspect}" unless persisted?
 
             run_callbacks :update do
