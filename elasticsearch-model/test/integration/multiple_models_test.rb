@@ -88,6 +88,7 @@ module Elasticsearch
 
         should "only retrieve records for existing results" do
           ::Series.find_by_name("The greatest Series").delete
+          ::Series.__elasticsearch__.refresh_index!
           response = Elasticsearch::Model.search("\"The greatest Episode\"^2 OR \"The greatest Series\"", [Series, Episode])
 
           assert response.any?, "Response should not be empty: #{response.to_a.inspect}"

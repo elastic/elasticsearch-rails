@@ -53,11 +53,12 @@ module Elasticsearch
           def __records_for_klass(klass, ids)
             adapter = __adapter_for_klass(klass)
 
-            if Elasticsearch::Model::Adapter::ActiveRecord.equal?(adapter)
+            case
+              when Elasticsearch::Model::Adapter::ActiveRecord.equal?(adapter)
                 klass.where(klass.primary_key => ids)
-            elsif Elasticsearch::Model::Adapter::Mongoid.equal?(adapter)
+              when Elasticsearch::Model::Adapter::Mongoid.equal?(adapter)
                 klass.where(:id.in => ids)
-            else
+              else
                 klass.find(ids)
             end
           end
