@@ -1,6 +1,7 @@
 require 'test_helper'
 
 require 'rails/railtie'
+require 'action_pack'
 require 'lograge'
 
 require 'elasticsearch/rails/lograge'

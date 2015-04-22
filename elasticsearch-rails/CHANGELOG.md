@@ -1,3 +1,13 @@
+# 0.1.7
+
+* Updated dependencies for the gem and example applications
+* Fixed various small errors in the `01-basic.rb` template
+* Fixed error when inserting the Kaminari gem into Gemfile in the 02-pretty.rb template
+* Fixed incorrect regex for adding Rails instrumentation into the application.rb in the `02-pretty.rb` template
+* Fixed other small errors in the `02-pretty.rb` template
+* Improved and added tests for the generated application from the `02-pretty.rb` template
+* Added the `04-dsl.rb` template which uses the `elasticsearch-dsl` gem to build the search definition
+
 ## 0.1.6
 
 * Fixed errors in templates for the Rails example applications

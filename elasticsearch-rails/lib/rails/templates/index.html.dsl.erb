@@ -68,11 +68,11 @@
       <p class="panel-heading"><%= link_to 'All Sections &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(c: nil))%></p>
 
       <div class="list-group">
-        <% @articles.response.response['facets']['categories']['terms'].each do |c| %>
+        <% @articles.response.response['aggregations']['categories']['categories']['buckets'].each do |c| %>
         <%=
-          link_to search_path(params.except(:controller, :action).merge(c: c['term'])),
-                  class: "list-group-item#{' active' if params[:c] == c['term']}" do
-                    c['term'].titleize.html_safe + content_tag(:small, c['count'], class: 'badge').html_safe
+          link_to search_path(params.except(:controller, :action).merge(c: c['key'])),
+                  class: "list-group-item#{' active' if params[:c] == c['key']}" do
+                    c['key'].titleize.html_safe + content_tag(:small, c['doc_count'], class: 'badge').html_safe
           end
         %>
         <% end %>
@@ -83,11 +83,11 @@
       <p class="panel-heading"><%= link_to 'All Authors &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(a: nil))%></p>
 
       <div class="list-group">
-        <% @articles.response.response['facets']['authors']['terms'].each do |a| %>
+        <% @articles.response.response['aggregations']['authors']['authors']['buckets'].each do |a| %>
         <%=
-          link_to search_path(params.except(:controller, :action).merge(a: a['term'])),
-                  class: "list-group-item#{' active' if params[:a] == a['term']}" do
-                    a['term'].titleize.html_safe + content_tag(:small, a['count'], class: 'badge').html_safe
+          link_to search_path(params.except(:controller, :action).merge(a: a['key'])),
+                  class: "list-group-item#{' active' if params[:a] == a['key']}" do
+                    a['key'].titleize.html_safe + content_tag(:small, a['doc_count'], class: 'badge').html_safe
           end
         %>
         <% end %>
@@ -98,16 +98,16 @@
       <p class="panel-heading"><%= link_to 'Any Date &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(w: nil))%></p>
 
       <div class="list-group">
-        <% @articles.response.response['facets']['published']['entries'].each do |w| %>
+        <% @articles.response.response['aggregations']['published']['published']['buckets'].each do |w| %>
         <%=
-          __start = Time.at(w['time']/1000)
+          __start = Time.at(w['key']/1000)
           __end   = __start.end_of_week
           __date  = __start.to_date.to_s(:iso)
 
           link_to search_path(params.except(:controller, :action).merge(w: __date)),
                   class: "list-group-item#{' active' if params[:w] == __date}" do
                     "#{__start.to_date.to_s(:short)} &mdash; #{__end.to_date.to_s(:short)}".html_safe + \
-                    content_tag(:small, w['count'], class: 'badge').html_safe
+                    content_tag(:small, w['doc_count'], class: 'badge').html_safe
           end
         %>
         <% end %>

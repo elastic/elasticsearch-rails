@@ -59,9 +59,43 @@ ActiveRecord::Schema.define(version: 1) do
   add_index(:comments, :article_id)
 end
 
+# ----- Elasticsearch client setup ----------------------------------------------------------------
+
+Elasticsearch::Model.client = Elasticsearch::Client.new log: true
+Elasticsearch::Model.client.transport.logger.formatter = proc { |s, d, p, m| "\e[32m#{m}\n\e[0m" }
+
+# ----- Search integration ------------------------------------------------------------------------
+
+module Searchable
+  extend ActiveSupport::Concern
+
+  included do
+    include Elasticsearch::Model
+    include Elasticsearch::Model::Callbacks
+
+    include Indexing
+    after_touch() { __elasticsearch__.index_document }
+  end
+
+  module Indexing
+
+    # Customize the JSON serialization for Elasticsearch
+    def as_indexed_json(options={})
+      self.as_json(
+        include: { categories: { only: :title},
+                   authors:    { methods: [:full_name], only: [:full_name] },
+                   comments:   { only: :text }
+                 })
+    end
+  end
+end
+
 # ----- Model definitions -------------------------------------------------------------------------
 
 class Category < ActiveRecord::Base
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
+
   has_and_belongs_to_many :articles
 end
 
@@ -81,6 +115,8 @@ class Authorship < ActiveRecord::Base
 end
 
 class Article < ActiveRecord::Base
+  include Searchable
+
   has_and_belongs_to_many :categories, after_add:    [ lambda { |a,c| a.__elasticsearch__.index_document } ],
                                        after_remove: [ lambda { |a,c| a.__elasticsearch__.index_document } ]
   has_many                :authorships
@@ -88,42 +124,12 @@ class Article < ActiveRecord::Base
   has_many                :comments
 end
 
-class Article < ActiveRecord::Base; delegate :size, to: :comments, prefix: true; end
-
 class Comment < ActiveRecord::Base
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
+
   belongs_to :article, touch: true
 end
-
-# ----- Search integration ------------------------------------------------------------------------
-
-module Searchable
-  extend ActiveSupport::Concern
-
-  included do
-    include Elasticsearch::Model
-    include Elasticsearch::Model::Callbacks
-
-    __elasticsearch__.client = Elasticsearch::Client.new log: true
-    __elasticsearch__.client.transport.logger.formatter = proc { |s, d, p, m| "\e[32m#{m}\n\e[0m" }
-
-    include Indexing
-    after_touch() { __elasticsearch__.index_document }
-  end
-
-  module Indexing
-
-    # Customize the JSON serialization for Elasticsearch
-    def as_indexed_json(options={})
-      self.as_json(
-        include: { categories: { only: :title},
-                   authors:    { methods: [:full_name], only: [:full_name] },
-                   comments:   { only: :text }
-                 })
-    end
-  end
-end
-
-Article.__send__ :include, Searchable
 
 # ----- Insert data -------------------------------------------------------------------------------
 
@@ -149,14 +155,23 @@ article.authors << author
 
 # Add comment
 #
-article.comments.create text: 'First comment'
+article.comments.create text: 'First comment for article One'
+article.comments.create text: 'Second comment for article One'
 
-# Load
+Elasticsearch::Model.client.indices.refresh index: Elasticsearch::Model::Registry.all.map(&:index_name)
+
+puts "\n\e[1mArticles containing 'one':\e[0m", Article.search('one').records.to_a.map(&:inspect), ""
+
+puts "\n\e[1mModels containing 'one':\e[0m", Elasticsearch::Model.search('one').records.to_a.map(&:inspect), ""
+
+# Load model
 #
 article = Article.all.includes(:categories, :authors, :comments).first
 
 # ----- Pry ---------------------------------------------------------------------------------------
 
+puts '', '-'*Pry::Terminal.width!
+
 Pry.start(binding, prompt: lambda { |obj, nest_level, _| '> ' },
-                   input: StringIO.new('puts "\n\narticle.as_indexed_json\n"; article.as_indexed_json'),
+                   input: StringIO.new("article.as_indexed_json\n"),
                    quiet: true)

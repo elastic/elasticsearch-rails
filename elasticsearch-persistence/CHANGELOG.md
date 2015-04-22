@@ -1,3 +1,8 @@
+# 0.1.7
+
+* Added an integration test for the `MyModel.all` method
+* Improved the "music" example application
+
 ## 0.1.6
 
 * Improved documentation

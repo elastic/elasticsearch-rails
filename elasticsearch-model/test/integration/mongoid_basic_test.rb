@@ -1,25 +1,9 @@
 require 'test_helper'
 
-begin
-  require 'mongoid'
-  session = Moped::Connection.new("localhost", 27017, 0.5)
-  session.connect
-  ENV["MONGODB_AVAILABLE"] = 'yes'
-rescue LoadError, Moped::Errors::ConnectionFailure => e
-  $stderr.puts "MongoDB not installed or running: #{e}"
-end
+Mongo.setup!
 
-if ENV["MONGODB_AVAILABLE"]
-  $stderr.puts "Mongoid #{Mongoid::VERSION}", '-'*80
-
-  logger = ::Logger.new($stderr)
-  logger.formatter = lambda { |s, d, p, m| " #{m.ansi(:faint, :cyan)}\n" }
-  logger.level = ::Logger::DEBUG
-
-  Mongoid.logger = logger unless ENV['QUIET']
-  Moped.logger   = logger unless ENV['QUIET']
-
-  Mongoid.connect_to 'mongoid_articles'
+if Mongo.available?
+  Mongo.connect_to 'mongoid_articles'
 
   module Elasticsearch
     module Model
@@ -50,7 +34,7 @@ if ENV["MONGODB_AVAILABLE"]
           setup do
             Elasticsearch::Model::Adapter.register \
               Elasticsearch::Model::Adapter::Mongoid,
-              lambda { |klass| !!defined?(::Mongoid::Document) && klass.ancestors.include?(::Mongoid::Document) }
+              lambda { |klass| !!defined?(::Mongoid::Document) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Mongoid::Document) }
 
             MongoidArticle.__elasticsearch__.create_index! force: true
 
