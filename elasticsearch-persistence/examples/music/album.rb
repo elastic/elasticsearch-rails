@@ -22,7 +22,6 @@ class Album
   attribute :label, Hash, mapping: { type: 'object' }
 
   attribute :title
-  attribute :suggest_title, String, default: {}, mapping: { type: 'completion', payloads: true }
   attribute :released, Date
   attribute :notes
   attribute :uri
