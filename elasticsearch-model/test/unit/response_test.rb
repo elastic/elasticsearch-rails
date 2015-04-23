@@ -7,7 +7,8 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       def self.document_type; 'bar'; end
     end
 
-    RESPONSE = { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'}, 'hits' => { 'hits' => [] } }
+    RESPONSE = { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'}, 'hits' => { 'hits' => [] },
+                 'aggregations' => {'foo' => {'bar' => 10}}}
 
     setup do
       @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
@@ -62,6 +63,15 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       @search.expects(:execute!).never
 
       Elasticsearch::Model::Response::Response.new OriginClass, @search
+    end
+
+    should "access the aggregations" do
+      @search.expects(:execute!).returns(RESPONSE)
+
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+      assert_respond_to response, :aggregations
+      assert_kind_of Hashie::Mash, response.aggregations.foo
+      assert_equal 10, response.aggregations.foo.bar
     end
   end
 end
