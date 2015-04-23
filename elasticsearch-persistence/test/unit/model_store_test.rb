@@ -312,9 +312,6 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
       end
 
       should "not update an invalid model" do
-        subject.expects(:persisted?).returns(true)
-        subject.expects(:id).returns('abc123').at_least_once
-
         @gateway
           .expects(:update)
           .never
@@ -323,19 +320,19 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           def valid?; false; end;
         end
 
-        assert ! subject.update
-        assert ! subject.persisted?
+        assert ! subject.update(title: 'INVALID')
       end
 
       should "skip the validation with the :validate option" do
-        subject.expects(:persisted?).returns(true)
+        subject.expects(:persisted?).returns(true).at_least_once
         subject.expects(:id).returns('abc123').at_least_once
 
         @gateway
           .expects(:update)
           .with do |object, options|
-            assert_equal subject, object
+            assert_equal 'abc123', object
             assert_equal nil, options[:id]
+            assert_equal 'INVALID', options[:doc][:title]
             true
           end
           .returns({'_id' => 'abc123'})
@@ -344,7 +341,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           def valid?; false; end;
         end
 
-        assert subject.update validate: false
+        assert subject.update( { title: 'INVALID' }, { validate: false } )
         assert subject.persisted?
       end
 
