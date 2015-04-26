@@ -41,8 +41,32 @@ class Elasticsearch::Persistence::ModelBaseTest < Test::Unit::TestCase
     end
 
     should "have the customized inspect method" do
-      m = DummyBaseModel.new name: 'Test'
-      assert_match /name\: "Test"/, m.inspect
+      model = DummyBaseModel.new name: 'Test'
+      assert_match /name\: "Test"/, model.inspect
+    end
+
+    context "#document_type" do
+      setup do
+        @model = DummyBaseModel
+        @gateway = mock()
+        @mapping = mock()
+        @model.stubs(:gateway).returns(@gateway)
+        @gateway.stubs(:mapping).returns(@mapping)
+        @document_type = 'dummybase'
+      end
+
+      should "forward argument to mapping" do
+        @gateway.expects(:document_type).with(@document_type).once
+        @mapping.expects(:type=).with(@document_type).once
+        @model.document_type @document_type
+      end
+
+      should "return the value from gateway" do
+        @gateway.expects(:document_type).once.returns(@document_type)
+        @mapping.expects(:type=).never
+        returned_type = @model.document_type
+        assert_equal @document_type, returned_type
+      end
     end
   end
 end
