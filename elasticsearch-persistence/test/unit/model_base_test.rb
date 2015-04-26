@@ -20,24 +20,24 @@ class Elasticsearch::Persistence::ModelBaseTest < Test::Unit::TestCase
     end
 
     should "set the ID from attributes during initialization" do
-      m = DummyBaseModel.new id: 1
-      assert_equal 1, m.id
+      model = DummyBaseModel.new id: 1
+      assert_equal 1, model.id
 
-      m = DummyBaseModel.new 'id' => 2
-      assert_equal 2, m.id
+      model = DummyBaseModel.new 'id' => 2
+      assert_equal 2, model.id
     end
 
     should "set the ID using setter method" do
-      m = DummyBaseModel.new id: 1
-      assert_equal 1, m.id
+      model = DummyBaseModel.new id: 1
+      assert_equal 1, model.id
 
-      m.id = 2
-      assert_equal 2, m.id
+      model.id = 2
+      assert_equal 2, model.id
     end
 
     should "have ID in attributes" do
-      m = DummyBaseModel.new id: 1, name: 'Test'
-      assert_equal 1, m.attributes[:id]
+      model = DummyBaseModel.new id: 1, name: 'Test'
+      assert_equal 1, model.attributes[:id]
     end
 
     should "have the customized inspect method" do
