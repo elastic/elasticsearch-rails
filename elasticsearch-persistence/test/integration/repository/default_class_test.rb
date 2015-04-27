@@ -73,6 +73,8 @@ module Elasticsearch
           note = Note.new(id: '1', title: 'Test')
           @repository.save note, routing: 'ABC'
 
+          @repository.client.cluster.health level: 'indices', wait_for_status: 'yellow'
+
           assert_raise Elasticsearch::Persistence::Repository::DocumentNotFound do
             @repository.find(1, routing: 'DEF')
           end
