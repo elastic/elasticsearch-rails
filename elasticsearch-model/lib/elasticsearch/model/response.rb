@@ -65,6 +65,12 @@ module Elasticsearch
         def shards
           Hashie::Mash.new(response['_shards'])
         end
+
+        # Reutrns a Hashie::Mash of the aggregations
+        #
+        def aggregations
+          response['aggregations'] ? Hashie::Mash.new(response['aggregations']) : nil
+        end
       end
     end
   end
