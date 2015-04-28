@@ -34,7 +34,7 @@ module Elasticsearch
       # Wraps the [index mappings](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping.html)
       #
       class Mappings
-        attr_accessor :options
+        attr_accessor :options, :type
 
         def initialize(type, options={})
           raise ArgumentError, "`type` is missing" if type.nil?
