@@ -128,7 +128,7 @@ module Elasticsearch
         #     # => {:article=>{:dynamic=>"strict", :properties=>{:foo=>{:type=>"long"}}}}
         #
         # The `mappings` and `settings` methods are accessible directly on the model class,
-        # when it doesn't already defines them. Use the `__elasticsearch__` proxy otherwise.
+        # when it doesn't already define them. Use the `__elasticsearch__` proxy otherwise.
         #
         def mapping(options={}, &block)
           @mapping ||= Mappings.new(document_type, options)
