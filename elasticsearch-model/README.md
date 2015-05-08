@@ -471,59 +471,38 @@ end
 #### Asynchronous Callbacks
 
 Of course, you're still performing an HTTP request during your database transaction, which is not optimal
-for large-scale applications. A better option would be to process the index operations in background,
-with a tool like [_Resque_](https://github.com/resque/resque) or [_Sidekiq_](https://github.com/mperham/sidekiq):
+for large-scale applications. A better option would be to process the index operations in the background using ActiveJob.
+
+Given this model:
 
 ```ruby
 class Article
   include Elasticsearch::Model
 
-  after_save    { Indexer.perform_async(:index,  self.id) }
-  after_destroy { Indexer.perform_async(:delete, self.id) }
+  after_save { ElasticsearchJob.perform_later(self) }
+  after_destroy { ElasticsearchJob.perform_later(self) }
 end
 ```
 
-An example implementation of the `Indexer` worker class could look like this:
+This ActiveJob will index in the background:
 
 ```ruby
-class Indexer
-  include Sidekiq::Worker
-  sidekiq_options queue: 'elasticsearch', retry: false
+require 'elasticsearch/model'
 
-  Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
-  Client = Elasticsearch::Client.new host: 'localhost:9200', logger: Logger
+class ElasticsearchJob < ActiveJob::Base
+  queue_as :default
 
-  def perform(operation, record_id)
-    logger.debug [operation, "ID: #{record_id}"]
-
-    case operation.to_s
-      when /index/
-        record = Article.find(record_id)
-        Client.index  index: 'articles', type: 'article', id: record.id, body: record.as_indexed_json
-      when /delete/
-        Client.delete index: 'articles', type: 'article', id: record_id
-      else raise ArgumentError, "Unknown operation '#{operation}'"
+  def perform(object)
+    if object.destroyed?
+      object.__elasticsearch__.delete_document
+    else
+      object.__elasticsearch__.index_document
     end
   end
 end
 ```
 
-Start the _Sidekiq_ workers with `bundle exec sidekiq --queue elasticsearch --verbose` and
-update a model:
-
-```ruby
-Article.first.update_attribute :title, 'Updated'
-```
-
-You'll see the job being processed in the console where you started the _Sidekiq_ worker:
-
-```
-Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: ["index", "ID: 7"]
-Indexer JID-eb7e2daf389a1e5e83697128 INFO: PUT http://localhost:9200/articles/article/1 [status:200, request:0.004s, query:n/a]
-Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: > {"id":1,"title":"Updated", ...}
-Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: < {"ok":true,"_index":"articles","_type":"article","_id":"1","_version":6}
-Indexer JID-eb7e2daf389a1e5e83697128 INFO: done: 0.006 sec
-```
+More examples can be found in the [wiki](https://github.com/elastic/elasticsearch-rails/wiki/Asynchronous-indexing).
 
 ### Model Serialization
 
