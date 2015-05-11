@@ -133,9 +133,9 @@ module Elasticsearch
         def mapping(options={}, &block)
           @mapping ||= Mappings.new(document_type, options)
 
-          if block_given?
-            @mapping.options.update(options)
+          @mapping.options.update(options) unless options.empty?
 
+          if block_given?
             @mapping.instance_eval(&block)
             return self
           else
