@@ -168,10 +168,10 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
         assert_equal 35, @response.search.definition[:from]
       end
 
-      should 'ignore invalid string parameters' do
+      should 'coerce invalid string parameters' do
         @response.offset(35)
         @response.offset("asdf")
-        assert_equal 35, @response.search.definition[:from]
+        assert_equal 0, @response.search.definition[:from]
       end
     end
 
