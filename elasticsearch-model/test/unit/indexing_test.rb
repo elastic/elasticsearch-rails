@@ -106,8 +106,8 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
       end
 
       should "update and return the index mappings" do
-        DummyIndexingModel.mappings foo: 'boo' do; end
-        DummyIndexingModel.mappings bar: 'bam' do; end
+        DummyIndexingModel.mappings foo: 'boo'
+        DummyIndexingModel.mappings bar: 'bam'
         assert_equal( { dummy_indexing_model: { foo: "boo", bar: "bam", properties: {} } },
                       DummyIndexingModel.mappings.to_hash )
       end
