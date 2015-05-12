@@ -1,7 +1,6 @@
 require 'test_helper'
 
-require 'active_model'
-require 'virtus'
+require 'active_attr'
 
 require 'elasticsearch/persistence/model/base'
 require 'elasticsearch/persistence/model/errors'
@@ -11,13 +10,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
   context "The model store module," do
 
     class DummyStoreModel
-      include ActiveModel::Naming
-      include ActiveModel::Conversion
-      include ActiveModel::Serialization
-      include ActiveModel::Serializers::JSON
-      include ActiveModel::Validations
-
-      include Virtus.model
+      include ActiveAttr::Model
 
       include Elasticsearch::Persistence::Model::Base::InstanceMethods
       extend  Elasticsearch::Persistence::Model::Store::ClassMethods
@@ -27,10 +20,10 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
       define_model_callbacks :create, :save, :update, :destroy
       define_model_callbacks :find, :touch, only: :after
 
-      attribute :title, String
-      attribute :count, Integer, default: 0
-      attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
-      attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
+      attribute :title, type: String
+      attribute :count, type: Integer, default: 0
+      attribute :created_at, type: DateTime, default: lambda { Time.now.utc }
+      attribute :updated_at, type: DateTime, default: lambda { Time.now.utc }
     end
 
     setup do

@@ -14,16 +14,16 @@ module Elasticsearch
         settings index: { number_of_shards: 1 }
         document_type 'human_being'
 
-        attribute :name, String,
+        attribute :name, type: String,
                   mapping: { fields: {
                     name: { type: 'string', analyzer: 'snowball' },
                     raw:  { type: 'string', analyzer: 'keyword' }
                   } }
 
-        attribute :birthday,   Date
-        attribute :department, String
-        attribute :salary,     Integer
-        attribute :admin,      Boolean, default: false
+        attribute :birthday,   type: Date
+        attribute :department, type: String
+        attribute :salary,     type: Integer
+        attribute :admin,      type: Boolean, default: false
 
         validates :name, presence: true
       end

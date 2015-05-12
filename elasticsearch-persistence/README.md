@@ -462,11 +462,8 @@ require 'elasticsearch/persistence/model'
 
 #### Model Definition
 
-The integration is implemented by including the module in a Ruby class.
-The model attribute definition support is implemented with the
-[_Virtus_](https://github.com/solnic/virtus) Rubygem, and the
-naming, validation, etc. features with the
-[_ActiveModel_](https://github.com/rails/rails/tree/master/activemodel) Rubygem.
+The integration is implemented by including the module in a Ruby class.  The model attribute definition support is implemented with the [_ActiveAttr_](https://github.com/cgriego/active_attr) Rubygem, and the naming,
+validation, etc.  features with the [_ActiveModel_](https://github.com/rails/rails/tree/master/activemodel) Rubygem.
 
 ```ruby
 class Article

@@ -1,13 +1,13 @@
 require 'active_support/core_ext/module/delegation'
 
-require 'active_model'
-require 'virtus'
+require 'active_attr'
 
 require 'elasticsearch/persistence'
 require 'elasticsearch/persistence/model/base'
 require 'elasticsearch/persistence/model/errors'
 require 'elasticsearch/persistence/model/store'
 require 'elasticsearch/persistence/model/find'
+require 'elasticsearch/persistence/model/time_with_zone_typecaster'
 
 module Elasticsearch
   module Persistence
@@ -25,13 +25,7 @@ module Elasticsearch
     module Model
       def self.included(base)
         base.class_eval do
-          include ActiveModel::Naming
-          include ActiveModel::Conversion
-          include ActiveModel::Serialization
-          include ActiveModel::Serializers::JSON
-          include ActiveModel::Validations
-
-          include Virtus.model
+          include ActiveAttr::Model
 
           extend  ActiveModel::Callbacks
           define_model_callbacks :create, :save, :update, :destroy
@@ -45,14 +39,14 @@ module Elasticsearch
           extend  Elasticsearch::Persistence::Model::Find::ClassMethods
 
           class << self
-            # Re-define the Virtus' `attribute` method, to configure Elasticsearch mapping as well
+            # Re-define the active_attr `attribute` method, to configure Elasticsearch mapping as well
             #
-            def attribute(name, type=nil, options={}, &block)
+            def attribute(name, options={}, &block)
               mapping = options.delete(:mapping) || {}
               super
 
               gateway.mapping do
-                indexes name, {type: Utils::lookup_type(type)}.merge(mapping)
+                indexes name, {type: Utils::lookup_type(options.fetch(:type, Object))}.merge(mapping)
               end
 
               gateway.mapping(&block) if block_given?
@@ -122,8 +116,8 @@ module Elasticsearch
 
           # Set up common attributes
           #
-          attribute :created_at, Time, default: lambda { |o,a| Time.now.utc }
-          attribute :updated_at, Time, default: lambda { |o,a| Time.now.utc }
+          attribute :created_at, type: ActiveSupport::TimeWithZone, default: lambda { Time.now.utc }, typecaster: TimeWithZoneTypecaster.new
+          attribute :updated_at, type: ActiveSupport::TimeWithZone, default: lambda { Time.now.utc }, typecaster: TimeWithZoneTypecaster.new
 
           attr_reader :hit
         end
