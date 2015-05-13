@@ -19,10 +19,10 @@ module Elasticsearch
             precision = @precision_override
           elsif !ActiveSupport::JSON::Encoding.use_standard_json_time_format
             precision = 0
-          elsif Gem::Version.new(::Rails.version.to_s) < Gem::Version.new('4.0')
+          elsif ActiveSupport.version < Gem::Version.new('4.0')
             precision = 0
-          elsif Gem::Version.new(::Rails.version.to_s) >= Gem::Version.new('4.0') &&
-            Gem::Version.new(::Rails.version.to_s) < Gem::Version.new('4.1')
+          elsif ActiveSupport.version >= Gem::Version.new('4.0') &&
+            ActiveSupport.version < Gem::Version.new('4.1')
             precision = 3
           else
             precision = ActiveSupport::JSON::Encoding.time_precision
