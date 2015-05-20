@@ -13,7 +13,7 @@ module Elasticsearch
             end
 
             def update(attributes={}, options={})
-              super(__convert_rails_dates(attributes))
+              super(__convert_rails_dates(attributes), options)
             end
           end
         end

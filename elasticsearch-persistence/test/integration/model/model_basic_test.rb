@@ -144,6 +144,16 @@ module Elasticsearch
           assert found.updated_at > updated_at, [found.updated_at, updated_at].inspect
         end
 
+        should "respect the version" do
+          person = Person.create name: 'John Smith'
+
+          person.update( { name: 'UPDATE 1' })
+
+          assert_raise Elasticsearch::Transport::Transport::Errors::Conflict do
+            person.update( { name: 'UPDATE 2' }, { version: 1 } )
+          end
+        end
+
         should "find all instances" do
           Person.create name: 'John Smith'
           Person.create name: 'Mary Smith'

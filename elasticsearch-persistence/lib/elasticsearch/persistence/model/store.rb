@@ -99,6 +99,16 @@ module Elasticsearch
           #     p.update name: 'UPDATED'
           #     => {"_index"=>"people", ... "_version"=>2}
           #
+          # @example Pass a version for concurrency control
+          #
+          #     p.update( { name: 'UPDATED' }, { version: 2 } )
+          #     => {"_index"=>"people", ... "_version"=>3}
+          #
+          # @example An exception is raised when the version doesn't match
+          #
+          #     p.update( { name: 'UPDATED' }, { version: 2 } )
+          #     => Elasticsearch::Transport::Transport::Errors::Conflict: [409] {"error" ... }
+          #
           # @return [Hash] The Elasticsearch response as a Hash
           #
           def update(attributes={}, options={})
@@ -112,7 +122,6 @@ module Elasticsearch
               options.update type:  self._type  if self._type
 
               attributes.update( { updated_at: Time.now.utc } )
-
               response = self.class.gateway.update(self.id, { doc: attributes}.merge(options))
 
               self.attributes = self.attributes.merge(attributes)

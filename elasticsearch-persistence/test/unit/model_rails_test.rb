@@ -91,5 +91,22 @@ class Elasticsearch::Persistence::ModelRailsTest < Test::Unit::TestCase
       assert_equal "2014-01-01", m.published_on.iso8601
     end
 
+    context "when updating," do
+      should "pass the options to gateway" do
+        model = MyRailsModel.new name: 'Test'
+        model.stubs(:persisted?).returns(true)
+
+        model.class.gateway
+          .expects(:update)
+          .with do |object, options|
+            assert_equal 'ABC', options[:routing]
+            true
+          end
+          .returns({'_id' => 'abc123'})
+
+        assert model.update( { title: 'UPDATED' }, { routing: 'ABC' } )
+      end
+    end
+
   end
 end
