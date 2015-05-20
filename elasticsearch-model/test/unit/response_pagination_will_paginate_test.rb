@@ -153,6 +153,18 @@ class Elasticsearch::Model::ResponsePaginationWillPaginateTest < Test::Unit::Tes
         assert_equal 0, @response.search.definition[:from]
         assert_equal 33, @response.search.definition[:size]
       end
+
+      should "use the param_name" do
+        @response.klass.client
+          .expects(:search)
+            .with do |definition|
+              assert_equal 10, definition[:from]
+              true
+            end
+          .returns(RESPONSE)
+
+        @response.paginate(my_page: 2, per_page: 10, param_name: :my_page).to_a
+      end
     end
 
     context "#page and #per_page shorthand methods" do

@@ -122,8 +122,9 @@ module Elasticsearch
           #     Article.search('foo').paginate(page: 1, per_page: 30)
           #
           def paginate(options)
-            page = [options[:page].to_i, 1].max
-            per_page = (options[:per_page] || klass.per_page).to_i
+            param_name = options[:param_name] || :page
+            page       = [options[param_name].to_i, 1].max
+            per_page   = (options[:per_page] || klass.per_page).to_i
 
             search.definition.update size: per_page,
                                      from: (page - 1) * per_page
