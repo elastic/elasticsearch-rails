@@ -19,8 +19,8 @@ class Elasticsearch::Persistence::ModelFindTest < Test::Unit::TestCase
 
       attribute :title, type: String
       attribute :count, type: Integer, default: 0
-      attribute :created_at, type: DateTime, default: lambda { |o,a| Time.now.utc }
-      attribute :updated_at, type: DateTime, default: lambda { |o,a| Time.now.utc }
+      attribute :created_at, type: DateTime, default: lambda { Time.now.utc }
+      attribute :updated_at, type: DateTime, default: lambda { Time.now.utc }
     end
 
     setup do
