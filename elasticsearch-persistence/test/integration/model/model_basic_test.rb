@@ -144,6 +144,20 @@ module Elasticsearch
           assert found.updated_at > updated_at, [found.updated_at, updated_at].inspect
         end
 
+        should 'update the object timestamp on save' do
+          person = Person.create name: 'John Smith'
+          person.admin = true
+          sleep 1
+          person.save
+
+          Person.gateway.refresh_index!
+
+          found = Person.find(person.id)
+
+          # Compare without usec
+          assert_equal found.updated_at.to_i, person.updated_at.to_i
+        end
+
         should "respect the version" do
           person = Person.create name: 'John Smith'
 

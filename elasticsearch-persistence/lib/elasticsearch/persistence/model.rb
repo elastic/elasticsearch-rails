@@ -121,8 +121,8 @@ module Elasticsearch
 
           # Set up common attributes
           #
-          attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
-          attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
+          attribute :created_at, Time, default: lambda { |o,a| Time.now.utc }
+          attribute :updated_at, Time, default: lambda { |o,a| Time.now.utc }
 
           attr_reader :hit
         end
