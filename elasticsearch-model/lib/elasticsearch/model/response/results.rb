@@ -22,7 +22,7 @@ module Elasticsearch
         #
         def results
           # TODO: Configurable custom wrapper
-          @results  = response.response['hits']['hits'].map { |hit| Result.new(hit) }
+          @results ||= response.response['hits']['hits'].map { |hit| Result.new(hit) }
         end
 
       end
