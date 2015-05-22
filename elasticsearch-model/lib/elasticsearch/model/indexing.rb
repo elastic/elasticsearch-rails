@@ -47,7 +47,7 @@ module Elasticsearch
           @mapping = {}
         end
 
-        def indexes(name, options = {}, &block)
+        def indexes(name, options={}, &block)
           @mapping[name] = options
 
           if block_given?
@@ -66,7 +66,6 @@ module Elasticsearch
           end
 
           # Set the type to `string` by default
-          #
           @mapping[name][:type] ||= 'string'
 
           self
