@@ -90,27 +90,36 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_equal 'string', mappings.to_hash[:mytype][:properties][:bar][:type]
       end
 
-      should "define embedded properties" do
-        mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
+      %w(string long double boolean multi_field).each do |outer_type|
+        should "define embedded fields for #{outer_type}" do
+          mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
 
-        mappings.indexes :foo do
-          indexes :bar
+          mappings.indexes :foo, type: outer_type do
+            indexes :raw, analyzer: 'keyword'
+          end
+
+          foo_mapping = mappings.to_hash[:mytype][:properties][:foo]
+
+          assert_equal outer_type, foo_mapping[:type]
+          assert_nil foo_mapping[:properties]
+          assert_equal 'string', foo_mapping[:fields][:raw][:type]
         end
-
-        mappings.indexes :multi, type: 'multi_field' do
-          indexes :multi, analyzer: 'snowball'
-          indexes :raw,   analyzer: 'keyword'
-        end
-
-        assert_equal 'object', mappings.to_hash[:mytype][:properties][:foo][:type]
-        assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo][:properties][:bar][:type]
-
-        assert_equal 'multi_field', mappings.to_hash[:mytype][:properties][:multi][:type]
-        assert_equal 'snowball', mappings.to_hash[:mytype][:properties][:multi][:fields][:multi][:analyzer]
-        assert_equal 'keyword',  mappings.to_hash[:mytype][:properties][:multi][:fields][:raw][:analyzer]
       end
 
-      should "define multi_field properties" do
+      %w(object nested).each do |outer_type|
+        should "define embedded properties for #{outer_type}" do
+          mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
+
+          mappings.indexes :foo, type: outer_type do
+            indexes :bar
+          end
+
+          foo_mapping = mappings.to_hash[:mytype][:properties][:foo]
+
+          assert_equal outer_type, foo_mapping[:type]
+          assert_nil foo_mapping[:fields]
+          assert_equal 'string', foo_mapping[:properties][:bar][:type]
+        end
       end
     end
 
