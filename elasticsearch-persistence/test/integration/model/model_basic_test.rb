@@ -135,7 +135,7 @@ module Elasticsearch
           person = Person.create name: 'John Smith'
           updated_at = person.updated_at
 
-          sleep 0.25
+          sleep 1
           person.touch
 
           assert person.updated_at > updated_at, [person.updated_at, updated_at].inspect
@@ -147,7 +147,7 @@ module Elasticsearch
         should 'update the object timestamp on save' do
           person = Person.create name: 'John Smith'
           person.admin = true
-          sleep 0.25
+          sleep 1
           person.save
 
           Person.gateway.refresh_index!
