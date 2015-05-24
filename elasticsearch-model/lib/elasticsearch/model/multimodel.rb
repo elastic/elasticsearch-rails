@@ -48,11 +48,6 @@ module Elasticsearch
     class Multimodel
       attr_reader :models
 
-      # Kaminari configuration methods should be included at the instance level to
-      # let a multimodel instance be paginated with Kaminari.
-      #
-      include ::Kaminari::ConfigurationMethods::ClassMethods if defined? ::Kaminari
-      
       # @param models [Class] The list of models across which the search will be performed
       #
       def initialize(*models)
