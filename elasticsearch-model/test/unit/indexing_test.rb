@@ -414,6 +414,55 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
       end
     end
 
+    context "Checking for index existence" do
+      context "the index exists" do
+        should "return true" do
+          indices = mock('indices', exists: true)
+          client  = stub('client', indices: indices)
+
+          DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+          assert_equal true, DummyIndexingModelForRecreate.index_exists?
+        end
+      end
+
+      context "the index does not exists" do
+        should "return false" do
+          indices = mock('indices', exists: false)
+          client  = stub('client', indices: indices)
+
+          DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+          assert_equal false, DummyIndexingModelForRecreate.index_exists?
+        end
+      end
+
+      context "the indices raises" do
+        should "return false" do
+          client  = stub('client')
+          client.expects(:indices).raises(StandardError)
+
+          DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+          assert_equal false, DummyIndexingModelForRecreate.index_exists?
+        end
+      end
+
+      context "the indices raises" do
+        should "return false" do
+          indices = stub('indices')
+          client  = stub('client')
+          client.expects(:indices).returns(indices)
+
+          indices.expects(:exists).raises(StandardError)
+
+          DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+          assert_equal false, DummyIndexingModelForRecreate.index_exists?
+        end
+      end
+    end
+
     context "Re-creating the index" do
       class ::DummyIndexingModelForRecreate
         extend ActiveModel::Naming
@@ -468,8 +517,6 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         indices = stub('indices')
         client.stubs(:indices).returns(indices)
 
-        indices.expects(:exists).returns(false)
-
         indices.expects(:create).with do |payload|
           assert_equal 'dummy_indexing_model_for_recreates', payload[:index]
           assert_equal 1,         payload[:body][:settings][:index][:number_of_shards]
@@ -477,6 +524,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           true
         end.returns({})
 
+        DummyIndexingModelForRecreate.expects(:index_exists?).returns(false)
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
         assert_nothing_raised { DummyIndexingModelForRecreate.create_index! }
@@ -487,11 +535,10 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         indices = stub('indices')
         client.stubs(:indices).returns(indices)
 
-        indices.expects(:exists).returns(true)
-
         indices.expects(:create).never
 
-        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+        DummyIndexingModelForRecreate.expects(:index_exists?).returns(true)
+        DummyIndexingModelForRecreate.expects(:client).returns(client).never
 
         assert_nothing_raised { DummyIndexingModelForRecreate.create_index! }
       end
@@ -502,9 +549,9 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         client.stubs(:indices).returns(indices)
 
         indices.expects(:delete).returns({})
-        indices.expects(:exists).returns(false)
-        indices.expects(:create).raises(Exception)
+        indices.expects(:create).raises(Exception).at_least_once
 
+        DummyIndexingModelForRecreate.expects(:index_exists?).returns(false)
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
         assert_raise(Exception) { DummyIndexingModelForRecreate.create_index! force: true }
@@ -516,9 +563,9 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         client.stubs(:indices).returns(indices)
 
         indices.expects(:delete).returns({})
-        indices.expects(:exists).returns(false)
         indices.expects(:create).returns({}).at_least_once
 
+        DummyIndexingModelForRecreate.expects(:index_exists?).returns(false)
         DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
 
         assert_nothing_raised do
@@ -559,12 +606,11 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
 
         should "create the custom index" do
-          @indices.expects(:exists).with do |arguments|
+          @indices.expects(:create).with do |arguments|
             assert_equal 'custom-foo', arguments[:index]
             true
           end
-
-          @indices.expects(:create).with do |arguments|
+          DummyIndexingModelForRecreate.expects(:index_exists?).with do |arguments|
             assert_equal 'custom-foo', arguments[:index]
             true
           end
