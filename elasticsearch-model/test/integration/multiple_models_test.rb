@@ -103,6 +103,14 @@ module Elasticsearch
           assert_equal 'The greatest Episode', response.records[0].name
         end
 
+        should "paginate the results" do
+          response = Elasticsearch::Model.search('series OR episode', [Series, Episode])
+
+          assert_equal 3, response.page(1).per(3).results.size
+          assert_equal 3, response.page(2).per(3).results.size
+          assert_equal 0, response.page(3).per(3).results.size
+        end
+
         if Mongo.available?
           Mongo.connect_to 'mongoid_collections'
 
