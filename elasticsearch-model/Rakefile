@@ -28,6 +28,12 @@ namespace :test do
     test.test_files = FileList["test/integration/**/*_test.rb"]
   end
 
+  Rake::TestTask.new(:run_integration_mongoid) do |test|
+    Rake::Task['test:ci_reporter'].invoke if ENV['CI']
+    test.libs << 'lib' << 'test'
+    test.test_files = FileList["test/integration/**/mongoid_*_test.rb"]
+  end
+
   desc "Run integration tests against ActiveModel 3 and 4"
   task :integration do
     sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_integration" unless defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
