@@ -75,13 +75,63 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
     end
 
     context "Importing" do
+      setup do
+        DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
+      end
+
       should "implement the __find_in_batches method" do
         relation = mock()
         relation.stubs(:no_timeout).returns([])
         DummyClassForMongoid.expects(:all).returns(relation)
 
-        DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
         DummyClassForMongoid.__find_in_batches do; end
+      end
+
+      should "raise an exception when passing an invalid scope" do
+        assert_raise NoMethodError do
+          dummy_scope = stub(batch_size: [])
+          DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
+          DummyClassForMongoid.__find_in_batches(scope: :not_found_method) do; end
+        end
+      end
+
+      should "implement the __find_in_batches method" do
+        dummy_scope = stub(batch_size: [])
+        DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
+        DummyClassForMongoid.__find_in_batches do; end
+      end
+
+      should "limit the relation to a specific scope" do
+        dummy_scope = stub(batch_size: DummyClassForMongoid)
+        DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
+        DummyClassForMongoid.expects(:published).returns([])
+
+        DummyClassForMongoid.__find_in_batches(scope: :published) do; end
+      end
+
+      should "limit the relation to a specific query" do
+        dummy_scope = stub(batch_size: DummyClassForMongoid)
+        DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
+        DummyClassForMongoid.expects(:where).returns([])
+
+        DummyClassForMongoid.__find_in_batches(query: -> { where(color: "red") }) do; end
+      end
+
+      should "preprocess the batch if option provided" do
+        class << DummyClassForMongoid
+          # Updates/transforms the batch while fetching it from the database
+          # (eg. with information from an external system)
+          #
+          def update_batch(batch)
+            batch.collect { |b| b.to_s + '!' }
+          end
+        end
+
+        DummyClassForMongoid.expects(:__find_in_batches).returns( [:a, :b] )
+
+        DummyClassForMongoid.__find_in_batches(preprocess: :update_batch) do |batch|
+          assert_same_elements ["a!", "b!"], batch
+        end
       end
 
       context "when transforming models" do
@@ -93,7 +143,7 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
           assert_respond_to @transform, :call
         end
 
-        should "provide basic transformation" do
+        should "provide default transformation" do
           model = mock("model", id: 1, as_indexed_json: {})
           assert_equal @transform.call(model), { index: { _id: "1", data: {} } }
         end
