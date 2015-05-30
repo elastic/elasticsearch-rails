@@ -13,11 +13,12 @@ if Mongo.available?
           setup do
             class ::MongoidImportArticle
               include Mongoid::Document
+              include Mongoid::Timestamps
               include Elasticsearch::Model
 
               field :title,      type: String
               field :views,      type: Integer
-              field :numeric,    type: String  # For the sake of invalid data sent to Elasticsearch
+              field :numeric                   # For the sake of invalid data sent to Elasticsearch
               field :created_at, type: Date
 
               scope :popular, -> { where(views: {'$gte' => 50 }) }
