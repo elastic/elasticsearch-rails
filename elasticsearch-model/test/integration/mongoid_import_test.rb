@@ -5,30 +5,6 @@ Mongo.setup!
 if Mongo.available?
   Mongo.connect_to 'mongoid_articles'
 
-  if defined?(BSON::ObjectId)
-    class BSON::ObjectId
-      def as_json(*args)
-        to_s
-      end
-
-      def to_json(*args)
-        as_json().to_json
-      end
-    end
-  end
-
-  if defined?(Moped::BSON::ObjectId)
-    class Moped::BSON::ObjectId
-      def as_json(*args)
-        to_s
-      end
-
-      def to_json(*args)
-        as_json().to_json
-      end
-    end
-  end
-
   module Elasticsearch
     module Model
       class MongoidImportIntegrationTest < Elasticsearch::Test::IntegrationTestCase
@@ -54,7 +30,7 @@ if Mongo.available?
               end
 
               def as_indexed_json(options = {})
-                as_json(options)
+                as_json(options).merge('_id' => self.id.to_s)
               end
             end
 
