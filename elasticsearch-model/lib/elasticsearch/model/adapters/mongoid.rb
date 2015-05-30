@@ -63,18 +63,18 @@ module Elasticsearch
           # @see https://github.com/karmi/retire/pull/724
           #
           def __find_in_batches(options={}, &block)
-            options[:batch_size] ||= 1_000
-
             query = options.delete(:query)
             named_scope = options.delete(:scope)
             preprocess = options.delete(:preprocess)
-            scope = scoped
+            batch_size = options.delete(:batch_size) { 1_000 }
+
+            scope = self
 
             scope = scope.__send__(named_scope) if named_scope
             scope = scope.instance_exec(&query) if query
-            scope = scope.batch_size(options[:batch_size])
+            scope = scope.batch_size(batch_size)
 
-            scope.no_timeout.each_slice(options[:batch_size]) do |items|
+            scope.no_timeout.each_slice(batch_size) do |items|
               yield (preprocess ? self.__send__(preprocess, items) : items)
             end
           end
