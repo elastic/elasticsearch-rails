@@ -79,40 +79,26 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
         DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
       end
 
-      should "implement the __find_in_batches method" do
-        relation = mock()
-        relation.stubs(:no_timeout).returns([])
-        DummyClassForMongoid.expects(:all).returns(relation)
-
-        DummyClassForMongoid.__find_in_batches do; end
-      end
-
       should "raise an exception when passing an invalid scope" do
         assert_raise NoMethodError do
-          dummy_scope = stub(batch_size: [])
-          DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
           DummyClassForMongoid.__find_in_batches(scope: :not_found_method) do; end
         end
       end
 
       should "implement the __find_in_batches method" do
-        dummy_scope = stub(batch_size: [])
-        DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
+        DummyClassForMongoid.expects(:batch_size).returns(stub(no_timeout: []))
         DummyClassForMongoid.__find_in_batches do; end
       end
 
       should "limit the relation to a specific scope" do
-        dummy_scope = stub(batch_size: DummyClassForMongoid)
-        DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
-        DummyClassForMongoid.expects(:published).returns([])
+        DummyClassForMongoid.expects(:batch_size).returns(stub(no_timeout: []))
+        DummyClassForMongoid.expects(:published).returns(DummyClassForMongoid)
 
         DummyClassForMongoid.__find_in_batches(scope: :published) do; end
       end
 
       should "limit the relation to a specific query" do
-        dummy_scope = stub(batch_size: DummyClassForMongoid)
-        DummyClassForMongoid.expects(:scoped).returns(dummy_scope)
-        DummyClassForMongoid.expects(:where).returns([])
+        DummyClassForMongoid.expects(:where).returns(stub(batch_size: stub(no_timeout: [])))
 
         DummyClassForMongoid.__find_in_batches(query: -> { where(color: "red") }) do; end
       end
