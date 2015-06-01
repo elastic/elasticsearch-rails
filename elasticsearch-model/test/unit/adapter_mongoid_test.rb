@@ -86,19 +86,19 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
       end
 
       should "implement the __find_in_batches method" do
-        DummyClassForMongoid.expects(:batch_size).returns(stub(no_timeout: []))
+        DummyClassForMongoid.expects(:batch_size).returns(mock(no_timeout: []))
         DummyClassForMongoid.__find_in_batches do; end
       end
 
       should "limit the relation to a specific scope" do
-        DummyClassForMongoid.expects(:batch_size).returns(stub(no_timeout: []))
+        DummyClassForMongoid.expects(:batch_size).returns(mock(no_timeout: []))
         DummyClassForMongoid.expects(:published).returns(DummyClassForMongoid)
 
         DummyClassForMongoid.__find_in_batches(scope: :published) do; end
       end
 
       should "limit the relation to a specific query" do
-        DummyClassForMongoid.expects(:where).returns(stub(batch_size: stub(no_timeout: [])))
+        DummyClassForMongoid.expects(:where).returns(mock(batch_size: mock(no_timeout: [])))
 
         DummyClassForMongoid.__find_in_batches(query: -> { where(color: "red") }) do; end
       end
