@@ -399,6 +399,8 @@ class Article
 end
 ```
 
+*Known limitation:* when working with STI (Single Table Inheritance), you should define the `index_name` on each leaf (concrete) class. See #28, #92 and #332  for details.
+
 ### Updating the Documents in the Index
 
 Usually, we need to update the Elasticsearch index when records in the database are created, updated or deleted;
