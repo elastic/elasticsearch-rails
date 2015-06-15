@@ -179,6 +179,30 @@ module Elasticsearch
         request = Searching::SearchRequest.new(models, query_or_payload, options)
         Response::Response.new(models, request)
       end
+
+      # Define a rule for mapping hits to models when searching across multiple models
+      #
+      # @param model_to_hit_selector [lambda(model,hit)] - Must return a boolean
+      #
+      # @example Map indices to models that operate against aliases
+      #
+      #     Elasticsearch::model_to_hit_selector = lambda do |model, hit|
+      #       /#{model.index_name}-.*/ =~ hit[:_index] && model.document_type == hit[:_type]
+      #     end
+      #
+      # @example Map indices to models but disregard the model's index name
+      #
+      #     Elasticsearch::model_to_hit_selector = lambda do |model, hit|
+      #       model.document_type == hit[:_type]
+      #     end
+      #
+      def model_to_hit_selector=(model_to_hit_selector)
+        @model_to_hit_selector = model_to_hit_selector
+      end
+
+      def model_to_hit_selector
+        @model_to_hit_selector ||= lambda { |model, hit| model.index_name == hit[:_index] && model.document_type == hit[:_type] }
+      end
     end
     extend ClassMethods
 
