@@ -59,7 +59,8 @@ module Elasticsearch
         # TODO: #to_s, #inspect, with support for Pry
 
         #
-        # Returns the result object as a plain ruby hash to support pry's inspection
+        # Returns the result object as a plain ruby hash to support awesome_print benefits
+        # it allows invoking the Elasticsearch::Model::Response::Result#method(:to_hash) method
         #
         #
         # @return [Hash]
