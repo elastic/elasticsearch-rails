@@ -57,6 +57,10 @@ module Elasticsearch
         end
 
         # TODO: #to_s, #inspect, with support for Pry
+
+        def to_hash
+          @result.to_h
+        end
       end
     end
   end
