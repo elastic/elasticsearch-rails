@@ -58,6 +58,12 @@ module Elasticsearch
 
         # TODO: #to_s, #inspect, with support for Pry
 
+        #
+        # Returns the result object as a plain ruby hash to support pry's inspection
+        #
+        #
+        # @return [Hash]
+        #
         def to_hash
           @result.to_h
         end
