@@ -103,6 +103,12 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
 
         subject.index_name 'foobar2'
         assert_equal 'foobar2', subject.index_name
+
+        subject.index_name do
+          "foobar#{Time.now.year}"
+        end
+
+        assert_equal "foobar#{Time.now.year}", subject.index_name
       end
 
       should "be aliased as `index`" do
