@@ -45,7 +45,7 @@ gem "pry", group: 'development'
 
 environment nil, env: 'development' do
   %q{
-  console do
+  config.console do
     config.console = Pry
     Pry.config.history.file = Rails.root.join('tmp/console_history.rb').to_s
     Pry.config.prompt = [ proc { |obj, nest_level, _| "(#{obj})> " },
