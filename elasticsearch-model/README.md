@@ -229,7 +229,7 @@ response.records.records.class
 # => ActiveRecord::Relation::ActiveRecord_Relation_Article
 ```
 
-The ordering of the records by score will be preserved, unless you explicitely specify a different
+The ordering of the records by score will be preserved, unless you explicitly specify a different
 order in your model query language:
 
 ```ruby
@@ -390,7 +390,7 @@ Article.__elasticsearch__.refresh_index!
 ```
 
 By default, index name and document type will be inferred from your class name,
-you can set it explicitely, however:
+you can set it explicitly, however:
 
 ```ruby
 class Article
