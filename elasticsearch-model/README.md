@@ -329,9 +329,7 @@ require 'jbuilder'
 query = Jbuilder.encode do |json|
   json.query do
     json.match do
-      json.title do
-        json.query "fox dogs"
-      end
+      json.title "fox dogs"
     end
   end
 end
