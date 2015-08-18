@@ -229,7 +229,7 @@ response.records.records.class
 # => ActiveRecord::Relation::ActiveRecord_Relation_Article
 ```
 
-The ordering of the records by score will be preserved, unless you explicitely specify a different
+The ordering of the records by score will be preserved, unless you explicitly specify a different
 order in your model query language:
 
 ```ruby
