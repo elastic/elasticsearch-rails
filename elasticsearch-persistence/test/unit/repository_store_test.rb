@@ -142,6 +142,22 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         subject.update('1', script: 'ctx._source.foo += 1', upsert: { foo: 1 })
       end
 
+      should "get the ID from first argument and :script, :doc, :doc_as_upsert, and :scripted_upsert from document" do
+        subject.expects(:document_type).returns('mydoc')
+        subject.expects(:__extract_id_from_document).never
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1', doc: { foo: 1 }, doc_as_upsert: true, scripted_upsert: true}, arguments[:body])
+          true
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update('1', script: 'ctx._source.foo += 1', doc: { foo: 1 }, doc_as_upsert: true, scripted_upsert: true)
+      end
+
       should "get the ID and :doc from document" do
         subject.expects(:document_type).returns('mydoc')
 
@@ -185,6 +201,21 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         subject.expects(:client).returns(client)
 
         subject.update(id: '1', script: 'ctx._source.foo += 1', upsert: { foo: 1 })
+      end
+
+      should "get the ID, :script, :doc, :doc_as_upsert, and :scripted_upsert from document" do
+        subject.expects(:document_type).returns('mydoc')
+
+        client = mock
+        client.expects(:update).with do |arguments|
+          assert_equal '1',     arguments[:id]
+          assert_equal 'mydoc', arguments[:type]
+          assert_equal({script: 'ctx._source.foo += 1', doc: { foo: 1 }, doc_as_upsert: true, scripted_upsert: true}, arguments[:body])
+          true
+        end
+        subject.expects(:client).returns(client)
+
+        subject.update(id: '1', script: 'ctx._source.foo += 1', doc: { foo: 1 }, doc_as_upsert: true, scripted_upsert: true)
       end
 
       should "override the type from params" do

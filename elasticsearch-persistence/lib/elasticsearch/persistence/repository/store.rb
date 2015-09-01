@@ -51,18 +51,18 @@ module Elasticsearch
                  document_type || \
                  __get_type_from_class(klass)
 
+          body_params = [:doc, :script, :params, :upsert, :doc_as_upsert, :scripted_upsert]
           if defined?(serialized) && serialized
             body = if serialized[:script]
-                       serialized.select { |k, v| [:script, :params, :upsert].include? k }
+                       serialized.select { |k, v| body_params.include? k }
                      else
                        { doc: serialized }
                    end
           else
             body = {}
-            body.update( doc: options.delete(:doc)) if options[:doc]
-            body.update( script: options.delete(:script)) if options[:script]
-            body.update( params: options.delete(:params)) if options[:params]
-            body.update( upsert: options.delete(:upsert)) if options[:upsert]
+            body_params.each do |key|
+              body.update(key => options.delete(key)) if options[key]
+            end
           end
 
           client.update( { index: index_name, type: type, id: id, body: body }.merge(options) )
