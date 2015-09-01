@@ -100,8 +100,13 @@ module Elasticsearch
             end
 
             def deserialize(document)
-              object = klass.new document['_source']
-
+              if document.has_key? 'fields'
+                document_fields = {}
+                document['fields'].each{|k, v| document_fields[k] = v[0]}
+                object = klass.new Hashie::Mash.new(document_fields)
+              else
+                object = klass.new document['_source'] || {}
+              end
               # Set the meta attributes when fetching the document from Elasticsearch
               #
               object.instance_variable_set :@_id,      document['_id']
