@@ -102,5 +102,34 @@ class Elasticsearch::Model::MultipleTest < Test::Unit::TestCase
         assert_equal [2, 2, 1, 1, 3], records.map(&:id)
       end
     end
+
+    context "when using index aliases" do
+      setup do
+        @aliased_hits = [{
+            _index: 'dummy1',
+            _type: 'dummy_two',
+            _id: '3'
+          }, {
+            _index: 'other_index_99',
+            _type: 'dummy_two',
+            _id: '1',
+          }
+        ]
+        @multimodel.class.send :include, Elasticsearch::Model::Adapter::Multiple::Records
+        @multimodel.expects(:response).at_least_once.returns(stub(response: { 'hits' => { 'hits' => @aliased_hits} }))
+      end
+
+      should "match the right models" do
+        assert_instance_of Module, Elasticsearch::Model::Adapter::Multiple::Records
+        records = @multimodel.records
+
+        assert_equal 2, records.count
+
+        assert_kind_of ::Namespace::DummyTwo, records[0]
+        assert_kind_of ::DummyTwo,            records[1]
+
+        assert_equal [3, 1], records.map(&:id)
+      end
+    end
   end
 end
