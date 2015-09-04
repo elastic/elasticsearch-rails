@@ -42,7 +42,11 @@ namespace :elasticsearch do
     desc import_model_desc
     task :model do
       if ENV['CLASS'].to_s == ''
-        puts '='*90, 'USAGE', '='*90, import_model_desc, ""
+        Rails.logger.info '='*90
+        Rails.logger.info 'USAGE'
+        Rails.logger.info '='*90
+        Rails.logger.info import_model_desc
+        Rails.logger.info ''
         exit(1)
       end
 
@@ -71,8 +75,8 @@ namespace :elasticsearch do
       end
       pbar.finish if pbar
 
-      puts "[IMPORT] #{total_errors} errors occurred" unless total_errors.zero?
-      puts '[IMPORT] Done'
+      Rails.logger.error "[IMPORT] #{total_errors} errors occurred" unless total_errors.zero?
+      Rails.logger.info '[IMPORT] Done'
     end
 
     desc <<-DESC.gsub(/    /, '')
@@ -83,7 +87,7 @@ namespace :elasticsearch do
     task :all do
       dir    = ENV['DIR'].to_s != '' ? ENV['DIR'] : Rails.root.join("app/models")
 
-      puts "[IMPORT] Loading models from: #{dir}"
+      Rails.logger.info "[IMPORT] Loading models from: #{dir}"
       Dir.glob(File.join("#{dir}/**/*.rb")).each do |path|
         model_filename = path[/#{Regexp.escape(dir.to_s)}\/([^\.]+).rb/, 1]
 
@@ -98,12 +102,12 @@ namespace :elasticsearch do
         # Skip if the class doesn't have Elasticsearch integration
         next unless klass.respond_to?(:__elasticsearch__)
 
-        puts "[IMPORT] Processing model: #{klass}..."
+        Rails.logger.info "[IMPORT] Processing model: #{klass}..."
 
         ENV['CLASS'] = klass.to_s
         Rake::Task["elasticsearch:import:model"].invoke
         Rake::Task["elasticsearch:import:model"].reenable
-        puts
+        Rails.logger.info ''
       end
     end
 

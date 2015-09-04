@@ -62,7 +62,7 @@ Article.__send__ :include, Elasticsearch::Model
 #   end
 # end
 
-puts '', '-'*Pry::Terminal.width!
+Rails.logger.debug '', '-'*Pry::Terminal.width!
 
 Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 

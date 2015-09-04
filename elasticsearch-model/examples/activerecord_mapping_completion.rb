@@ -50,8 +50,8 @@ Article.__elasticsearch__.refresh_index!
 
 response_1 = Article.search 'foo';
 
-puts "Article search:".ansi(:bold),
-     response_1.to_a.map { |d| "Title: #{d.title}" }.inspect.ansi(:bold, :yellow)
+Rails.logger.info "Article search:".ansi(:bold)
+Rails.logger.info response_1.to_a.map { |d| "Title: #{d.title}" }.inspect.ansi(:bold, :yellow)
 
 response_2 = Article.__elasticsearch__.client.suggest \
   index: Article.index_name,
@@ -62,8 +62,8 @@ response_2 = Article.__elasticsearch__.client.suggest \
     }
   };
 
-puts "Article suggest:".ansi(:bold),
-     response_2['articles'].first['options'].map { |d| "#{d['text']} -> #{d['payload']['url']}" }.
-     inspect.ansi(:bold, :green)
+Rails.logger.info "Article suggest:".ansi(:bold)
+Rails.logger.info response_2['articles'].first['options'].map { |d| "#{d['text']} -> #{d['payload']['url']}" }.
+                    inspect.ansi(:bold, :green)
 
 require 'pry'; binding.pry;

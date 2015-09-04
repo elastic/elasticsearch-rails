@@ -49,7 +49,7 @@ module Elasticsearch
         # @example Process the response from Elasticsearch
         #
         #     Article.import do |response|
-        #       puts "Got " + response['items'].select { |i| i['index']['error'] }.size.to_s + " errors"
+        #       Rails.logger.error "Got " + response['items'].select { |i| i['index']['error'] }.size.to_s + " errors"
         #     end
         #
         # @example Delete and create the index with appropriate settings and mappings

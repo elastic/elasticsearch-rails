@@ -49,7 +49,7 @@ end
 #
 Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 
-puts '', '-'*Pry::Terminal.width!
+Rails.logger.debug '', '-'*Pry::Terminal.width!
 
 Article.all.map { |a| a.delete }
 Article.create id: '1', title: 'Foo'
