@@ -297,6 +297,28 @@ module Elasticsearch
             end
           end
         end
+
+        # Updates mappings with latest mappings
+        # Also creates the index if it doesn't exists already
+        # `mappings` defined in the model
+        #
+        # @example Update index for the `Article` model
+        #
+        #     Article.__elasticsearch__.update_index!
+        #
+        # @example Pass a specific index name
+        #
+        #     Article.__elasticsearch__.update_index! index: 'my-index'
+        #
+        def update_mapping!(options={})
+          target_index = options.delete(:index) || self.index_name
+
+          self.client.indices.create(index: target_index) unless index_exists?(index: target_index)
+
+          self.client.indices.put_mapping index: target_index,
+                                          type: self.document_type,
+                                          body: self.mappings.to_hash
+        end
       end
 
       module InstanceMethods
