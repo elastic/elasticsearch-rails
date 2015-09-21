@@ -47,7 +47,7 @@ namespace :elasticsearch do
       end
 
       klass  = eval(ENV['CLASS'].to_s)
-      total  = klass.count rescue nil
+      total  = klass.count(:all) rescue nil
       pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
       pbar.__send__ :show if pbar
 
