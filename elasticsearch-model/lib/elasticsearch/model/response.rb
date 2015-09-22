@@ -44,8 +44,8 @@ module Elasticsearch
         #
         # @return [Records]
         #
-        def records
-          @records ||= Records.new(klass, self)
+        def records(options = {})
+          @records ||= Records.new(klass, self, options)
         end
 
         # Returns the "took" time

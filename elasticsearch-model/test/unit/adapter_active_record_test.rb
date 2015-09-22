@@ -51,6 +51,16 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         instance.load
       end
 
+      should "load the records with its submodels when using :includes" do
+        klass    = mock('class', primary_key: :some_key, where: @records)
+        @records.expects(:includes).with([:submodel]).at_least_once
+
+        instance = DummyClassForActiveRecord.new
+        instance.expects(:klass).returns(klass).at_least_once
+        instance.options[:includes] = [:submodel]
+        instance.records
+      end
+
       should "reorder the records based on hits order" do
         @records.instance_variable_set(:@records, @records)
 
