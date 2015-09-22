@@ -12,6 +12,8 @@ module Elasticsearch
 
         delegate :each, :empty?, :size, :slice, :[], :to_a, :to_ary, to: :records
 
+        attr_accessor :options
+
         include Base
 
         # @see Base#initialize
@@ -25,6 +27,7 @@ module Elasticsearch
           metaclass = class << self; self; end
           metaclass.__send__ :include, adapter.records_mixin
 
+          self.options = options
           self
         end
 

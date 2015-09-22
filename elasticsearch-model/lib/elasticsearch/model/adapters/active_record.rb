@@ -10,10 +10,17 @@ module Elasticsearch
                          lambda { |klass| !!defined?(::ActiveRecord::Base) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::ActiveRecord::Base) }
 
         module Records
+          attr_writer :options
+
+          def options
+            @options ||= {}
+          end
+
           # Returns an `ActiveRecord::Relation` instance
           #
           def records
             sql_records = klass.where(klass.primary_key => ids)
+            sql_records = sql_records.includes(self.options[:includes]) if self.options[:includes]
 
             # Re-order records based on the order from Elasticsearch hits
             # by redefining `to_a`, unless the user has called `order()`
