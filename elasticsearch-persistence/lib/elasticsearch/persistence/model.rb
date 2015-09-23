@@ -102,8 +102,28 @@ module Elasticsearch
             def deserialize(document)
               if document.has_key? 'fields'
                 document_fields = {}
-                document['fields'].each{|k, v| document_fields[k] = v[0]}
-                object = klass.new Hashie::Mash.new(document_fields)
+                
+                document['fields'].each do |key, value|
+                  insert_to = document_fields
+                  if '.'.in? key
+                    levels = key.split('.')
+                    kl = klass
+                    leaf = levels.pop
+
+                    levels.each do |lev|
+                      insert_to = insert_to[lev] || insert_to[lev] = {}
+                      kl = kl.try(:primitive).try(:attribute_set).try(:[], lev)
+                    end
+                  else
+                    leaf = key
+                  end
+
+                  is_array = kl.try(:attribute_set).try([], leaf) == Axiom::Types::Array
+                  
+                  insert_to[leaf] = is_array ? value : value[0]
+                end
+                
+                object = klass.new document_fields
               else
                 object = klass.new document['_source'] || {}
               end
