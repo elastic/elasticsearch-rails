@@ -1,3 +1,28 @@
+## 0.1.8
+
+* Added "default per page" methods for pagination with multi model searches
+* Added a convenience accessor for the `aggregations` part of response
+* Added a full example with mapping for the completion suggester
+* Added an integration test for paginating multiple models
+* Added proper support for the new "multi_fields" in the mapping DSL
+* Added the `no_timeout` option for `__find_in_batches` in the Mongoid adapter
+* Added, that index settings can be loaded from any object that responds to `:read`
+* Added, that index settings/mappings can be loaded from a YAML or JSON file
+* Added, that String pagination parameters are converted to numbers
+* Added, that empty block is not required for setting mapping options
+* Added, that on MyModel#import, an exception is raised if the index does not exists
+* Changed the Elasticsearch port in the Mongoid example to 9200
+* Cleaned up the tests for multiple fields/properties in mapping DSL
+* Fixed a bug where continuous `#save` calls emptied the `@__changed_attributes` variable
+* Fixed a buggy test introduced in #335
+* Fixed incorrect deserialization of records in the Multiple adapter
+* Fixed incorrect examples and documentation
+* Fixed unreliable order of returned results/records in the integration test for the multiple adapter
+* Fixed, that `param_name` is used when paginating with WillPaginate
+* Fixed the problem where `document_type` configuration was not propagated to mapping [6 months ago by Miguel Ferna
+* Refactored the code in `__find_in_batches` to use Enumerable#each_slice
+* Refactored the string queries in multiple_models_test.rb to avoid quote escaping
+
 ## 0.1.7
 
 * Improved examples and instructions in README and code annotations

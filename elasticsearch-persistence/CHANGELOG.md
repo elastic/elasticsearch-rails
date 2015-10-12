@@ -1,4 +1,16 @@
-# 0.1.7
+## 0.1.8
+
+* Added `cluster.health wait_for_status: 'yellow'` to Repository integration test
+* Fixed tests for the updates to the `update` method for Persistence::Model
+* Fixed timestamp tests
+* Fixed typos and broken links in documentation, fixed examples
+* Fixed, that `MyModel#save` does in fact persist `updated_at` attribute
+* Fixed, that `options` have not been passed to gateway in MyModel#update
+* Short-circuit the operation and return `false` when the model is not valid
+* Fixed the problem where `document_type` configuration was not propagated to mapping
+
+
+## 0.1.7
 
 * Added an integration test for the `MyModel.all` method
 * Improved the "music" example application
