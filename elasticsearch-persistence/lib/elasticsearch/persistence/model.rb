@@ -108,6 +108,7 @@ module Elasticsearch
               object.instance_variable_set :@_index,   document['_index']
               object.instance_variable_set :@_type,    document['_type']
               object.instance_variable_set :@_version, document['_version']
+              object.instance_variable_set :@_source,  document['_source']
 
               # Store the "hit" information (highlighting, score, ...)
               #

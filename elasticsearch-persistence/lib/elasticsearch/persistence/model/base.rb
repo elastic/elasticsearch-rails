@@ -49,6 +49,12 @@ module Elasticsearch
             @_version
           end
 
+          # Return the raw document `_source`
+          #
+          def _source
+            @_source
+          end
+
           def to_s
             "#<#{self.class} #{attributes.to_hash.inspect.gsub(/:(\w+)=>/, '\1: ')}>"
           end; alias :inspect :to_s
