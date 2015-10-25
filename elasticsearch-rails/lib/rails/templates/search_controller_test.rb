@@ -59,7 +59,7 @@ class SearchControllerTest < ActionController::TestCase
     get :index, q: 'one'
     assert_response :success
 
-    suggestions = assigns(:articles).response.response['suggest']
+    suggestions = assigns(:articles).response.suggest
 
     assert_equal 'one', suggestions['suggest_title'][0]['text']
   end
