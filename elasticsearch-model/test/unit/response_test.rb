@@ -8,7 +8,8 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
     end
 
     RESPONSE = { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'}, 'hits' => { 'hits' => [] },
-                 'aggregations' => {'foo' => {'bar' => 10}}}
+                 'aggregations' => {'foo' => {'bar' => 10}},
+                 'suggest' => {'my_suggest' => []}}
 
     setup do
       @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
@@ -72,6 +73,15 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       assert_respond_to response, :aggregations
       assert_kind_of Hashie::Mash, response.aggregations.foo
       assert_equal 10, response.aggregations.foo.bar
+    end
+
+    should "access the suggest" do
+      @search.expects(:execute!).returns(RESPONSE)
+
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+      assert_respond_to response, :suggest
+      assert_kind_of Hashie::Mash, response.suggest
+      assert_equal [], response.suggest.my_suggest
     end
   end
 end
