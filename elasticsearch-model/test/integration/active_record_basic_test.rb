@@ -22,10 +22,18 @@ module Elasticsearch
 
             settings index: { number_of_shards: 1, number_of_replicas: 0 } do
               mapping do
-                indexes :title,      type: 'string', analyzer: 'snowball'
-                indexes :body,       type: 'string'
-                indexes :created_at, type: 'date'
+                indexes :title,         type: 'string', analyzer: 'snowball'
+                indexes :suggest_title, type: 'completion'
+                indexes :body,          type: 'string'
+                indexes :created_at,    type: 'date'
               end
+            end
+
+            def as_indexed_json(options = {})
+              attributes
+                .symbolize_keys
+                .slice(:title, :body, :created_at)
+                .merge(suggest_title: title)
             end
           end
 
@@ -210,10 +218,14 @@ module Elasticsearch
 
         should "allow dot access to response" do
           response = Article.search query: { match: { title: { query: 'test' } } },
-                                    aggregations: { dates: { date_histogram: { field: 'created_at', interval: 'hour' } } }
+                                    aggregations: { dates: { date_histogram: { field: 'created_at', interval: 'hour' } } },
+                                    suggest: { title_suggest: { text: 'test', completion: { field: 'suggest_title' } } }
 
           response.response.respond_to?(:aggregations)
           assert_equal 2, response.response.aggregations.dates.buckets.first.doc_count
+
+          response.response.respond_to?(:suggest)
+          assert_equal 2, response.response.suggest.title_suggest.first.options.size
         end
       end
 
