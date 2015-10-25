@@ -47,7 +47,7 @@
   <hr>
 </div>
 
-<% if @articles.size < 1 && (suggestions = @articles.response.response['suggest']) && suggestions.present?  %>
+<% if @articles.size < 1 && @articles.response.suggest.present?  %>
 <div class="col-md-12">
   <p class="alert alert-warning">
     No documents have been found.
