@@ -127,6 +127,10 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           indexes :bar
         end
 
+        mappings.indexes :foo_nested_as_symbol, type: :nested do
+          indexes :bar
+        end
+
         # Object is the default when `type` is missing and there's a block passed
         #
         assert_equal 'object', mappings.to_hash[:mytype][:properties][:foo][:type]
@@ -140,6 +144,10 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_equal 'nested', mappings.to_hash[:mytype][:properties][:foo_nested][:type]
         assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo_nested][:properties][:bar][:type]
         assert_nil             mappings.to_hash[:mytype][:properties][:foo_nested][:fields]
+
+        assert_equal :nested, mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:type]
+        assert_not_nil        mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:properties]
+        assert_nil            mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:fields]
       end
     end
 

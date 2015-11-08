@@ -52,7 +52,7 @@ module Elasticsearch
 
           if block_given?
             @mapping[name][:type] ||= 'object'
-            properties = TYPES_WITH_EMBEDDED_PROPERTIES.include?(@mapping[name][:type]) ? :properties : :fields
+            properties = TYPES_WITH_EMBEDDED_PROPERTIES.include?(@mapping[name][:type].to_s) ? :properties : :fields
 
             @mapping[name][properties] ||= {}
 
