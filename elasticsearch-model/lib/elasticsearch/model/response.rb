@@ -17,7 +17,20 @@ module Elasticsearch
 
         delegate :each, :empty?, :size, :slice, :[], :to_ary, to: :results
 
+        def self.ensure_pagination_included
+          Thread.current[:response_pagination] ||= begin
+            case
+            when defined?(::Kaminari)
+              include(Pagination::Kaminari)
+            when defined?(::WillPaginate)
+              include(Pagination::WillPaginate)
+            end
+            true
+          end
+        end
+
         def initialize(klass, search, options={})
+          self.class.ensure_pagination_included
           @klass     = klass
           @search    = search
         end
