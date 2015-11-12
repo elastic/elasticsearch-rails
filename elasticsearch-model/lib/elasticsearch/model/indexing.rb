@@ -400,8 +400,6 @@ module Elasticsearch
                 id:    self.id,
                 body:  { doc: attributes } }.merge(options)
             )
-          else
-            index_document(options)
           end
         end
 

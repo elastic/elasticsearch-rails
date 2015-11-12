@@ -100,6 +100,7 @@ module Elasticsearch
         #    Article.import return: 'errors'
         #
         def import(options={}, &block)
+          fail 'Import is unsafe when data is not in the SQL database'
           errors       = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
