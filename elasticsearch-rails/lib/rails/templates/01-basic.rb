@@ -120,7 +120,7 @@ gem 'mocha', group: 'test', require: 'mocha/api'
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
 
 comment_lines 'Gemfile', /gem 'coffee/
-comment_lines 'Gemfile', /gem 'sass/
+uncomment_lines 'Gemfile', /gem 'sass/
 comment_lines 'Gemfile', /gem 'uglifier/
 uncomment_lines 'Gemfile', /gem 'therubyracer/
 
