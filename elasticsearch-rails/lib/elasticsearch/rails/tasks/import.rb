@@ -80,20 +80,21 @@ namespace :elasticsearch do
         # recreate index if forced
         klass.__elasticsearch__.create_index!(force: true, index: klass.index_name) if ENV.fetch('FORCE', false)
 
-        threads = []
+        threads = Array.new
 
         partition.times do |index|
-          from_range = query.offset(index * (per_partition)).first.try(by.to_sym) + 1
-          to_range = query.offset((index + 1) * per_partition).first.try(by.to_sym) || query.last.send(by)
+          from_range = index == 0 ? 1 : query.offset(index * (per_partition)).first.try(by.to_sym) + 1
+          to_range = index == partition - 1 ? query.last.send(by) : query.offset((index + 1) * per_partition).first.try(by.to_sym)
           threads << Thread.new( index, options, from_range, to_range) { | _index, _options, _from_range, _to_range|
-            puts "[IMPORT] Starting partition: #{_index + 1} #{Time.now}"
+            puts "[IMPORT] Starting partition: #{_index + 1} #{Time.now} - Processing #{from_range} - #{to_range}"
             klass.__elasticsearch__.import _options.merge(force: false, query: Proc.new { where(by => _from_range.._to_range) })
-            puts "[IMPORT] Finished partition: #{_index + 1} #{Time.now}"
+            puts "[IMPORT] Finished partition: #{_index + 1} #{Time.now} - Processing #{from_range} - #{to_range}"
           }
-
         end
         threads.each { |thr| thr.join }
+
       else
+
         pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
         pbar.__send__ :show if pbar
         total_errors = klass.__elasticsearch__.import(options.merge(force: ENV.fetch('FORCE', false), scope: ENV.fetch('SCOPE', nil))) do |response|
