@@ -7,4 +7,5 @@ _yardoc/
 coverage/
 rdoc/
 doc/
+.idea/
 Gemfile.lock

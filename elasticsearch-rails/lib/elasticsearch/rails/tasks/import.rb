@@ -38,6 +38,10 @@ namespace :elasticsearch do
 
       Pass an ActiveRecord scope to limit the imported records:
         $ rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
+
+      Import data from your model concurrently:
+        $ rake environment elasticsearch:import:model CLASS='Article' PARTITION=2 BY=id
+
     DESC
     desc import_model_desc
     task :model do
@@ -48,8 +52,7 @@ namespace :elasticsearch do
 
       klass  = eval(ENV['CLASS'].to_s)
       total  = klass.count rescue nil
-      pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
-      pbar.__send__ :show if pbar
+      partition = ENV['PARTITION'].to_i
 
       unless ENV['DEBUG']
         begin
@@ -60,19 +63,49 @@ namespace :elasticsearch do
         rescue NoMethodError; end
       end
 
-      total_errors = klass.__elasticsearch__.import force:      ENV.fetch('FORCE', false),
-                                  batch_size: ENV.fetch('BATCH', 1000).to_i,
-                                  index:      ENV.fetch('INDEX', nil),
-                                  type:       ENV.fetch('TYPE',  nil),
-                                  scope:      ENV.fetch('SCOPE', nil) do |response|
-        pbar.inc response['items'].size if pbar
-        STDERR.flush
-        STDOUT.flush
-      end
-      pbar.finish if pbar
+      options = {
+        batch_size: ENV.fetch('BATCH', 1000).to_i,
+        index:      ENV.fetch('INDEX', nil),
+        type:       ENV.fetch('TYPE',  nil)
+      }
 
-      puts "[IMPORT] #{total_errors} errors occurred" unless total_errors.zero?
-      puts '[IMPORT] Done'
+      if partition > 0
+        by = ENV.fetch('BY', klass.primary_key)
+        scope = ENV.fetch('SCOPE', nil)
+        Rails.application.eager_load!
+
+        query = scope ? klass.send(scope) : klass
+        per_partition = (query.count.to_f / partition.to_f).ceil
+
+        # recreate index if forced
+        klass.__elasticsearch__.create_index!(force: true, index: klass.index_name) if ENV.fetch('FORCE', false)
+
+        threads = []
+
+        partition.times do |index|
+          from_range = query.offset(index * (per_partition)).first.try(by.to_sym) + 1
+          to_range = query.offset((index + 1) * per_partition).first.try(by.to_sym) || query.last.send(by)
+          threads << Thread.new( index, options, from_range, to_range) { | _index, _options, _from_range, _to_range|
+            puts "[IMPORT] Starting partition: #{_index + 1} #{Time.now}"
+            klass.__elasticsearch__.import _options.merge(force: false, query: Proc.new { where(by => _from_range.._to_range) })
+            puts "[IMPORT] Finished partition: #{_index + 1} #{Time.now}"
+          }
+
+        end
+        threads.each { |thr| thr.join }
+      else
+        pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
+        pbar.__send__ :show if pbar
+        total_errors = klass.__elasticsearch__.import(options.merge(force: ENV.fetch('FORCE', false), scope: ENV.fetch('SCOPE', nil))) do |response|
+          pbar.inc response['items'].size if pbar
+          STDERR.flush
+          STDOUT.flush
+        end
+        pbar.finish if pbar
+
+        puts "[IMPORT] #{total_errors} errors occurred" unless total_errors.zero?
+        puts '[IMPORT] Done'
+      end
     end
 
     desc <<-DESC.gsub(/    /, '')
