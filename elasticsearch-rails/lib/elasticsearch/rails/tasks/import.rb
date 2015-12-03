@@ -66,10 +66,11 @@ namespace :elasticsearch do
       options = {
         batch_size: ENV.fetch('BATCH', 1000).to_i,
         index:      ENV.fetch('INDEX', nil),
-        type:       ENV.fetch('TYPE',  nil)
+        type:       ENV.fetch('TYPE',  nil),
+        scope:      ENV.fetch('SCOPE', nil)
       }
 
-      if partition > 0
+      if partition > 1
         by = ENV.fetch('BY', klass.primary_key)
         scope = ENV.fetch('SCOPE', nil)
         Rails.application.eager_load!
@@ -80,24 +81,21 @@ namespace :elasticsearch do
         # recreate index if forced
         klass.__elasticsearch__.create_index!(force: true, index: klass.index_name) if ENV.fetch('FORCE', false)
 
-        threads = Array.new
-
         partition.times do |index|
           from_range = index == 0 ? 1 : query.offset(index * (per_partition)).first.try(by.to_sym) + 1
           to_range = index == partition - 1 ? query.last.send(by) : query.offset((index + 1) * per_partition).first.try(by.to_sym)
-          threads << Thread.new( index, options, from_range, to_range) { | _index, _options, _from_range, _to_range|
-            puts "[IMPORT] Starting partition: #{_index + 1} #{Time.now} - Processing #{from_range} - #{to_range}"
-            klass.__elasticsearch__.import _options.merge(force: false, query: Proc.new { where(by => _from_range.._to_range) })
-            puts "[IMPORT] Finished partition: #{_index + 1} #{Time.now} - Processing #{from_range} - #{to_range}"
-          }
+          eval(%Q{
+            pid = fork do
+              klass.__elasticsearch__.import options.merge(force: false, query: Proc.new { where(by => #{from_range}..#{to_range}) })
+            end
+            puts "[IMPORT] PID \#{pid} processing:  #{from_range}..#{to_range}"
+          })
         end
-        threads.each { |thr| thr.join }
 
       else
-
         pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
         pbar.__send__ :show if pbar
-        total_errors = klass.__elasticsearch__.import(options.merge(force: ENV.fetch('FORCE', false), scope: ENV.fetch('SCOPE', nil))) do |response|
+        total_errors = klass.__elasticsearch__.import(options.merge(force: ENV.fetch('FORCE', false))) do |response|
           pbar.inc response['items'].size if pbar
           STDERR.flush
           STDOUT.flush
