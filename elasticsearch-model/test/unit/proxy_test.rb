@@ -69,6 +69,17 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
       assert_equal 'insta barr', DummyProxyModel.new.__elasticsearch__.bar
     end
 
+    should "reset the proxy target for duplicates" do
+      model = DummyProxyModel.new
+      model_target = model.__elasticsearch__.target
+      duplicate = model.dup
+      duplicate_target = duplicate.__elasticsearch__.target
+
+      assert_not_equal model, duplicate
+      assert_equal model, model_target
+      assert_equal duplicate, duplicate_target
+    end
+
     should "return the proxy class from instance proxy" do
       assert_equal Elasticsearch::Model::Proxy::ClassMethodsProxy, DummyProxyModel.new.__elasticsearch__.class.class
     end
