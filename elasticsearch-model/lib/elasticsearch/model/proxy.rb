@@ -66,6 +66,15 @@ module Elasticsearch
         end
       end
 
+      # @overload dup
+      #
+      # Returns a copy of this object. Resets the __elasticsearch__ proxy so
+      # the duplicate will build its own proxy.
+      def initialize_dup(_)
+        @__elasticsearch__ = nil
+        super
+      end
+
       # Common module for the proxy classes
       #
       module Base
