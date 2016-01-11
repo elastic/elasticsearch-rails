@@ -534,7 +534,7 @@ class Indexer
     case operation.to_s
       when /index/
         record = Article.find(record_id)
-        Client.index  index: 'articles', type: 'article', id: record.id, body: record.as_indexed_json
+        Client.index  index: 'articles', type: 'article', id: record.id, body: record.__elasticsearch__.as_indexed_json
       when /delete/
         Client.delete index: 'articles', type: 'article', id: record_id
       else raise ArgumentError, "Unknown operation '#{operation}'"
