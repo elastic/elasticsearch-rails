@@ -37,11 +37,11 @@ run "bundle install"
 
 # copy_file File.expand_path('../searchable.dsl.rb', __FILE__), 'app/models/concerns/searchable.rb', force: true
 get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb',
-    'app/models/concerns/searchable.rb'
+    'app/models/concerns/searchable.rb', force: true
 
 # copy_file File.expand_path('../index.html.dsl.erb', __FILE__), 'app/views/search/index.html.erb', force: true
 get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb',
-    'app/views/search/index.html.erb'
+    'app/views/search/index.html.erb', force: true
 
 gsub_file "test/controllers/search_controller_test.rb", %r{test "should return facets" do.*?end}m, <<-CODE
 test "should return aggregations" do
