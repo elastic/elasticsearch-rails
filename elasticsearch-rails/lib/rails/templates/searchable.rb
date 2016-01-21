@@ -71,15 +71,14 @@ module Searchable
     #
     def self.search(query, options={})
 
-      # Prefill and set the filters (top-level `filter` and `facet_filter` elements)
+      # Prefill and set the filters (top-level `post_filter` and aggregation `filter` elements)
       #
       __set_filters = lambda do |key, f|
+        @search_definition[:post_filter][:and] ||= []
+        @search_definition[:post_filter][:and]  |= [f]
 
-        @search_definition[:filter][:and] ||= []
-        @search_definition[:filter][:and]  |= [f]
-
-        @search_definition[:facets][key.to_sym][:facet_filter][:and] ||= []
-        @search_definition[:facets][key.to_sym][:facet_filter][:and]  |= [f]
+        @search_definition[:aggregations][key.to_sym][:filter][:bool][:must] ||= []
+        @search_definition[:aggregations][key.to_sym][:filter][:bool][:must]  |= [f]
       end
 
       @search_definition = {
@@ -95,27 +94,22 @@ module Searchable
           }
         },
 
-        filter: {},
+        post_filter: {},
 
-        facets: {
+        aggregations: {
           categories: {
-            terms: {
-              field: 'categories'
-            },
-            facet_filter: {}
+            filter: { bool: { must: [ match_all: {} ] } },
+            aggregations: { categories: { terms: { field: 'categories' } } }
           },
           authors: {
-            terms: {
-              field: 'authors.full_name.raw'
-            },
-            facet_filter: {}
+            filter: { bool: { must: [ match_all: {} ] } },
+            aggregations: { authors: { terms: { field: 'authors.full_name.raw' } } }
           },
           published: {
-            date_histogram: {
-              field: 'published_on',
-              interval: 'week'
-            },
-            facet_filter: {}
+            filter: { bool: { must: [ match_all: {} ] } },
+            aggregations: {
+              published: { date_histogram: { field: 'published_on', interval: 'week' } }
+            }
           }
         }
       }
@@ -174,7 +168,7 @@ module Searchable
             query: {
               multi_match: {
                 query: query,
-                fields: ['body'],
+                fields: ['comments.body'],
                 operator: 'and'
               }
             }

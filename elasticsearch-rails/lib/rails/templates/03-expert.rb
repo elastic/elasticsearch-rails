@@ -189,6 +189,10 @@ run "bundle install"
 get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/indexer.rb',
     'app/workers/indexer.rb'
 
+insert_into_file "test/test_helper.rb",
+                 "require 'sidekiq/testing'\n\n",
+                 before: "class ActiveSupport::TestCase\n"
+
 git add:    "Gemfile* app/workers/"
 git commit: "-m 'Added a Sidekiq indexer\n\nRun:\n\n    $ bundle exec sidekiq --queue elasticsearch --verbose\n\nSee http://sidekiq.org'"
 
