@@ -1,6 +1,9 @@
 # $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
 
-# (See: 01-basic.rb)
+unless File.read('README.rdoc').include? '== [1] Basic'
+  say_status  "ERROR", "You have to run the 01-basic.rb template first.", :red
+  exit(1)
+end
 
 puts
 say_status  "README", "Updating Readme...\n", :yellow

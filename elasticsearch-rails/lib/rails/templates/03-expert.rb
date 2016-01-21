@@ -1,6 +1,9 @@
 #     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/03-expert.rb
 
-# (See: 01-basic.rb, 02-pretty.rb)
+unless File.read('README.rdoc').include? '== [2] Pretty'
+  say_status  "ERROR", "You have to run the 01-basic.rb and 02-pretty.rb templates first.", :red
+  exit(1)
+end
 
 append_to_file 'README.rdoc', <<-README
 
