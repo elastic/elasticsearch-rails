@@ -5,6 +5,22 @@ unless File.read('README.rdoc').include? '== [2] Pretty'
   exit(1)
 end
 
+begin
+  require 'redis'
+rescue LoadError
+  say_status  "ERROR", "Please install the 'redis' gem before running this template", :red
+  exit(1)
+end
+
+begin
+  Redis.new.info
+rescue Redis::CannotConnectError
+  puts
+  say_status  "ERROR", "Redis not available", :red
+  say_status  "", "This template uses an asynchronous indexer via Sidekiq, and requires a running Redis server."
+  exit(1)
+end
+
 append_to_file 'README.rdoc', <<-README
 
 == [3] Expert
