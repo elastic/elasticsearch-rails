@@ -196,7 +196,7 @@ insert_into_file "test/test_helper.rb",
                  "require 'sidekiq/testing'\n\n",
                  before: "class ActiveSupport::TestCase\n"
 
-git add:    "Gemfile* app/workers/"
+git add:    "Gemfile* app/workers/ test/test_helper.rb"
 git commit: "-m 'Added a Sidekiq indexer\n\nRun:\n\n    $ bundle exec sidekiq --queue elasticsearch --verbose\n\nSee http://sidekiq.org'"
 
 # ----- Add SearchController -----------------------------------------------------------------------
