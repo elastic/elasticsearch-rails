@@ -16,7 +16,6 @@ module Elasticsearch
 
             # Include the Kaminari paging methods in results and records
             #
-            Elasticsearch::Model::Response::Results.__send__ :include, ::Kaminari::ConfigurationMethods::ClassMethods
             Elasticsearch::Model::Response::Results.__send__ :include, ::Kaminari::PageScopeMethods
             Elasticsearch::Model::Response::Records.__send__ :include, ::Kaminari::PageScopeMethods
 
