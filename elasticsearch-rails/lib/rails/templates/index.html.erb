@@ -47,13 +47,13 @@
   <hr>
 </div>
 
-<% if @articles.size < 1 && @articles.response.suggest.present?  %>
+<% if @articles.size < 1 && @articles.response.suggest.present? %>
 <div class="col-md-12">
   <p class="alert alert-warning">
     No documents have been found.
-    <% if suggestions['suggest_title'].present? || suggestions['suggest_body'].present? %>
+    <% if @articles.response.suggest['suggest_title'].present? || @articles.response.suggest['suggest_body'].present? %>
       Maybe you mean
-      <%= suggestions.map { |k,v| v.first['options'] }.flatten.map {|v| v['text']}.uniq.map do |term|
+      <%= @articles.response.suggest.map { |k,v| v.first['options'] }.flatten.map {|v| v['text']}.uniq.map do |term|
         link_to term, search_path(params.except(:controller, :action).merge q: term)
       end.to_sentence(last_word_connector: ' or ').html_safe %>?
     <% end %>
