@@ -1,9 +1,7 @@
 require 'test_helper'
 
 class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCase
-  class ModelClass
-    include ::Kaminari::ConfigurationMethods
-
+  class ModelClass    
     def self.index_name;    'foo'; end
     def self.document_type; 'bar'; end
   end
