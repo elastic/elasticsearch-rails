@@ -72,10 +72,10 @@ module Elasticsearch
           response['aggregations'] ? Hashie::Mash.new(response['aggregations']) : nil
         end
 
-        # Returns a Hashie::Mash of the suggest
+        # Returns a Hashie::Mash of the suggestions
         #
-        def suggest
-          response['suggest'] ? Hashie::Mash.new(response['suggest']) : nil
+        def suggestions
+          Suggestions.new(response['suggest'])
         end
       end
     end

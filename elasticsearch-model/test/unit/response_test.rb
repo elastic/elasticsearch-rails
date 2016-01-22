@@ -9,7 +9,7 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
 
     RESPONSE = { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'}, 'hits' => { 'hits' => [] },
                  'aggregations' => {'foo' => {'bar' => 10}},
-                 'suggest' => {'my_suggest' => []}}
+                 'suggest' => {'my_suggest' => [ { 'text' => 'foo', 'options' => [ { 'text' => 'Foo', 'score' => 2.0 }, { 'text' => 'Bar', 'score' => 1.0 } ] } ]}}
 
     setup do
       @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
@@ -79,9 +79,26 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       @search.expects(:execute!).returns(RESPONSE)
 
       response = Elasticsearch::Model::Response::Response.new OriginClass, @search
-      assert_respond_to response, :suggest
-      assert_kind_of Hashie::Mash, response.suggest
-      assert_equal [], response.suggest.my_suggest
+
+      assert_respond_to response, :suggestions
+      assert_kind_of Hashie::Mash, response.suggestions
+      assert_equal 'Foo', response.suggestions.my_suggest.first.options.first.text
+    end
+
+    should "return array of terms from the suggestions" do
+      @search.expects(:execute!).returns(RESPONSE)
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+
+      assert_not_empty response.suggestions
+      assert_equal [ 'Foo', 'Bar' ], response.suggestions.terms
+    end
+
+    should "return empty array as suggest terms when there are no suggestions" do
+      @search.expects(:execute!).returns({})
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+
+      assert_empty response.suggestions
+      assert_equal [], response.suggestions.terms
     end
   end
 end
