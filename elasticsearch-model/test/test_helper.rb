@@ -6,7 +6,7 @@ require 'simplecov' and SimpleCov.start { add_filter "/test|test_/" } if ENV["CO
 
 # Register `at_exit` handler for integration tests shutdown.
 # MUST be called before requiring `test/unit`.
-at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks }
+at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks if defined? Elasticsearch }
 
 puts '-'*80
 
@@ -44,13 +44,16 @@ module Elasticsearch
       context "IntegrationTest" do; should "noop on Ruby 1.8" do; end; end if RUBY_1_8
 
       def setup
-        ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" )
         logger = ::Logger.new(STDERR)
         logger.formatter = lambda { |s, d, p, m| "\e[2;36m#{m}\e[0m\n" }
-        ActiveRecord::Base.logger = logger unless ENV['QUIET']
 
-        ActiveRecord::LogSubscriber.colorize_logging = false
-        ActiveRecord::Migration.verbose = false
+        if defined? ActiveRecord
+          ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" )
+          ActiveRecord::Base.logger = logger unless ENV['QUIET']
+
+          ActiveRecord::LogSubscriber.colorize_logging = false
+          ActiveRecord::Migration.verbose = false
+        end
 
         tracer = ::Logger.new(STDERR)
         tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
