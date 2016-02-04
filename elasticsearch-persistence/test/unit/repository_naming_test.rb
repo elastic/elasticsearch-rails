@@ -50,7 +50,7 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
     end
 
     context "extract an ID from the document" do
-      should "delete the key from theHash" do
+      should "delete the key from the Hash" do
         d1 = { :id   => 1 }
         d2 = { :_id  => 1 }
         d3 = { 'id'  => 1 }
@@ -67,6 +67,19 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
 
         assert_equal 1, subject.__extract_id_from_document(d4)
         assert_nil   d1['_id']
+      end
+    end
+
+    context "extract an attribute from the document" do
+      should "delete the key from the hash" do
+        d1 = { :_routing  => 'routing-key' }
+        d2 = { '_routing' => 'routing-key' }
+
+        assert_equal 'routing-key', subject.__extract_attribute_from_document(d1, :_routing)
+        assert_nil   d1[:_routing]
+
+        assert_equal 'routing-key', subject.__extract_attribute_from_document(d2, '_routing')
+        assert_nil   d1['_routing']
       end
     end
 
