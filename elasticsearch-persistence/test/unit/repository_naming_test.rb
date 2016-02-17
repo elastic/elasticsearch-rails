@@ -110,6 +110,11 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
         assert_equal 'foobar1', subject.index
       end
 
+      should 'be settable with a block' do
+        subject.index_name { 'block1' }
+        assert_equal 'block1', subject.index
+      end
+
       should "be inferred from the host class" do
         class ::MySpecialRepository; end
         subject.define_singleton_method(:host) { MySpecialRepository }
