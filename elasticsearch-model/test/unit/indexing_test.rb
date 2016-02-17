@@ -2,13 +2,19 @@ require 'test_helper'
 
 class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
   context "Indexing module: " do
-    class ::DummyIndexingModel
-      extend ActiveModel::Naming
-      extend Elasticsearch::Model::Naming::ClassMethods
-      extend Elasticsearch::Model::Indexing::ClassMethods
+    setup do
+      @dummy_indexing_model = Class.new do
+        def self.name
+          "DummyIndexingModel"
+        end
 
-      def self.foo
-        'bar'
+        extend ActiveModel::Naming
+        extend Elasticsearch::Model::Naming::ClassMethods
+        extend Elasticsearch::Model::Indexing::ClassMethods
+
+        def self.foo
+          'bar'
+        end
       end
     end
 
@@ -25,34 +31,34 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
     context "Settings method" do
       should "initialize the index settings" do
-        assert_instance_of Elasticsearch::Model::Indexing::Settings, DummyIndexingModel.settings
+        assert_instance_of Elasticsearch::Model::Indexing::Settings, @dummy_indexing_model.settings
       end
 
       should "update and return the index settings from a hash" do
-        DummyIndexingModel.settings foo: 'boo'
-        DummyIndexingModel.settings bar: 'bam'
+        @dummy_indexing_model.settings foo: 'boo'
+        @dummy_indexing_model.settings bar: 'bam'
 
-        assert_equal( {foo: 'boo', bar: 'bam'},  DummyIndexingModel.settings.to_hash)
+        assert_equal( {foo: 'boo', bar: 'bam'},  @dummy_indexing_model.settings.to_hash)
       end
 
       should "update and return the index settings from a yml file" do
-        DummyIndexingModel.settings File.open("test/support/model.yml")
-        DummyIndexingModel.settings bar: 'bam'
+        @dummy_indexing_model.settings File.open("test/support/model.yml")
+        @dummy_indexing_model.settings bar: 'bam'
 
-        assert_equal( {foo: 'boo', bar: 'bam', 'baz' => 'qux'}, DummyIndexingModel.settings.to_hash)
+        assert_equal( {bar: 'bam', 'baz' => 'qux'}, @dummy_indexing_model.settings.to_hash)
       end
 
       should "update and return the index settings from a json file" do
-        DummyIndexingModel.settings File.open("test/support/model.json")
-        DummyIndexingModel.settings bar: 'bam'
+        @dummy_indexing_model.settings File.open("test/support/model.json")
+        @dummy_indexing_model.settings bar: 'bam'
 
-        assert_equal( {foo: 'boo', bar: 'bam', 'baz' => 'qux'}, DummyIndexingModel.settings.to_hash)
+        assert_equal( {bar: 'bam', 'baz' => 'qux'}, @dummy_indexing_model.settings.to_hash)
       end
 
       should "evaluate the block" do
-        DummyIndexingModel.expects(:foo)
+        @dummy_indexing_model.expects(:foo)
 
-        DummyIndexingModel.settings do
+        @dummy_indexing_model.settings do
           foo
         end
       end
@@ -60,7 +66,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
     context "Mappings class" do
       should "initialize the index mappings" do
-        assert_instance_of Elasticsearch::Model::Indexing::Mappings, DummyIndexingModel.mappings
+        assert_instance_of Elasticsearch::Model::Indexing::Mappings, @dummy_indexing_model.mappings
       end
 
       should "raise an exception when not passed type" do
@@ -153,83 +159,93 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
     context "Mappings method" do
       should "initialize the index mappings" do
-        assert_instance_of Elasticsearch::Model::Indexing::Mappings, DummyIndexingModel.mappings
+        assert_instance_of Elasticsearch::Model::Indexing::Mappings, @dummy_indexing_model.mappings
       end
 
       should "update and return the index mappings" do
-        DummyIndexingModel.mappings foo: 'boo'
-        DummyIndexingModel.mappings bar: 'bam'
+        @dummy_indexing_model.mappings foo: 'boo'
+        @dummy_indexing_model.mappings bar: 'bam'
         assert_equal( { dummy_indexing_model: { foo: "boo", bar: "bam", properties: {} } },
-                      DummyIndexingModel.mappings.to_hash )
+                      @dummy_indexing_model.mappings.to_hash )
       end
 
       should "evaluate the block" do
-        DummyIndexingModel.mappings.expects(:indexes).with(:foo).returns(true)
+        @dummy_indexing_model.mappings.expects(:indexes).with(:foo).returns(true)
 
-        DummyIndexingModel.mappings do
+        @dummy_indexing_model.mappings do
           indexes :foo
         end
       end
     end
 
     context "Instance methods" do
-      class ::DummyIndexingModelWithCallbacks
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+      setup do
+        @dummy_indexing_model_with_callbacks = Class.new do
+          def self.name
+            "DummyIndexingModelWithCallbacks"
+          end
 
-        def self.before_save(&block)
-          (@callbacks ||= {})[block.hash] = block
+          extend  Elasticsearch::Model::Indexing::ClassMethods
+          include Elasticsearch::Model::Indexing::InstanceMethods
+
+          def self.before_save(&block)
+            (@callbacks ||= {})[block.hash] = block
+          end
+
+          def changed_attributes; [:foo]; end
+
+          def changes
+            {:foo => ['One', 'Two']}
+          end
         end
 
-        def changed_attributes; [:foo]; end
+        @dummy_indexing_model_with_callbacks_and_custom_as_indexed_json = Class.new do
+          def self.name
+            "DummyIndexingModelWithCallbacksAndCustomAsIndexedJson"
+          end
 
-        def changes
-          {:foo => ['One', 'Two']}
-        end
-      end
+          extend  Elasticsearch::Model::Indexing::ClassMethods
+          include Elasticsearch::Model::Indexing::InstanceMethods
 
-      class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+          def self.before_save(&block)
+            (@callbacks ||= {})[block.hash] = block
+          end
 
-        def self.before_save(&block)
-          (@callbacks ||= {})[block.hash] = block
-        end
+          def changed_attributes; [:foo, :bar]; end
 
-        def changed_attributes; [:foo, :bar]; end
+          def changes
+            {:foo => ['A', 'B'], :bar => ['C', 'D']}
+          end
 
-        def changes
-          {:foo => ['A', 'B'], :bar => ['C', 'D']}
-        end
-
-        def as_indexed_json(options={})
-          { :foo => 'B' }
+          def as_indexed_json(options={})
+            { :foo => 'B' }
+          end
         end
       end
 
       should "register before_save callback when included" do
-        ::DummyIndexingModelWithCallbacks.expects(:before_save).returns(true)
-        ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+        @dummy_indexing_model_with_callbacks.expects(:before_save).returns(true)
+        @dummy_indexing_model_with_callbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
       end
 
       should "set the @__changed_attributes variable before save" do
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
         instance.expects(:instance_variable_set).with do |name, value|
           assert_equal :@__changed_attributes, name
           assert_equal({foo: 'Two'}, value)
           true
         end
 
-        ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+        @dummy_indexing_model_with_callbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
 
-        ::DummyIndexingModelWithCallbacks.instance_variable_get(:@callbacks).each do |n,b|
+        @dummy_indexing_model_with_callbacks.instance_variable_get(:@callbacks).each do |n,b|
           instance.instance_eval(&b)
         end
       end
 
       should "have the index_document method" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         client.expects(:index).with do |payload|
           assert_equal 'foo',  payload[:index]
@@ -250,7 +266,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "pass extra options to the index_document method to client.index" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         client.expects(:index).with do |payload|
           assert_equal 'A',  payload[:parent]
@@ -268,7 +284,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "have the delete_document method" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         client.expects(:delete).with do |payload|
           assert_equal 'foo',  payload[:index]
@@ -287,7 +303,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "pass extra options to the delete_document method to client.delete" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         client.expects(:delete).with do |payload|
           assert_equal 'A',  payload[:parent]
@@ -304,7 +320,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "update the document by re-indexing when no changes are present" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         # Reset the fake `changes`
         instance.instance_variable_set(:@__changed_attributes, nil)
@@ -315,7 +331,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "update the document by partial update when changes are present" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         # Set the fake `changes` hash
         instance.instance_variable_set(:@__changed_attributes, {foo: 'bar'})
@@ -338,7 +354,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "exclude attributes not contained in custom as_indexed_json during partial update" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
+        instance = @dummy_indexing_model_with_callbacks_and_custom_as_indexed_json.new
 
         # Set the fake `changes` hash
         instance.instance_variable_set(:@__changed_attributes, {'foo' => 'B', 'bar' => 'D' })
@@ -358,7 +374,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "get attributes from as_indexed_json during partial update" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
+        instance = @dummy_indexing_model_with_callbacks_and_custom_as_indexed_json.new
 
         instance.instance_variable_set(:@__changed_attributes, { 'foo' => { 'bar' => 'BAR'} })
         # Overload as_indexed_json
@@ -379,7 +395,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "update only the specific attributes" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         # Set the fake `changes` hash
         instance.instance_variable_set(:@__changed_attributes, {author: 'john'})
@@ -402,7 +418,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
       should "pass options to the update_document_attributes method" do
         client   = mock('client')
-        instance = ::DummyIndexingModelWithCallbacks.new
+        instance = @dummy_indexing_model_with_callbacks.new
 
         client.expects(:update).with do |payload|
           assert_equal 'foo',  payload[:index]
