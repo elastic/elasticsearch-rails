@@ -20,13 +20,31 @@ module Elasticsearch
 
         # Get or set the index name used when storing and retrieving documents
         #
-        def index_name name=nil
-          @index_name = name || @index_name || begin
+        # @example Set the index name for the `Article` model
+        #
+        #     class Article
+        #       index_name "articles-#{Rails.env}"
+        #     end
+        #
+        # @example Set the index name for the `Article` model and re-evaluate it on each call
+        #
+        #     class Article
+        #       index_name { "articles-#{Time.now.year}" }
+        #     end
+        #
+        def index_name(name = nil, &block)
+          @index_name = name || block || @index_name || begin
             if respond_to?(:host) && host && host.is_a?(Module)
               self.host.to_s.underscore.gsub(/\//, '-')
             else
               self.class.to_s.underscore.gsub(/\//, '-')
             end
+          end
+
+          if @index_name.respond_to?(:call)
+            @index_name.call
+          else
+            @index_name
           end
         end; alias :index :index_name
 
