@@ -694,7 +694,7 @@ The source files for the application are available in the [`examples/music`](exa
 
 This software is licensed under the Apache 2 license, quoted below.
 
-    Copyright (c) 2014 Elasticsearch <http://www.elasticsearch.org>
+    Copyright (c) 2016 Elasticsearch <http://www.elasticsearch.org>
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
