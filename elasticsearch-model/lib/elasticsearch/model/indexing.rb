@@ -22,6 +22,10 @@ module Elasticsearch
           @settings = settings
         end
 
+        def update(additional_settings={})
+          @settings.update(additional_settings)
+        end
+
         def to_hash
           @settings
         end
@@ -186,11 +190,16 @@ module Elasticsearch
         #
         #     # => { "index" => { "number_of_shards" => 1 } }
         #
-        def settings(settings={}, &block)
-          settings = YAML.load(settings.read) if settings.respond_to?(:read)
-          @settings ||= Settings.new({})
+        def settings(settings_hash_or_io={}, &block)
+          additional_settings =
+            if settings_hash_or_io.respond_to?(:read)
+              YAML.load(settings_hash_or_io.read)
+            else
+              settings_hash_or_io
+            end
 
-          @settings.settings.update(settings) unless settings.empty?
+          @settings ||= Settings.new({})
+          @settings.update(additional_settings)
 
           if block_given?
             self.instance_eval(&block)
