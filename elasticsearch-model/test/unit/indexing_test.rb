@@ -41,6 +41,13 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_equal( {foo: 'boo', bar: 'bam'},  @dummy_indexing_model.settings.to_hash)
       end
 
+      should "successfully update the index settings when given a frozen hash" do
+        @dummy_indexing_model.settings({foo: 'boo'}.freeze)
+        @dummy_indexing_model.settings({bar: 'bam'}.freeze)
+
+        assert_equal( {foo: 'boo', bar: 'bam'},  @dummy_indexing_model.settings.to_hash)
+      end
+
       should "update and return the index settings from a yml file" do
         @dummy_indexing_model.settings File.open("test/support/model.yml")
         @dummy_indexing_model.settings bar: 'bam'

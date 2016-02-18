@@ -188,7 +188,7 @@ module Elasticsearch
         #
         def settings(settings={}, &block)
           settings = YAML.load(settings.read) if settings.respond_to?(:read)
-          @settings ||= Settings.new(settings)
+          @settings ||= Settings.new({})
 
           @settings.settings.update(settings) unless settings.empty?
 
