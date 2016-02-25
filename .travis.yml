@@ -33,3 +33,5 @@ install: "gem uninstall bundler -axI && gem install bundler -v 1.11.2"
 
 notifications:
   disable: true
+
+sudo: false
