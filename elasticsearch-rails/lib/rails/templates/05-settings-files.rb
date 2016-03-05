@@ -25,7 +25,9 @@ git commit: "-m 'Setup the Searchable module to load settings from file'"
 
 # ----- Copy the articles_settings.json file -------------------------------------------------------
 
-copy_file File.expand_path('../articles_settings.json', __FILE__), 'config/elasticsearch/articles_settings.json'
+# copy_file File.expand_path('../articles_settings.json', __FILE__), 'config/elasticsearch/articles_settings.json'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/articles_settings.json',
+    'config/elasticsearch/articles_settings.json', force: true
 
 git add:    "config/elasticsearch/articles_settings.json"
 git commit: "-m 'Create the articles settings file'"
