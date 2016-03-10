@@ -20,6 +20,11 @@ jdk:
 services:
   - mongodb
 
+before_install:
+  - gem update --system
+  - gem --version
+  - gem install bundler -v 1.11.2
+
 before_script:
   - ls -la /usr/share/elasticsearch/bin/elasticsearch
   - echo $PWD
@@ -28,8 +33,6 @@ before_script:
 
 script:
   - SERVER=launch TEST_CLUSTER_COMMAND=/usr/share/elasticsearch/bin/elasticsearch TEST_CLUSTER_PARAMS='-Des.default.path.conf=/etc/elasticsearch/ -Des.default.path.logs==/var/log/elasticsearch/' bundle exec rake test:all
-
-install: "gem uninstall bundler -axI && gem install bundler -v 1.11.2"
 
 notifications:
   disable: true
