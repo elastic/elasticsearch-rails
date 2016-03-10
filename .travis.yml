@@ -27,7 +27,7 @@ before_install:
 
 before_script:
   - ls -la /usr/share/elasticsearch/bin/elasticsearch
-  - echo $PWD
+  - elasticsearch -v
   - rake bundle:clean
   - rake bundle:install
 
