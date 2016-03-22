@@ -19,7 +19,7 @@ module Elasticsearch
     #     require 'elasticsearch/persistence/model'
     #
     #     class MyObject
-    #       include Elasticsearch::Persistence::Repository
+    #       include Elasticsearch::Persistence::Model
     #     end
     #
     module Model
