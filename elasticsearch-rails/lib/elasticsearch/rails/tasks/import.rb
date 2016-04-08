@@ -47,7 +47,8 @@ namespace :elasticsearch do
       end
 
       klass  = eval(ENV['CLASS'].to_s)
-      total  = klass.count rescue nil
+      scope  = ENV.fetch('SCOPE', 'all')
+      total  = klass.send(scope).count rescue nil
       pbar   = ANSI::Progressbar.new(klass.to_s, total) rescue nil
       pbar.__send__ :show if pbar
 
@@ -64,7 +65,7 @@ namespace :elasticsearch do
                                   batch_size: ENV.fetch('BATCH', 1000).to_i,
                                   index:      ENV.fetch('INDEX', nil),
                                   type:       ENV.fetch('TYPE',  nil),
-                                  scope:      ENV.fetch('SCOPE', nil) do |response|
+                                  scope:      scope do |response|
         pbar.inc response['items'].size if pbar
         STDERR.flush
         STDOUT.flush
