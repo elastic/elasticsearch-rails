@@ -111,7 +111,7 @@ module Elasticsearch
               :_source_include,
               :_source_exclude,
               :stats,
-              :timeout)
+              :timeout).delete_if {|_, value| value.nil? }
 
             scroll = search_params.delete(:scroll) || '5m'
 
