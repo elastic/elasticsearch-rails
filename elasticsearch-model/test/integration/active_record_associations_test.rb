@@ -133,11 +133,16 @@ module Elasticsearch
           # Include the search integration
           #
           Post.__send__ :include, Searchable
+          Comment.__send__ :include, Elasticsearch::Model
+          Comment.__send__ :include, Elasticsearch::Model::Callbacks
 
-          # ----- Reset the index -----------------------------------------------------------------
+          # ----- Reset the indices -----------------------------------------------------------------
 
           Post.delete_all
           Post.__elasticsearch__.create_index! force: true
+
+          Comment.delete_all
+          Comment.__elasticsearch__.create_index! force: true
         end
 
         should "index and find a document" do
@@ -299,6 +304,20 @@ module Elasticsearch
 
           assert_equal 0, Post.search('categories:One').size
           assert_equal 1, Post.search('categories:Updated').size
+        end
+
+        should "eagerly load associated records" do
+          post_1 = Post.create(title: 'One')
+          post_2 = Post.create(title: 'Two')
+          post_1.comments.create text: 'First comment'
+          post_1.comments.create text: 'Second comment'
+
+          Comment.__elasticsearch__.refresh_index!
+
+          records = Comment.search('first').records(includes: :post)
+
+          assert records.first.association(:post).loaded?, "The associated Post should be eagerly loaded"
+          assert_equal 'One', records.first.post.title
         end
       end
 
