@@ -1,3 +1,11 @@
+## 0.1.9
+
+* Added a `suggest` method to wrap the suggestions in response
+* Added the `:includes` option to Adapter::ActiveRecord::Records for eagerly loading associated models
+* Delegated `max_pages` method properly for Kaminari's `next_page`
+* Fixed `#dup` behaviour for Elasticsearch::Model
+* Fixed typos in the README and examples
+
 ## 0.1.8
 
 * Added "default per page" methods for pagination with multi model searches

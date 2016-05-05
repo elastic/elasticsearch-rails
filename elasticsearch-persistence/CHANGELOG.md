@@ -1,3 +1,7 @@
+## 0.1.9
+
+* Added, that raw `_source` is accessible from a model instance
+
 ## 0.1.8
 
 * Added `cluster.health wait_for_status: 'yellow'` to Repository integration test
