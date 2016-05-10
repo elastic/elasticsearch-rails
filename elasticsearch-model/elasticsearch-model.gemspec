@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie"
 
   s.add_development_dependency "bundler", "~> 1.3"
-  s.add_development_dependency "rake", "< 11.0"
+  s.add_development_dependency "rake", "~> 11.1"
 
   s.add_development_dependency "elasticsearch-extensions"
 
