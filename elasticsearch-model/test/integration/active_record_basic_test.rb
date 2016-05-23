@@ -12,6 +12,7 @@ module Elasticsearch
             create_table :articles do |t|
               t.string   :title
               t.string   :body
+              t.integer  :clicks, :default => 0
               t.datetime :created_at, :default => 'NOW()'
             end
           end
@@ -24,6 +25,7 @@ module Elasticsearch
               mapping do
                 indexes :title,         type: 'string', analyzer: 'snowball'
                 indexes :body,          type: 'string'
+                indexes :clicks,        type: 'integer'
                 indexes :created_at,    type: 'date'
               end
             end
@@ -31,7 +33,7 @@ module Elasticsearch
             def as_indexed_json(options = {})
               attributes
                 .symbolize_keys
-                .slice(:title, :body, :created_at)
+                .slice(:title, :body, :clicks, :created_at)
                 .merge(suggest_title: title)
             end
           end
@@ -39,9 +41,9 @@ module Elasticsearch
           Article.delete_all
           Article.__elasticsearch__.create_index! force: true
 
-          ::Article.create! title: 'Test',           body: ''
-          ::Article.create! title: 'Testing Coding', body: ''
-          ::Article.create! title: 'Coding',         body: ''
+          ::Article.create! title: 'Test',           body: '', clicks: 1
+          ::Article.create! title: 'Testing Coding', body: '', clicks: 2
+          ::Article.create! title: 'Coding',         body: '', clicks: 3
 
           Article.__elasticsearch__.refresh_index!
         end
@@ -217,11 +219,17 @@ module Elasticsearch
 
         should "allow dot access to response" do
           response = Article.search query: { match: { title: { query: 'test' } } },
-                                    aggregations: { dates: { date_histogram: { field: 'created_at', interval: 'hour' } } },
+                                    aggregations: {
+                                      dates: { date_histogram: { field: 'created_at', interval: 'hour' } },
+                                      clicks: { global: {}, aggregations: { min: { min: { field: 'clicks' } } } }
+                                    },
                                     suggest: { text: 'tezt', title: { term: { field: 'title', suggest_mode: 'always' } } }
 
           response.response.respond_to?(:aggregations)
-          assert_equal 2, response.aggregations.dates.buckets.first.doc_count
+          assert_equal 2,   response.aggregations.dates.buckets.first.doc_count
+          assert_equal 3,   response.aggregations.clicks.doc_count
+          assert_equal 1.0, response.aggregations.clicks.min.value
+          assert_nil        response.aggregations.clicks.max
 
           response.response.respond_to?(:suggest)
           assert_equal 1, response.suggestions.title.first.options.size

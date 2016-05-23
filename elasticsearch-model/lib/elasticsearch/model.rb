@@ -31,6 +31,7 @@ require 'elasticsearch/model/response/result'
 require 'elasticsearch/model/response/results'
 require 'elasticsearch/model/response/records'
 require 'elasticsearch/model/response/pagination'
+require 'elasticsearch/model/response/aggregations'
 require 'elasticsearch/model/response/suggestions'
 
 require 'elasticsearch/model/ext/active_record'

@@ -69,7 +69,7 @@ module Elasticsearch
         # Returns a Hashie::Mash of the aggregations
         #
         def aggregations
-          response['aggregations'] ? Hashie::Mash.new(response['aggregations']) : nil
+          Aggregations.new(response['aggregations'])
         end
 
         # Returns a Hashie::Mash of the suggestions
