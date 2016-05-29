@@ -341,6 +341,10 @@ response.results.first.title
 # => "Quick brown fox"
 ```
 
+Also you can use [`elasticsearch-dsl`](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-dsl),
+which provides a Ruby API for the
+[Elasticsearch Query DSL](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html).
+
 ### Index Configuration
 
 For proper search engine function, it's often necessary to configure the index properly.
