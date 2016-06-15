@@ -93,7 +93,7 @@ module Elasticsearch
 
             @@__types[ "#{hit[:_index]}::#{hit[:_type]}" ] ||= begin
               Registry.all.detect do |model|
-                model.index_name == hit[:_index] && model.document_type == hit[:_type]
+                Model.model_to_hit_selector.call(model, hit)
               end
             end
           end
