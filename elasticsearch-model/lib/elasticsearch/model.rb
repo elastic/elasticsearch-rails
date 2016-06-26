@@ -130,6 +130,12 @@ module Elasticsearch
       end
     end
 
+    # Access the module settings
+    #
+    def self.settings
+      @settings ||= {}
+    end
+
     module ClassMethods
       # Get the client common for all models
       #

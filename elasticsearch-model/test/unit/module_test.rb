@@ -53,5 +53,16 @@ class Elasticsearch::Model::ModuleTest < Test::Unit::TestCase
       end
     end
 
+    context "settings" do
+        should "access the settings" do
+          assert_not_nil Elasticsearch::Model.settings
+        end
+
+        should "allow to set settings" do
+          assert_nothing_raised { Elasticsearch::Model.settings[:foo] = 'bar' }
+          assert_equal 'bar', Elasticsearch::Model.settings[:foo]
+        end
+    end
+
   end
 end
