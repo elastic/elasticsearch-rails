@@ -75,7 +75,7 @@ module Elasticsearch
           def implicit(prop)
             value = nil
 
-            if Elasticsearch::Model.inheritance_enabled
+            if Elasticsearch::Model.settings[:inheritance_enabled]
               self.ancestors.each do |klass|
                 next if klass == self
                 break if value = klass.respond_to?(prop) && klass.send(prop)

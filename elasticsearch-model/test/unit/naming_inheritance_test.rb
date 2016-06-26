@@ -2,11 +2,11 @@ require "test_helper"
 
 class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
   def setup
-    Elasticsearch::Model.inheritance_enabled = true
+    Elasticsearch::Model.settings[:inheritance_enabled] = true
   end
 
   def teardown
-    Elasticsearch::Model.inheritance_enabled = false
+    Elasticsearch::Model.settings[:inheritance_enabled] = false
   end
 
   context "Naming module with inheritance" do
@@ -35,6 +35,16 @@ class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
       end
     end
 
+    class ::Cat < ::Animal
+      extend ActiveModel::Naming
+
+      extend  Elasticsearch::Model::Naming::ClassMethods
+      include Elasticsearch::Model::Naming::InstanceMethods
+
+      index_name "cats"
+      document_type "cat"
+    end
+
     should "return the default index_name" do
       assert_equal "test_bases", TestBase.index_name
       assert_equal "test_bases", TestBase.new.index_name
@@ -43,6 +53,9 @@ class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
     should "return the explicit index_name" do
       assert_equal "mammals", Animal.index_name
       assert_equal "mammals", Animal.new.index_name
+
+      assert_equal "cats", Cat.index_name
+      assert_equal "cats", Cat.new.index_name
     end
 
     should "return the ancestor index_name" do
@@ -63,6 +76,9 @@ class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
     should "return the explicit document_type" do
       assert_equal "mammal", Animal.document_type
       assert_equal "mammal", Animal.new.document_type
+
+      assert_equal "cat", Cat.document_type
+      assert_equal "cat", Cat.new.document_type
     end
 
     should "return the ancestor document_type" do
