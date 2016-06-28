@@ -704,6 +704,18 @@ response.records.records.class
 More examples can be found in the `examples` folder. Please see the `Elasticsearch::Model::Adapter`
 module and its submodules for technical information.
 
+### Settings
+
+The module provides a common `settings` method to customize various features.
+
+At the moment, the only supported setting is `:inheritance_enabled`, which makes the class receiving the module
+respect index names and document types of a super-class, eg. in case you're using "single table inheritance" (STI)
+in Rails:
+
+```ruby
+Elasticsearch::Model.settings[:inheritance_enabled] = true
+```
+
 ## Development and Community
 
 For local development, clone the repository and run `bundle install`. See `rake -T` for a list of
