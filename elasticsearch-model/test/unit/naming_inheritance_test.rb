@@ -10,18 +10,47 @@ class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
   end
 
   context "Naming module with inheritance" do
+
+    # Emulate a simplified version of Elasticsearch::Model, which includes methods via proxy.
+    # The proxy confuses inheritance detection, causing an infinite loop
+    module ::ProxiedModel
+      METHODS = [:search, :mapping, :mappings, :settings, :index_name, :document_type, :import]
+
+      def self.included(base)
+        base.class_eval do
+          include Elasticsearch::Model::Proxy
+
+          Elasticsearch::Model::Proxy::ClassMethodsProxy.class_eval do
+            include Elasticsearch::Model::Naming::ClassMethods
+          end
+
+          Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval do
+            include Elasticsearch::Model::Naming::InstanceMethods
+          end
+
+          class << self
+            METHODS.each do |method|
+              delegate method, to: :__elasticsearch__ unless self.public_instance_methods.include?(method)
+            end
+          end
+        end
+      end
+    end
+
     class ::TestBase
       extend ActiveModel::Naming
 
-      extend  Elasticsearch::Model::Naming::ClassMethods
-      include Elasticsearch::Model::Naming::InstanceMethods
+      include ::ProxiedModel
+      #extend  Elasticsearch::Model::Naming::ClassMethods
+      #include Elasticsearch::Model::Naming::InstanceMethods
     end
 
     class ::Animal < ::TestBase
       extend ActiveModel::Naming
 
-      extend  Elasticsearch::Model::Naming::ClassMethods
-      include Elasticsearch::Model::Naming::InstanceMethods
+      include ::ProxiedModel
+      #extend  Elasticsearch::Model::Naming::ClassMethods
+      #include Elasticsearch::Model::Naming::InstanceMethods
 
       index_name "mammals"
       document_type "mammal"
@@ -38,8 +67,9 @@ class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
     class ::Cat < ::Animal
       extend ActiveModel::Naming
 
-      extend  Elasticsearch::Model::Naming::ClassMethods
-      include Elasticsearch::Model::Naming::InstanceMethods
+      include ::ProxiedModel
+      #extend  Elasticsearch::Model::Naming::ClassMethods
+      #include Elasticsearch::Model::Naming::InstanceMethods
 
       index_name "cats"
       document_type "cat"
