@@ -139,3 +139,4 @@ module Elasticsearch
     end
   end
 end
+
