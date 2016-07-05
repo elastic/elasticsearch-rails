@@ -393,13 +393,7 @@ module Elasticsearch
             else
               changed_attributes
             end
-
-            client.update(
-              { index: index_name,
-                type:  document_type,
-                id:    self.id,
-                body:  { doc: attributes } }.merge(options)
-            )
+            update_document_attributes(attributes, options)
           else
             index_document(options)
           end
@@ -420,11 +414,14 @@ module Elasticsearch
         # @return [Hash] The response from Elasticsearch
         #
         def update_document_attributes(attributes, options={})
+          body_params = {}
+          body_params[:doc_as_upsert] = options.delete(:doc_as_upsert) if options[:doc_as_upsert]
+
           client.update(
             { index: index_name,
               type:  document_type,
               id:    self.id,
-              body:  { doc: attributes } }.merge(options)
+              body:  { doc: attributes }.merge(body_params) }.merge(options)
           )
         end
       end
