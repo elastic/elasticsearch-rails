@@ -112,6 +112,9 @@ module Elasticsearch
           # @return [Hash] The Elasticsearch response as a Hash
           #
           def update(attributes={}, options={})
+            # we need merge attributes before validations
+            self.attributes = self.attributes.merge(attributes)
+
             unless options.delete(:validate) == false
               return false unless valid?
             end
@@ -124,7 +127,6 @@ module Elasticsearch
               attributes.update( { updated_at: Time.now.utc } )
               response = self.class.gateway.update(self.id, { doc: attributes}.merge(options))
 
-              self.attributes = self.attributes.merge(attributes)
               @_index    = response['_index']
               @_type     = response['_type']
               @_version  = response['_version']
