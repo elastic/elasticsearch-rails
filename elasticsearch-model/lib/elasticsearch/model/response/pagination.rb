@@ -122,7 +122,7 @@ module Elasticsearch
           end
 
           def length
-            search.definition[:size]
+            results.count
           end
 
           # Main pagination method
