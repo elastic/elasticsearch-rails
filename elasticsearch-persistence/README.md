@@ -79,6 +79,18 @@ n = repository.find(1)
 => <Note:0x007fcbfc0c4980 @attributes={"id"=>1, "text"=>"Test"}>
 ```
 
+... check if object exists in the repository ...
+
+```ruby
+n = repository.exists?(1)
+# HEAD http://localhost:9200/repository/_all/1 [status: 200]
+=> true
+
+n = repository.exists?(2)
+# HEAD http://localhost:9200/repository/_all/2 [status: 404]
+=> false
+```
+
 ...search for it...
 
 ```ruby
