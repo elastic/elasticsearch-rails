@@ -117,21 +117,35 @@ module Elasticsearch
             end
             raise DocumentNotPersisted, "Object not persisted: #{self.inspect}" unless persisted?
 
+            # Give a chance to callback methods to update the new attributes
+            @_new_attributes = attributes
+
             run_callbacks :update do
               options.update index: self._index if self._index
               options.update type:  self._type  if self._type
 
               attributes.update( { updated_at: Time.now.utc } )
-              response = self.class.gateway.update(self.id, { doc: attributes}.merge(options))
+              response = self.class.gateway.update(self.id, { doc: @_new_attributes}.merge(options))
 
-              self.attributes = self.attributes.merge(attributes)
+              self.attributes = self.attributes.merge(@_new_attributes)
               @_index    = response['_index']
               @_type     = response['_type']
               @_version  = response['_version']
 
+              @_new_attributes = nil
+
               response
             end
           end; alias :update_attributes :update
+
+          # Get access to new attributes values during a before_update callback.
+          # Allows the callback to update the new attributes. For instance, to set the value of a computed attribute
+          #
+          # @return [Hash] The new attributes hash
+          #
+          def new_attributes
+            @_new_attributes
+          end
 
           # Increments a numeric attribute (via Elasticsearch's "Update" API) and returns the response
           #
