@@ -487,7 +487,7 @@ class Article < ActiveRecord::Base
 end
 ```
 
-#### Asynchronous Callbacks
+#### Asynchronous Callbacks using plain async. libraries
 
 Of course, you're still performing an HTTP request during your database transaction, which is not optimal
 for large-scale applications. A better option would be to process the index operations in background,
@@ -542,6 +542,39 @@ Indexer JID-eb7e2daf389a1e5e83697128 INFO: PUT http://localhost:9200/articles/ar
 Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: > {"id":1,"title":"Updated", ...}
 Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: < {"ok":true,"_index":"articles","_type":"article","_id":"1","_version":6}
 Indexer JID-eb7e2daf389a1e5e83697128 INFO: done: 0.006 sec
+```
+
+#### Asynchronous Callbacks using Rails Active Job
+
+Rails 4.2 introduced generalized interface concept of async. libraries called [Active Job](http://guides.rubyonrails.org/active_job_basics.html)
+
+Here is a version of example above using it:
+
+```ruby
+class Article
+  include Elasticsearch::Model
+
+  after_save    { Indexer.perform_async(operation: :index,  model_name: self.class.name ,id: self.id) }
+  after_destroy { Indexer.perform_async(operation: :delete, model_name: self.class.name ,id: self.id) }
+end
+```
+
+```ruby
+class Indexer < ActiveJob::Base
+  queue_as :elasticsearch
+
+  def perform(operation:, model_name:, id:)
+    record = model_name.constantize.find(id)
+
+    case operation.to_s
+    when /index/
+      record.__elasticsearch__.index_document
+    when /delete/
+      record.__elasticsearch__.delete_document
+    else raise ArgumentError, "Unknown operation '#{operation}'"
+    end
+  end
+end
 ```
 
 ### Model Serialization
