@@ -26,6 +26,7 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
       assert_respond_to @response, :limit
       assert_respond_to @response, :offset
       assert_respond_to @response, :total_count
+      assert_respond_to @response, :entry_name
     end
 
     context "#page method" do

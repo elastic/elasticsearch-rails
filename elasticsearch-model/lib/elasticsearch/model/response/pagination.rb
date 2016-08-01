@@ -20,8 +20,9 @@ module Elasticsearch
             Elasticsearch::Model::Response::Results.__send__ :include, ::Kaminari::PageScopeMethods
             Elasticsearch::Model::Response::Records.__send__ :include, ::Kaminari::PageScopeMethods
 
-            Elasticsearch::Model::Response::Results.__send__ :delegate, :limit_value, :offset_value, :total_count, :max_pages, to: :response
-            Elasticsearch::Model::Response::Records.__send__ :delegate, :limit_value, :offset_value, :total_count, :max_pages, to: :response
+            methods = [:limit_value, :offset_value, :total_count, :max_pages, :entry_name]
+            Elasticsearch::Model::Response::Results.__send__ :delegate, *methods, to: :response
+            Elasticsearch::Model::Response::Records.__send__ :delegate, *methods, to: :response
 
             base.class_eval <<-RUBY, __FILE__, __LINE__ + 1
               # Define the `page` Kaminari method
@@ -93,6 +94,10 @@ module Elasticsearch
           #
           def total_count
             results.total
+          end
+
+          def entry_name
+            klass.entry_name
           end
 
           # Returns the models's `per_page` value or the default
