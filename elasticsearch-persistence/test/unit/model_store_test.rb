@@ -421,6 +421,28 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         assert_equal 999, d.count
       end
 
+      should "not update updated_at if touch is false" do
+        #Time.expects(:now).never
+
+        subject.expects(:persisted?).returns(true)
+        subject.expects(:id).returns('abc123').at_least_once
+        original_updated_at = 1.year.ago
+        subject.updated_at = original_updated_at
+
+        @gateway
+            .expects(:update)
+            .with do |id, options|
+          assert_equal 'abc123', id
+          assert_equal 'UPDATED', options[:doc][:title]
+          true
+        end
+            .returns({'_id' => 'abc123', 'version' => 2})
+
+        assert subject.update({title: 'UPDATED'}, {touch: false})
+
+        assert_equal original_updated_at, subject.updated_at
+      end
+
       should "update the model in its own index" do
         @gateway.expects(:update)
           .with do |model, options|

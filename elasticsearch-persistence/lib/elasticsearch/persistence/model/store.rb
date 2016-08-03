@@ -124,7 +124,10 @@ module Elasticsearch
               options.update index: self._index if self._index
               options.update type:  self._type  if self._type
 
-              attributes.update( { updated_at: Time.now.utc } )
+              unless options.delete(:touch) == false
+                attributes.update( { updated_at: Time.now.utc } )
+              end
+
               response = self.class.gateway.update(self.id, { doc: @_new_attributes}.merge(options))
 
               self.attributes = self.attributes.merge(@_new_attributes)
