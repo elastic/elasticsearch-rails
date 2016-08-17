@@ -104,7 +104,10 @@ module Elasticsearch
         end
 
         should "preserve the search results order for records" do
-          response = Article.search('title:code')
+          response = Article.search query: { match: { title: 'code' }}, sort: { clicks: :desc }
+
+          assert_equal response.records[0].clicks, 3
+          assert_equal response.records[1].clicks, 2
 
           response.records.each_with_hit do |r, h|
             assert_equal h._id, r.id.to_s
