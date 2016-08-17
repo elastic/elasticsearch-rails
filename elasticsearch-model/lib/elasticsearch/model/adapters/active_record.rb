@@ -26,7 +26,10 @@ module Elasticsearch
             # by redefining `to_a`, unless the user has called `order()`
             #
             sql_records.instance_exec(response.response['hits']['hits']) do |hits|
-              define_singleton_method :to_a do
+              ar_records_method_name = :to_a
+              ar_records_method_name = :records if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 5
+
+              define_singleton_method(ar_records_method_name) do
                 if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
                   self.load
                 else
