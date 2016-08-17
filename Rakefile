@@ -35,6 +35,8 @@ namespace :bundle do
     sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile"
     puts '-'*80
     sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile"
+    puts '-'*80
+    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile"
   end
 
   desc "Remove Gemfile.lock in all subprojects"
@@ -45,6 +47,7 @@ namespace :bundle do
     end
     sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile.lock"
     sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile.lock"
+    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile.lock"
   end
 end
 

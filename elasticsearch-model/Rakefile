@@ -30,10 +30,11 @@ namespace :test do
     test.warning = false
   end
 
-  desc "Run integration tests against ActiveModel 3 and 4"
+  desc "Run integration tests against ActiveModel 3, 4 and 5"
   task :integration do
     sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_integration" unless defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
     sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/5.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
   end
 
   desc "Run unit and integration tests"
