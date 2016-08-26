@@ -394,12 +394,7 @@ module Elasticsearch
               changed_attributes
             end
 
-            client.update(
-              { index: index_name,
-                type:  document_type,
-                id:    self.id,
-                body:  { doc: attributes } }.merge(options)
-            )
+            update_document_attributes attributes, options
           else
             index_document(options)
           end
