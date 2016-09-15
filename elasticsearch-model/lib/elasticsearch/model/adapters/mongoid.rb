@@ -63,9 +63,10 @@ module Elasticsearch
           # @see https://github.com/karmi/retire/pull/724
           #
           def __find_in_batches(options={}, &block)
-            options[:batch_size] ||= 1_000
-  
-            all.no_timeout.each_slice(options[:batch_size]) do |items|
+            batch_size = options.fetch(:batch_size, 1_000)
+            base_criteria = options.fetch(:criteria, all)
+
+            base_criteria.no_timeout.each_slice(batch_size) do |items|
               yield items
             end
           end
