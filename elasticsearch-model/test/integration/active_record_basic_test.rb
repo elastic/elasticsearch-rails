@@ -217,6 +217,14 @@ module Elasticsearch
           end
         end
 
+        should "return records within the scope the search was called on" do
+          scope = Article.where("clicks >= ?", 2)
+          response = scope.search 'title:test'
+
+          assert_equal 1, response.records.size
+          assert_equal 'Testing Coding', response.records.first.title
+        end
+
         should "allow dot access to response" do
           response = Article.search query: { match: { title: { query: 'test' } } },
                                     aggregations: {

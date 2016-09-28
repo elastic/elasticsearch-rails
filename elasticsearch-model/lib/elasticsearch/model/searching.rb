@@ -99,7 +99,7 @@ module Elasticsearch
         def search(query_or_payload, options={})
           search   = SearchRequest.new(self, query_or_payload, options)
 
-          Response::Response.new(self, search)
+          Response::Response.new(all, search)
         end
 
       end

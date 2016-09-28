@@ -7,6 +7,7 @@ class Elasticsearch::Model::SearchingTest < Test::Unit::TestCase
 
       def self.index_name;    'foo'; end
       def self.document_type; 'bar'; end
+      def self.all;           self;  end
     end
 
     setup do
