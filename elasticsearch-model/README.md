@@ -561,19 +561,42 @@ end
 
 ```ruby
 class Indexer < ActiveJob::Base
-  queue_as :elasticsearch
-
-  def perform(operation:, model_name:, id:)
-    record = model_name.constantize.find(id)
-
-    case operation.to_s
-    when /index/
+  module Index
+    def self.execute(record)
       record.__elasticsearch__.index_document
-    when /delete/
-      record.__elasticsearch__.delete_document
-    else raise ArgumentError, "Unknown operation '#{operation}'"
+    end
+
+    def self.fetch_record(model_name, model_id)
+      model_name.constantize.find_by(id: model_id)
     end
   end
+
+  module Delete
+    def self.execute(record)
+      record.__elasticsearch__.delete_document
+    end
+
+    def self.fetch_record(model_name, model_id)
+      model_name.constantize.new(id: model_id) # Record is deleted so we cannot retrieve it form DB,
+                                               # init new object with its id
+    end
+  end
+
+  queue_as :elasticsearch
+
+  def perform(operation:, model_name:, model_id:)
+    case operation.to_s
+    when /index/
+      service_module = Indexer::Index
+    when /delete/
+      service_module = Indexer::Delete
+    else raise ArgumentError, "Unknown operation '#{operation}'"
+    end
+
+    record = service_module.fetch_record(model_name, model_id)
+    service_module.execute(record)
+  end
+end
 end
 ```
 
