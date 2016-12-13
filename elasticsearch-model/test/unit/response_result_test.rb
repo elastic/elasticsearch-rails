@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_support/json/encoding'
 
 class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
   context "Response result" do
@@ -80,7 +81,6 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
     end
 
     should "delegate as_json to @result even when ActiveSupport changed half of Ruby" do
-      require 'active_support/json/encoding'
       result = Elasticsearch::Model::Response::Result.new foo: 'bar'
 
       result.instance_variable_get(:@result).expects(:as_json)
