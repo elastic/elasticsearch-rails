@@ -1,6 +1,9 @@
 require 'test_helper'
 require 'active_record'
 
+# Needed for ActiveRecord 3.x ?
+ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" ) unless ActiveRecord::Base.connected?
+
 class Question < ActiveRecord::Base
   include Elasticsearch::Model
 
