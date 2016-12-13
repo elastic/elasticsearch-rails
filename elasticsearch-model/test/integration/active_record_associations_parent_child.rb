@@ -71,12 +71,15 @@ module Elasticsearch
               t.string     :author
               t.timestamps
             end
+
             create_table :answers do |t|
               t.text       :text
               t.string     :author
               t.references :question
               t.timestamps
-            end and add_index(:answers, :question_id)
+            end
+
+            add_index(:answers, :question_id) unless index_exists?(:answers, :question_id)
           end
 
           Question.delete_all

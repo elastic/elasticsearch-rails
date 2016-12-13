@@ -56,7 +56,8 @@ ActiveRecord::Schema.define(version: 1) do
     t.references :article
     t.timestamps
   end
-  add_index(:comments, :article_id)
+
+  add_index(:comments, :article_id) unless index_exists?(:comments, :article_id)
 end
 
 # ----- Elasticsearch client setup ----------------------------------------------------------------
