@@ -9,6 +9,28 @@ ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":m
 module Elasticsearch
   module Model
     class ActiveRecordBasicIntegrationTest < Elasticsearch::Test::IntegrationTestCase
+
+      class ::Article < ActiveRecord::Base
+        include Elasticsearch::Model
+        include Elasticsearch::Model::Callbacks
+
+        settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+          mapping do
+            indexes :title,         type: 'string', analyzer: 'snowball'
+            indexes :body,          type: 'string'
+            indexes :clicks,        type: 'integer'
+            indexes :created_at,    type: 'date'
+          end
+        end
+
+        def as_indexed_json(options = {})
+          attributes
+            .symbolize_keys
+            .slice(:title, :body, :clicks, :created_at)
+            .merge(suggest_title: title)
+        end
+      end
+
       context "ActiveRecord basic integration" do
         setup do
           ActiveRecord::Schema.define(:version => 1) do
@@ -17,27 +39,6 @@ module Elasticsearch
               t.string   :body
               t.integer  :clicks, :default => 0
               t.datetime :created_at, :default => 'NOW()'
-            end
-          end
-
-          class ::Article < ActiveRecord::Base
-            include Elasticsearch::Model
-            include Elasticsearch::Model::Callbacks
-
-            settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-              mapping do
-                indexes :title,         type: 'string', analyzer: 'snowball'
-                indexes :body,          type: 'string'
-                indexes :clicks,        type: 'integer'
-                indexes :created_at,    type: 'date'
-              end
-            end
-
-            def as_indexed_json(options = {})
-              attributes
-                .symbolize_keys
-                .slice(:title, :body, :clicks, :created_at)
-                .merge(suggest_title: title)
             end
           end
 

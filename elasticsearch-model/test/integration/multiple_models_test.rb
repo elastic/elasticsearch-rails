@@ -9,6 +9,30 @@ Mongo.setup!
 module Elasticsearch
   module Model
     class MultipleModelsIntegration < Elasticsearch::Test::IntegrationTestCase
+      module ::NameSearch
+        extend ActiveSupport::Concern
+
+        included do
+          include Elasticsearch::Model
+          include Elasticsearch::Model::Callbacks
+
+          settings index: {number_of_shards: 1, number_of_replicas: 0} do
+            mapping do
+              indexes :name, type: 'string', analyzer: 'snowball'
+              indexes :created_at, type: 'date'
+            end
+          end
+        end
+      end
+
+      class ::Episode < ActiveRecord::Base
+        include NameSearch
+      end
+
+      class ::Series < ActiveRecord::Base
+        include NameSearch
+      end
+
       context "Multiple models" do
         setup do
           ActiveRecord::Schema.define(:version => 1) do
@@ -23,30 +47,6 @@ module Elasticsearch
             end
           end
 
-          module ::NameSearch
-            extend ActiveSupport::Concern
-
-            included do
-              include Elasticsearch::Model
-              include Elasticsearch::Model::Callbacks
-
-              settings index: {number_of_shards: 1, number_of_replicas: 0} do
-                mapping do
-                  indexes :name, type: 'string', analyzer: 'snowball'
-                  indexes :created_at, type: 'date'
-                end
-              end
-            end
-          end
-
-          class ::Episode < ActiveRecord::Base
-            include NameSearch
-          end
-
-          class ::Series < ActiveRecord::Base
-            include NameSearch
-          end
-
           [::Episode, ::Series].each do |model|
             model.delete_all
             model.__elasticsearch__.create_index! force: true
@@ -55,7 +55,6 @@ module Elasticsearch
             model.create name: "The greatest #{model.name}"
             model.__elasticsearch__.refresh_index!
           end
-
         end
 
         should "find matching documents across multiple models" do

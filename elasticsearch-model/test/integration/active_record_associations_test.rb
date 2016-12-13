@@ -8,6 +8,58 @@ module Elasticsearch
   module Model
     class ActiveRecordAssociationsIntegrationTest < Elasticsearch::Test::IntegrationTestCase
 
+      # ----- Search integration via Concern module -----------------------------------------------------
+
+      module Searchable
+        extend ActiveSupport::Concern
+
+        included do
+          include Elasticsearch::Model
+          include Elasticsearch::Model::Callbacks
+
+          # Set up the mapping
+          #
+          settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+            mapping do
+              indexes :title,      analyzer: 'snowball'
+              indexes :created_at, type: 'date'
+
+              indexes :authors do
+                indexes :first_name
+                indexes :last_name
+                indexes :full_name, type: 'multi_field' do
+                  indexes :full_name
+                  indexes :raw, analyzer: 'keyword'
+                end
+              end
+
+              indexes :categories, analyzer: 'keyword'
+
+              indexes :comments, type: 'nested' do
+                indexes :text
+                indexes :author
+              end
+            end
+          end
+
+          # Customize the JSON serialization for Elasticsearch
+          #
+          def as_indexed_json(options={})
+            {
+              title: title,
+              text:  text,
+              categories: categories.map(&:title),
+              authors:    authors.as_json(methods: [:full_name], only: [:full_name, :first_name, :last_name]),
+              comments:   comments.as_json(only: [:text, :author])
+            }
+          end
+
+          # Update document in the index after touch
+          #
+          after_touch() { __elasticsearch__.index_document }
+        end
+      end
+
       context "ActiveRecord associations" do
         setup do
 
@@ -40,7 +92,9 @@ module Elasticsearch
               t.string     :author
               t.references :post
               t.timestamps
-            end and add_index(:comments, :post_id)
+            end
+
+            add_index(:comments, :post_id) unless index_exists?(:comments, :post_id)
 
             create_table :posts do |t|
               t.string     :title
@@ -79,58 +133,6 @@ module Elasticsearch
             has_many                :authorships
             has_many                :authors, through: :authorships
             has_many                :comments
-          end
-
-          # ----- Search integration via Concern module -----------------------------------------------------
-
-          module Searchable
-            extend ActiveSupport::Concern
-
-            included do
-              include Elasticsearch::Model
-              include Elasticsearch::Model::Callbacks
-
-              # Set up the mapping
-              #
-              settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-                mapping do
-                  indexes :title,      analyzer: 'snowball'
-                  indexes :created_at, type: 'date'
-
-                  indexes :authors do
-                    indexes :first_name
-                    indexes :last_name
-                    indexes :full_name, type: 'multi_field' do
-                      indexes :full_name
-                      indexes :raw, analyzer: 'keyword'
-                    end
-                  end
-
-                  indexes :categories, analyzer: 'keyword'
-
-                  indexes :comments, type: 'nested' do
-                    indexes :text
-                    indexes :author
-                  end
-                end
-              end
-
-              # Customize the JSON serialization for Elasticsearch
-              #
-              def as_indexed_json(options={})
-                {
-                  title: title,
-                  text:  text,
-                  categories: categories.map(&:title),
-                  authors:    authors.as_json(methods: [:full_name], only: [:full_name, :first_name, :last_name]),
-                  comments:   comments.as_json(only: [:text, :author])
-                }
-              end
-
-              # Update document in the index after touch
-              #
-              after_touch() { __elasticsearch__.index_document }
-            end
           end
 
           # Include the search integration

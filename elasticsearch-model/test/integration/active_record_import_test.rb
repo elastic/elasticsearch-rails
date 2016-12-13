@@ -7,6 +7,20 @@ ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":m
 module Elasticsearch
   module Model
     class ActiveRecordImportIntegrationTest < Elasticsearch::Test::IntegrationTestCase
+
+      class ::ImportArticle < ActiveRecord::Base
+        include Elasticsearch::Model
+
+        scope :popular, -> { where('views >= 50') }
+
+        mapping do
+          indexes :title,      type: 'string'
+          indexes :views,      type: 'integer'
+          indexes :numeric,    type: 'integer'
+          indexes :created_at, type: 'date'
+        end
+      end
+
       context "ActiveRecord importing" do
         setup do
           ActiveRecord::Schema.define(:version => 1) do
@@ -15,19 +29,6 @@ module Elasticsearch
               t.integer  :views
               t.string   :numeric # For the sake of invalid data sent to Elasticsearch
               t.datetime :created_at, :default => 'NOW()'
-            end
-          end
-
-          class ::ImportArticle < ActiveRecord::Base
-            include Elasticsearch::Model
-
-            scope :popular, -> { where('views >= 50') }
-
-            mapping do
-              indexes :title,      type: 'string'
-              indexes :views,      type: 'integer'
-              indexes :numeric,    type: 'integer'
-              indexes :created_at, type: 'date'
             end
           end
 

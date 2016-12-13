@@ -7,21 +7,21 @@ ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":m
 module Elasticsearch
   module Model
     class ActiveRecordPaginationTest < Elasticsearch::Test::IntegrationTestCase
+      class ::ArticleForPagination < ActiveRecord::Base
+        include Elasticsearch::Model
+
+        scope :published, -> { where(published: true) }
+
+        settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+          mapping do
+            indexes :title,      type: 'string', analyzer: 'snowball'
+            indexes :created_at, type: 'date'
+          end
+        end
+      end
+
       context "ActiveRecord pagination" do
         setup do
-          class ::ArticleForPagination < ActiveRecord::Base
-            include Elasticsearch::Model
-
-            scope :published, -> { where(published: true) }
-
-            settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-              mapping do
-                indexes :title,      type: 'string', analyzer: 'snowball'
-                indexes :created_at, type: 'date'
-              end
-            end
-          end
-
           ActiveRecord::Schema.define(:version => 1) do
             create_table ::ArticleForPagination.table_name do |t|
               t.string   :title
