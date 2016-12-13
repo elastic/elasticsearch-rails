@@ -36,7 +36,7 @@ module Elasticsearch
                   self.__send__(:exec_queries)
                 end
                 @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
-              end
+              end if self
             end
 
             sql_records
@@ -45,7 +45,7 @@ module Elasticsearch
           # Prevent clash with `ActiveSupport::Dependencies::Loadable`
           #
           def load
-            records.load
+            records.__send__(:load)
           end
 
           # Intercept call to the `order` method, so we can ignore the order from Elasticsearch
