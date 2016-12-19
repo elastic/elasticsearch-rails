@@ -70,7 +70,7 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
     end
 
     should "properly look up types for classes" do
-      assert_equal 'string',  Elasticsearch::Persistence::Model::Utils::lookup_type(String)
+      assert_equal 'text',    Elasticsearch::Persistence::Model::Utils::lookup_type(String)
       assert_equal 'integer', Elasticsearch::Persistence::Model::Utils::lookup_type(Integer)
       assert_equal 'float',   Elasticsearch::Persistence::Model::Utils::lookup_type(Float)
       assert_equal 'date',    Elasticsearch::Persistence::Model::Utils::lookup_type(Date)
