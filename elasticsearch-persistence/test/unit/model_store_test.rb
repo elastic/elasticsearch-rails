@@ -31,6 +31,8 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
       attribute :count, Integer, default: 0
       attribute :created_at, DateTime, default: lambda { |o,a| Time.now.utc }
       attribute :updated_at, DateTime, default: lambda { |o,a| Time.now.utc }
+
+      validates :title, presence: true
     end
 
     setup do
@@ -65,7 +67,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         $stderr.expects(:puts).with('CREATED')
         $stderr.expects(:puts).with('SAVED')
 
-        DummyStoreModelWithCallback.create name: 'test'
+        DummyStoreModelWithCallback.create title: 'test'
       end
     end
 
@@ -163,7 +165,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         DummyStoreModelWithCallback.after_save { $stderr.puts "SAVED" }
 
         $stderr.expects(:puts).with('SAVED')
-        d = DummyStoreModelWithCallback.new name: 'Test'
+        d = DummyStoreModelWithCallback.new title: 'Test'
         d.save
       end
 
@@ -176,7 +178,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           end
           .returns({'_id' => 'abc'})
 
-        d = DummyStoreModel.new name: 'Test'
+        d = DummyStoreModel.new title: 'Test'
         d.instance_variable_set(:@_index, 'my_custom_index')
         d.instance_variable_set(:@_type,  'my_custom_type')
         d.save
@@ -191,7 +193,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 
-        d = DummyStoreModel.new name: 'Test'
+        d = DummyStoreModel.new title: 'Test'
         d.instance_variable_set(:@_index, 'my_custom_index')
         d.instance_variable_set(:@_type,  'my_custom_type')
         d.save
@@ -311,7 +313,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         assert subject.update( {}, { script: 'EXEC' } )
       end
 
-      should "not update an invalid model" do
+      should "not update an already invalid model" do
         @gateway
           .expects(:update)
           .never
@@ -321,6 +323,19 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         end
 
         assert ! subject.update(title: 'INVALID')
+      end
+
+      should "not update an invalid model" do
+
+        subject.instance_eval do
+          def persisted?; true; end;
+        end
+
+        @gateway
+          .expects(:update)
+          .never
+
+        assert ! subject.update(title: nil)
       end
 
       should "skip the validation with the :validate option" do
@@ -376,7 +391,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
         DummyStoreModelWithCallback.after_update { $stderr.puts "UPDATED" }
 
         $stderr.expects(:puts).with('UPDATED')
-        d = DummyStoreModelWithCallback.new name: 'Test'
+        d = DummyStoreModelWithCallback.new title: 'Test'
         d.expects(:persisted?).returns(true)
         d.update name: 'Update'
       end
@@ -390,7 +405,7 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           end
           .returns({'_id' => 'abc'})
 
-        d = DummyStoreModel.new name: 'Test'
+        d = DummyStoreModel.new title: 'Test'
         d.instance_variable_set(:@_index, 'my_custom_index')
         d.instance_variable_set(:@_type,  'my_custom_type')
         d.expects(:persisted?).returns(true)
@@ -407,12 +422,12 @@ class Elasticsearch::Persistence::ModelStoreTest < Test::Unit::TestCase
           end
           .returns({'_id' => 'abc', '_index' => 'foo', '_type' => 'bar', '_version' => '100'})
 
-        d = DummyStoreModel.new name: 'Test'
+        d = DummyStoreModel.new title: 'Test'
         d.instance_variable_set(:@_index, 'my_custom_index')
         d.instance_variable_set(:@_type,  'my_custom_type')
         d.expects(:persisted?).returns(true)
 
-        d.update name: 'Update'
+        d.update title: 'Update'
 
         assert_equal 'foo', d._index
         assert_equal 'bar', d._type
