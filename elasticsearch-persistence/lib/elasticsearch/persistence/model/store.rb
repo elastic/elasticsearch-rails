@@ -112,6 +112,7 @@ module Elasticsearch
           # @return [Hash] The Elasticsearch response as a Hash
           #
           def update(attributes={}, options={})
+            attributes = self.attributes.merge(attributes)
             unless options.delete(:validate) == false
               return false unless valid?
             end
