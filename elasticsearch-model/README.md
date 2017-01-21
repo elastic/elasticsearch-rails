@@ -300,10 +300,9 @@ In a Rails controller, use the the `params[:page]` parameter to paginate through
 @articles.next_page
 # => 3
 ```
-To initialize and include the Kaminari pagination support manually:
+To include the Kaminari pagination support manually:
 
 ```ruby
-Kaminari::Hooks.init
 Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
 ```
 
