@@ -4,6 +4,8 @@ require 'active_record'
 # Needed for ActiveRecord 3.x ?
 ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" ) unless ActiveRecord::Base.connected?
 
+::ActiveRecord::Base.raise_in_transactional_callbacks = true if ::ActiveRecord::Base.respond_to?(:raise_in_transactional_callbacks) && ::ActiveRecord::VERSION::MAJOR.to_s < '5'
+
 class Question < ActiveRecord::Base
   include Elasticsearch::Model
 
