@@ -30,7 +30,7 @@ module Elasticsearch
             end
           end
 
-          Kaminari::Hooks.init
+          Kaminari::Hooks.init if defined?(Kaminari::Hooks)
 
           ArticleForPagination.delete_all
           ArticleForPagination.__elasticsearch__.create_index! force: true

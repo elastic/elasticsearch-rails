@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 1) do
   end
 end
 
-Kaminari::Hooks.init
+Kaminari::Hooks.init if defined?(Kaminari::Hooks) if defined?(Kaminari::Hooks)
 
 class Article < ActiveRecord::Base
 end

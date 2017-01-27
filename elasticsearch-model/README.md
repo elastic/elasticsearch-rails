@@ -303,7 +303,7 @@ In a Rails controller, use the the `params[:page]` parameter to paginate through
 To initialize and include the Kaminari pagination support manually:
 
 ```ruby
-Kaminari::Hooks.init
+Kaminari::Hooks.init if defined?(Kaminari::Hooks)
 Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
 ```
 
