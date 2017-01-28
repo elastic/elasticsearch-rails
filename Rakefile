@@ -1,6 +1,6 @@
 require 'pathname'
 
-subprojects = %w| elasticsearch-model elasticsearch-rails elasticsearch-persistence |
+subprojects = %w| elasticsearch-rails elasticsearch-persistence elasticsearch-model |
 
 __current__ = Pathname( File.expand_path('..', __FILE__) )
 
@@ -23,9 +23,6 @@ task :bundle => 'bundle:install'
 namespace :bundle do
   desc "Run `bundle install` in all subprojects"
   task :install do
-    puts '-'*80
-    sh "bundle install --gemfile #{__current__}/Gemfile"
-    puts
     subprojects.each do |project|
       puts '-'*80
       sh "bundle install --gemfile #{__current__.join(project)}/Gemfile"
@@ -41,7 +38,6 @@ namespace :bundle do
 
   desc "Remove Gemfile.lock in all subprojects"
   task :clean do
-    sh "rm -f Gemfile.lock"
     subprojects.each do |project|
       sh "rm -f #{__current__.join(project)}/Gemfile.lock"
     end
