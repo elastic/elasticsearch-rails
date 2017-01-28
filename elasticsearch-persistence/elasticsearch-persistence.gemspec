@@ -23,10 +23,10 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 1.9.3"
 
-  s.add_dependency "elasticsearch",       '> 0.4'
+  s.add_dependency "elasticsearch",       '~> 1.1'
   s.add_dependency "elasticsearch-model", '>= 0.1'
-  s.add_dependency "activesupport",       '> 3'
-  s.add_dependency "activemodel",         '> 3'
+  s.add_dependency "activesupport",       '> 4'
+  s.add_dependency "activemodel",         '> 4'
   s.add_dependency "hashie"
   s.add_dependency "virtus"
 
@@ -35,22 +35,19 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "oj"
 
-  s.add_development_dependency "rails"
+  s.add_development_dependency "rails", '> 4'
 
   s.add_development_dependency "elasticsearch-extensions"
 
-  s.add_development_dependency "minitest", "~> 4.2"
-  s.add_development_dependency "test-unit" if defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
+  s.add_development_dependency "minitest"
+  s.add_development_dependency "test-unit"
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
   s.add_development_dependency "yard"
   s.add_development_dependency "ruby-prof"
   s.add_development_dependency "pry"
-  s.add_development_dependency "ci_reporter", "~> 1.9"
 
-  if defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
-    s.add_development_dependency "simplecov"
-    s.add_development_dependency "cane"
-  end
+  s.add_development_dependency "simplecov"
+  s.add_development_dependency "cane"
 end
