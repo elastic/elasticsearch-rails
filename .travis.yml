@@ -2,39 +2,48 @@
 # Configuration file for http://travis-ci.org/elasticsearch/elasticsearch-rails
 # -----------------------------------------------------------------------------
 
+dist: trusty
+
+sudo: required
+
 language: ruby
+
+services:
+  - mongodb
 
 branches:
   only:
     - master
     - travis
 
-rvm:
-  - 1.9.3
-  - 2.1
-  - 2.2
+matrix:
+  include:
+    - rvm: 2.2.6
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
 
-jdk:
-  - openjdk7
+    - rvm: 2.3.3
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
 
-services:
-  - mongodb
+    - rvm: 2.3.3
+      jdk: oraclejdk8
+      env: TEST_SUITE=integration SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-1.7.5/bin/elasticsearch
 
 before_install:
-  - gem update --system
+  - gem update --system --no-rdoc --no-ri
   - gem --version
-  - gem install bundler -v 1.11.2
+  - gem install bundler -v 1.14.3 --no-rdoc --no-ri
+  - bundle version
+  - curl -sS https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.5.tar.gz | tar xz -C /tmp
 
-before_script:
-  - ls -la /usr/share/elasticsearch/bin/elasticsearch
-  - elasticsearch -v
+install:
+  - bundle install
   - rake bundle:clean
   - rake bundle:install
 
 script:
-  - SERVER=launch TEST_CLUSTER_COMMAND=/usr/share/elasticsearch/bin/elasticsearch TEST_CLUSTER_PARAMS='-Des.default.path.conf=/etc/elasticsearch/ -Des.default.path.logs==/var/log/elasticsearch/' bundle exec rake test:all
+  - rake test:$TEST_SUITE
 
 notifications:
   disable: true
-
-sudo: false
