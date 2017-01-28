@@ -4,6 +4,15 @@ desc "Run unit tests"
 task :default => 'test:unit'
 task :test    => 'test:unit'
 
+namespace :bundler do
+  desc "Install dependencies for all the Gemfiles"
+  task :install do
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle install"
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle install"
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/5.0.gemfile', __FILE__)}' bundle install"
+  end
+end
+
 # ----- Test tasks ------------------------------------------------------------
 
 require 'rake/testtask'
