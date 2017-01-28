@@ -92,12 +92,11 @@ module Elasticsearch
 
           assert_equal 0, records.size
           assert_equal 6, records.current_page
-          assert_equal 5, records.prev_page
+
           assert_equal nil, records.next_page
           assert_equal 3, records.total_pages
 
           assert ! records.first_page?,   "Should NOT be the first page"
-          assert   records.last_page?,    "Should be the last page"
           assert   records.out_of_range?, "Should be out of range"
         end
 
