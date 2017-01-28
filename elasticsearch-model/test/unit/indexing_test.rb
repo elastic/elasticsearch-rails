@@ -423,7 +423,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
     end
 
     context "Checking for index existence" do
-      context "the index exists" do
+      context "when the index exists" do
         should "return true" do
           indices = mock('indices', exists: true)
           client  = stub('client', indices: indices)
@@ -434,7 +434,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
-      context "the index does not exists" do
+      context "when the index does not exists" do
         should "return false" do
           indices = mock('indices', exists: false)
           client  = stub('client', indices: indices)
@@ -445,7 +445,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
-      context "the indices raises" do
+      context "when the indices API raises an error" do
         should "return false" do
           client  = stub('client')
           client.expects(:indices).raises(StandardError)
@@ -456,7 +456,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
-      context "the indices raises" do
+      context "the indices.exists API raises an error" do
         should "return false" do
           indices = stub('indices')
           client  = stub('client')
