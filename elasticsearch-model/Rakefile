@@ -23,12 +23,12 @@ namespace :test do
     Rake::Task['ci:setup:minitest'].invoke
   end
 
-  Rake::TestTask.new(:unit) do |test|
+  Rake::TestTask.new(:run_unit) do |test|
     Rake::Task['test:ci_reporter'].invoke if ENV['CI']
     test.libs << 'lib' << 'test'
     test.test_files = FileList["test/unit/**/*_test.rb"]
-    # test.verbose = true
-    # test.warning = true
+    test.verbose = false
+    test.warning = false
   end
 
   Rake::TestTask.new(:run_integration) do |test|
@@ -39,9 +39,16 @@ namespace :test do
     test.warning = false
   end
 
+  desc "Run unit tests against ActiveModel 3, 4 and 5"
+  task :unit do
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_unit"
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle exec rake test:run_unit"
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/5.0.gemfile', __FILE__)}' bundle exec rake test:run_unit"
+  end
+
   desc "Run integration tests against ActiveModel 3, 4 and 5"
   task :integration do
-    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_integration" unless defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
+    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
     sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
     sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/5.0.gemfile', __FILE__)}' bundle exec rake test:run_integration"
   end
