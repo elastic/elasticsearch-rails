@@ -70,7 +70,7 @@ module Elasticsearch
           ActiveRecord::Schema.define(version: 1) do
             create_table :categories do |t|
               t.string     :title
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :categories_posts, id: false do |t|
@@ -79,21 +79,21 @@ module Elasticsearch
 
             create_table :authors do |t|
               t.string     :first_name, :last_name
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :authorships do |t|
               t.string     :first_name, :last_name
               t.references :post
               t.references :author
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :comments do |t|
               t.string     :text
               t.string     :author
               t.references :post
-              t.timestamps
+              t.timestamps null: false
             end
 
             add_index(:comments, :post_id) unless index_exists?(:comments, :post_id)
@@ -102,7 +102,7 @@ module Elasticsearch
               t.string     :title
               t.text       :text
               t.boolean    :published
-              t.timestamps
+              t.timestamps null: false
             end
           end
 

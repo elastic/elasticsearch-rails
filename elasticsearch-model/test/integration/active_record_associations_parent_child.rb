@@ -71,14 +71,14 @@ module Elasticsearch
               t.string     :title
               t.text       :text
               t.string     :author
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :answers do |t|
               t.text       :text
               t.string     :author
               t.references :question
-              t.timestamps
+              t.timestamps null: false
             end
 
             add_index(:answers, :question_id) unless index_exists?(:answers, :question_id)
