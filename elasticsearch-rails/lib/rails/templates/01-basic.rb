@@ -145,7 +145,8 @@ say_status  "Application", "Disabling asset logging in development...\n", :yello
 puts        '-'*80, ''; sleep 0.25
 
 environment 'config.assets.logger = false', env: 'development'
-gem 'quiet_assets',  group: "development"
+# quiet_assets move in sprockets-rails > 3.1 https://github.com/rails/sprockets-rails/pull/355 
+# gem 'quiet_assets',  group: "development"
 
 git add:    "Gemfile*"
 git add:    "config/"
