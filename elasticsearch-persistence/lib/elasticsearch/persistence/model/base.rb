@@ -55,8 +55,12 @@ module Elasticsearch
             @_source
           end
 
+          def to_h
+            attributes.symbolize_keys
+          end; alias :to_hash :to_h
+
           def to_s
-            "#<#{self.class} #{attributes.to_hash.inspect.gsub(/:(\w+)=>/, '\1: ')}>"
+            "#<#{self.class} #{to_h.inspect.gsub(/:(\w+)=>/, '\1: ')}>"
           end; alias :inspect :to_s
         end
       end
@@ -75,9 +79,9 @@ module Elasticsearch
               'integer'
             when type == Float
               'float'
-            when type == Date || type == Time || type == DateTime
+            when type == Date || type == Time || type == DateTime || type == ActiveSupport::TimeWithZone
               'date'
-            when type == Virtus::Attribute::Boolean
+            when type == ActiveAttr::Typecasting::Boolean
               'boolean'
           end
         end; module_function :lookup_type

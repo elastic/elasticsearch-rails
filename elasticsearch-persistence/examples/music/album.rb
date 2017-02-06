@@ -1,5 +1,5 @@
 class Meta
-  include Virtus.model
+  include ActiveAttr::Model
 
   attribute :rating
   attribute :have
@@ -18,16 +18,16 @@ class Album
   end
 
   attribute :artist
-  attribute :artist_id, String, mapping: { index: 'not_analyzed' }
-  attribute :label, Hash, mapping: { type: 'object' }
+  attribute :artist_id, type: String, mapping: { index: 'not_analyzed' }
+  attribute :label, type: Hash, mapping: { type: 'object' }
 
   attribute :title
-  attribute :released, Date
+  attribute :released, type: Date
   attribute :notes
   attribute :uri
 
-  attribute :tracklist, Array, mapping: { type: 'object' }
+  attribute :tracklist, type: Array, mapping: { type: 'object' }
 
   attribute :styles
-  attribute :meta, Meta, mapping: { type: 'object' }
+  attribute :meta, type: Meta, mapping: { type: 'object' }
 end

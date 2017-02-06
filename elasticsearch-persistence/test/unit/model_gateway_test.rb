@@ -52,7 +52,7 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
     end
 
     should "configure the mapping via attribute" do
-      DummyGatewayModel.attribute :name, String, mapping: { analyzer: 'snowball' }
+      DummyGatewayModel.attribute :name, type: String, mapping: { analyzer: 'snowball' }
 
       assert_respond_to DummyGatewayModel, :name
       assert_equal 'snowball',
@@ -60,7 +60,7 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
     end
 
     should "configure the mapping via an attribute block" do
-      DummyGatewayModel.attribute :name, String do
+      DummyGatewayModel.attribute :name, type: String do
         indexes :name, analyzer: 'custom'
       end
 
@@ -74,7 +74,7 @@ class Elasticsearch::Persistence::ModelGatewayTest < Test::Unit::TestCase
       assert_equal 'integer', Elasticsearch::Persistence::Model::Utils::lookup_type(Integer)
       assert_equal 'float',   Elasticsearch::Persistence::Model::Utils::lookup_type(Float)
       assert_equal 'date',    Elasticsearch::Persistence::Model::Utils::lookup_type(Date)
-      assert_equal 'boolean', Elasticsearch::Persistence::Model::Utils::lookup_type(Virtus::Attribute::Boolean)
+      assert_equal 'boolean', Elasticsearch::Persistence::Model::Utils::lookup_type(ActiveAttr::Typecasting::Boolean)
     end
 
     should "remove IDs from hash when serializing" do

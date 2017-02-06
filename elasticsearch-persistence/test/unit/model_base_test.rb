@@ -9,7 +9,7 @@ class Elasticsearch::Persistence::ModelBaseTest < Test::Unit::TestCase
       class DummyBaseModel
         include Elasticsearch::Persistence::Model
 
-        attribute :name, String
+        attribute :name, type: String
       end
     end
 

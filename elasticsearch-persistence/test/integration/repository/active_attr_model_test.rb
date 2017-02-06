@@ -1,26 +1,30 @@
 require 'test_helper'
 
-require 'virtus'
+require 'active_attr'
 
 module Elasticsearch
   module Persistence
-    class RepositoryWithVirtusIntegrationTest < Elasticsearch::Test::IntegrationTestCase
+    class RepositoryWithActiveAttrIntegrationTest < Elasticsearch::Test::IntegrationTestCase
 
       class ::Page
-        include Virtus.model
+        include ActiveAttr::Model
 
-        attribute :id,        String, writer: :private
-        attribute :title,     String
-        attribute :views,     Integer, default: 0
-        attribute :published, Boolean, default: false
-        attribute :slug,      String,  default: lambda { |page, attr| page.title.downcase.gsub(' ', '-') }
+        attribute :id,        type: String, writer: :private
+        attribute :title,     type: String
+        attribute :views,     type: Integer, default: 0
+        attribute :published, type: Boolean, default: false
+        attribute :slug,      type: String,  default: lambda { title.downcase.gsub(' ', '-') }
 
         def set_id(id)
           self.id = id
         end
+
+        def to_hash
+          attributes.symbolize_keys
+        end
       end
 
-      context "The repository with a Virtus model" do
+      context "The repository with an active_attr model" do
         setup do
           @repository = Elasticsearch::Persistence::Repository.new do
             index :pages
