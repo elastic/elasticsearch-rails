@@ -290,7 +290,7 @@ response.page(2).results
 response.page(2).records
 ```
 
-In a Rails controller, use the the `params[:page]` parameter to paginate through results:
+In a Rails controller, use the `params[:page]` parameter to paginate through results:
 
 ```ruby
 @articles = Article.search(params[:q]).page(params[:page]).records
