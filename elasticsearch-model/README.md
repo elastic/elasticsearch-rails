@@ -248,7 +248,7 @@ When you want to access both the database `records` and search `results`, use th
 (or `map_with_hit`) iterator:
 
 ```ruby
-response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._score}" }
+response.records.each_with_hit { |record, hit| Rails.logger.info "* #{record.title}: #{hit._score}" }
 # * Quick brown fox: 0.02250402
 # * Fast black dogs: 0.02250402
 ```

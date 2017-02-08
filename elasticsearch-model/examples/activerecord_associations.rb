@@ -161,9 +161,9 @@ article.comments.create text: 'Second comment for article One'
 
 Elasticsearch::Model.client.indices.refresh index: Elasticsearch::Model::Registry.all.map(&:index_name)
 
-puts "\n\e[1mArticles containing 'one':\e[0m", Article.search('one').records.to_a.map(&:inspect), ""
+Rails.logger.info "\n\e[1mArticles containing 'one':\e[0m", Article.search('one').records.to_a.map(&:inspect), ""
 
-puts "\n\e[1mModels containing 'one':\e[0m", Elasticsearch::Model.search('one').records.to_a.map(&:inspect), ""
+Rails.logger.info "\n\e[1mModels containing 'one':\e[0m", Elasticsearch::Model.search('one').records.to_a.map(&:inspect), ""
 
 # Load model
 #
@@ -171,7 +171,8 @@ article = Article.all.includes(:categories, :authors, :comments).first
 
 # ----- Pry ---------------------------------------------------------------------------------------
 
-puts '', '-'*Pry::Terminal.width!
+Rails.logger.debug ''
+Rails.logger.debug '-'*Pry::Terminal.width!
 
 Pry.start(binding, prompt: lambda { |obj, nest_level, _| '> ' },
                    input: StringIO.new("article.as_indexed_json\n"),

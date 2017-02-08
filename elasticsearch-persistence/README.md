@@ -143,7 +143,7 @@ repository = Elasticsearch::Persistence::Repository.new do
 
   # Customize the de-serialization logic
   def deserialize(document)
-    puts "# ***** CUSTOM DESERIALIZE LOGIC KICKING IN... *****"
+    Rails.logger.info "# ***** CUSTOM DESERIALIZE LOGIC KICKING IN... *****"
     super
   end
 end
@@ -241,7 +241,7 @@ note = Note.new 'id' => 1, 'text' => 'Document with image', 'image' => '... BINA
 repository.save(note)
 # PUT http://localhost:9200/notes_development/note/1
 # > {"id":1,"text":"Document with image","image":"Li4uIEJJTkFSWSBEQVRBIC4uLg==\n"}
-puts repository.find(1).attributes['image']
+Rails.logger.info repository.find(1).attributes['image']
 # GET http://localhost:9200/notes_development/note/1
 # < {... "_source" : { ... "image":"Li4uIEJJTkFSWSBEQVRBIC4uLg==\n"}}
 # => ... BINARY DATA ...
@@ -397,7 +397,7 @@ results = repository.search(query: { match: { title: 'fox dog' } })
 # Iterate over the objects
 #
 results.each do |note|
-  puts "* #{note.attributes[:title]}"
+  Rails.logger.info "* #{note.attributes[:title]}"
 end
 # * QUICK BROWN FOX
 # * FAST WHITE DOG
@@ -405,7 +405,7 @@ end
 # Iterate over the objects and hits
 #
 results.each_with_hit do |note, hit|
-  puts "* #{note.attributes[:title]}, score: #{hit._score}"
+  Rails.logger.info "* #{note.attributes[:title]}, score: #{hit._score}"
 end
 # * QUICK BROWN FOX, score: 0.29930896
 # * FAST WHITE DOG, score: 0.29930896
@@ -494,7 +494,7 @@ class Article
 
   # Execute code after saving the model.
   #
-  after_save { puts "Successfully saved: #{self}" }
+  after_save { Rails.logger.info "Successfully saved: #{self}" }
 end
 ```
 
@@ -580,7 +580,7 @@ The model also supports familiar `find_in_batches` and `find_each` methods to ef
 retrieve big collections of model instances, using the Elasticsearch's _Scan API_:
 
 ```ruby
-Article.find_each(_source_include: 'title') { |a| puts "===> #{a.title.upcase}" }
+Article.find_each(_source_include: 'title') { |a| Rails.logger.info "===> #{a.title.upcase}" }
 # GET http://localhost:9200/articles/article/_search?scroll=5m&search_type=scan&size=20
 # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhb...
 # ===> TEST
@@ -598,13 +598,13 @@ results = Article.search query: { match: { title: 'test' } },
                          aggregations: {  authors: { terms: { field: 'author.raw' } } },
                          highlight: { fields: { title: {} } }
 
-puts results.first.title
+Rails.logger.info results.first.title
 # Test
 
-puts results.first.hit.highlight['title']
+Rails.logger.info results.first.hit.highlight['title']
 # <em>Test</em>
 
-puts results.response.aggregations.authors.buckets.each { |b| puts "#{b['key']} : #{b['doc_count']}" }
+Rails.logger.info results.response.aggregations.authors.buckets.each { |b| Rails.logger.info "#{b['key']} : #{b['doc_count']}" }
 # John : 1
 ```
 

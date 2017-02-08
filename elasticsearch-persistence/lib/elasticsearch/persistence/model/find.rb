@@ -69,19 +69,19 @@ module Elasticsearch
           #
           # @example Return all models in batches of 20 x number of primary shards
           #
-          #     Person.find_in_batches { |batch| puts batch.map(&:name) }
+          #     Person.find_in_batches { |batch| Rails.logger.info batch.map(&:name) }
           #
           # @example Return all models in batches of 100 x number of primary shards
           #
-          #     Person.find_in_batches(size: 100) { |batch| puts batch.map(&:name) }
+          #     Person.find_in_batches(size: 100) { |batch| Rails.logger.info batch.map(&:name) }
           #
           # @example Return all models matching a specific query
           #
-          #      Person.find_in_batches(query: { match: { name: 'test' } }) { |batch| puts batch.map(&:name) }
+          #      Person.find_in_batches(query: { match: { name: 'test' } }) { |batch| Rails.logger.info batch.map(&:name) }
           #
           # @example Return all models, fetching only the `name` attribute from Elasticsearch
           #
-          #      Person.find_in_batches( _source_include: 'name') { |_| puts _.response.hits.hits.map(&:to_hash) }
+          #      Person.find_in_batches( _source_include: 'name') { |_| Rails.logger.info _.response.hits.hits.map(&:to_hash) }
           #
           # @example Leave out the block to return an Enumerator instance
           #
@@ -147,7 +147,7 @@ module Elasticsearch
           #
           # @example Print out the people's names by scrolling through the index
           #
-          #     Person.find_each { |person| puts person.name }
+          #     Person.find_each { |person| Rails.logger.info person.name }
           #
           #     # # GET http://localhost:9200/people/person/_search?scroll=5m&search_type=scan&size=20
           #     # # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhbj...
