@@ -1,6 +1,6 @@
 #     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/03-expert.rb
 
-unless File.read('README.rdoc').include? '== [2] Pretty'
+unless File.read('README.md').include? '== [2] Pretty'
   say_status  "ERROR", "You have to run the 01-basic.rb and 02-pretty.rb templates first.", :red
   exit(1)
 end
@@ -21,9 +21,9 @@ rescue Redis::CannotConnectError
   exit(1)
 end
 
-append_to_file 'README.rdoc', <<-README
+append_to_file 'README.md', <<-README
 
-== [3] Expert
+## [3] Expert
 
 The `expert` template changes to a complex database schema with model relationships: article belongs
 to a category, has many authors and comments.
@@ -39,7 +39,7 @@ to a category, has many authors and comments.
 
 README
 
-git add:    "README.rdoc"
+git add:    "README.md"
 git commit: "-m '[03] Updated the application README'"
 
 # ----- Add gems into Gemfile ---------------------------------------------------------------------
