@@ -32,12 +32,6 @@ get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasti
 git add:    "config/elasticsearch/articles_settings.json"
 git commit: "-m 'Create the articles settings file'"
 
-# ----- Temporarily set local repo for testing ----------------------------------------------------
-
-gsub_file "Gemfile",
-    %r{gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'},
-    "gem 'elasticsearch-model', path: File.expand_path('../../../../../../elasticsearch-model', __FILE__)"
-
 # ----- Run bundle install ------------------------------------------------------------------------
 
 run "bundle install"

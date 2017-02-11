@@ -12,12 +12,12 @@ module Searchable
     #
     settings index: { number_of_shards: 1, number_of_replicas: 0 } do
       mapping do
-        indexes :title, type: 'multi_field' do
+        indexes :title, type: 'text' do
           indexes :title,     analyzer: 'snowball'
           indexes :tokenized, analyzer: 'simple'
         end
 
-        indexes :content, type: 'multi_field' do
+        indexes :content, type: 'text'  do
           indexes :content,   analyzer: 'snowball'
           indexes :tokenized, analyzer: 'simple'
         end
@@ -25,22 +25,22 @@ module Searchable
         indexes :published_on, type: 'date'
 
         indexes :authors do
-          indexes :full_name, type: 'multi_field' do
+          indexes :full_name, type: 'text' do
             indexes :full_name
-            indexes :raw, analyzer: 'keyword'
+            indexes :raw, type: 'keyword'
           end
         end
 
-        indexes :categories, analyzer: 'keyword'
+        indexes :categories, type: 'keyword'
 
         indexes :comments, type: 'nested' do
           indexes :body, analyzer: 'snowball'
           indexes :stars
           indexes :pick
-          indexes :user, analyzer: 'keyword'
-          indexes :user_location, type: 'multi_field' do
+          indexes :user, type: 'keyword'
+          indexes :user_location, type: 'text' do
             indexes :user_location
-            indexes :raw, analyzer: 'keyword'
+            indexes :raw, type: 'keyword'
           end
         end
       end
@@ -74,8 +74,9 @@ module Searchable
       # Prefill and set the filters (top-level `post_filter` and aggregation `filter` elements)
       #
       __set_filters = lambda do |key, f|
-        @search_definition[:post_filter][:and] ||= []
-        @search_definition[:post_filter][:and]  |= [f]
+        @search_definition[:post_filter][:bool] ||= {}
+        @search_definition[:post_filter][:bool][:must] ||= []
+        @search_definition[:post_filter][:bool][:must]  |= [f]
 
         @search_definition[:aggregations][key.to_sym][:filter][:bool][:must] ||= []
         @search_definition[:aggregations][key.to_sym][:filter][:bool][:must]  |= [f]

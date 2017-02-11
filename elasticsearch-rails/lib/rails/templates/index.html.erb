@@ -37,8 +37,8 @@
           sorted by <%= sort.humanize.downcase %> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
-          <li><%= link_to "Sort by published on", search_path(params.except(:controller, :action).merge(s: 'published_on')), class: 'btn-xs' %></li>
-          <li><%= link_to "Sort by relevancy",    search_path(params.except(:controller, :action).merge(s: nil)), class: 'btn-xs' %></li>
+          <li><%= link_to "Sort by published on", search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(s: 'published_on')), class: 'btn-xs' %></li>
+          <li><%= link_to "Sort by relevancy",    search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(s: nil)), class: 'btn-xs' %></li>
         </ul>
       </div>
     </div>
@@ -47,14 +47,14 @@
   <hr>
 </div>
 
-<% if @articles.size < 1 && @articles.response.suggest.present? %>
+<% if @articles.size < 1 && @articles.response.suggestions.present? %>
 <div class="col-md-12">
   <p class="alert alert-warning">
     No documents have been found.
-    <% if @articles.response.suggest['suggest_title'].present? || @articles.response.suggest['suggest_body'].present? %>
+    <% if @articles.response.suggestions['suggest_title'].present? || @articles.response.suggestions['suggest_body'].present? %>
       Maybe you mean
-      <%= @articles.response.suggest.map { |k,v| v.first['options'] }.flatten.map {|v| v['text']}.uniq.map do |term|
-        link_to term, search_path(params.except(:controller, :action).merge q: term)
+      <%= @articles.response.suggestions.map { |k,v| v.first['options'] }.flatten.map {|v| v['text']}.uniq.map do |term|
+        link_to term, search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge q: term)
       end.to_sentence(last_word_connector: ' or ').html_safe %>?
     <% end %>
   </p>
@@ -65,12 +65,12 @@
   <% unless @articles.size < 1 %>
 
     <div class="categories panel panel-default">
-      <p class="panel-heading"><%= link_to 'All Sections &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(c: nil))%></p>
+      <p class="panel-heading"><%= link_to 'All Sections &rarr;'.html_safe, search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(c: nil))%></p>
 
       <div class="list-group">
         <% @articles.response.response['aggregations']['categories']['categories']['buckets'].each do |c| %>
         <%=
-          link_to search_path(params.except(:controller, :action).merge(c: c['key'])),
+          link_to search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(c: c['key'])),
                   class: "list-group-item#{' active' if params[:c] == c['key']}" do
                     c['key'].titleize.html_safe + content_tag(:small, c['doc_count'], class: 'badge').html_safe
           end
@@ -80,12 +80,12 @@
     </div>
 
     <div class="authors panel panel-default">
-      <p class="panel-heading"><%= link_to 'All Authors &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(a: nil))%></p>
+      <p class="panel-heading"><%= link_to 'All Authors &rarr;'.html_safe, search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(a: nil))%></p>
 
       <div class="list-group">
         <% @articles.response.response['aggregations']['authors']['authors']['buckets'].each do |a| %>
         <%=
-          link_to search_path(params.except(:controller, :action).merge(a: a['key'])),
+          link_to search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(a: a['key'])),
                   class: "list-group-item#{' active' if params[:a] == a['key']}" do
                     a['key'].titleize.html_safe + content_tag(:small, a['doc_count'], class: 'badge').html_safe
           end
@@ -95,7 +95,7 @@
     </div>
 
     <div class="authors panel panel-default">
-      <p class="panel-heading"><%= link_to 'Any Date &rarr;'.html_safe, search_path(params.except(:controller, :action).merge(w: nil))%></p>
+      <p class="panel-heading"><%= link_to 'Any Date &rarr;'.html_safe, search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(w: nil))%></p>
 
       <div class="list-group">
         <% @articles.response.response['aggregations']['published']['published']['buckets'].each do |w| %>
@@ -104,7 +104,7 @@
           __end   = __start.end_of_week
           __date  = __start.to_date.to_s(:iso)
 
-          link_to search_path(params.except(:controller, :action).merge(w: __date)),
+          link_to search_path(params.permit(:q, :a, :c, :s, :w, :comments).merge(w: __date)),
                   class: "list-group-item#{' active' if params[:w] == __date}" do
                     "#{__start.to_date.to_s(:short)} &mdash; #{__end.to_date.to_s(:short)}".html_safe + \
                     content_tag(:small, w['doc_count'], class: 'badge').html_safe

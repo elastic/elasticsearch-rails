@@ -154,8 +154,8 @@ end
 
 # ----- Customize the header -----------------------------------------------------------------
 
-gsub_file 'app/views/articles/index.html.erb', %r{<h1>Listing articles</h1>} do |match|
-  "<h1><%= controller.action_name == 'search' ? 'Searching articles' : 'Listing articles' %></h1>"
+gsub_file 'app/views/articles/index.html.erb', %r{<h1>.*Articles</h1>} do |match|
+  "<h1><%= controller.action_name == 'search' ? 'Search results' : 'Articles' %></h1>"
 end
 
 # ----- Customize the results listing -------------------------------------------------------------

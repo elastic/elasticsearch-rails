@@ -12,12 +12,12 @@ module Searchable
     #
     settings index: { number_of_shards: 1, number_of_replicas: 0 } do
       mapping do
-        indexes :title, type: 'multi_field' do
+        indexes :title, type: 'text' do
           indexes :title,     analyzer: 'snowball'
           indexes :tokenized, analyzer: 'simple'
         end
 
-        indexes :content, type: 'multi_field' do
+        indexes :content, type: 'text'  do
           indexes :content,   analyzer: 'snowball'
           indexes :tokenized, analyzer: 'simple'
         end
@@ -25,22 +25,22 @@ module Searchable
         indexes :published_on, type: 'date'
 
         indexes :authors do
-          indexes :full_name, type: 'multi_field' do
+          indexes :full_name, type: 'text' do
             indexes :full_name
-            indexes :raw, analyzer: 'keyword'
+            indexes :raw, type: 'keyword'
           end
         end
 
-        indexes :categories, analyzer: 'keyword'
+        indexes :categories, type: 'keyword'
 
         indexes :comments, type: 'nested' do
           indexes :body, analyzer: 'snowball'
           indexes :stars
           indexes :pick
-          indexes :user, analyzer: 'keyword'
-          indexes :user_location, type: 'multi_field' do
+          indexes :user, type: 'keyword'
+          indexes :user_location, type: 'text' do
             indexes :user_location
-            indexes :raw, analyzer: 'keyword'
+            indexes :raw, type: 'keyword'
           end
         end
       end
@@ -98,7 +98,7 @@ module Searchable
                     query do
                       multi_match do
                         query q
-                        fields   'body'
+                        fields   'comments.body'
                         operator 'and'
                       end
                     end

@@ -41,7 +41,9 @@ git commit: "-m 'Initial commit: Clean application'"
 
 # ----- Download Elasticsearch --------------------------------------------------------------------
 
-unless (Net::HTTP.get(URI.parse('http://localhost:9200')) rescue false)
+ELASTICSEARCH_URL = ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200')
+
+unless (Net::HTTP.get(URI.parse(ELASTICSEARCH_URL)) rescue false)
   COMMAND = <<-COMMAND.gsub(/^    /, '')
     curl -# -O "http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.tar.gz"
     tar -zxf elasticsearch-1.0.1.tar.gz
@@ -116,6 +118,7 @@ end
 # ----- Auxiliary gems ----------------------------------------------------------------------------
 
 gem 'mocha', group: 'test', require: 'mocha/api'
+gem 'rails-controller-testing', group: 'test'
 
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
 
@@ -145,9 +148,8 @@ say_status  "Application", "Disabling asset logging in development...\n", :yello
 puts        '-'*80, ''; sleep 0.25
 
 environment 'config.assets.logger = false', env: 'development'
-gem 'quiet_assets',  group: "development"
+environment 'config.assets.quiet  = true',  env: 'development'
 
-git add:    "Gemfile*"
 git add:    "config/"
 git commit: "-m 'Disabled asset logging in development'"
 
@@ -208,7 +210,7 @@ inject_into_file 'app/controllers/articles_controller.rb', before: %r|^\s*# GET 
   CODE
 end
 
-inject_into_file 'app/views/articles/index.html.erb', after: %r{<h1>Listing articles</h1>}i do
+inject_into_file 'app/views/articles/index.html.erb', after: %r{<h1>.*Articles</h1>}i do
   <<-CODE
 
 
@@ -236,21 +238,21 @@ resources :articles do
   end
 CODE
 
-gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/controllers' : 'test/functional'}/articles_controller_test.rb", %r{setup do.*?end}m, <<-CODE
+gsub_file "test/controllers/articles_controller_test.rb", %r{setup do.*?end}m, <<-CODE
 setup do
     @article = articles(:one)
 
-    Article.__elasticsearch__.import
+    Article.__elasticsearch__.import force: true
     Article.__elasticsearch__.refresh_index!
   end
 CODE
 
-inject_into_file "#{Rails::VERSION::STRING > '4' ? 'test/controllers' : 'test/functional'}/articles_controller_test.rb", after: %r{test "should get index" do.*?end}m do
+inject_into_file "test/controllers/articles_controller_test.rb", after: %r{test "should get index" do.*?end}m do
   <<-CODE
 
 
   test "should get search results" do
-    get :search, q: 'mystring'
+    #{ Rails::VERSION::STRING > '5' ? 'get search_articles_url(q: "mystring")' : 'get :search, q: "mystring"' }
     assert_response :success
     assert_not_nil assigns(:articles)
     assert_equal 2, assigns(:articles).size
