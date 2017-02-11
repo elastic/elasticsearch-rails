@@ -1,13 +1,13 @@
 #     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/04-dsl.rb
 
-unless File.read('README.rdoc').include? '== [3] Expert'
+unless File.read('README.md').include? '## [3] Expert'
   say_status  "ERROR", "You have to run the 01-basic.rb, 02-pretty.rb and 03-expert.rb templates first.", :red
   exit(1)
 end
 
-append_to_file 'README.rdoc', <<-README
+append_to_file 'README.md', <<-README
 
-== [4] DSL
+## [4] DSL
 
 The `dsl` template refactors the search definition in SearchController#index
 to use the [`elasticsearch-dsl`](https://github.com/elastic/elasticsearch-ruby/tree/dsl/elasticsearch-dsl)
@@ -15,7 +15,7 @@ Rubygem for better expresivity and readability of the code.
 
 README
 
-git add:    "README.rdoc"
+git add:    "README.md"
 git commit: "-m '[03] Updated the application README'"
 
 run 'rm -f app/assets/stylesheets/*.scss'

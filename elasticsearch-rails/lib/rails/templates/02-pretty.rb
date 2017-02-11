@@ -1,6 +1,6 @@
 # $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
 
-unless File.read('README.rdoc').include? '== [1] Basic'
+unless File.read('README.md').include? '## [1] Basic'
   say_status  "ERROR", "You have to run the 01-basic.rb template first.", :red
   exit(1)
 end
@@ -9,9 +9,9 @@ puts
 say_status  "README", "Updating Readme...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-append_to_file 'README.rdoc', <<-README
+append_to_file 'README.md', <<-README
 
-== [2] Pretty
+## [2] Pretty
 
 The `pretty` template builds on the `basic` version and brings couple of improvements:
 
@@ -22,7 +22,7 @@ The `pretty` template builds on the `basic` version and brings couple of improve
 
 README
 
-git add:    "README.rdoc"
+git add:    "README.md"
 git commit: "-m '[02] Updated the application README'"
 
 # ----- Update application.rb ---------------------------------------------------------------------
