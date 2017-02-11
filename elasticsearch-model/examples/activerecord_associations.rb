@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 1) do
 
   create_table :authors do |t|
     t.string     :first_name, :last_name
+    t.string     :department
     t.timestamps null: false
   end
 
@@ -84,7 +85,7 @@ module Searchable
     def as_indexed_json(options={})
       self.as_json(
         include: { categories: { only: :title},
-                   authors:    { methods: [:full_name], only: [:full_name] },
+                   authors:    { methods: [:full_name, :department], only: [:full_name, :department] },
                    comments:   { only: :text }
                  })
     end
@@ -140,7 +141,7 @@ category = Category.create title: 'One'
 
 # Create author
 #
-author = Author.create first_name: 'John', last_name: 'Smith'
+author = Author.create first_name: 'John', last_name: 'Smith', department: 'Business'
 
 # Create article
 
@@ -192,7 +193,16 @@ puts "",
      ""
 
 puts "",
-     "The indexed document:".ansi(:bold),
+     "The whole indexed document (according to `Article#as_indexed_json`):".ansi(:bold),
+     JSON.pretty_generate(response.results.first._source.to_hash),
+     ""
+
+# Retrieve only selected fields from Elasticsearch
+#
+response = Article.search query: { match: { title: 'first' } }, _source: ['title', 'authors.full_name']
+
+puts "",
+     "Retrieve only selected fields from Elasticsearch:".ansi(:bold),
      JSON.pretty_generate(response.results.first._source.to_hash),
      ""
 
