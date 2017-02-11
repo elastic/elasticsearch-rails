@@ -18,6 +18,6 @@ class Indexer
 
     record = klass.constantize.find(record_id)
     record.__elasticsearch__.client = Client
-    record.__elasticsearch__.__send__ "#{operation}_document", options
+    record.__elasticsearch__.__send__ "#{operation}_document", options.symbolize_keys
   end
 end
