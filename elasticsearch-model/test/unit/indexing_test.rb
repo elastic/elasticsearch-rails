@@ -83,33 +83,23 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_equal 'boolean', mappings.to_hash[:mytype][:properties][:foo][:type]
       end
 
-      should "define type as string by default" do
+      should "define type as 'text' by default" do
         mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
 
-        mappings.indexes :bar, {}
-        assert_equal 'string', mappings.to_hash[:mytype][:properties][:bar][:type]
+        mappings.indexes :bar
+        assert_equal 'text', mappings.to_hash[:mytype][:properties][:bar][:type]
       end
 
       should "define multiple fields" do
         mappings = Elasticsearch::Model::Indexing::Mappings.new :mytype
 
-        mappings.indexes :foo_1, type: 'string' do
-          indexes :raw, analyzer: 'keyword'
+        mappings.indexes :my_field, type: 'text' do
+          indexes :raw, type: 'keyword'
         end
 
-        mappings.indexes :foo_2, type: 'multi_field' do
-          indexes :raw, analyzer: 'keyword'
-        end
-
-        assert_equal 'string',  mappings.to_hash[:mytype][:properties][:foo_1][:type]
-        assert_equal 'string',  mappings.to_hash[:mytype][:properties][:foo_1][:fields][:raw][:type]
-        assert_equal 'keyword', mappings.to_hash[:mytype][:properties][:foo_1][:fields][:raw][:analyzer]
-        assert_nil              mappings.to_hash[:mytype][:properties][:foo_1][:properties]
-
-        assert_equal 'multi_field',  mappings.to_hash[:mytype][:properties][:foo_2][:type]
-        assert_equal 'string',  mappings.to_hash[:mytype][:properties][:foo_2][:fields][:raw][:type]
-        assert_equal 'keyword', mappings.to_hash[:mytype][:properties][:foo_2][:fields][:raw][:analyzer]
-        assert_nil              mappings.to_hash[:mytype][:properties][:foo_2][:properties]
+        assert_equal 'text',    mappings.to_hash[:mytype][:properties][:my_field][:type]
+        assert_equal 'keyword', mappings.to_hash[:mytype][:properties][:my_field][:fields][:raw][:type]
+        assert_nil              mappings.to_hash[:mytype][:properties][:my_field][:properties]
       end
 
       should "define embedded properties" do
@@ -134,15 +124,15 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         # Object is the default when `type` is missing and there's a block passed
         #
         assert_equal 'object', mappings.to_hash[:mytype][:properties][:foo][:type]
-        assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo][:properties][:bar][:type]
+        assert_equal 'text',   mappings.to_hash[:mytype][:properties][:foo][:properties][:bar][:type]
         assert_nil             mappings.to_hash[:mytype][:properties][:foo][:fields]
 
         assert_equal 'object', mappings.to_hash[:mytype][:properties][:foo_object][:type]
-        assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo_object][:properties][:bar][:type]
+        assert_equal 'text',   mappings.to_hash[:mytype][:properties][:foo_object][:properties][:bar][:type]
         assert_nil             mappings.to_hash[:mytype][:properties][:foo_object][:fields]
 
         assert_equal 'nested', mappings.to_hash[:mytype][:properties][:foo_nested][:type]
-        assert_equal 'string', mappings.to_hash[:mytype][:properties][:foo_nested][:properties][:bar][:type]
+        assert_equal 'text',   mappings.to_hash[:mytype][:properties][:foo_nested][:properties][:bar][:type]
         assert_nil             mappings.to_hash[:mytype][:properties][:foo_nested][:fields]
 
         assert_equal :nested, mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:type]

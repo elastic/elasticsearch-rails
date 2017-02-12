@@ -65,8 +65,8 @@ module Elasticsearch
             end
           end
 
-          # Set the type to `string` by default
-          @mapping[name][:type] ||= 'string'
+          # Set the type to `text` by default
+          @mapping[name][:type] ||= 'text'
 
           self
         end

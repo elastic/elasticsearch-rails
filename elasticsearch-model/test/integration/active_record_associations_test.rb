@@ -29,13 +29,12 @@ module Elasticsearch
               indexes :authors do
                 indexes :first_name
                 indexes :last_name
-                indexes :full_name, type: 'multi_field' do
-                  indexes :full_name
-                  indexes :raw, analyzer: 'keyword'
+                indexes :full_name, type: 'text' do
+                  indexes :raw, type: 'keyword'
                 end
               end
 
-              indexes :categories, analyzer: 'keyword'
+              indexes :categories, type: 'keyword'
 
               indexes :comments, type: 'nested' do
                 indexes :text
@@ -188,8 +187,8 @@ module Elasticsearch
           Post.__elasticsearch__.refresh_index!
 
           query = { query: {
-                      filtered: {
-                        query: {
+                      bool: {
+                        must: {
                           multi_match: {
                             fields: ['title'],
                             query: 'first'
