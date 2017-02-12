@@ -581,7 +581,7 @@ retrieve big collections of model instances, using the Elasticsearch's _Scan API
 
 ```ruby
 Article.find_each(_source_include: 'title') { |a| puts "===> #{a.title.upcase}" }
-# GET http://localhost:9200/articles/article/_search?scroll=5m&search_type=scan&size=20
+# GET http://localhost:9200/articles/article/_search?scroll=5m&size=20
 # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhb...
 # ===> TEST
 # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhb...

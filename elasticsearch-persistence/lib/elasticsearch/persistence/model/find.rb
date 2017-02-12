@@ -55,7 +55,7 @@ module Elasticsearch
             gateway.count( query_or_definition, options )
           end
 
-          # Returns all models efficiently via the Elasticsearch's scan/scroll API
+          # Returns all models efficiently via the Elasticsearch's scroll API
           #
           # You can restrict the models being returned with a query.
           #
@@ -117,20 +117,17 @@ module Elasticsearch
 
             body = options
 
-            # Get the initial scroll_id
+            # Get the initial batch of documents and the scroll_id
             #
             response = gateway.client.search( { index: gateway.index_name,
                                          type:  gateway.document_type,
-                                         search_type: 'scan',
-                                         scroll:      scroll,
-                                         size:        20,
-                                         body:        body }.merge(search_params) )
+                                         scroll: scroll,
+                                         sort:   ['_doc'],
+                                         size:   20,
+                                         body:   body }.merge(search_params) )
 
-            # Get the initial batch of documents
-            #
-            response = gateway.client.scroll( { scroll_id: response['_scroll_id'], scroll: scroll } )
 
-            # Break when receiving an empty array of hits
+            # Scroll the search object and break when receiving an empty array of hits
             #
             while response['hits']['hits'].any? do
               yield Repository::Response::Results.new(gateway, response)
@@ -149,7 +146,7 @@ module Elasticsearch
           #
           #     Person.find_each { |person| puts person.name }
           #
-          #     # # GET http://localhost:9200/people/person/_search?scroll=5m&search_type=scan&size=20
+          #     # # GET http://localhost:9200/people/person/_search?scroll=5m&size=20
           #     # # GET http://localhost:9200/_search/scroll?scroll=5m&scroll_id=c2Nhbj...
           #     # Test 0
           #     # Test 1
