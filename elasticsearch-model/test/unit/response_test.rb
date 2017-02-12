@@ -27,7 +27,7 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       assert_equal 'OK',        response.shards.one
     end
 
-    should "wrap the raw Hash response in Hashie::Mash" do
+    should "wrap the raw Hash response in a HashWrapper" do
       @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
       @search.stubs(:execute!).returns({'hits' => { 'hits' => [] }, 'aggregations' => { 'dates' => 'FOO' }})
 

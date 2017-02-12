@@ -1,11 +1,12 @@
-require 'elasticsearch'
-
-require 'hashie'
+require 'hashie/mash'
 
 require 'active_support/core_ext/module/delegation'
 
+require 'elasticsearch'
+
 require 'elasticsearch/model/version'
 
+require 'elasticsearch/model/hash_wrapper'
 require 'elasticsearch/model/client'
 
 require 'elasticsearch/model/multimodel'
