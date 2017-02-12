@@ -3,6 +3,8 @@ module Elasticsearch
     module Response
 
       class Aggregations < Hashie::Mash
+        disable_warnings if respond_to?(:disable_warnings)
+
         def initialize(attributes={})
           __redefine_enumerable_methods super(attributes)
         end
