@@ -41,7 +41,7 @@ class Elasticsearch::Persistence::RepositoryResponseResultsTest < Test::Unit::Te
       assert_equal 5, subject.response['_shards']['total']
     end
 
-    should "wrap the response in Hashie::Mash" do
+    should "wrap the response in HashWrapper" do
       assert_equal 5, subject.response._shards.total
     end
 
