@@ -96,21 +96,21 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
     end
 
     should "return the number of domain objects" do
-      subject.expects(:search)
-        .returns(Elasticsearch::Persistence::Repository::Response::Results.new( subject, {'hits' => { 'total' => 1 }}))
+      subject.client.expects(:count).returns({'count' => 1})
       assert_equal 1, subject.count
     end
 
-    should "pass arguments from count to search" do
-      subject.expects(:search)
-        .with do |query_or_definition, options|
-          assert_equal 'bar', query_or_definition[:query][:match][:foo]
-          assert_equal true, options[:ignore_unavailable]
+    should "pass arguments to count" do
+      subject.client.expects(:count)
+        .with do |arguments|
+          assert_equal 'test', arguments[:index]
+          assert_equal 'bar',  arguments[:body][:query][:match][:foo]
+          assert_equal true,   arguments[:ignore_unavailable]
           true
         end
-        .returns(Elasticsearch::Persistence::Repository::Response::Results.new( subject, {'hits' => { 'total' => 1 }}))
+        .returns({'count' => 1})
 
-      subject.count( { query: { match: { foo: 'bar' } } }, { ignore_unavailable: true } )
+      assert_equal 1, subject.count( { query: { match: { foo: 'bar' } } }, { ignore_unavailable: true } )
     end
   end
 
