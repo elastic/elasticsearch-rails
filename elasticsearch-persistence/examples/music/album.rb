@@ -12,9 +12,8 @@ class Album
 
   index_name [Rails.application.engine_name, Rails.env].join('-')
 
+
   mapping _parent: { type: 'artist' } do
-    indexes :suggest_title, type: 'completion', payloads: true
-    indexes :suggest_track, type: 'completion', payloads: true
   end
 
   attribute :artist
@@ -30,4 +29,26 @@ class Album
 
   attribute :styles
   attribute :meta, Meta, mapping: { type: 'object' }
+
+  attribute :suggest, Hashie::Mash, mapping: {
+    type: 'object',
+    properties: {
+      title: {
+        type: 'object',
+        properties: {
+          input:   { type: 'completion' },
+          output:  { type: 'keyword', index: false },
+          payload: { type: 'object', enabled: false }
+        }
+      },
+      track: {
+        type: 'object',
+        properties: {
+          input:   { type: 'completion' },
+          output:  { type: 'keyword', index: false },
+          payload: { type: 'object', enabled: false }
+        }
+      }
+    }
+  }
 end

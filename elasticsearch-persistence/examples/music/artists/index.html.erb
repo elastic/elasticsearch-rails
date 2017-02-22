@@ -15,6 +15,7 @@
   <% @artists.each do |artist| %>
     <%= div_for artist, class: 'result clearfix' do %>
       <h2>
+        <%= image_tag "http://ruby.elastic.co.s3-website-us-east-1.amazonaws.com/demo/music/bands/#{artist.id}.jpeg", height: '50px', class: 'band' %>
         <%= link_to artist do %>
           <span class="name"><%= artist.name %></span>
           <small><%= pluralize artist.album_count, 'album' %></small>
@@ -41,7 +42,7 @@ $.widget( "custom.suggest", $.ui.autocomplete, {
         var category = ul.append( "<li class='ui-autocomplete-category'>" + item.label + "</li>" );
 
         $.each( item.value, function( index, item ) {
-          var li = $('<li class="ui-autocomplete-item"><a href="<%= Rails.application.config.relative_url_root %>'+ item.payload.url +'">'+ item.text +'</a></li>').data('ui-autocomplete-item', item )
+          var li = $('<li class="ui-autocomplete-item"><a href="<%= Rails.application.config.relative_url_root %>'+ item.url +'">'+ item.text +'</a></li>').data('ui-autocomplete-item', item )
           category.append(li)
         } )
       });
@@ -51,7 +52,9 @@ $.widget( "custom.suggest", $.ui.autocomplete, {
 $( "#q" ).suggest({
   source: '<%= suggest_path %>',
   select: function(event, ui) {
-    document.location.href = '<%= Rails.application.config.relative_url_root %>'+ui.item.payload.url
+    document.location.href = '<%= Rails.application.config.relative_url_root %>'+ui.item.url
   }
 });
 </script>
+
+<script>$('img.band').error(function(){ $(this).attr('src', '/images/blank_artist.png'); });</script>

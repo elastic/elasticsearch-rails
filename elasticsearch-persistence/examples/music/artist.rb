@@ -4,22 +4,42 @@ class Artist
   index_name [Rails.application.engine_name, Rails.env].join('-')
 
   analyzed_and_raw = { fields: {
-    name: { type: 'string', analyzer: 'snowball' },
-    raw:  { type: 'string', analyzer: 'keyword' }
+    name: { type: 'text', analyzer: 'snowball' },
+    raw:  { type: 'keyword' }
   } }
 
   attribute :name, String, mapping: analyzed_and_raw
-  attribute :suggest_name, String, default: {}, mapping: { type: 'completion', payloads: true }
 
   attribute :profile
   attribute :date, Date
 
   attribute :members, String, default: [], mapping: analyzed_and_raw
   attribute :members_combined, String, default: [], mapping: { analyzer: 'snowball' }
-  attribute :suggest_member, String, default: {}, mapping: { type: 'completion', payloads: true }
 
   attribute :urls, String, default: []
   attribute :album_count, Integer, default: 0
+
+  attribute :suggest, Hashie::Mash, mapping: {
+    type: 'object',
+    properties: {
+      name: {
+        type: 'object',
+        properties: {
+          input:   { type: 'completion' },
+          output:  { type: 'keyword', index: false },
+          payload: { type: 'object', enabled: false }
+        }
+      },
+      member: {
+        type: 'object',
+        properties: {
+          input:   { type: 'completion' },
+          output:  { type: 'keyword', index: false },
+          payload: { type: 'object', enabled: false }
+        }
+      }
+    }
+  }
 
   validates :name, presence: true
 
@@ -29,7 +49,7 @@ class Artist
           has_parent: {
             type: 'artist',
             query: {
-              filtered: {
+              bool: {
                 filter: {
                   ids: { values: [ self.id ] }
                 }

@@ -100,6 +100,20 @@ h1 form {
 
 .artist h2 {
   float: left;
+  margin-left: 50px;
+}
+
+.artist.search.result h2 {
+  float: none;
+}
+
+.artist h1 .back {
+  margin-right: 65px;
+}
+
+.artist h1 img.band {
+  left: 120px;
+  top: 50px;
 }
 
 .result h2 a,
@@ -124,17 +138,17 @@ h1 form {
   text-decoration: underline;
 }
 
-.result .small {
+.result .highlight.small {
   font-size: 90%;
   font-weight: 200;
   padding: 0;
-  margin: 0.25em 0 0.25em 0;
+  margin: 0.25em 0 0.25em 50px;
 }
 
 .result .small .label {
   color: #999;
   font-size: 80%;
-  min-width: 5em;
+  /*min-width: 5em;*/
   display: inline-block;
 }
 
@@ -156,13 +170,30 @@ h1 form {
   margin: 0.25em 0 0 0;
 }
 
+.artist img.band {
+  position: absolute;
+  left: 85px;
+  margin-top: 14px;
+  transform: translate(-50%,-50%);
+  clip-path: circle(20px at center);
+}
+
 .album {
   margin: 0 0 4em 0;
+}
+
+.album.search.result {
+  margin: 0;
 }
 
 .album .cover {
   float: left;
   width: 150px;
+}
+
+.album.search.result .cover {
+  width: 40px;
+  margin-right: 10px;
 }
 
 .album .cover img {

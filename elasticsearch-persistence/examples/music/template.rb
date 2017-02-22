@@ -11,8 +11,8 @@
 #
 # * Git
 # * Ruby  >= 1.9.3
-# * Rails >= 4
-# * Java  >= 7 (for Elasticsearch)
+# * Rails >= 5
+# * Java  >= 8 (for Elasticsearch)
 #
 # Usage:
 # ------
@@ -25,6 +25,7 @@ STDOUT.sync = true
 STDERR.sync = true
 
 require 'uri'
+require 'json'
 require 'net/http'
 
 at_exit do
@@ -35,29 +36,32 @@ at_exit do
   end
 end
 
-run "touch tmp/.gitignore"
+$elasticsearch_url = ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200')
 
-append_to_file ".gitignore", "vendor/elasticsearch-1.2.1/\n"
+# ----- Check & download Elasticsearch ------------------------------------------------------------
 
-git :init
-git add:    "."
-git commit: "-m 'Initial commit: Clean application'"
+cluster_info = Net::HTTP.get(URI.parse($elasticsearch_url)) rescue nil
+cluster_info = JSON.parse(cluster_info) if cluster_info
 
-# ----- Download Elasticsearch --------------------------------------------------------------------
+if cluster_info.nil? || cluster_info['version']['number'] < '5'
+  # Change the port when incompatible Elasticsearch version is running on localhost:9200
+  if $elasticsearch_url == 'http://localhost:9200' && cluster_info && cluster_info['version']['number'] < '5'
+    $change_port = '9280'
+    $elasticsearch_url = "http://localhost:#{$change_port}"
+  end
 
-unless (Net::HTTP.get(URI.parse('http://localhost:9200')) rescue false)
   COMMAND = <<-COMMAND.gsub(/^    /, '')
-    curl -# -O "http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.2.1.tar.gz"
-    tar -zxf elasticsearch-1.2.1.tar.gz
-    rm  -f   elasticsearch-1.2.1.tar.gz
-    ./elasticsearch-1.2.1/bin/elasticsearch -d -p #{destination_root}/tmp/pids/elasticsearch.pid
+    curl -# -O "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.1.tar.gz"
+    tar -zxf elasticsearch-5.2.1.tar.gz
+    rm  -f   elasticsearch-5.2.1.tar.gz
+    ./elasticsearch-5.2.1/bin/elasticsearch -d -p #{destination_root}/tmp/pids/elasticsearch.pid #{$change_port.nil? ? '' : "-E http.port=#{$change_port}" }
   COMMAND
 
   puts        "\n"
   say_status  "ERROR", "Elasticsearch not running!\n", :red
   puts        '-'*80
-  say_status  '',      "It appears that Elasticsearch is not running on this machine."
-  say_status  '',      "Is it installed? Do you want me to install it for you with this command?\n\n"
+  say_status  '',      "It appears that Elasticsearch 5 is not running on this machine."
+  say_status  '',      "Is it installed? Do you want me to install and run it for you with this command?\n\n"
   COMMAND.each_line { |l| say_status '', "$ #{l}" }
   puts
   say_status  '',      "(To uninstall, just remove the generated application directory.)"
@@ -69,9 +73,9 @@ unless (Net::HTTP.get(URI.parse('http://localhost:9200')) rescue false)
 
     java_info = `java -version 2>&1`
 
-    unless java_info.match /1\.[7-9]/
+    unless java_info.match /1\.[8-9]/
       puts
-      say_status "ERROR", "Required Java version (1.7) not found, exiting...", :red
+      say_status "ERROR", "Required Java version (1.8) not found, exiting...", :red
       exit(1)
     end
 
@@ -81,8 +85,26 @@ unless (Net::HTTP.get(URI.parse('http://localhost:9200')) rescue false)
       commands.each { |command| run command }
       run "(#{exec})"  # Launch Elasticsearch in subshell
     end
+
+    # Wait for Elasticsearch to be up...
+    #
+    system <<-COMMAND
+      until $(curl --silent --head --fail #{$elasticsearch_url} > /dev/null 2>&1); do
+          printf '.'; sleep 1
+      done
+    COMMAND
   end
 end unless ENV['RAILS_NO_ES_INSTALL']
+
+# ----- Application skeleton ----------------------------------------------------------------------
+
+run "touch tmp/.gitignore"
+
+append_to_file ".gitignore", "vendor/elasticsearch-5.2.1/\n"
+
+git :init
+git add:    "."
+git commit: "-m 'Initial commit: Clean application'"
 
 # ----- Add README --------------------------------------------------------------------------------
 
@@ -90,9 +112,9 @@ puts
 say_status  "README", "Adding Readme...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-remove_file 'README.rdoc'
+remove_file 'README.md'
 
-create_file 'README.rdoc', <<-README
+create_file 'README.md', <<-README
 = Ruby on Rails and Elasticsearch persistence: Example application
 
 README
@@ -101,19 +123,30 @@ README
 git add:    "."
 git commit: "-m 'Added README for the application'"
 
-# ----- Use Thin ----------------------------------------------------------------------------------
+# ----- Use Pry as the Rails console --------------------------------------------------------------
 
-begin
-  require 'thin'
-  puts
-  say_status  "Rubygems", "Adding Thin into Gemfile...\n", :yellow
-  puts        '-'*80, '';
+puts
+say_status  "Rubygems", "Adding Pry into Gemfile...\n", :yellow
+puts        '-'*80, '';
 
-  gem 'thin'
-rescue LoadError
+gem_group :development do
+  gem 'pry'
+  gem 'pry-rails'
 end
 
+git add:    "Gemfile*"
+git commit: "-m 'Added Pry into the Gemfile'"
+
 # ----- Auxiliary gems ----------------------------------------------------------------------------
+
+puts
+say_status  "Rubygems", "Adding libraries into the Gemfile...\n", :yellow
+puts        '-'*80, ''; sleep 0.75
+
+gem "simple_form"
+
+git add:    "Gemfile*"
+git commit: "-m 'Added auxiliary libraries into the Gemfile'"
 
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
 
@@ -128,16 +161,13 @@ puts
 say_status  "Rubygems", "Adding Elasticsearch libraries into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.75
 
-gem "quiet_assets"
-gem "simple_form"
-
 gem 'elasticsearch', git: 'git://github.com/elasticsearch/elasticsearch-ruby.git'
 gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git', require: 'elasticsearch/model'
 gem 'elasticsearch-persistence', git: 'git://github.com/elasticsearch/elasticsearch-rails.git', require: 'elasticsearch/persistence/model'
 gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
 
 git add:    "Gemfile*"
-git commit: "-m 'Added libraries into Gemfile'"
+git commit: "-m 'Added the Elasticsearch libraries into the Gemfile'"
 
 # ----- Install gems ------------------------------------------------------------------------------
 
@@ -173,11 +203,15 @@ if ENV['LOCAL']
             'vendor/assets/javascripts/jquery-ui-1.10.4.custom.min.js'
   copy_file File.expand_path('../vendor/assets/jquery-ui-1.10.4.custom.min.css', __FILE__),
             'vendor/assets/stylesheets/ui-lightness/jquery-ui-1.10.4.custom.min.css'
+  copy_file File.expand_path('../vendor/assets/stylesheets/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png', __FILE__),
+            'vendor/assets/stylesheets/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png'
 else
   get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/vendor/assets/jquery-ui-1.10.4.custom.min.js',
       'vendor/assets/javascripts/jquery-ui-1.10.4.custom.min.js'
   get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/vendor/assets/jquery-ui-1.10.4.custom.min.css',
       'vendor/assets/stylesheets/ui-lightness/jquery-ui-1.10.4.custom.min.css'
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/vendor/assets/stylesheets/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png',
+      'vendor/assets/stylesheets/ui-lightness/images/ui-bg_highlight-soft_100_eeeeee_1x100.png'
 end
 
 append_to_file 'app/assets/javascripts/application.js', "//= require jquery-ui-1.10.4.custom.min.js"
@@ -301,6 +335,7 @@ if ENV['LOCAL']
   copy_file File.expand_path('../assets/autocomplete.css', __FILE__), 'app/assets/stylesheets/autocomplete.css'
   copy_file File.expand_path('../assets/form.css', __FILE__),         'app/assets/stylesheets/form.css'
   copy_file File.expand_path('../assets/blank_cover.png', __FILE__),  'public/images/blank_cover.png'
+  copy_file File.expand_path('../assets/blank_artist.png', __FILE__),  'public/images/blank_artist.png'
 else
   get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/application.css',
       'app/assets/stylesheets/application.css'
@@ -310,6 +345,8 @@ else
       'app/assets/stylesheets/form.css'
   get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/blank_cover.png',
       'public/images/blank_cover.png'
+  get 'https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/assets/blank_artist.png',
+      'public/images/blank_artist.png'
 end
 
 git add:    "."
@@ -359,9 +396,9 @@ puts
 say_status  "Data", "Import the data...", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-source = ENV.fetch('DATA_SOURCE', 'http://ruby-demo-assets.s3.amazonaws.com/dischord.yml')
+source = ENV.fetch('DATA_SOURCE', 'https://github.com/elastic/elasticsearch-rails/releases/download/dischord.yml/dischord.yml')
 
-run  "rails runner 'IndexManager.import_from_yaml(\"#{source}\", force: true)'"
+run  "ELASTICSEARCH_URL=#{$elasticsearch_url} rails runner 'IndexManager.import_from_yaml(\"#{source}\", force: true)'"
 
 # ----- Print Git log -----------------------------------------------------------------------------
 
@@ -389,5 +426,5 @@ unless ENV['RAILS_NO_SERVER_START']
   say_status  "DONE", "\e[1mStarting the application.\e[0m", :yellow
   puts  "="*80, ""
 
-  run  "rails server --port=#{port}"
+  run  "ELASTICSEARCH_URL=#{$elasticsearch_url} rails server --port=#{port}"
 end

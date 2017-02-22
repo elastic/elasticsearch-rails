@@ -26,33 +26,46 @@ class IndexManager
       Artist.create artist.update(
         'album_count' => artist['releases'].size,
         'members_combined' => artist['members'].join(', '),
-        'suggest_name' => {
-          'input'  => artist['namevariations'].unshift(artist['name']),
-          'output' => artist['name'],
-          'payload' => { 'url' => "/artists/#{artist['id']}" }
-        },
-        'suggest_member' => {
-          'input'  => artist['members'],
-          'output' => artist['name'],
-          'payload' => { 'url' => "/artists/#{artist['id']}" }
+        'suggest' => {
+          'name' => {
+            'input' => { 'input' => artist['namevariations'].unshift(artist['name']).reject { |d| d.to_s.empty? } },
+            'output' => artist['name'],
+            'payload' => {
+              'url' => "/artists/#{artist['id']}"
+            }
+          },
+          'member' => {
+            'input' => { 'input' => artist['members'] },
+            'output' => artist['name'],
+            'payload' => {
+              'url' => "/artists/#{artist['id']}"
+            }
+          }
         }
       )
 
       artist['releases'].each do |album|
         album.update(
-          'suggest_title' => {
-            'input'  => album['title'],
-            'output' => album['title'],
-            'payload' => { 'url' => "/artists/#{artist['id']}#album_#{album['id']}" }
-          },
-          'suggest_track' => {
-            'input'  => album['tracklist'].map { |d| d['title'] },
-            'output' => album['title'],
-            'payload' => { 'url' => "/artists/#{artist['id']}#album_#{album['id']}" }
+          'suggest' => {
+            'title' => {
+              'input' => { 'input' => album['title'] },
+              'output' => album['title'],
+              'payload' => {
+                'url' => "/artists/#{artist['id']}#album_#{album['id']}"
+              }
+            },
+            'track' => {
+              'input' => { 'input' => album['tracklist'].map { |d| d['title'] }.reject { |d| d.to_s.empty? } },
+              'output' => album['title'],
+              'payload' => {
+                'url' => "/artists/#{artist['id']}#album_#{album['id']}"
+              }
+            }
           }
         )
         album['notes'] = album['notes'].to_s.gsub(/<.+?>/, '').gsub(/ {2,}/, '')
         album['released'] = nil if album['released'] < 1
+
         Album.create album, id: album['id'], parent: artist['id']
       end
     end
