@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  application:
+    build: .
+    command: bundle exec thin --port 3000 --rackup config.ru start
+    environment:
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+    ports:
+      - "3000:3000"

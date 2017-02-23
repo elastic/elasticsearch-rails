@@ -1,0 +1,16 @@
+version: '2'
+services:
+  application:
+    build: .
+    command: rails server -p 3000 -b '0.0.0.0'
+    environment:
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+    ports:
+      - "3000:3000"
+#    links:
+#      - elasticsearch
+
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:5.2.1
+#    ports:
+#      - 9200

@@ -1,0 +1,4 @@
+music/tmp/*
+music/log/*
+music/db/*.sqlite3
+music/.git
