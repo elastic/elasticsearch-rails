@@ -10,8 +10,8 @@
 #
 # * Git
 # * Ruby  >= 1.9.3
-# * Rails >= 4
-# * Java  >= 7 (for Elasticsearch)
+# * Rails >= 5
+# * Java  >= 8 (for Elasticsearch)
 #
 # Usage:
 # ------
@@ -31,31 +31,32 @@ at_exit do
   end
 end
 
-run "touch tmp/.gitignore"
+$elasticsearch_url = ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200')
 
-append_to_file ".gitignore", "vendor/elasticsearch-1.0.1/\n"
+# ----- Check & download Elasticsearch ------------------------------------------------------------
 
-git :init
-git add:    "."
-git commit: "-m 'Initial commit: Clean application'"
+cluster_info = Net::HTTP.get(URI.parse($elasticsearch_url)) rescue nil
+cluster_info = JSON.parse(cluster_info) if cluster_info
 
-# ----- Download Elasticsearch --------------------------------------------------------------------
+if cluster_info.nil? || cluster_info['version']['number'] < '5'
+  # Change the port when incompatible Elasticsearch version is running on localhost:9200
+  if $elasticsearch_url == 'http://localhost:9200' && cluster_info && cluster_info['version']['number'] < '5'
+    $change_port = '9280'
+    $elasticsearch_url = "http://localhost:#{$change_port}"
+  end
 
-ELASTICSEARCH_URL = ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200')
-
-unless (Net::HTTP.get(URI.parse(ELASTICSEARCH_URL)) rescue false)
   COMMAND = <<-COMMAND.gsub(/^    /, '')
-    curl -# -O "http://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.1.tar.gz"
-    tar -zxf elasticsearch-1.0.1.tar.gz
-    rm  -f   elasticsearch-1.0.1.tar.gz
-    ./elasticsearch-1.0.1/bin/elasticsearch -d -p #{destination_root}/tmp/pids/elasticsearch.pid
+    curl -# -O "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.1.tar.gz"
+    tar -zxf elasticsearch-5.2.1.tar.gz
+    rm  -f   elasticsearch-5.2.1.tar.gz
+    ./elasticsearch-5.2.1/bin/elasticsearch -d -p #{destination_root}/tmp/pids/elasticsearch.pid #{$change_port.nil? ? '' : "-E http.port=#{$change_port}" }
   COMMAND
 
   puts        "\n"
   say_status  "ERROR", "Elasticsearch not running!\n", :red
   puts        '-'*80
-  say_status  '',      "It appears that Elasticsearch is not running on this machine."
-  say_status  '',      "Is it installed? Do you want me to install it for you with this command?\n\n"
+  say_status  '',      "It appears that Elasticsearch 5 is not running on this machine."
+  say_status  '',      "Is it installed? Do you want me to install and run it for you with this command?\n\n"
   COMMAND.each_line { |l| say_status '', "$ #{l}" }
   puts
   say_status  '',      "(To uninstall, just remove the generated application directory.)"
@@ -65,14 +66,40 @@ unless (Net::HTTP.get(URI.parse(ELASTICSEARCH_URL)) rescue false)
     puts
     say_status  "Install", "Elasticsearch", :yellow
 
+    java_info = `java -version 2>&1`
+
+    unless java_info.match /1\.[8-9]/
+      puts
+      say_status "ERROR", "Required Java version (1.8) not found, exiting...", :red
+      exit(1)
+    end
+
     commands = COMMAND.split("\n")
     exec     = commands.pop
     inside("vendor") do
       commands.each { |command| run command }
       run "(#{exec})"  # Launch Elasticsearch in subshell
     end
+
+    # Wait for Elasticsearch to be up...
+    #
+    system <<-COMMAND
+      until $(curl --silent --head --fail #{$elasticsearch_url} > /dev/null 2>&1); do
+          printf '.'; sleep 1
+      done
+    COMMAND
   end
 end unless ENV['RAILS_NO_ES_INSTALL']
+
+# ----- Application skeleton ----------------------------------------------------------------------
+
+run "touch tmp/.gitignore"
+
+append_to_file ".gitignore", "vendor/elasticsearch-5.2.1/\n"
+
+git :init
+git add:    "."
+git commit: "-m 'Initial commit: Clean application'"
 
 # ----- Add README --------------------------------------------------------------------------------
 
