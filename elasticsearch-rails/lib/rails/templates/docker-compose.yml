@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  searchapp-01:
+    build:
+      context: .
+      args:
+        PATH_TO_APPLICATION: ./searchapp-01
+    command: rails server -p 3000 -b '0.0.0.0'
+    environment:
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+    ports:
+      - "3001:3000"
+
+  searchapp-02:
+    build:
+      context: .
+      args:
+        PATH_TO_APPLICATION: ./searchapp-02
+    command: rails server -p 3000 -b '0.0.0.0'
+    environment:
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+    ports:
+      - "3002:3000"
+
+  searchapp-03:
+    build:
+      context: .
+      args:
+        PATH_TO_APPLICATION: ./searchapp-03
+    command: rails server -p 3000 -b '0.0.0.0'
+    environment:
+      - ELASTICSEARCH_URL=${ELASTICSEARCH_URL}
+      - REDIS_URL=redis://redis:6379
+    ports:
+      - "3003:3000"
+    links:
+      - redis
+
+  redis:
+    image: redis:alpine
+    command: redis-server
+    ports: ["6379"]
