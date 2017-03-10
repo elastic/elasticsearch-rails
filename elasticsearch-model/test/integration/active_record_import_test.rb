@@ -16,7 +16,7 @@ module Elasticsearch
         scope :popular, -> { where('views >= 50') }
 
         mapping do
-          indexes :title,      type: 'string'
+          indexes :title,      type: 'text'
           indexes :views,      type: 'integer'
           indexes :numeric,    type: 'integer'
           indexes :created_at, type: 'date'

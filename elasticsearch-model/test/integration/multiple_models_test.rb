@@ -20,7 +20,7 @@ module Elasticsearch
 
           settings index: {number_of_shards: 1, number_of_replicas: 0} do
             mapping do
-              indexes :name, type: 'string', analyzer: 'snowball'
+              indexes :name, type: 'text', analyzer: 'snowball'
               indexes :created_at, type: 'date'
             end
           end
@@ -130,7 +130,7 @@ module Elasticsearch
 
                 settings index: {number_of_shards: 1, number_of_replicas: 0} do
                   mapping do
-                    indexes :name, type: 'string', analyzer: 'snowball'
+                    indexes :name, type: 'text', analyzer: 'snowball'
                     indexes :created_at, type: 'date'
                   end
                 end

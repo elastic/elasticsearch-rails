@@ -18,8 +18,8 @@ module Elasticsearch
 
         settings index: { number_of_shards: 1, number_of_replicas: 0 } do
           mapping do
-            indexes :title,         type: 'string', analyzer: 'snowball'
-            indexes :body,          type: 'string'
+            indexes :title,         type: 'text', analyzer: 'snowball'
+            indexes :body,          type: 'text'
             indexes :clicks,        type: 'integer'
             indexes :created_at,    type: 'date'
           end

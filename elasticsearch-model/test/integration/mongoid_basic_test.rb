@@ -20,7 +20,7 @@ if Mongo.available?
 
           settings index: { number_of_shards: 1, number_of_replicas: 0 } do
             mapping do
-              indexes :title,      type: 'string', analyzer: 'snowball'
+              indexes :title,      type: 'text', analyzer: 'snowball'
               indexes :created_at, type: 'date'
             end
           end
