@@ -31,7 +31,7 @@ class Answer < ActiveRecord::Base
 
   index_name 'questions_and_answers'
 
-  mapping _parent: { type: 'question', required: true } do
+  mapping _parent: { type: 'question' }, _routing: { required: true } do
     indexes :text
     indexes :author
   end
