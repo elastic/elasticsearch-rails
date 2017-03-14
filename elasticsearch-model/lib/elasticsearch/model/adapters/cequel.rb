@@ -38,7 +38,7 @@ module Elasticsearch
 
           def self.included(base)
             base.include InstanceMethods
-            ::Elasticsearch::Model::Indexing::InstanceMethods.prepend ProxyMethods
+            ::Elasticsearch::Model::Proxy::InstanceMethodsProxy.prepend ProxyMethods
 
             [:save, :create, :update].each do |mtd|
               base.send("after_#{ mtd }", lambda { __elasticsearch__.index_document } )
