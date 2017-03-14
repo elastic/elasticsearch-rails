@@ -8,6 +8,11 @@ module Elasticsearch
         Adapter.register self, lambda { |klass| !!defined?(::Cequel::Record) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Cequel::Record) }
 
         module Records
+          # results.records return Enumerable with cequel records
+          # Elasticsearch index contains array with all partition and cluster columns values
+          #
+          # Elasticsearch record's body contains only mapped fields
+
           def records
             return [] unless ids.present?
             ars = ids.map{|id| JSON.parse(id)}.transpose
@@ -15,7 +20,6 @@ module Elasticsearch
             ars.each_with_index do |vals, index|
               select_options[klass.columns[index].name] = vals
             end
-
 
             klass.where(select_options)
           end
@@ -28,6 +32,10 @@ module Elasticsearch
           #
           # @see https://github.com/cequel/cequel/blob/master/lib/cequel/record/callbacks.rb
           #
+
+          # Default elasticsearch indexing instance methods overwritten by ProxyMethods
+          # with custom index, consisting of partition and cluster column values
+
           def self.included(base)
             base.include InstanceMethods
             ::Elasticsearch::Model::Indexing::InstanceMethods.prepend ProxyMethods
