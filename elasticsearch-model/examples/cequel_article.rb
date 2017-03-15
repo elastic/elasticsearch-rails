@@ -48,7 +48,8 @@ connection = Cequel.connect cequel_config
 Cequel::Record.connection = connection
 
 Elasticsearch::Model.client = Elasticsearch::Client.new elastic_config
-
+# In example need prepend custom proxy method manually
+::Elasticsearch::Model::Indexing::InstanceMethods.send(:prepend, ::Elasticsearch::Model::Adapter::Cequel::Callbacks::ProxyMethods)
 
 class Article
   include Cequel::Record
@@ -71,7 +72,6 @@ end
 #
 Rake.application['cequel:reset'].invoke
 Article.synchronize_schema
-
 Article.delete_all
 
 Article.new(user_id: 2, title: 'Foo').save!
@@ -84,7 +84,7 @@ Article.each{|a| a.__elasticsearch__.index_document }
 
 Article.new(user_id: 3, title: 'Foo Bar').save!
 
-puts 'Records count should be eq 2...'
+puts 'Records count should be eq 2...'e
 sleep(1)
 
 Pry.start(binding, prompt: lambda { |obj, nest_level, _| '> ' },
