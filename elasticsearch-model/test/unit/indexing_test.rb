@@ -528,6 +528,27 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         assert_nothing_raised { DummyIndexingModelForRecreate.create_index! }
       end
 
+      should "get the index settings and mappings from options" do
+        client  = stub('client')
+        indices = stub('indices')
+        client.stubs(:indices).returns(indices)
+
+        indices.expects(:create).with do |payload|
+          assert_equal 'foobar', payload[:index]
+          assert_equal 3,        payload[:body][:settings][:index][:number_of_shards]
+          assert_equal 'bar', payload[:body][:mappings][:foobar][:properties][:foo][:analyzer]
+          true
+        end.returns({})
+
+        DummyIndexingModelForRecreate.expects(:index_exists?).returns(false)
+        DummyIndexingModelForRecreate.expects(:client).returns(client).at_least_once
+
+        DummyIndexingModelForRecreate.create_index! \
+          index: 'foobar',
+          settings: { index: { number_of_shards: 3 } },
+          mappings: { foobar: { properties: { foo: { analyzer: 'bar' } } } }
+      end
+
       should "not create the index when it exists" do
         client  = stub('client')
         indices = stub('indices')
