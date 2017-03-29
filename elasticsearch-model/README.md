@@ -365,6 +365,8 @@ response.results.first.title
 For proper search engine function, it's often necessary to configure the index properly.
 The `Elasticsearch::Model` integration provides class methods to set up index settings and mappings.
 
+Note: make sure to manually create your index with `MyModel.__elasticsearch__.create_index!` before adding items to your index or ElasticSearch will fallback to creating indexes for you, ignoring any settings provided in your model.
+
 ```ruby
 class Article
   settings index: { number_of_shards: 1 } do
