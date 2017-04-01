@@ -146,6 +146,27 @@ class Elasticsearch::Model::ImportingTest < Test::Unit::TestCase
       end
     end
 
+    context "with the refresh option" do
+      should "refresh the index" do
+        DummyImportingModel.expects(:__find_in_batches).with do |options|
+          assert_equal 'bar', options[:foo]
+          assert_nil   options[:refresh]
+          true
+        end
+
+        DummyImportingModel.expects(:refresh_index!).with do |options|
+          assert_equal 'foo', options[:index]
+          true
+        end
+
+        DummyImportingModel.expects(:index_name).returns('foo')
+        DummyImportingModel.expects(:document_type).returns('foo')
+        DummyImportingModel.stubs(:index_exists?).returns(true)
+
+        DummyImportingModel.import refresh: true, foo: 'bar'
+      end
+    end
+
     should "allow passing a different index / type" do
       Elasticsearch::Model::Adapter.expects(:from_class)
                                    .with(DummyImportingModel)
