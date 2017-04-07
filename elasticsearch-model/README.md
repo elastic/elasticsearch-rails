@@ -29,11 +29,11 @@ Install the package from [Rubygems](https://rubygems.org):
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+    gem 'elasticsearch-model', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: '5.x'
 
 or install it from a source code checkout:
 
-    git clone https://github.com/elasticsearch/elasticsearch-rails.git
+    git clone https://github.com/elastic/elasticsearch-rails.git
     cd elasticsearch-rails/elasticsearch-model
     bundle install
     rake install
@@ -121,7 +121,7 @@ See the `Elasticsearch::Model` module documentation for technical information.
 
 ### The Elasticsearch client
 
-The module will set up a [client](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch),
+The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch),
 connected to `localhost:9200`, by default. You can access and use it as any other `Elasticsearch::Client`:
 
 ```ruby
@@ -144,7 +144,7 @@ Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
 
 Please refer to the
-[`elasticsearch-transport`](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-transport)
+[`elasticsearch-transport`](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-transport)
 library documentation for all the configuration options, and to the
 [`elasticsearch-api`](http://rubydoc.info/gems/elasticsearch-api) library documentation
 for information about the Ruby client API.
@@ -253,7 +253,7 @@ response.records.order(:title).to_a
 The `records` method returns the real instances of your model, which is useful when you want to access your
 model methods -- at the expense of slowing down your application, of course.
 In most cases, working with `results` coming from Elasticsearch is sufficient, and much faster. See the
-[`elasticsearch-rails`](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails)
+[`elasticsearch-rails`](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails)
 library for more information about compatibility with the Ruby on Rails framework.
 
 When you want to access both the database `records` and search `results`, use the `each_with_hit`
