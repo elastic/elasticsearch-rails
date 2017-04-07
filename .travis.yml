@@ -15,6 +15,7 @@ branches:
   only:
     - master
     - travis
+    - 2.x
 
 matrix:
   include:
@@ -28,14 +29,14 @@ matrix:
 
     - rvm: 2.3.3
       jdk: oraclejdk8
-      env: TEST_SUITE=integration SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-1.7.5/bin/elasticsearch
+      env: TEST_SUITE=integration SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-2.4.3/bin/elasticsearch
 
 before_install:
   - gem update --system --no-rdoc --no-ri
   - gem --version
   - gem install bundler -v 1.14.3 --no-rdoc --no-ri
   - bundle version
-  - curl -sS https://download.elastic.co/elasticsearch/elasticsearch/elasticsearch-1.7.5.tar.gz | tar xz -C /tmp
+  - curl -sS https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.3/elasticsearch-2.4.3.tar.gz | tar xz -C /tmp
 
 install:
   - bundle install
