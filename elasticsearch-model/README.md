@@ -1,13 +1,25 @@
 # Elasticsearch::Model
 
 The `elasticsearch-model` library builds on top of the
-the [`elasticsearch`](https://github.com/elasticsearch/elasticsearch-ruby) library.
+the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
 
 It aims to simplify integration of Ruby classes ("models"), commonly found
 e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the
 [Elasticsearch](http://www.elasticsearch.org) search and analytics engine.
 
-The library is compatible with Ruby 1.9.3 and higher.
+## Compatibility
+
+This library is compatible with Ruby 1.9.3 and higher.
+
+The library version numbers follow the Elasticsearch major versions, and the `master` branch
+is compatible with the Elasticsearch `master` branch, therefore, with the next major version.
+
+| Rubygem       |   | Elasticsearch |
+|:-------------:|:-:| :-----------: |
+| 0.1           | → | 1.x           |
+| 2.x           | → | 2.x           |
+| 5.x           | → | 5.x           |
+| master        | → | master        |
 
 ## Installation
 
