@@ -24,11 +24,11 @@ Install the package from [Rubygems](https://rubygems.org):
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-persistence', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+    gem 'elasticsearch-persistence', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: '5.x'
 
 or install it from a source code checkout:
 
-    git clone https://github.com/elasticsearch/elasticsearch-rails.git
+    git clone https://github.com/elastic/elasticsearch-rails.git
     cd elasticsearch-rails/elasticsearch-persistence
     bundle install
     rake install
@@ -112,7 +112,7 @@ repository.delete(note)
 
 The repository module provides a number of features and facilities to configure and customize the behavior:
 
-* Configuring the Elasticsearch [client](https://github.com/elasticsearch/elasticsearch-ruby#usage) being used
+* Configuring the Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage) being used
 * Setting the index name, document type, and object class for deserialization
 * Composing mappings and settings for the index
 * Creating, deleting or refreshing the index
@@ -263,7 +263,7 @@ puts repository.find(1).attributes['image']
 
 ##### Client
 
-The repository uses the standard Elasticsearch [client](https://github.com/elasticsearch/elasticsearch-ruby#usage),
+The repository uses the standard Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage),
 which is accessible with the `client` getter and setter methods:
 
 ```ruby
@@ -622,7 +622,7 @@ puts results.response.aggregations.authors.buckets.each { |b| puts "#{b['key']} 
 
 #### The Elasticsearch Client
 
-The module will set up a [client](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch),
+The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch),
 connected to `localhost:9200`, by default.
 
 To use a client with different configuration:
@@ -688,7 +688,7 @@ rails generate scaffold Person name:String email:String birthday:Date --orm=elas
 A fully working Ruby on Rails application can be generated with the following command:
 
 ```bash
-rails new music --force --skip --skip-bundle --skip-active-record --template https://raw.githubusercontent.com/elasticsearch/elasticsearch-rails/master/elasticsearch-persistence/examples/music/template.rb
+rails new music --force --skip --skip-bundle --skip-active-record --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-persistence/examples/music/template.rb
 ```
 
 The application demonstrates:

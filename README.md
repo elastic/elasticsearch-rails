@@ -39,23 +39,11 @@ gem install elasticsearch-model
 gem install elasticsearch-rails
 ```
 
-To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://gembundler.com):
+To use an unreleased version, add it to your `Gemfile` for [Bundler](http://bundler.io):
 
 ```ruby
-gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-```
-
-or install it from a source code checkout:
-
-```bash
-git clone https://github.com/elasticsearch/elasticsearch-rails.git
-cd elasticsearch-model
-bundle install
-rake install
-cd elasticsearch-rails
-bundle install
-rake install
+gem 'elasticsearch-model', github: 'elastic/elasticsearch-rails', branch: '5.x'
+gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
 ```
 
 ## Usage
