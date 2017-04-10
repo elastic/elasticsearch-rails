@@ -119,7 +119,8 @@ module Elasticsearch
 
             # Get the initial batch of documents and the scroll_id
             #
-            response = gateway.client.search( { index: gateway.index_name,
+            response = gateway.client.search( {
+                                         index: gateway.index_name,
                                          type:  gateway.document_type,
                                          scroll: scroll,
                                          sort:   ['_doc'],

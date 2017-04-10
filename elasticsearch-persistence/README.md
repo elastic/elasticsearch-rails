@@ -491,8 +491,8 @@ class Article
   # Define an `author` attribute, with multiple analyzers for this field
   #
   attribute :author, String, mapping: { fields: {
-                               author: { type: 'string'},
-                               raw:    { type: 'string', analyzer: 'keyword' }
+                               author: { type: 'text'},
+                               raw:    { type: 'keyword' }
                              } }
 
 
