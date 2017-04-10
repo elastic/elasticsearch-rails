@@ -16,8 +16,8 @@ module Elasticsearch
 
         attribute :name, String,
                   mapping: { fields: {
-                    name: { type: 'string', analyzer: 'snowball' },
-                    raw:  { type: 'string', analyzer: 'keyword' }
+                    name: { type: 'text', analyzer: 'snowball' },
+                    raw:  { type: 'keyword' }
                   } }
 
         attribute :birthday,   Date
