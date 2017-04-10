@@ -1,5 +1,5 @@
 module Elasticsearch
   module Rails
-    VERSION = "0.1.9"
+    VERSION = "6.0.0.alpha1"
   end
 end
