@@ -321,7 +321,7 @@ Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model
 
 #### The Elasticsearch DSL
 
-In most situation, you'll want to pass the search definition
+In most situations, you'll want to pass the search definition
 in the Elasticsearch [domain-specific language](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
 
 ```ruby
