@@ -35,6 +35,17 @@ class Article < ActiveRecord::Base
           type: 'pattern',
           pattern: "_|-|\\.",
           lowercase: true
+        },
+        trigram: {
+          tokenizer: 'trigram'
+        }
+      },
+      tokenizer: {
+        trigram: {
+          type: 'ngram',
+          min_gram: 3,
+          max_gram: 3,
+          token_chars: ['letter', 'digit']
         }
       }
     } } do
@@ -42,6 +53,7 @@ class Article < ActiveRecord::Base
       indexes :title, type: 'text' do
         indexes :keyword, analyzer: 'keyword'
         indexes :pattern, analyzer: 'pattern'
+        indexes :trigram, analyzer: 'trigram'
       end
     end
   end
@@ -52,7 +64,7 @@ end
 Article.delete_all
 Article.create title: 'Foo'
 Article.create title: 'Foo-Bar'
-Article.create title: 'Foo_Bar_Baz'
+Article.create title: 'Foo_Bar_Bazooka'
 Article.create title: 'Foo.Bar'
 
 # Index records
@@ -62,24 +74,31 @@ puts "[!] Errors importing records: #{errors.map { |d| d['index']['error'] }.joi
 
 puts '', '-'*80
 
-puts "Fulltext analyzer [Foo_Bar_1]".ansi(:bold),
+puts "Fulltext analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
      Article.__elasticsearch__.client.indices
-      .analyze(index: Article.index_name, body: { field: 'title', text: 'Foo_Bar_1' })['tokens']
+      .analyze(index: Article.index_name, body: { field: 'title', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
     "\n"
 
-puts "Keyword analyzer [Foo_Bar_1]".ansi(:bold),
+puts "Keyword analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
      Article.__elasticsearch__.client.indices
-      .analyze(index: Article.index_name, body: { field: 'title.keyword', text: 'Foo_Bar_1' })['tokens']
+      .analyze(index: Article.index_name, body: { field: 'title.keyword', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
      "\n"
 
-puts "Pattern analyzer [Foo_Bar_1]".ansi(:bold),
+puts "Pattern analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
      Article.__elasticsearch__.client.indices
-      .analyze(index: Article.index_name, body: { field: 'title.pattern', text: 'Foo_Bar_1' })['tokens']
+      .analyze(index: Article.index_name, body: { field: 'title.pattern', text: 'Foo_Bar_1_Bazooka' })['tokens']
+      .map { |d| "[#{d['token']}]" }.join(' '),
+     "\n"
+
+puts "Trigram analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
+     "Tokens: " +
+     Article.__elasticsearch__.client.indices
+      .analyze(index: Article.index_name, body: { field: 'title.trigram', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
      "\n"
 
@@ -102,5 +121,15 @@ puts "Pattern search for 'foo'".ansi(:bold),
      "\n"
 
 puts '', '-'*80
+
+response = Article.search query: { match: { 'title.trigram' => 'zoo' } } ;
+
+puts "Trigram search for 'zoo'".ansi(:bold),
+     "#{response.response.hits.total} matches: " +
+     response.records.map { |d| d.title }.join(', '),
+     "\n"
+
+puts '', '-'*80
+
 
 require 'pry'; binding.pry;
