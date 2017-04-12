@@ -425,7 +425,7 @@ Article.__elasticsearch__.refresh_index!
 ```
 
 By default, index name and document type will be inferred from your class name,
-you can set it explicitely, however:
+you can set it explicitly, however:
 
 ```ruby
 class Article
