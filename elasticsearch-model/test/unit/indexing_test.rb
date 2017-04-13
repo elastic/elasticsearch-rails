@@ -167,13 +167,13 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         extend  Elasticsearch::Model::Indexing::ClassMethods
         include Elasticsearch::Model::Indexing::InstanceMethods
 
-        def self.before_save(&block)
+        def self.after_save(&block)
           (@callbacks ||= {})[block.hash] = block
         end
 
         def changed_attributes; [:foo]; end
 
-        def changes
+        def previous_changes
           {:foo => ['One', 'Two']}
         end
       end
@@ -182,13 +182,13 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         extend  Elasticsearch::Model::Indexing::ClassMethods
         include Elasticsearch::Model::Indexing::InstanceMethods
 
-        def self.before_save(&block)
+        def self.after_save(&block)
           (@callbacks ||= {})[block.hash] = block
         end
 
         def changed_attributes; [:foo, :bar]; end
 
-        def changes
+        def previous_changes
           {:foo => ['A', 'B'], :bar => ['C', 'D']}
         end
 
@@ -197,12 +197,12 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
-      should "register before_save callback when included" do
-        ::DummyIndexingModelWithCallbacks.expects(:before_save).returns(true)
+      should "register after_save callback when included" do
+        ::DummyIndexingModelWithCallbacks.expects(:after_save).returns(true)
         ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
       end
 
-      should "set the @__changed_attributes variable before save" do
+      should "set the @__changed_attributes variable after save" do
         instance = ::DummyIndexingModelWithCallbacks.new
         instance.expects(:instance_variable_set).with do |name, value|
           assert_equal :@__changed_attributes, name

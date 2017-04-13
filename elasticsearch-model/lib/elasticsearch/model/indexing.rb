@@ -314,10 +314,10 @@ module Elasticsearch
           #
           # @see #update_document
           #
-          base.before_save do |instance|
+          base.after_save do |instance|
             instance.instance_variable_set(:@__changed_attributes,
-                                  Hash[ instance.changes.map { |key, value| [key, value.last] } ])
-          end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
+                                  Hash[ instance.previous_changes.map { |key, value| [key, value.last] } ])
+          end if base.respond_to?(:after_save) && base.instance_methods.include?(:previous_changes)
         end
 
         # Serializes the model instance into JSON (by calling `as_indexed_json`),
