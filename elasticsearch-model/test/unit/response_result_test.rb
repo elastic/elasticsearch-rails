@@ -31,7 +31,7 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
     end
 
     should "delegate method calls to `_source` when available" do
-      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _source: { bar: 'baz' }
+      result = Elasticsearch::Model::Response::Result.new foo: 'bar', _source: { bar: 'baz', type: 'quux' }
 
       assert_respond_to result, :foo
       assert_respond_to result, :_source
@@ -40,6 +40,7 @@ class Elasticsearch::Model::ResultTest < Test::Unit::TestCase
       assert_equal 'bar', result.foo
       assert_equal 'baz', result._source.bar
       assert_equal 'baz', result.bar
+      assert_equal 'quux', result.type
     end
 
     should "delegate existence method calls to `_source`" do
