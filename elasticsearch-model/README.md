@@ -513,8 +513,8 @@ with a tool like [_Resque_](https://github.com/resque/resque) or [_Sidekiq_](htt
 class Article
   include Elasticsearch::Model
 
-  after_save    { Indexer.perform_async(:index,  self.id) }
-  after_destroy { Indexer.perform_async(:delete, self.id) }
+  after_commit lambda { Indexer.perform_async(:index,  self.id) }, on: [:create, :update]
+  after_commit lambda { Indexer.perform_async(:delete, self.id) }, on: :destroy
 end
 ```
 
