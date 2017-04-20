@@ -22,6 +22,7 @@
 
 require 'uri'
 require 'net/http'
+require 'json'
 
 at_exit do
   pid = File.read("#{destination_root}/tmp/pids/elasticsearch.pid") rescue nil
