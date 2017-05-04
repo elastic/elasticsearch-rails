@@ -33,7 +33,7 @@ class Article < ActiveRecord::Base
       analyzer: {
         pattern: {
           type: 'pattern',
-          pattern: "_|-|\\.",
+          pattern: "\\s|_|-|\\.",
           lowercase: true
         },
         trigram: {
@@ -50,7 +50,7 @@ class Article < ActiveRecord::Base
       }
     } } do
     mapping do
-      indexes :title, type: 'text' do
+      indexes :title, type: 'text', analyzer: 'english' do
         indexes :keyword, analyzer: 'keyword'
         indexes :pattern, analyzer: 'pattern'
         indexes :trigram, analyzer: 'trigram'
@@ -74,7 +74,7 @@ puts "[!] Errors importing records: #{errors.map { |d| d['index']['error'] }.joi
 
 puts '', '-'*80
 
-puts "Fulltext analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
+puts "English analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
      Article.__elasticsearch__.client.indices
       .analyze(index: Article.index_name, body: { field: 'title', text: 'Foo_Bar_1_Bazooka' })['tokens']
@@ -106,7 +106,7 @@ puts '', '-'*80
 
 response = Article.search query: { match: { 'title' => 'foo' } } ;
 
-puts "Search for 'foo'".ansi(:bold),
+puts "English search for 'foo'".ansi(:bold),
      "#{response.response.hits.total} matches: " +
      response.records.map { |d| d.title }.join(', '),
      "\n"
