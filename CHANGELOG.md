@@ -1,3 +1,9 @@
+## 2.0.1
+
+### ActiveModel
+
+* Fixed incorrect dependency on the "elasticsearch" Rubygem
+
 ## 2.0.0
 
 * Updated the Rake dependency to 11.1
