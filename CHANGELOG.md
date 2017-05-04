@@ -1,3 +1,14 @@
+## 5.0.1
+
+### ActiveModel
+
+* Updated the dependency on "elasticsearch" to 5.x
+
+### Persistence
+
+* Updated the failing integration tests for Elasticsearch 5.x
+* Updated the dependency for "elasticsearch" and "elasticsearch-model" to `5.x`
+
 ## 5.0.0
 
 * Updated the Rake dependency to 11.1
