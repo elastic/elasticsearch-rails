@@ -25,9 +25,7 @@ class Article < ActiveRecord::Base
   end
 
   def as_indexed_json(options={})
-    as_json.merge \
-    title_suggest: { input:  title },
-    url: "/articles/#{id}"
+    as_json.merge 'url' => "/articles/#{id}"
   end
 end
 
