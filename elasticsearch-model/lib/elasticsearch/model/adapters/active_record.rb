@@ -80,7 +80,7 @@ module Elasticsearch
           def self.included(base)
             base.class_eval do
               after_commit lambda { __elasticsearch__.index_document  },  on: :create
-              after_commit lambda { __elasticsearch__.update_document },  on: :update
+              after_commit lambda { __elasticsearch__.update_document },  if: :changed?, on: :update
               after_commit lambda { __elasticsearch__.delete_document },  on: :destroy
             end
           end
