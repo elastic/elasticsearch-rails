@@ -80,7 +80,7 @@ namespace :elasticsearch do
 
         $ rake environment elasticsearch:import:all DIR=app/models
     DESC
-    task :all do
+    task :all => :environment do
       dir    = ENV['DIR'].to_s != '' ? ENV['DIR'] : Rails.root.join("app/models")
 
       puts "[IMPORT] Loading models from: #{dir}"
