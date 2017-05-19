@@ -108,6 +108,23 @@ module Elasticsearch
         def __extract_id_from_document(document)
           document.delete(:id) || document.delete('id') || document.delete(:_id) || document.delete('_id')
         end
+
+        # Extract an attribute from the document (assuming Hash or Hash-like object)
+        #
+        # @note Calling this method will *remove* the `attribute` key from the passed object.
+        #
+        # @example
+        #     options = { title: 'Test', id: 'abc123', _parent: 'parent' }
+        #     repository.__extract_attribute_from_document(options, :_parent)
+        #     # => "parent"
+        #     options
+        #     # => { title: 'Test', id: 'abc123' }
+        #
+        # @api private
+        #
+        def __extract_attribute_from_document(document, attribute)
+          document.delete(attribute.to_sym) || document.delete(attribute.to_s)
+        end
       end
 
     end

@@ -6,19 +6,24 @@ module Elasticsearch
       #
       module Store
 
-        # Store the serialized object in Elasticsearch
+        # Store the serialized object or objects in Elasticsearch
         #
         # @example
         #     repository.save(myobject)
         #     => {"_index"=>"...", "_type"=>"...", "_id"=>"...", "_version"=>1, "created"=>true}
         #
+        # @example
+        #     repository.save([myobject, myobject])
+        #     => {"took"=>1, "errors"=>false, "items"=>[{"index"=>{"_index"=>"...", "_type"=>"...", "_id"=>"...", "status"=>200}}]}
+        #
         # @return {Hash} The response from Elasticsearch
         #
-        def save(document, options={})
-          serialized = serialize(document)
-          id   = __get_id_from_document(serialized)
-          type = document_type || __get_type_from_class(klass || document.class)
-          client.index( { index: index_name, type: type, id: id, body: serialized }.merge(options) )
+        def save(document_or_documents, options={})
+          if document_or_documents.is_a?(Array)
+            __save_many(document_or_documents, options)
+          else
+            __save_one(document_or_documents, options)
+          end
         end
 
         # Update the serialized object in Elasticsearch with partial data or script
@@ -88,8 +93,50 @@ module Elasticsearch
           end
           client.delete( { index: index_name, type: type, id: id }.merge(options) )
         end
-      end
 
+        # Save one document using `client.index` method
+        #
+        # @api private
+        #
+        def __save_one(document, options={})
+          document   = document.dup
+          serialized = serialize(document)
+          id   = __get_id_from_document(serialized)
+          type = document_type || __get_type_from_class(klass || document.class)
+          client.index( { index: index_name, type: type, id: id, body: serialized }.merge(options) )
+        end
+
+        # Save multiple documents using `client.bulk` method
+        #
+        # @api private
+        #
+        def __save_many(documents, options={})
+          body = documents.map do |document|
+            document   = document.dup
+            payload    = {}
+            serialized = serialize(document)
+            id         = __get_id_from_document(serialized)
+            type       = document_type || __get_type_from_class(klass || document.class)
+
+            payload[:_id]    = id
+            payload[:_type]  = type
+            payload[:_index] = index_name
+
+            [:_parent, :_version, :_routing].each do |attribute|
+              if value = __extract_attribute_from_document(serialized, attribute)
+                payload[attribute] = value
+              end
+            end
+
+            payload[:data]  = serialized
+
+            { index: payload.merge(options) }
+          end
+
+          client.bulk body: body
+        end
+      end
     end
   end
 end
+
