@@ -407,6 +407,8 @@ Article.mappings.to_hash
 Article.settings.to_hash
 # { :index => { :number_of_shards => 1 } }
 ```
+Note: Mappings dynamic: 'false' is required (default is true) as without it
+Elasticsearch will automatically create additional fields for data not specified. 
 
 You can use the defined settings and mappings to create an index with desired configuration:
 
