@@ -47,6 +47,8 @@ module Elasticsearch
             case
               when search.definition[:size]
                 search.definition[:size]
+              when search.definition[:body].try(:[], :size)
+                search.definition[:body][:size]
               else
                 __default_per_page
             end
@@ -58,6 +60,8 @@ module Elasticsearch
             case
               when search.definition[:from]
                 search.definition[:from]
+              when search.definition[:body].try(:[], :from)
+                search.definition[:body][:from]
               else
                 0
             end
