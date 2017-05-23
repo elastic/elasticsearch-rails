@@ -21,6 +21,31 @@ module Elasticsearch
           client.index( { index: index_name, type: type, id: id, body: serialized }.merge(options) )
         end
 
+        # Bulk store a collection of objects in Elasticsearch
+        #
+        # Accepts heterogeneus collections of objects.
+        #
+        # @example
+        #     repository.bulk_save([obj1, obj2])
+        #     => []
+        #
+        # @return An Array of errors.
+        #
+        def bulk_save(documents)
+          body = documents.map do |document|
+            serialized = serialize(document)
+            id   = __get_id_from_document(serialized)
+            type = document_type || __get_type_from_class(klass || document.class)
+            { index: { _id: id, _type: type, data: serialized } }
+          end
+
+          response = client.bulk index: index_name, body: body
+
+          errors = response['items'].select { |k, v| k.values.first['error'] }
+
+          errors
+        end
+
         # Update the serialized object in Elasticsearch with partial data or script
         #
         # @example Update the document with partial data
