@@ -99,7 +99,7 @@ module Elasticsearch
             preprocess = options.delete(:preprocess)
 
             scope = self
-            scope = scope.__send__(named_scope) if named_scope
+            scope = scope.public_send(named_scope) if named_scope
             scope = scope.instance_exec(&query) if query
 
             scope.find_in_batches(options) do |batch|
