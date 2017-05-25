@@ -116,6 +116,9 @@ module Elasticsearch
                  Elasticsearch::Model::HashWrapper.new(document.except('_index', '_type', '_id', '_version', '_source'))
 
               object.instance_variable_set(:@persisted, true)
+
+              object.run_callbacks :find
+
               object
             end
           end
