@@ -30,7 +30,7 @@ module Elasticsearch
                 @results  = nil
                 @records  = nil
                 @response = nil
-                @page     = [num.to_i, 1].max
+                @page     = [[num.to_i, 1].max, __max_pages].compact.min
                 @per_page ||= __default_per_page
 
                 self.search.definition.update size: @per_page,
@@ -93,6 +93,14 @@ module Elasticsearch
           #
           def total_count
             results.total
+          end
+
+          # Returns the model's `max_pages` value
+          #
+          # @api private
+          #
+          def __max_pages
+            klass.respond_to?(:max_pages) && klass.max_pages || ::Kaminari.config.max_pages
           end
 
           # Returns the models's `per_page` value or the default
