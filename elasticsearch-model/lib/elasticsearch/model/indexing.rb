@@ -320,6 +320,25 @@ module Elasticsearch
           end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
         end
 
+        # Verifies model instance presence in the index
+        #
+        # @example Checks for identifier presence in the index
+        #
+        #     @article.__elasticsearch__.exists?
+        #     2015-11-26 12:17:00 +0100: HEAD http://localhost:9200/articles/article/1
+        #
+        # @return [true, false]
+        #
+        def exists?(options = {})
+          client.exists?(
+            {
+              id: id,
+              index: index_name,
+              type: document_type
+            }.merge(options)
+          )
+        end
+
         # Serializes the model instance into JSON (by calling `as_indexed_json`),
         # and saves the document into the Elasticsearch index.
         #

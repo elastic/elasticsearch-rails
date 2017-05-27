@@ -256,6 +256,20 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance.index_document(parent: 'A')
       end
 
+      should "have the exists? method" do
+        client = mock('client')
+        instance = ::DummyIndexingModelWithCallbacks.new
+
+        client.expects(:exists?).returns(true)
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.exists?
+      end
+
       should "have the delete_document method" do
         client   = mock('client')
         instance = ::DummyIndexingModelWithCallbacks.new
