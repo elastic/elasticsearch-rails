@@ -84,8 +84,7 @@ module Elasticsearch
             @results  = nil
             @records  = nil
             @response = nil
-            @page     = nil
-            search.definition.update :from => value.to_i
+            search.definition.update :from => @per_page * (@page - 1) + value.to_i
             self
           end
 
