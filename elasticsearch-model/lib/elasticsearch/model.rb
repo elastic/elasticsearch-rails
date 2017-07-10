@@ -27,6 +27,7 @@ require 'elasticsearch/model/proxy'
 
 require 'elasticsearch/model/response'
 require 'elasticsearch/model/response/base'
+require 'elasticsearch/model/response/hash_wrapper'
 require 'elasticsearch/model/response/result'
 require 'elasticsearch/model/response/results'
 require 'elasticsearch/model/response/records'
