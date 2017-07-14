@@ -14,7 +14,7 @@ module Elasticsearch
         # @param attributes [Hash] A Hash with document properties
         #
         def initialize(attributes={})
-          @result = Hashie::Mash.new(attributes)
+          @result = HashWrapper.new(attributes)
         end
 
         # Return document `_id` as `id`

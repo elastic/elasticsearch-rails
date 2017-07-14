@@ -2,7 +2,7 @@ module Elasticsearch
   module Model
     module Response
 
-      class Aggregations < Hashie::Mash
+      class Aggregations < HashWrapper
         def initialize(attributes={})
           __redefine_enumerable_methods super(attributes)
         end
