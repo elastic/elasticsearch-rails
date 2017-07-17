@@ -11,6 +11,12 @@ module Elasticsearch
         Adapter.register self, lambda { |klass| klass.is_a? Multimodel }
 
         module Records
+          attr_writer :options
+
+          def options
+            @options ||= {}
+          end
+
           # Returns a collection of model instances, possibly of different classes (ActiveRecord, Mongoid, ...)
           #
           # @note The order of results in the Elasticsearch response is preserved
@@ -39,6 +45,12 @@ module Elasticsearch
           def __records_by_type
             result = __ids_by_type.map do |klass, ids|
               records = __records_for_klass(klass, ids)
+
+              klass_sym = klass.to_s.to_sym
+              if self.options[:includes] && self.options[:includes][klass_sym]
+                records = records.includes(self.options[:includes][klass_sym])
+              end
+
               ids     = records.map(&:id).map(&:to_s)
               [ klass, Hash[ids.zip(records)] ]
             end

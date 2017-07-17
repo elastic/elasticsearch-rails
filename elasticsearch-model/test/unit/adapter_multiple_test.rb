@@ -101,6 +101,21 @@ class Elasticsearch::Model::MultipleTest < Test::Unit::TestCase
 
         assert_equal [2, 2, 1, 1, 3], records.map(&:id)
       end
+
+      should "load the records with its submodels when using :includes" do
+        @records = [ stub(id: 1, inspect: '<Model-1>'), stub(id: 2, inspect: '<Model-2>') ]
+
+        ::DummyOne.stubs(:find).returns(@records)
+        @records.expects(:includes).with([:submodel]).returns(@records).at_least_once
+
+        ::Namespace::DummyTwo.stubs(:find).returns(@records)
+        @records.expects(:includes).with([:submodel, :submodel1]).returns(@records).at_least_once
+
+
+        @multimodel.options[:includes] = { :DummyOne => [:submodel],
+                                           :"Namespace::DummyTwo" => [:submodel, :submodel1] }
+        @multimodel.records
+      end
     end
   end
 end
