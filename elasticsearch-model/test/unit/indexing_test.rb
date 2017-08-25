@@ -406,6 +406,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
 
         client.expects(:update).with do |payload|
           assert_equal({'foo' => 'BAR'}, payload[:body][:doc])
+          true
         end
 
         instance.expects(:client).returns(client)
