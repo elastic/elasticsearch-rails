@@ -23,7 +23,7 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
         (@callbacks ||= {})[block.hash] = block
       end
 
-      def changed_attributes; [:foo]; end
+      def attributes_in_database; [:foo]; end
 
       def changes
         {:foo => ['One', 'Two']}
@@ -43,10 +43,10 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
       DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
     end
 
-    should "set the @__changed_attributes variable before save" do
+    should "set the @__attributes_in_database variable before save" do
       instance = ::DummyProxyModelWithCallbacks.new
       instance.__elasticsearch__.expects(:instance_variable_set).with do |name, value|
-        assert_equal :@__changed_attributes, name
+        assert_equal :@__attributes_in_database, name
         assert_equal({foo: 'Two'}, value)
         true
       end
