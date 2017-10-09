@@ -1,5 +1,7 @@
 # Elasticsearch
 
+[![Build Status](https://travis-ci.org/elastic/elasticsearch-rails.svg?branch=master)](https://travis-ci.org/elastic/elasticsearch-rails) [![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
+
 This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
@@ -133,8 +135,6 @@ Article.create title: 'Test'
 * [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/test)
 
 ## Development
-
-[![Build Status](https://travis-ci.org/elastic/elasticsearch-rails.svg?branch=master)](https://travis-ci.org/elastic/elasticsearch-rails) [![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
 
 To work on the code, clone the repository and install all dependencies first:
 
