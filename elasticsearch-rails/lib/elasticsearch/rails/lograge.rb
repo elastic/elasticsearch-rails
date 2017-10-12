@@ -29,8 +29,18 @@ module Elasticsearch
             include Elasticsearch::Rails::Instrumentation::ControllerRuntime
           end
 
+          previous_lograge_custom_options = config.lograge.custom_options
           config.lograge.custom_options = lambda do |event|
-            { es: event.payload[:elasticsearch_runtime].to_f.round(2) }
+            previous_lograge_custom_options_hash = if previous_lograge_custom_options
+              if previous_lograge_custom_options.respond_to?(:call)
+                previous_lograge_custom_options.call(event)
+              else
+                previous_lograge_custom_options
+              end
+            else
+              {}
+            end
+            previous_lograge_custom_options_hash.merge(es: event.payload[:elasticsearch_runtime].to_f.round(2))
           end
         end
       end
