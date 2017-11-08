@@ -22,15 +22,11 @@ matrix:
   include:
     - rvm: 2.2.8
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
+      env: QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.0.0-rc2-SNAPSHOT/bin/elasticsearch
 
     - rvm: 2.3.5
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
-
-    - rvm: 2.3.5
-      jdk: oraclejdk8
-      env: TEST_SUITE=integration QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.0.0-rc2-SNAPSHOT/bin/elasticsearch
+      env: QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.0.0-rc2-SNAPSHOT/bin/elasticsearch
 
 before_install:
   - gem update --system --no-rdoc --no-ri
@@ -45,7 +41,7 @@ install:
   - rake bundle:install
 
 script:
-  - rake test:$TEST_SUITE
+  - rake test
 
 notifications:
   disable: true
