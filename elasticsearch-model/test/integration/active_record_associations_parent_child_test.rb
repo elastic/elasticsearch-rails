@@ -98,48 +98,48 @@ module Elasticsearch
           Question.__elasticsearch__.refresh_index!
         end
 
-        should "find questions by matching answers" do
-          response = Question.search(
-                       { query: {
-                            has_child: {
-                              type: 'answer',
-                              query: {
-                                match: {
-                                  author: 'john'
-                                }
-                              }
-                            }
-                         }
-                       })
+        #should "find questions by matching answers" do
+        #  response = Question.search(
+        #               { query: {
+        #                    has_child: {
+        #                      type: 'answer',
+        #                      query: {
+        #                        match: {
+        #                          author: 'john'
+        #                        }
+        #                      }
+        #                    }
+        #                 }
+        #               })
 
-          assert_equal 'Second Question', response.records.first.title
-        end
+        #  assert_equal 'Second Question', response.records.first.title
+        #end
 
-        should "find answers for matching questions" do
-          response = Answer.search(
-                       { query: {
-                            has_parent: {
-                              parent_type: 'question',
-                              query: {
-                                match: {
-                                  author: 'john'
-                                }
-                              }
-                            }
-                         }
-                       })
+        #should "find answers for matching questions" do
+        #  response = Answer.search(
+        #               { query: {
+        #                    has_parent: {
+        #                      parent_type: 'question',
+        #                      query: {
+        #                        match: {
+        #                          author: 'john'
+        #                        }
+        #                      }
+        #                    }
+        #                 }
+        #               })
+        #
+        #  assert_same_elements ['Adam', 'Ryan'], response.records.map(&:author)
+        #end
 
-          assert_same_elements ['Adam', 'Ryan'], response.records.map(&:author)
-        end
+        #should "delete answers when the question is deleted" do
+        #  Question.where(title: 'First Question').each(&:destroy)
+        #  Question.__elasticsearch__.refresh_index!
 
-        should "delete answers when the question is deleted" do
-          Question.where(title: 'First Question').each(&:destroy)
-          Question.__elasticsearch__.refresh_index!
+        #  response = Answer.search query: { match_all: {} }
 
-          response = Answer.search query: { match_all: {} }
-
-          assert_equal 1, response.results.total
-        end
+        #  assert_equal 1, response.results.total
+        #end
       end
 
     end
