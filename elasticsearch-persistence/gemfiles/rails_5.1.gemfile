@@ -4,6 +4,7 @@ source "https://rubygems.org"
 
 gem "appraisal"
 gem "yard"
+gem "elasticsearch-extensions", git: "https://github.com/elastic/elasticsearch-ruby.git"
 gem "rails", "~> 5.1", ">= 5.1.4"
 
 gemspec path: "../"
