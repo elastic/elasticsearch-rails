@@ -1,7 +1,3 @@
-RUBY_1_8 = defined?(RUBY_VERSION) && RUBY_VERSION < '1.9'
-
-exit(0) if RUBY_1_8
-
 $LOAD_PATH.unshift File.expand_path('../../../elasticsearch-model/lib', __FILE__) if File.exists? File.expand_path('../../../elasticsearch-model/lib', __FILE__)
 
 require 'simplecov' and SimpleCov.start { add_filter "/test|test_/" } if ENV["COVERAGE"]
@@ -37,7 +33,6 @@ module Elasticsearch
 
       startup  { Elasticsearch::Extensions::Test::Cluster.start(nodes: 1) if ENV['SERVER'] and not Elasticsearch::Extensions::Test::Cluster.running? }
       shutdown { Elasticsearch::Extensions::Test::Cluster.stop if ENV['SERVER'] && started? }
-      context "IntegrationTest" do; should "noop on Ruby 1.8" do; end; end if RUBY_1_8
 
       def setup
         tracer = ::Logger.new(STDERR)

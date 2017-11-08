@@ -24,16 +24,13 @@ namespace :bundle do
   desc "Run `bundle install` in all subprojects"
   task :install do
     subprojects.each do |project|
-      puts '-'*80
-      sh "bundle install --gemfile #{__current__.join(project)}/Gemfile"
-      puts
+      Dir.chdir(project) do
+        puts project + '-'*80
+        sh "unset BUNDLE_GEMFILE && bundle check || bundle install"
+        sh "unset BUNDLE_GEMFILE && bundle exec appraisal"
+      end
     end
     puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile"
-    puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile"
-    puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile"
   end
 
   desc "Remove Gemfile.lock in all subprojects"
@@ -48,40 +45,26 @@ namespace :bundle do
 end
 
 namespace :test do
-  task :bundle => 'bundle:install'
-
   desc "Run unit tests in all subprojects"
   task :unit do
     subprojects.each do |project|
-      puts '-'*80
-      sh "cd #{__current__.join(project)} && unset BUNDLE_GEMFILE && bundle exec rake test:unit"
-      puts "\n"
+      puts project + '-'*80
+      Dir.chdir(project) do
+        sh "unset BUNDLE_GEMFILE && bundle exec appraisal rake test:unit"
+        #sh "bundle exec appraisal rake test:unit"
+        puts "\n"
+      end
     end
   end
 
   desc "Run integration tests in all subprojects"
   task :integration do
-    # 1/ elasticsearch-model
-    #
-    puts '-'*80
-    sh "cd #{__current__.join('elasticsearch-model')} && unset BUNDLE_GEMFILE &&" +
-       %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE='#{ENV['TEST_BUNDLE_GEMFILE']}'" : '' }|  +
-       " bundle exec rake test:integration"
-    puts "\n"
-
-    # 2/ elasticsearch-persistence
-    #
-    puts '-'*80
-    sh "cd #{__current__.join('elasticsearch-persistence')} && unset BUNDLE_GEMFILE &&" +
-       " bundle exec rake test:integration"
-    puts "\n"
-
-    # 3/ elasticsearch-rails
-    #
-    puts '-'*80
-    sh "cd #{__current__.join('elasticsearch-rails')} && unset BUNDLE_GEMFILE &&" +
-       " bundle exec rake test:integration"
-    puts "\n"
+    subprojects.each do |project|
+      Dir.chdir(project) do
+      puts '-'*80
+        sh "unset BUNDLE_GEMFILE && bundle exec appraisal rake test:integration"
+      end
+    end
   end
 
   desc "Run all tests in all subprojects"
@@ -110,6 +93,12 @@ namespace :test do
     end
   end
 end
+
+task :test do
+  Rake::Task['bundle:install'].invoke
+  Rake::Task['test:all'].invoke
+end
+
 
 desc "Generate documentation for all subprojects"
 task :doc do

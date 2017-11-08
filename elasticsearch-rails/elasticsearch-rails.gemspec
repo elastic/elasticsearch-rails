@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "elasticsearch-model"
 
   s.add_development_dependency "oj"
-  s.add_development_dependency "rails",  ">= 3.1"
+  s.add_development_dependency "rails",  ">= 3.2"
 
   s.add_development_dependency "lograge"
 
@@ -39,8 +39,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "shoulda-context"
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
-  s.add_development_dependency "yard"
   s.add_development_dependency "ruby-prof"
+  s.add_development_dependency "yard"
   s.add_development_dependency "pry"
 
   s.add_development_dependency "simplecov"

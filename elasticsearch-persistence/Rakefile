@@ -2,7 +2,7 @@ require "bundler/gem_tasks"
 
 desc "Run unit tests"
 task :default => 'test:unit'
-task :test    => 'test:unit'
+task :test    => 'test:all'
 
 # ----- Test tasks ------------------------------------------------------------
 
@@ -18,7 +18,7 @@ namespace :test do
   Rake::TestTask.new(:integration) do |test|
     test.libs << 'lib' << 'test'
     test.test_files = FileList["test/integration/**/*_test.rb"]
-    test.verbose = false
+    test.verbose = true
     test.warning = false
   end
 
@@ -37,14 +37,12 @@ end
 
 # ----- Code analysis tasks ---------------------------------------------------
 
-if defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
-  begin
-    require 'cane/rake_task'
-    Cane::RakeTask.new(:quality) do |cane|
-      cane.abc_max = 15
-      cane.style_measure = 120
-    end
-  rescue LoadError
-    warn "cane not available, quality task not provided."
+begin
+  require 'cane/rake_task'
+  Cane::RakeTask.new(:quality) do |cane|
+    cane.abc_max = 15
+    cane.style_measure = 120
   end
+rescue LoadError
+  warn "cane not available, quality task not provided."
 end

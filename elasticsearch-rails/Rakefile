@@ -1,8 +1,7 @@
 require "bundler/gem_tasks"
-
 desc "Run unit tests"
 task :default => 'test:unit'
-task :test    => 'test:unit'
+task :test    => 'test:all'
 
 # ----- Test tasks ------------------------------------------------------------
 
