@@ -9,4 +9,3 @@ gemspec
 # end
 gem 'appraisal'
 gem 'yard'
-gem 'elasticsearch-extensions', git: 'https://github.com/elastic/elasticsearch-ruby.git'
