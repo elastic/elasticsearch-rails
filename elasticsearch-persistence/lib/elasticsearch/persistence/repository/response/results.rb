@@ -18,7 +18,7 @@ module Elasticsearch
           #
           def initialize(repository, response, options={})
             @repository = repository
-            @response   = Elasticsearch::Model::HashWrapper.new(response)
+            @response   = response
             @options    = options
           end
 
@@ -33,13 +33,13 @@ module Elasticsearch
           # The number of total hits for a query
           #
           def total
-            response['hits']['total']
+            @response['hits']['total']
           end
 
           # The maximum score for a query
           #
           def max_score
-            response['hits']['max_score']
+            @response['hits']['max_score']
           end
 
           # Yields [object, hit] pairs to the block
@@ -64,7 +64,7 @@ module Elasticsearch
           # @return [Array]
           #
           def results
-            @results ||= response['hits']['hits'].map do |document|
+            @results ||= @response['hits']['hits'].map do |document|
               repository.deserialize(document.to_hash)
             end
           end
@@ -81,7 +81,7 @@ module Elasticsearch
           # @return [Elasticsearch::Model::HashWrapper]
           #
           def response
-            @response
+            @hash_wrapped_response ||= Elasticsearch::Model::HashWrapper.new(@response)
           end
         end
       end
