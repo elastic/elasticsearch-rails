@@ -1,3 +1,9 @@
+## 5.0.2
+
+### ActiveModel
+
+* Fixed the deprecation warnings on Rails 5.1 due to calling the `changes` method
+
 ## 5.0.1
 
 ### ActiveModel
