@@ -307,17 +307,23 @@ module Elasticsearch
 
         def self.included(base)
           # Register callback for storing changed attributes for models
-          # which implement `before_save` and `attributes_in_database` methods
+          # which implement `before_save` and return changed attributes
+          # (ie. when `Elasticsearch::Model` is included)
           #
           # @note This is typically triggered only when the module would be
           #       included in the model directly, not within the proxy.
           #
           # @see #update_document
           #
-          base.before_save do |instance|
-            instance.instance_variable_set(:@__attributes_in_database,
-                                  Hash[ instance.changes_to_save.map { |key, value| [key, value.last] } ])
-          end if base.respond_to?(:before_save) && base.instance_methods.include?(:attributes_in_database)
+          base.before_save do |i|
+            if i.class.instance_methods.include?(:changes_to_save) # Rails 5.1
+              i.instance_variable_set(:@__changed_model_attributes,
+                                      Hash[ i.changes_to_save.map { |key, value| [key, value.last] } ])
+            elsif i.class.instance_methods.include?(:changes)
+              i.instance_variable_set(:@__changed_model_attributes,
+                                      Hash[ i.changes.map { |key, value| [key, value.last] } ])
+            end
+          end if base.respond_to?(:before_save)
         end
 
         # Serializes the model instance into JSON (by calling `as_indexed_json`),
@@ -391,7 +397,7 @@ module Elasticsearch
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:update
         #
         def update_document(options={})
-          if attributes_in_database = self.instance_variable_get(:@__attributes_in_database)
+          if attributes_in_database = self.instance_variable_get(:@__changed_model_attributes)
             attributes = if respond_to?(:as_indexed_json)
               self.as_indexed_json.select { |k,v| attributes_in_database.keys.map(&:to_s).include? k.to_s }
             else
