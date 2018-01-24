@@ -69,6 +69,7 @@ class Article < ActiveRecord::Base
   include Elasticsearch::Model::Callbacks
 end
 
+Article.__elasticsearch__.create_index!
 Article.import
 
 @articles = Article.search('foobar').records
