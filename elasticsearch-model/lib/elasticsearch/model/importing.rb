@@ -129,6 +129,7 @@ module Elasticsearch
             yield response if block_given?
 
             errors +=  response['items'].select { |k, v| k.values.first['error'] }
+            sleep(10)
           end
 
           self.refresh_index! if refresh
