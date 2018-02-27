@@ -120,7 +120,7 @@ module Elasticsearch
           end
 
           __find_in_batches(options) do |batch|
-            p 'hey my Elasticsearch'
+            puts ObjectSpace.each_object(ActiveRecord::Base).count
             response = client.bulk \
                          index:   target_index,
                          type:    target_type,
