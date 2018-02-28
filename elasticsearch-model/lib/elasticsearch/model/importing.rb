@@ -99,7 +99,7 @@ module Elasticsearch
         #
         #    Article.import return: 'errors'
         #
-        def import(options={}, &block)
+        def import(options={}, logger, &block)
           errors       = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
@@ -119,17 +119,22 @@ module Elasticsearch
                   "#{target_index} does not exist to be imported into. Use create_index! or the :force option to create it."
           end
 
+          count_of_batches = 0
           __find_in_batches(options) do |batch|
-            puts ObjectSpace.each_object(ActiveRecord::Base).count
+            count_of_batches += 1
+
             response = client.bulk \
                          index:   target_index,
                          type:    target_type,
                          body:    __batch_to_bulk(batch, transform)
 
+            puts "#{count_of_batches} 回目のバッチ"
+            logger.info "#{count_of_batches} 回目のバッチ"
+            logger.info "Memory Used #{ObjectSpace.each_object(ActiveRecord::Base).count}"
+
             yield response if block_given?
 
             errors +=  response['items'].select { |k, v| k.values.first['error'] }
-            sleep(10)
           end
 
           self.refresh_index! if refresh
