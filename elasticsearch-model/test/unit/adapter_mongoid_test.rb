@@ -98,7 +98,64 @@ class Elasticsearch::Model::AdapterMongoidTest < Test::Unit::TestCase
           assert_equal @transform.call(model), { index: { _id: "1", data: {} } }
         end
       end
-    end
 
+      should "limit the relation to a specific scope" do
+        relation = mock()
+        relation.stubs(:no_timeout).returns(relation)
+        relation.expects(:published).returns(relation)
+        relation.expects(:each_slice).returns([])
+        DummyClassForMongoid.expects(:all).returns(relation)
+
+        DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
+        DummyClassForMongoid.__find_in_batches(scope: :published) do; end
+      end
+
+      context "when limit the relation with proc" do
+        setup do
+          @query = Proc.new { where(color: "red") }
+        end
+        should "query with a specific criteria" do
+          relation = mock()
+          relation.stubs(:no_timeout).returns(relation)
+          relation.expects(:class_exec).returns(relation)
+          relation.expects(:each_slice).returns([])
+          DummyClassForMongoid.expects(:all).returns(relation)
+
+          DummyClassForMongoid.__find_in_batches(query: @query) do; end
+        end
+      end
+
+      context "when limit the relation with hash" do
+        setup do
+          @query = { color: "red" }
+        end
+        should "query with a specific criteria" do
+          relation = mock()
+          relation.stubs(:no_timeout).returns(relation)
+          relation.expects(:where).with(@query).returns(relation)
+          relation.expects(:each_slice).returns([])
+          DummyClassForMongoid.expects(:all).returns(relation)
+
+          DummyClassForMongoid.__find_in_batches(query: @query) do; end
+        end
+      end
+
+      should "preprocess the batch if option provided" do
+        class << DummyClassForMongoid
+          # Updates/transforms the batch while fetching it from the database
+          # (eg. with information from an external system)
+          #
+          def update_batch(batch)
+            batch.collect { |b| b.to_s + '!' }
+          end
+        end
+
+        DummyClassForMongoid.expects(:__find_in_batches).returns( [:a, :b] )
+
+        DummyClassForMongoid.__find_in_batches(preprocess: :update_batch) do |batch|
+          assert_same_elements ["a!", "b!"], batch
+        end
+      end
+    end
   end
 end
