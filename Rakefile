@@ -29,8 +29,6 @@ namespace :bundle do
       puts
     end
     puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile"
-    puts '-'*80
     sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile"
     puts '-'*80
     sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile"
@@ -41,7 +39,6 @@ namespace :bundle do
     subprojects.each do |project|
       sh "rm -f #{__current__.join(project)}/Gemfile.lock"
     end
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile.lock"
     sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile.lock"
     sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile.lock"
   end
