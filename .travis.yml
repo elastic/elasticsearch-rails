@@ -20,15 +20,15 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.6
+    - rvm: 2.3.7
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.3.3
+    - rvm: 2.4.4
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.3.3
+    - rvm: 2.4.4
       jdk: oraclejdk8
       env: TEST_SUITE=integration QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.1.0/bin/elasticsearch
 
