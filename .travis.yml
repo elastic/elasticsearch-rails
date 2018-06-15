@@ -20,11 +20,11 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.6
+    - rvm: 2.2.10
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.3.3
+    - rvm: 2.3.7
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
