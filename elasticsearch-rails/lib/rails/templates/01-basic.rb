@@ -11,7 +11,6 @@
 # * Git
 # * Ruby  >= 1.9.3
 # * Rails >= 5
-# * Java  >= 8 (for Elasticsearch)
 #
 # Usage:
 # ------
@@ -22,74 +21,54 @@
 
 require 'uri'
 require 'net/http'
-
-at_exit do
-  pid = File.read("#{destination_root}/tmp/pids/elasticsearch.pid") rescue nil
-  if pid
-    say_status  "Stop", "Elasticsearch", :yellow
-    run "kill #{pid}"
-  end
-end
+require 'json'
 
 $elasticsearch_url = ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200')
 
-# ----- Check & download Elasticsearch ------------------------------------------------------------
+# ----- Check for Elasticsearch -------------------------------------------------------------------
 
-cluster_info = Net::HTTP.get(URI.parse($elasticsearch_url)) rescue nil
-cluster_info = JSON.parse(cluster_info) if cluster_info
+required_elasticsearch_version = '6'
 
-if cluster_info.nil? || cluster_info['version']['number'] < '5'
-  # Change the port when incompatible Elasticsearch version is running on localhost:9200
-  if $elasticsearch_url == 'http://localhost:9200' && cluster_info && cluster_info['version']['number'] < '5'
-    $change_port = '9280'
-    $elasticsearch_url = "http://localhost:#{$change_port}"
-  end
+docker_command =<<-CMD.gsub(/\s{1,}/, ' ').strip
+  docker run \
+    --name elasticsearch-rails-searchapp \
+    --publish 9200:9200 \
+    --env "discovery.type=single-node" \
+    --env "cluster.name=elasticsearch-rails" \
+    --env "cluster.routing.allocation.disk.threshold_enabled=false" \
+    --rm \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+CMD
 
-  COMMAND = <<-COMMAND.gsub(/^    /, '')
-    curl -# -O "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.2.1.tar.gz"
-    tar -zxf elasticsearch-5.2.1.tar.gz
-    rm  -f   elasticsearch-5.2.1.tar.gz
-    ./elasticsearch-5.2.1/bin/elasticsearch -d -p #{destination_root}/tmp/pids/elasticsearch.pid #{$change_port.nil? ? '' : "-E http.port=#{$change_port}" }
-  COMMAND
+begin
+  cluster_info = Net::HTTP.get(URI.parse($elasticsearch_url))
+rescue Errno::ECONNREFUSED => e
+  say_status "ERROR", "Cannot connect to Elasticsearch on <#{$elasticsearch_url}>\n\n", :red
+  say_status "", "The application requires an Elasticsearch cluster running, " +
+                 "but no cluster has been found on <#{$elasticsearch_url}>."
+  say_status "", "The easiest way of launching Elasticsearch is by running it with Docker (https://www.docker.com/get-docker):\n\n"
+  say_status "", docker_command + "\n"
+  exit(1)
+rescue StandardError => e
+  say_status "ERROR", "#{e.class}: #{e.message}", :red
+  exit(1)
+end
 
-  puts        "\n"
-  say_status  "ERROR", "Elasticsearch not running!\n", :red
-  puts        '-'*80
-  say_status  '',      "It appears that Elasticsearch 5 is not running on this machine."
-  say_status  '',      "Is it installed? Do you want me to install and run it for you with this command?\n\n"
-  COMMAND.each_line { |l| say_status '', "$ #{l}" }
-  puts
-  say_status  '',      "(To uninstall, just remove the generated application directory.)"
-  puts        '-'*80, ''
+cluster_info = JSON.parse(cluster_info)
 
-  if yes?("Install Elasticsearch?", :bold)
-    puts
-    say_status  "Install", "Elasticsearch", :yellow
+unless cluster_info['version']
+  say_status "ERROR", "Cannot determine Elasticsearch version from <#{$elasticsearch_url}>", :red
+  say_status "", JSON.dump(cluster_info), :red
+  exit(1)
+end
 
-    java_info = `java -version 2>&1`
-
-    unless java_info.match /1\.[8-9]/
-      puts
-      say_status "ERROR", "Required Java version (1.8) not found, exiting...", :red
-      exit(1)
-    end
-
-    commands = COMMAND.split("\n")
-    exec     = commands.pop
-    inside("vendor") do
-      commands.each { |command| run command }
-      run "(#{exec})"  # Launch Elasticsearch in subshell
-    end
-
-    # Wait for Elasticsearch to be up...
-    #
-    system <<-COMMAND
-      until $(curl --silent --head --fail #{$elasticsearch_url} > /dev/null 2>&1); do
-          printf '.'; sleep 1
-      done
-    COMMAND
-  end
-end unless ENV['RAILS_NO_ES_INSTALL']
+if cluster_info['version']['number'] < required_elasticsearch_version
+  say_status "ERROR",
+             "The application requires Elasticsearch version #{required_elasticsearch_version} or higher, found version #{cluster_info['version']['number']}.\n\n", :red
+  say_status "", "The easiest way of launching Elasticsearch is by running it with Docker (https://www.docker.com/get-docker):\n\n"
+  say_status "", docker_command + "\n"
+  exit(1)
+end
 
 # ----- Application skeleton ----------------------------------------------------------------------
 
@@ -144,7 +123,7 @@ end
 
 # ----- Auxiliary gems ----------------------------------------------------------------------------
 
-gem 'mocha', group: 'test', require: 'mocha/api'
+gem 'mocha', group: 'test'
 gem 'rails-controller-testing', group: 'test'
 
 # ----- Remove CoffeeScript, Sass and "all that jazz" ---------------------------------------------
@@ -160,9 +139,9 @@ puts
 say_status  "Rubygems", "Adding Elasticsearch libraries into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.75
 
-gem 'elasticsearch',       git: 'git://github.com/elasticsearch/elasticsearch-ruby.git'
-gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
+gem 'elasticsearch',       git: 'https://github.com/elasticsearch/elasticsearch-ruby.git'
+gem 'elasticsearch-model', git: 'https://github.com/elasticsearch/elasticsearch-rails.git'
+gem 'elasticsearch-rails', git: 'https://github.com/elasticsearch/elasticsearch-rails.git'
 
 
 git add:    "Gemfile*"

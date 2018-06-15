@@ -183,7 +183,7 @@ git commit: "-m 'Refactored the Elasticsearch integration into a concern\n\nSee:
 # ----- Add Sidekiq indexer -----------------------------------------------------------------------
 
 puts
-say_status  "Application", "Adding Sidekiq worker for updating the index...\n", :yellow
+say_status  "Sidekiq", "Adding Sidekiq worker for updating the index...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
 gem "sidekiq"
@@ -240,6 +240,18 @@ get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasti
 git add:    "app/controllers/ test/controllers/ config/routes.rb"
 git add:    "app/views/search/ app/assets/stylesheets/search.css"
 git commit: "-m 'Added SearchController#index'"
+
+# ----- Add SearchController -----------------------------------------------------------------------
+
+puts
+say_status  "Views", "Updating application layout...\n", :yellow
+puts        '-'*80, ''; sleep 0.25
+
+insert_into_file 'app/views/layouts/application.html.erb', <<-CODE, before: '</head>'
+  <link href="https://fonts.googleapis.com/css?family=Rokkitt:400,700" rel="stylesheet">
+CODE
+
+git commit: "-a -m 'Updated application template'"
 
 # ----- Add initializer ---------------------------------------------------------------------------
 

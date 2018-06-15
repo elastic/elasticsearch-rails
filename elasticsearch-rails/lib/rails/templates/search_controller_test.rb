@@ -2,7 +2,7 @@ require 'test_helper'
 
 class SearchControllerTest < ActionController::TestCase
   setup do
-    Time.stubs(:now).returns(Time.new(2015, 03, 16, 10, 00, 00, 0))
+    travel_to Time.new(2015, 03, 16, 10, 00, 00, 0)
 
     Article.delete_all
 

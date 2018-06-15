@@ -95,7 +95,7 @@ module Searchable
           }
         },
 
-        post_filter: {},
+        post_filter: { bool: { must: [ match_all: {} ] } },
 
         aggregations: {
           categories: {
