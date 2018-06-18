@@ -37,7 +37,7 @@ before_install:
   - gem --version
   - gem install bundler -v 1.16.1 --no-rdoc --no-ri
   - bundle version
-  - curl -sS https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.0.tar.gz | tar xz -C /tmp
+  - curl -sS https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.0.tar.gz | tar xz -C /tmp
 
 install:
   - bundle install
