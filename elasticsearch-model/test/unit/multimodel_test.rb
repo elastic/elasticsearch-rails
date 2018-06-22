@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'pry'
 
 class Elasticsearch::Model::MultimodelTest < Test::Unit::TestCase
 
