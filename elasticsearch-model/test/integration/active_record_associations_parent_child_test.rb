@@ -11,8 +11,8 @@ class Question < ActiveRecord::Base
 
   has_many :answers, dependent: :destroy
 
-  JOIN_METADATA = { join_field: 'question'}.freeze
   JOIN_TYPE = 'question'.freeze
+  JOIN_METADATA = { join_field: JOIN_TYPE}.freeze
 
   index_name 'questions_and_answers'.freeze
   document_type '_doc'.freeze
@@ -42,6 +42,14 @@ class Answer < ActiveRecord::Base
   index_name 'questions_and_answers'.freeze
   document_type '_doc'.freeze
 
+  before_create :randomize_id
+
+  def randomize_id
+    begin
+      self.id = SecureRandom.random_number(1_000_000)
+    end while Answer.where(id: self.id).exists?
+  end
+
   mapping do
     indexes :text
     indexes :author
@@ -53,7 +61,7 @@ class Answer < ActiveRecord::Base
 
   after_commit lambda { __elasticsearch__.index_document(routing: (question_id || 1))  },  on: :create
   after_commit lambda { __elasticsearch__.update_document(routing: (question_id || 1)) },  on: :update
-  after_commit lambda { __elasticsearch__.delete_document(routing: (question_id || 1)) },  on: :destroy
+  after_commit lambda {__elasticsearch__.delete_document(routing: (question_id || 1)) },  on: :destroy
 end
 
 module ParentChildSearchable
@@ -122,47 +130,54 @@ module Elasticsearch
         should "find questions by matching answers" do
           response = Question.search(
                        { query: {
-                           has_child: {
-                               type: 'answer',
-                               query: {
-                                   match: {
-                                       author: 'john'
-                                   }
-                               }
+                         has_child: {
+                           type: 'answer',
+                           query: {
+                             match: {
+                               author: 'john'
+                             }
                            }
+                         }
                        }
                      })
 
           assert_equal 'Second Question', response.records.first.title
         end
 
-        # should "find answers for matching questions" do
-        #   binding.pry
-        #   response = Answer.search(
-        #       { query: {
-        #           has_parent: {
-        #               parent_type: 'question',
-        #               query: {
-        #                   match: {
-        #                       author: 'john'
-        #                   }
-        #               }
-        #           }
-        #       }
-        #       })
-        #
-        #   assert_same_elements ['Adam', 'Ryan'], response.records.map(&:author)
-        # end
+        should "find answers for matching questions" do
+          response = Answer.search(
+                       { query: {
+                           has_parent: {
+                             parent_type: 'question',
+                             query: {
+                               match: {
+                                 author: 'john'
+                               }
+                             }
+                           }
+                         }
+                       })
 
-        # should "delete answers when the question is deleted" do
-        #   binding.pry
-        #   Question.where(title: 'First Question').each(&:destroy)
-        #   Question.__elasticsearch__.refresh_index!
-        #
-        #   response = Answer.search query: { match_all: {} }
-        #
-        #   assert_equal 1, response.results.total
-        # end
+          assert_same_elements ['Adam', 'Ryan'], response.records.map(&:author)
+        end
+
+        should "delete answers when the question is deleted" do
+          Question.where(title: 'First Question').each(&:destroy)
+          Question.__elasticsearch__.refresh_index!
+
+          response = Answer.search(
+                      { query: {
+                        has_parent: {
+                            parent_type: 'question',
+                            query: {
+                              match_all: {}
+                            }
+                        }
+                      }
+                    })
+
+          assert_equal 1, response.results.total
+        end
       end
     end
   end
