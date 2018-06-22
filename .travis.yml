@@ -20,24 +20,28 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.6
+    - rvm: 2.2.10
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
+
+    - rvm: 2.3.7
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
+
+    - rvm: 2.5.1
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
     - rvm: 2.3.3
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
-
-    - rvm: 2.3.3
-      jdk: oraclejdk8
-      env: TEST_SUITE=integration QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.0.0-alpha1-SNAPSHOT/bin/elasticsearch
+      env: TEST_SUITE=integration QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.3.0/bin/elasticsearch
 
 before_install:
   - gem update --system --no-rdoc --no-ri
   - gem --version
   - gem install bundler -v 1.14.3 --no-rdoc --no-ri
   - bundle version
-  - curl -sS https://snapshots.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0-alpha1-SNAPSHOT.tar.gz | tar xz -C /tmp
+  - curl -sS https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.0.tar.gz | tar xz -C /tmp
 
 install:
   - bundle install
