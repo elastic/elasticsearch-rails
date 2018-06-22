@@ -15,7 +15,7 @@ class Question < ActiveRecord::Base
   JOIN_METADATA = { join_field: JOIN_TYPE}.freeze
 
   index_name 'questions_and_answers'.freeze
-  document_type '_doc'.freeze
+  document_type 'doc'.freeze
 
   mapping do
     indexes :title
@@ -42,7 +42,7 @@ class Answer < ActiveRecord::Base
   JOIN_TYPE = 'answer'.freeze
 
   index_name 'questions_and_answers'.freeze
-  document_type '_doc'.freeze
+  document_type 'doc'.freeze
 
   before_create :randomize_id
 
@@ -80,9 +80,9 @@ module ParentChildSearchable
     mapping_properties = { join_field: { type: JOIN,
                                          relations: { Question::JOIN_TYPE => Answer::JOIN_TYPE } } }
 
-    merged_properties = mapping_properties.merge(Question.mappings.to_hash[:_doc][:properties]).merge(
-                          Answer.mappings.to_hash[:_doc][:properties])
-    mappings = { _doc: { properties: merged_properties }}
+    merged_properties = mapping_properties.merge(Question.mappings.to_hash[:doc][:properties]).merge(
+                          Answer.mappings.to_hash[:doc][:properties])
+    mappings = { doc: { properties: merged_properties }}
 
     client.indices.create index: INDEX_NAME,
                           body: {
