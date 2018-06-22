@@ -24,7 +24,9 @@ class Question < ActiveRecord::Base
   end
 
   def as_indexed_json(options={})
-    as_json(options).merge(JOIN_METADATA)
+    # This line is necessary for differences between ActiveModel::Serializers::JSON#as_json versions
+    json = as_json(options)[JOIN_TYPE] || as_json(options)
+    json.merge(JOIN_METADATA)
   end
 
   after_commit lambda { __elasticsearch__.index_document  },  on: :create
@@ -56,7 +58,9 @@ class Answer < ActiveRecord::Base
   end
 
   def as_indexed_json(options={})
-    as_json(options).merge(join_field: { name: JOIN_TYPE, parent: question_id })
+    # This line is necessary for differences between ActiveModel::Serializers::JSON#as_json versions
+    json = as_json(options)[JOIN_TYPE] || as_json(options)
+    json.merge(join_field: { name: JOIN_TYPE, parent: question_id })
   end
 
   after_commit lambda { __elasticsearch__.index_document(routing: (question_id || 1))  },  on: :create
