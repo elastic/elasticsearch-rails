@@ -36,7 +36,7 @@ matrix:
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.5.1
+    - rvm: 2.3.7
       jdk: oraclejdk8
       env: TEST_SUITE=integration QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-6.3.0/bin/elasticsearch
 
