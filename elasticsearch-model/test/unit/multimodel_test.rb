@@ -4,8 +4,8 @@ class Elasticsearch::Model::MultimodelTest < Test::Unit::TestCase
 
   context "Multimodel class" do
     setup do
-      title  = stub('Foo', index_name: 'foo_index', document_type: 'foo')
-      series = stub('Bar', index_name: 'bar_index', document_type: 'bar')
+      title  = stub('Foo', index_name: 'foo_index', document_type: 'foo', to_ary: nil)
+      series = stub('Bar', index_name: 'bar_index', document_type: 'bar', to_ary: nil)
       @multimodel = Elasticsearch::Model::Multimodel.new(title, series)
     end
 
