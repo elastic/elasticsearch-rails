@@ -59,8 +59,31 @@ namespace :test do
     end
   end
 
+  desc "Run Elasticsearch (Docker)"
+  task :setup_elasticsearch do
+    begin
+      sh <<-COMMAND.gsub(/^\s*/, '').gsub(/\s{1,}/, ' ')
+          docker stop $(docker ps -aq);
+          docker rm $(docker ps -aq);
+          docker rmi $(docker images -q);
+          docker run -d=true \
+            --env "discovery.type=single-node" \
+            --env "cluster.name=elasticsearch-rails" \
+            --env "http.port=9200" \
+            --env "cluster.routing.allocation.disk.threshold_enabled=false" \
+            --publish 9250:9200 \
+            --rm \
+            docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+      COMMAND
+      require 'elasticsearch/extensions/test/cluster'
+      Elasticsearch::Extensions::Test::Cluster::Cluster.new(version: '6.3.0',
+                                                            number_of_nodes: 1).wait_for_green
+    rescue
+    end
+  end
+
   desc "Run integration tests in all subprojects"
-  task :integration do
+  task :integration => :setup_elasticsearch do
     # 1/ elasticsearch-model
     #
     puts '-'*80
