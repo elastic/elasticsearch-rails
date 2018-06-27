@@ -11,12 +11,22 @@ class Question < ActiveRecord::Base
 
   has_many :answers, dependent: :destroy
 
-  index_name 'questions_and_answers'
+  JOIN_TYPE = 'question'.freeze
+  JOIN_METADATA = { join_field: JOIN_TYPE}.freeze
+
+  index_name 'questions_and_answers'.freeze
+  document_type 'doc'.freeze
 
   mapping do
     indexes :title
     indexes :text
     indexes :author
+  end
+
+  def as_indexed_json(options={})
+    # This line is necessary for differences between ActiveModel::Serializers::JSON#as_json versions
+    json = as_json(options)[JOIN_TYPE] || as_json(options)
+    json.merge(JOIN_METADATA)
   end
 
   after_commit lambda { __elasticsearch__.index_document  },  on: :create
@@ -29,32 +39,55 @@ class Answer < ActiveRecord::Base
 
   belongs_to :question
 
-  index_name 'questions_and_answers'
+  JOIN_TYPE = 'answer'.freeze
 
-  mapping _parent: { type: 'question' }, _routing: { required: true } do
+  index_name 'questions_and_answers'.freeze
+  document_type 'doc'.freeze
+
+  before_create :randomize_id
+
+  def randomize_id
+    begin
+      self.id = SecureRandom.random_number(1_000_000)
+    end while Answer.where(id: self.id).exists?
+  end
+
+  mapping do
     indexes :text
     indexes :author
   end
 
-  after_commit lambda { __elasticsearch__.index_document(parent: question_id)  },  on: :create
-  after_commit lambda { __elasticsearch__.update_document(parent: question_id) },  on: :update
-  after_commit lambda { __elasticsearch__.delete_document(parent: question_id) },  on: :destroy
+  def as_indexed_json(options={})
+    # This line is necessary for differences between ActiveModel::Serializers::JSON#as_json versions
+    json = as_json(options)[JOIN_TYPE] || as_json(options)
+    json.merge(join_field: { name: JOIN_TYPE, parent: question_id })
+  end
+
+  after_commit lambda { __elasticsearch__.index_document(routing: (question_id || 1))  },  on: :create
+  after_commit lambda { __elasticsearch__.update_document(routing: (question_id || 1)) },  on: :update
+  after_commit lambda {__elasticsearch__.delete_document(routing: (question_id || 1)) },  on: :destroy
 end
 
 module ParentChildSearchable
-  INDEX_NAME = 'questions_and_answers'
+  INDEX_NAME = 'questions_and_answers'.freeze
+  JOIN = 'join'.freeze
 
   def create_index!(options={})
     client = Question.__elasticsearch__.client
     client.indices.delete index: INDEX_NAME rescue nil if options[:force]
 
     settings = Question.settings.to_hash.merge Answer.settings.to_hash
-    mappings = Question.mappings.to_hash.merge Answer.mappings.to_hash
+    mapping_properties = { join_field: { type: JOIN,
+                                         relations: { Question::JOIN_TYPE => Answer::JOIN_TYPE } } }
+
+    merged_properties = mapping_properties.merge(Question.mappings.to_hash[:doc][:properties]).merge(
+        Answer.mappings.to_hash[:doc][:properties])
+    mappings = { doc: { properties: merged_properties }}
 
     client.indices.create index: INDEX_NAME,
                           body: {
-                            settings: settings.to_hash,
-                            mappings: mappings.to_hash }
+                              settings: settings.to_hash,
+                              mappings: mappings }
   end
 
   extend self
@@ -100,34 +133,34 @@ module Elasticsearch
 
         should "find questions by matching answers" do
           response = Question.search(
-                       { query: {
-                            has_child: {
-                              type: 'answer',
-                              query: {
-                                match: {
-                                  author: 'john'
-                                }
-                              }
-                            }
-                         }
-                       })
+              { query: {
+                  has_child: {
+                      type: 'answer',
+                      query: {
+                          match: {
+                              author: 'john'
+                          }
+                      }
+                  }
+              }
+              })
 
           assert_equal 'Second Question', response.records.first.title
         end
 
         should "find answers for matching questions" do
           response = Answer.search(
-                       { query: {
-                            has_parent: {
-                              parent_type: 'question',
-                              query: {
-                                match: {
-                                  author: 'john'
-                                }
-                              }
-                            }
-                         }
-                       })
+              { query: {
+                  has_parent: {
+                      parent_type: 'question',
+                      query: {
+                          match: {
+                              author: 'john'
+                          }
+                      }
+                  }
+              }
+              })
 
           assert_same_elements ['Adam', 'Ryan'], response.records.map(&:author)
         end
@@ -136,12 +169,20 @@ module Elasticsearch
           Question.where(title: 'First Question').each(&:destroy)
           Question.__elasticsearch__.refresh_index!
 
-          response = Answer.search query: { match_all: {} }
+          response = Answer.search(
+              { query: {
+                  has_parent: {
+                      parent_type: 'question',
+                      query: {
+                          match_all: {}
+                      }
+                  }
+              }
+              })
 
           assert_equal 1, response.results.total
         end
       end
-
     end
   end
 end
