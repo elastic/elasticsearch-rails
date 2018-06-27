@@ -16,6 +16,7 @@ branches:
     - master
     - travis
     - 5.x
+    - 6.x
     - 2.x
 
 matrix:
