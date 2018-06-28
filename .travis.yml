@@ -21,19 +21,27 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.10
+    - rvm: 2.2
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.3.7
+    - rvm: 2.3
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.5.1
+    - rvm: 2.4
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.5.1
+    - rvm: 2.5
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
+
+#    - rvm: jruby-9.1
+#      jdk: oraclejdk8
+#      env: TEST_SUITE=unit
+
+    - rvm: 2.5
       jdk: oraclejdk8
       env: TEST_SUITE=integration QUIET=y
 
