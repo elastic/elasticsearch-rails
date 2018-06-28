@@ -19,15 +19,28 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.6
+  include:
+    - rvm: 2.2
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.3.3
+    - rvm: 2.3
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-    - rvm: 2.3.3
+    - rvm: 2.4
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
+
+    - rvm: 2.5
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
+
+#    - rvm: jruby-9.1
+#      jdk: oraclejdk8
+#      env: TEST_SUITE=unit
+
+    - rvm: 2.5
       jdk: oraclejdk8
       env: TEST_SUITE=integration QUIET=y SERVER=start TEST_CLUSTER_LOGS=/tmp/log TEST_CLUSTER_COMMAND=/tmp/elasticsearch-5.3.0/bin/elasticsearch
 
