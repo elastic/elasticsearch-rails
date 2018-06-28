@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "sqlite3"
   s.add_development_dependency "activemodel",   "> 3"
 
-  s.add_development_dependency "oj"
+  s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
   s.add_development_dependency "kaminari"
   s.add_development_dependency "will_paginate"
 
