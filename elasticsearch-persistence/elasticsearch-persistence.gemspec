@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "bundler", "~> 1.5"
   s.add_development_dependency "rake", "~> 11.1"
 
-  s.add_development_dependency "oj"
+  s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
 
   s.add_development_dependency "rails", '> 4'
 
