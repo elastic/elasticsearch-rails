@@ -63,9 +63,6 @@ namespace :test do
   task :setup_elasticsearch do
     begin
       sh <<-COMMAND.gsub(/^\s*/, '').gsub(/\s{1,}/, ' ')
-          docker stop $(docker ps -aq);
-          docker rm $(docker ps -aq);
-          docker rmi $(docker images -q);
           docker run -d=true \
             --env "discovery.type=single-node" \
             --env "cluster.name=elasticsearch-rails" \
