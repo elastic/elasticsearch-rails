@@ -6,7 +6,7 @@ ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":m
 
 ::ActiveRecord::Base.raise_in_transactional_callbacks = true if ::ActiveRecord::Base.respond_to?(:raise_in_transactional_callbacks) && ::ActiveRecord::VERSION::MAJOR.to_s < '5'
 
-Mongo.setup!
+MongoDB.setup!
 
 module Elasticsearch
   module Model
@@ -115,8 +115,8 @@ module Elasticsearch
           assert_equal 0, response.page(3).per(3).results.size
         end
 
-        if Mongo.available?
-          Mongo.connect_to 'mongoid_collections'
+        if MongoDB.available?
+          MongoDB.connect_to 'mongoid_collections'
 
           context "Across mongoid models" do
             setup do
