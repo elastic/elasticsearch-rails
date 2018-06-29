@@ -66,6 +66,22 @@ module Elasticsearch
               @gateway
             end
 
+            DEPRECATION_WARNING = "This (ActiveRecord) persistence pattern is deprecated. It will be removed in " +
+              "version 6.0 in favor of the Repository pattern. Please see the ReadMe for " +
+              "details on the alternative pattern.\n" +
+              "https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-persistence" +
+              "#the-repository-pattern".freeze
+
+            # Warn that this ActiveRecord persistence pattern is deprecated.
+            #
+            def raise_deprecation_warning!
+              if STDERR.tty?
+                Kernel.warn("\e[31;1m#{DEPRECATION_WARNING}\e[0m")
+              else
+                Kernel.warn(DEPRECATION_WARNING)
+              end
+            end
+
             # Delegate methods to repository
             #
             delegate :settings,
@@ -126,6 +142,8 @@ module Elasticsearch
           attribute :updated_at, Time, default: lambda { |o,a| Time.now.utc }
 
           attr_reader :hit
+
+          raise_deprecation_warning!
         end
 
       end
