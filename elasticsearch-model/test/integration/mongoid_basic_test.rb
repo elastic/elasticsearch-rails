@@ -1,9 +1,8 @@
 require 'test_helper'
+MongoDB.setup!
 
-Mongo.setup!
-
-if Mongo.available?
-  Mongo.connect_to 'mongoid_articles'
+if MongoDB.available?
+  MongoDB.connect_to 'mongoid_articles'
 
   module Elasticsearch
     module Model
