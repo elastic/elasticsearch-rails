@@ -33,6 +33,11 @@ module Elasticsearch
           Person.create_index! force: true
         end
 
+        should "warn that the ActiveRecord persistence pattern is deprecated" do
+          Kernel.expects(:warn).at_least_once
+          class ShouldWarn; include Elasticsearch::Persistence::Model; end
+        end
+
         should "save the object with custom ID" do
           person = Person.new id: 1, name: 'Number One'
           person.save

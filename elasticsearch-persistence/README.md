@@ -445,6 +445,9 @@ and demonstrates a rich set of features:
 
 ### The ActiveRecord Pattern
 
+Please note that this pattern is deprecated and will be removed in version 6.0.
+The [Repository Pattern](#the-repository-pattern) is recommended instead.
+
 The `Elasticsearch::Persistence::Model` module provides an implementation of the
 active record [pattern](http://www.martinfowler.com/eaaCatalog/activeRecord.html),
 with a familiar interface for using Elasticsearch as a persistence layer in
