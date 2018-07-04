@@ -1,3 +1,9 @@
+## 5.1.0
+
+### Persistence
+
+* Warn that the ActiveRecord persistence pattern is deprecated (#809)
+
 ## 5.0.2
 
 ### ActiveModel
