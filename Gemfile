@@ -8,3 +8,7 @@ gem 'elasticsearch-extensions'
 gem "pry"
 gem "ansi"
 gem "cane"
+
+group :development do
+  gem 'yard'
+end
