@@ -98,20 +98,6 @@ repository.save Article.new(title: 'Test')
 # => {"_index"=>"repository", "_type"=>"article", "_id"=>"Ak75E0U9Q96T5Y999_39NA", ...}
 ```
 
-Example of using Elasticsearch as a persistence layer for a Ruby model:
-
-```ruby
-require 'elasticsearch/persistence/model'
-class Article
-  include Elasticsearch::Persistence::Model
-  attribute :title, String, mapping: { analyzer: 'snowball' }
-end
-
-Article.create title: 'Test'
-# POST http://localhost:9200/articles/article
-# => #<Article {title: "Test", id: "lUOQ9lhHToWa7oYPxwjqPQ", ...}>
-```
-
 **Please refer to each library documentation for detailed information and examples.**
 
 ### Model
