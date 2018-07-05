@@ -18,7 +18,7 @@ module Elasticsearch
           #
           def initialize(repository, response, options={})
             @repository = repository
-            @response   = Elasticsearch::Model::HashWrapper.new(response)
+            @response   = response
             @options    = options
           end
 
@@ -33,13 +33,13 @@ module Elasticsearch
           # The number of total hits for a query
           #
           def total
-            response['hits']['total']
+            raw_response['hits']['total']
           end
 
           # The maximum score for a query
           #
           def max_score
-            response['hits']['max_score']
+            raw_response['hits']['max_score']
           end
 
           # Yields [object, hit] pairs to the block
@@ -64,7 +64,7 @@ module Elasticsearch
           # @return [Array]
           #
           def results
-            @results ||= response['hits']['hits'].map do |document|
+            @results ||= @response['hits']['hits'].map do |document|
               repository.deserialize(document.to_hash)
             end
           end
@@ -81,6 +81,21 @@ module Elasticsearch
           # @return [Elasticsearch::Model::HashWrapper]
           #
           def response
+            @hash_wrapped_response ||= Elasticsearch::Model::HashWrapper.new(@response)
+          end
+
+          # Access the unwrapped raw response returned from Elasticsearch by the client
+          #
+          # @example Access the aggregations in the response
+          #
+          #     results = repository.search query: { match: { title: 'fox dog' } },
+          #                                 aggregations: { titles: { terms: { field: 'title' } } }
+          #     results.raw_response["aggregations"]["titles"]["buckets"].map { |term| "#{term['key']}: #{term['doc_count']}" }
+          #     # => ["brown: 1", "dog: 1", ...]
+          #
+          # @return [Hash]
+          #
+          def raw_response
             @response
           end
         end

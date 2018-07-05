@@ -45,6 +45,14 @@ class Elasticsearch::Persistence::RepositoryResponseResultsTest < Test::Unit::Te
       assert_equal 5, subject.response._shards.total
     end
 
+    should "provide access to the raw response" do
+      assert_equal 5, subject.raw_response['_shards']['total']
+    end
+
+    should "return the raw response unwrapped" do
+      assert_equal @response, subject.raw_response
+    end
+
     should "return the total" do
       assert_equal 2, subject.total
     end
