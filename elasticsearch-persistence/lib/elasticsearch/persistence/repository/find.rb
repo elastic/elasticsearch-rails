@@ -7,6 +7,20 @@ module Elasticsearch
       #
       module Find
 
+        # The default type of document.
+        #
+        ALL = '_all'.freeze
+
+        # The key for accessing the document found and returned from an
+        #   Elasticsearch _mget query.
+        #
+        DOCS = 'docs'.freeze
+
+        # The key for the boolean value indicating whether a particular id
+        #   has been successfully found in an Elasticsearch _mget query.
+        #
+        FOUND = 'found'.freeze
+
         # Retrieve a single object or multiple objects from Elasticsearch by ID or IDs
         #
         # @example Retrieve a single object by ID
@@ -43,14 +57,14 @@ module Elasticsearch
         # @return [true, false]
         #
         def exists?(id, options={})
-          type     = document_type || (klass ? __get_type_from_class(klass) : '_all')
+          type     = document_type || (klass ? __get_type_from_class(klass) : ALL)
           client.exists( { index: index_name, type: type, id: id }.merge(options) )
         end
 
         # @api private
         #
         def __find_one(id, options={})
-          type     = document_type || (klass ? __get_type_from_class(klass) : '_all')
+          type     = document_type || (klass ? __get_type_from_class(klass) : ALL)
           document = client.get( { index: index_name, type: type, id: id }.merge(options) )
 
           deserialize(document)
@@ -61,10 +75,10 @@ module Elasticsearch
         # @api private
         #
         def __find_many(ids, options={})
-          type     = document_type || (klass ? __get_type_from_class(klass) : '_all')
+          type     = document_type || (klass ? __get_type_from_class(klass) : ALL)
           documents = client.mget( { index: index_name, type: type, body: { ids: ids } }.merge(options) )
 
-          documents['docs'].map { |document| document['found'] ? deserialize(document) : nil }
+          documents[DOCS].map { |document| document[FOUND] ? deserialize(document) : nil }
         end
       end
 

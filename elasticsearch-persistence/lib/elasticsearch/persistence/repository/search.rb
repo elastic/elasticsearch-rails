@@ -6,6 +6,10 @@ module Elasticsearch
       #
       module Search
 
+        # The key for accessing the count in a Elasticsearch query response.
+        #
+        COUNT = 'count'.freeze
+
         # Returns a collection of domain objects by an Elasticsearch query
         #
         # Pass the query either as a string or a Hash-like object
@@ -86,7 +90,7 @@ module Elasticsearch
             raise ArgumentError, "[!] Pass the search definition as a Hash-like object or pass the query as a String, not as [#{query_or_definition.class}]"
           end
 
-          response['count']
+          response[COUNT]
         end
       end
 

@@ -6,6 +6,10 @@ module Elasticsearch
       #
       module Naming
 
+        # The possible keys for a document id.
+        #
+        IDS = [:id, 'id', :_id, '_id'].freeze
+
         # Get or set the class used to initialize domain objects when deserializing them
         #
         def klass name=nil
@@ -89,7 +93,7 @@ module Elasticsearch
         # @api private
         #
         def __get_id_from_document(document)
-          document[:id] || document['id'] || document[:_id] || document['_id']
+          document[IDS.find { |id| document[id] }]
         end
 
         # Extract a document ID from the document (assuming Hash or Hash-like object)
@@ -106,7 +110,13 @@ module Elasticsearch
         # @api private
         #
         def __extract_id_from_document(document)
-          document.delete(:id) || document.delete('id') || document.delete(:_id) || document.delete('_id')
+          IDS.inject(nil) do |deleted, id|
+            if document[id]
+              document.delete(id)
+            else
+              deleted
+            end
+          end
         end
       end
 
