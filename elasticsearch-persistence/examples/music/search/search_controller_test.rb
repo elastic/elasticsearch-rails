@@ -1,9 +1,12 @@
 require 'test_helper'
 
 class SearchControllerTest < ActionController::TestCase
-  test "should get suggest" do
-    get :suggest
-    assert_response :success
+  setup do
+    IndexManager.create_index force: true
   end
 
+  test "should get suggest" do
+    get :suggest, term: 'foo'
+    assert_response :success
+  end
 end

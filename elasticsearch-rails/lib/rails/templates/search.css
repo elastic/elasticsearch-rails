@@ -54,8 +54,12 @@ form #form-options input {
 }
 
 .result h3.title {
+  font-size: 180% !important;
   font-family: 'Rokkitt', sans-serif;
   margin-top: 0;
+}
+.result h3.title small {
+  font-size: 75% !important;
 }
 
 .result .body {

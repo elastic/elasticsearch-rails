@@ -62,8 +62,8 @@ class NoteRepository
 
   mapping do
     indexes :text,       analyzer: 'snowball'
-    indexes :tags,       analyzer:   'keyword'
-    indexes :created_at, type: 'date'
+    indexes :tags,       type:     'keyword'
+    indexes :created_at, type:     'date'
   end
 
   create_index!
@@ -105,7 +105,7 @@ class Application < Sinatra::Base
                 end
 
                 if filter
-                  { filtered: { query: query, filter: filter } }
+                  { bool: { must: [ query ], filter: filter } }
                 else
                   query
                 end

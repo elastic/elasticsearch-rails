@@ -1,4 +1,18 @@
-# 0.1.7
+## 0.1.9
+
+* Added checks for proper launch order and other updates to the example application templates
+* Updated the example application to work with Elasticsearch 2.x
+* Used the `suggest` method instead of `response['suggest']` in the application template
+
+## 0.1.8
+
+* Added an example application template that loads settings from a file
+* Added missing require in the seeds.rb file for the expert template
+* Fixed double include of the aliased method (execute_without_instrumentation)
+* Fixed the error when getting the search_controller_test.rb asset in `03-expert.rb` template
+* Updated URLs for getting raw assets from Github in the `03-expert.rb` template
+
+## 0.1.7
 
 * Updated dependencies for the gem and example applications
 * Fixed various small errors in the `01-basic.rb` template

@@ -102,7 +102,11 @@ module Elasticsearch
         should "update the object with a script and params" do
           response = @repository.save Page.new(title: 'Test Page')
 
-          @repository.update id: response['_id'], script: 'ctx._source.views += count', params: { count: 3 }
+          @repository.update id: response['_id'],
+                             script: {
+                              inline: 'ctx._source.views += params.count',
+                              params: { count: 3 }
+                             }
 
           page = @repository.find(response['_id'])
           assert_equal 3, page.views

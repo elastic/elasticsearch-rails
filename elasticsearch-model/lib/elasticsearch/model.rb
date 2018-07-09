@@ -1,11 +1,12 @@
-require 'elasticsearch'
-
-require 'hashie'
+require 'hashie/mash'
 
 require 'active_support/core_ext/module/delegation'
 
+require 'elasticsearch'
+
 require 'elasticsearch/model/version'
 
+require 'elasticsearch/model/hash_wrapper'
 require 'elasticsearch/model/client'
 
 require 'elasticsearch/model/multimodel'
@@ -31,6 +32,8 @@ require 'elasticsearch/model/response/result'
 require 'elasticsearch/model/response/results'
 require 'elasticsearch/model/response/records'
 require 'elasticsearch/model/response/pagination'
+require 'elasticsearch/model/response/aggregations'
+require 'elasticsearch/model/response/suggestions'
 
 require 'elasticsearch/model/ext/active_record'
 
@@ -128,8 +131,13 @@ module Elasticsearch
       end
     end
 
-    module ClassMethods
+    # Access the module settings
+    #
+    def self.settings
+      @settings ||= {}
+    end
 
+    module ClassMethods
       # Get the client common for all models
       #
       # @example Get the client
@@ -178,6 +186,24 @@ module Elasticsearch
         models = Multimodel.new(models)
         request = Searching::SearchRequest.new(models, query_or_payload, options)
         Response::Response.new(models, request)
+      end
+
+      # Check if inheritance is enabled
+      #
+      # @note Inheritance is disabled by default.
+      #
+      def inheritance_enabled
+        @inheritance_enabled ||= false
+      end
+
+      # Enable inheritance of index_name and document_type
+      #
+      # @example Enable inheritance
+      #
+      #     Elasticsearch::Model.inheritance_enabled = true
+      #
+      def inheritance_enabled=(inheritance_enabled)
+        @inheritance_enabled = inheritance_enabled
       end
     end
     extend ClassMethods

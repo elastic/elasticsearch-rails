@@ -23,9 +23,7 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
         (@callbacks ||= {})[block.hash] = block
       end
 
-      def changed_attributes; [:foo]; end
-
-      def changes
+      def changes_to_save
         {:foo => ['One', 'Two']}
       end
     end
@@ -43,10 +41,10 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
       DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
     end
 
-    should "set the @__changed_attributes variable before save" do
+    should "set the @__changed_model_attributes variable before save" do
       instance = ::DummyProxyModelWithCallbacks.new
       instance.__elasticsearch__.expects(:instance_variable_set).with do |name, value|
-        assert_equal :@__changed_attributes, name
+        assert_equal :@__changed_model_attributes, name
         assert_equal({foo: 'Two'}, value)
         true
       end
@@ -67,6 +65,17 @@ class Elasticsearch::Model::SearchTest < Test::Unit::TestCase
 
       assert_equal 'classy foo', DummyProxyModel.__elasticsearch__.foo
       assert_equal 'insta barr', DummyProxyModel.new.__elasticsearch__.bar
+    end
+
+    should "reset the proxy target for duplicates" do
+      model = DummyProxyModel.new
+      model_target = model.__elasticsearch__.target
+      duplicate = model.dup
+      duplicate_target = duplicate.__elasticsearch__.target
+
+      assert_not_equal model, duplicate
+      assert_equal model, model_target
+      assert_equal duplicate, duplicate_target
     end
 
     should "return the proxy class from instance proxy" do

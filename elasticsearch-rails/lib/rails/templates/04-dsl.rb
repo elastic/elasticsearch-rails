@@ -1,10 +1,13 @@
 #     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/04-dsl.rb
 
-# (See: 01-basic.rb, 02-pretty.rb, 03-expert.rb)
+unless File.read('README.md').include? '## [3] Expert'
+  say_status  "ERROR", "You have to run the 01-basic.rb, 02-pretty.rb and 03-expert.rb templates first.", :red
+  exit(1)
+end
 
-append_to_file 'README.rdoc', <<-README
+append_to_file 'README.md', <<-README
 
-== [4] DSL
+## [4] DSL
 
 The `dsl` template refactors the search definition in SearchController#index
 to use the [`elasticsearch-dsl`](https://github.com/elastic/elasticsearch-ruby/tree/dsl/elasticsearch-dsl)
@@ -12,7 +15,7 @@ Rubygem for better expresivity and readability of the code.
 
 README
 
-git add:    "README.rdoc"
+git add:    "README.md"
 git commit: "-m '[03] Updated the application README'"
 
 run 'rm -f app/assets/stylesheets/*.scss'
@@ -36,16 +39,14 @@ run "bundle install"
 # ----- Change the search definition implementation and associated views and tests ----------------
 
 # copy_file File.expand_path('../searchable.dsl.rb', __FILE__), 'app/models/concerns/searchable.rb', force: true
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb',
-    'app/models/concerns/searchable.rb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb', 'app/models/concerns/searchable.rb', force: true
 
 # copy_file File.expand_path('../index.html.dsl.erb', __FILE__), 'app/views/search/index.html.erb', force: true
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb',
-    'app/views/search/index.html.erb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb', 'app/views/search/index.html.erb', force: true
 
 gsub_file "test/controllers/search_controller_test.rb", %r{test "should return facets" do.*?end}m, <<-CODE
 test "should return aggregations" do
-    get :index, q: 'one'
+    get :index, params: { q: 'one' }
     assert_response :success
 
     aggregations = assigns(:articles).response.response['aggregations']
@@ -62,7 +63,7 @@ CODE
 
 gsub_file "test/controllers/search_controller_test.rb", %r{test "should filter search results and the author and published date facets when user selects a category" do.*?end}m, <<-CODE
 test "should filter search results and the author and published date facets when user selects a category" do
-    get :index, q: 'one', c: 'One'
+    get :index, params: { q: 'one', c: 'One' }
     assert_response :success
 
     assert_equal 2, assigns(:articles).size
@@ -79,7 +80,7 @@ CODE
 
 gsub_file "test/controllers/search_controller_test.rb", %r{test "should filter search results and the category and published date facets when user selects a category" do.*?end}m, <<-CODE
 test "should filter search results and the category and published date facets when user selects a category" do
-    get :index, q: 'one', a: 'Mary Smith'
+    get :index, params: { q: 'one', a: 'Mary Smith' }
     assert_response :success
 
     assert_equal 1, assigns(:articles).size

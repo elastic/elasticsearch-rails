@@ -1,24 +1,29 @@
 require 'test_helper'
 require 'active_record'
 
+# Needed for ActiveRecord 3.x ?
+ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" ) unless ActiveRecord::Base.connected?
+
+::ActiveRecord::Base.raise_in_transactional_callbacks = true if ::ActiveRecord::Base.respond_to?(:raise_in_transactional_callbacks) && ::ActiveRecord::VERSION::MAJOR.to_s < '5'
+
 module Elasticsearch
   module Model
     class ActiveRecordPaginationTest < Elasticsearch::Test::IntegrationTestCase
+      class ::ArticleForPagination < ActiveRecord::Base
+        include Elasticsearch::Model
+
+        scope :published, -> { where(published: true) }
+
+        settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+          mapping do
+            indexes :title,      type: 'text', analyzer: 'snowball'
+            indexes :created_at, type: 'date'
+          end
+        end
+      end
+
       context "ActiveRecord pagination" do
         setup do
-          class ::ArticleForPagination < ActiveRecord::Base
-            include Elasticsearch::Model
-
-            scope :published, -> { where(published: true) }
-
-            settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-              mapping do
-                indexes :title,      type: 'string', analyzer: 'snowball'
-                indexes :created_at, type: 'date'
-              end
-            end
-          end
-
           ActiveRecord::Schema.define(:version => 1) do
             create_table ::ArticleForPagination.table_name do |t|
               t.string   :title
@@ -27,7 +32,7 @@ module Elasticsearch
             end
           end
 
-          Kaminari::Hooks.init
+          Kaminari::Hooks.init if defined?(Kaminari::Hooks)
 
           ArticleForPagination.delete_all
           ArticleForPagination.__elasticsearch__.create_index! force: true
@@ -87,12 +92,11 @@ module Elasticsearch
 
           assert_equal 0, records.size
           assert_equal 6, records.current_page
-          assert_equal 5, records.prev_page
+
           assert_equal nil, records.next_page
           assert_equal 3, records.total_pages
 
           assert ! records.first_page?,   "Should NOT be the first page"
-          assert   records.last_page?,    "Should be the last page"
           assert   records.out_of_range?, "Should be out of range"
         end
 

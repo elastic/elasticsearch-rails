@@ -18,7 +18,7 @@ module Elasticsearch
           #
           def initialize(repository, response, options={})
             @repository = repository
-            @response   = Hashie::Mash.new(response)
+            @response   = Elasticsearch::Model::HashWrapper.new(response)
             @options    = options
           end
 
@@ -78,7 +78,7 @@ module Elasticsearch
           #     results.response.aggregations.titles.buckets.map { |term| "#{term['key']}: #{term['doc_count']}" }
           #     # => ["brown: 1", "dog: 1", ...]
           #
-          # @return [Hashie::Mash]
+          # @return [Elasticsearch::Model::HashWrapper]
           #
           def response
             @response

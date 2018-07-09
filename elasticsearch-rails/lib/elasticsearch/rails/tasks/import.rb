@@ -1,4 +1,4 @@
-# A collection of Rake tasks to facilitate importing data from yout models into Elasticsearch.
+# A collection of Rake tasks to facilitate importing data from your models into Elasticsearch.
 #
 # Add this e.g. into the `lib/tasks/elasticsearch.rake` file in your Rails application:
 #

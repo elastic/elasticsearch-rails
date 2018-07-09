@@ -12,12 +12,12 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
 
 require 'logger'
 require 'ansi/core'
 require 'active_record'
 
+require 'json'
 require 'elasticsearch/model'
 
 ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
@@ -28,23 +28,24 @@ ActiveRecord::Base.establish_connection( adapter: 'sqlite3', database: ":memory:
 ActiveRecord::Schema.define(version: 1) do
   create_table :categories do |t|
     t.string     :title
-    t.timestamps
+    t.timestamps null: false
   end
 
   create_table :authors do |t|
     t.string     :first_name, :last_name
-    t.timestamps
+    t.string     :department
+    t.timestamps null: false
   end
 
   create_table :authorships do |t|
     t.references :article
     t.references :author
-    t.timestamps
+    t.timestamps null: false
   end
 
   create_table :articles do |t|
     t.string   :title
-    t.timestamps
+    t.timestamps null: false
   end
 
   create_table :articles_categories, id: false do |t|
@@ -54,15 +55,16 @@ ActiveRecord::Schema.define(version: 1) do
   create_table :comments do |t|
     t.string     :text
     t.references :article
-    t.timestamps
+    t.timestamps null: false
   end
-  add_index(:comments, :article_id)
+
+  add_index(:comments, :article_id) unless index_exists?(:comments, :article_id)
 end
 
 # ----- Elasticsearch client setup ----------------------------------------------------------------
 
 Elasticsearch::Model.client = Elasticsearch::Client.new log: true
-Elasticsearch::Model.client.transport.logger.formatter = proc { |s, d, p, m| "\e[32m#{m}\n\e[0m" }
+Elasticsearch::Model.client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
 
 # ----- Search integration ------------------------------------------------------------------------
 
@@ -83,7 +85,7 @@ module Searchable
     def as_indexed_json(options={})
       self.as_json(
         include: { categories: { only: :title},
-                   authors:    { methods: [:full_name], only: [:full_name] },
+                   authors:    { methods: [:full_name, :department], only: [:full_name, :department] },
                    comments:   { only: :text }
                  })
     end
@@ -139,7 +141,7 @@ category = Category.create title: 'One'
 
 # Create author
 #
-author = Author.create first_name: 'John', last_name: 'Smith'
+author = Author.create first_name: 'John', last_name: 'Smith', department: 'Business'
 
 # Create article
 
@@ -160,18 +162,52 @@ article.comments.create text: 'Second comment for article One'
 
 Elasticsearch::Model.client.indices.refresh index: Elasticsearch::Model::Registry.all.map(&:index_name)
 
-puts "\n\e[1mArticles containing 'one':\e[0m", Article.search('one').records.to_a.map(&:inspect), ""
-
-puts "\n\e[1mModels containing 'one':\e[0m", Elasticsearch::Model.search('one').records.to_a.map(&:inspect), ""
-
-# Load model
+# Search for a term and return records
 #
-article = Article.all.includes(:categories, :authors, :comments).first
+puts "",
+     "Articles containing 'one':".ansi(:bold),
+     Article.search('one').records.to_a.map(&:inspect),
+     ""
+
+puts "",
+     "All Models containing 'one':".ansi(:bold),
+     Elasticsearch::Model.search('one').records.to_a.map(&:inspect),
+     ""
+
+# Difference between `records` and `results`
+#
+response = Article.search query: { match: { title: 'first' } }
+
+puts "",
+     "Search results are wrapped in the <#{response.class}> class",
+     ""
+
+puts "",
+     "Access the <ActiveRecord> instances with the `#records` method:".ansi(:bold),
+     response.records.map { |r| "* #{r.title} | Authors: #{r.authors.map(&:full_name) } | Comment count: #{r.comments.size}" }.join("\n"),
+     ""
+
+puts "",
+     "Access the Elasticsearch documents with the `#results` method (without touching the database):".ansi(:bold),
+     response.results.map { |r| "* #{r.title} | Authors: #{r.authors.map(&:full_name) } | Comment count: #{r.comments.size}" }.join("\n"),
+     ""
+
+puts "",
+     "The whole indexed document (according to `Article#as_indexed_json`):".ansi(:bold),
+     JSON.pretty_generate(response.results.first._source.to_hash),
+     ""
+
+# Retrieve only selected fields from Elasticsearch
+#
+response = Article.search query: { match: { title: 'first' } }, _source: ['title', 'authors.full_name']
+
+puts "",
+     "Retrieve only selected fields from Elasticsearch:".ansi(:bold),
+     JSON.pretty_generate(response.results.first._source.to_hash),
+     ""
 
 # ----- Pry ---------------------------------------------------------------------------------------
 
-puts '', '-'*Pry::Terminal.width!
-
 Pry.start(binding, prompt: lambda { |obj, nest_level, _| '> ' },
-                   input: StringIO.new("article.as_indexed_json\n"),
+                   input: StringIO.new('response.records.first'),
                    quiet: true)

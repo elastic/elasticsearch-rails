@@ -1,9 +1,65 @@
 require 'test_helper'
 require 'active_record'
 
+# Needed for ActiveRecord 3.x ?
+ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" ) unless ActiveRecord::Base.connected?
+
+::ActiveRecord::Base.raise_in_transactional_callbacks = true if ::ActiveRecord::Base.respond_to?(:raise_in_transactional_callbacks) && ::ActiveRecord::VERSION::MAJOR.to_s < '5'
+
 module Elasticsearch
   module Model
     class ActiveRecordAssociationsIntegrationTest < Elasticsearch::Test::IntegrationTestCase
+
+      # ----- Search integration via Concern module -----------------------------------------------------
+
+      module Searchable
+        extend ActiveSupport::Concern
+
+        included do
+          include Elasticsearch::Model
+          include Elasticsearch::Model::Callbacks
+
+          # Set up the mapping
+          #
+          settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+            mapping do
+              indexes :title,      analyzer: 'snowball'
+              indexes :created_at, type: 'date'
+
+              indexes :authors do
+                indexes :first_name
+                indexes :last_name
+                indexes :full_name, type: 'text' do
+                  indexes :raw, type: 'keyword'
+                end
+              end
+
+              indexes :categories, type: 'keyword'
+
+              indexes :comments, type: 'nested' do
+                indexes :text
+                indexes :author
+              end
+            end
+          end
+
+          # Customize the JSON serialization for Elasticsearch
+          #
+          def as_indexed_json(options={})
+            {
+              title: title,
+              text:  text,
+              categories: categories.map(&:title),
+              authors:    authors.as_json(methods: [:full_name], only: [:full_name, :first_name, :last_name]),
+              comments:   comments.as_json(only: [:text, :author])
+            }
+          end
+
+          # Update document in the index after touch
+          #
+          after_touch() { __elasticsearch__.index_document }
+        end
+      end
 
       context "ActiveRecord associations" do
         setup do
@@ -13,7 +69,7 @@ module Elasticsearch
           ActiveRecord::Schema.define(version: 1) do
             create_table :categories do |t|
               t.string     :title
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :categories_posts, id: false do |t|
@@ -22,28 +78,30 @@ module Elasticsearch
 
             create_table :authors do |t|
               t.string     :first_name, :last_name
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :authorships do |t|
               t.string     :first_name, :last_name
               t.references :post
               t.references :author
-              t.timestamps
+              t.timestamps null: false
             end
 
             create_table :comments do |t|
               t.string     :text
               t.string     :author
               t.references :post
-              t.timestamps
-            end and add_index(:comments, :post_id)
+              t.timestamps null: false
+            end
+
+            add_index(:comments, :post_id) unless index_exists?(:comments, :post_id)
 
             create_table :posts do |t|
               t.string     :title
               t.text       :text
               t.boolean    :published
-              t.timestamps
+              t.timestamps null: false
             end
           end
 
@@ -55,6 +113,8 @@ module Elasticsearch
 
           class Author < ActiveRecord::Base
             has_many :authorships
+
+            after_update { self.authorships.each(&:touch) }
 
             def full_name
               [first_name, last_name].compact.join(' ')
@@ -74,70 +134,28 @@ module Elasticsearch
             has_and_belongs_to_many :categories, after_add:    [ lambda { |a,c| a.__elasticsearch__.index_document } ],
                                                  after_remove: [ lambda { |a,c| a.__elasticsearch__.index_document } ]
             has_many                :authorships
-            has_many                :authors, through: :authorships
-            has_many                :comments
-          end
+            has_many                :authors, through: :authorships,
+                                              after_add: [ lambda { |a,c| a.__elasticsearch__.index_document } ],
+                                              after_remove: [ lambda { |a,c| a.__elasticsearch__.index_document } ]
+            has_many                :comments, after_add:    [ lambda { |a,c| a.__elasticsearch__.index_document } ],
+                                               after_remove: [ lambda { |a,c| a.__elasticsearch__.index_document } ]
 
-          # ----- Search integration via Concern module -----------------------------------------------------
-
-          module Searchable
-            extend ActiveSupport::Concern
-
-            included do
-              include Elasticsearch::Model
-              include Elasticsearch::Model::Callbacks
-
-              # Set up the mapping
-              #
-              settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-                mapping do
-                  indexes :title,      analyzer: 'snowball'
-                  indexes :created_at, type: 'date'
-
-                  indexes :authors do
-                    indexes :first_name
-                    indexes :last_name
-                    indexes :full_name, type: 'multi_field' do
-                      indexes :full_name
-                      indexes :raw, analyzer: 'keyword'
-                    end
-                  end
-
-                  indexes :categories, analyzer: 'keyword'
-
-                  indexes :comments, type: 'nested' do
-                    indexes :text
-                    indexes :author
-                  end
-                end
-              end
-
-              # Customize the JSON serialization for Elasticsearch
-              #
-              def as_indexed_json(options={})
-                {
-                  title: title,
-                  text:  text,
-                  categories: categories.map(&:title),
-                  authors:    authors.as_json(methods: [:full_name], only: [:full_name, :first_name, :last_name]),
-                  comments:   comments.as_json(only: [:text, :author])
-                }
-              end
-
-              # Update document in the index after touch
-              #
-              after_touch() { __elasticsearch__.index_document }
-            end
+            after_touch() { __elasticsearch__.index_document }
           end
 
           # Include the search integration
           #
           Post.__send__ :include, Searchable
+          Comment.__send__ :include, Elasticsearch::Model
+          Comment.__send__ :include, Elasticsearch::Model::Callbacks
 
-          # ----- Reset the index -----------------------------------------------------------------
+          # ----- Reset the indices -----------------------------------------------------------------
 
           Post.delete_all
           Post.__elasticsearch__.create_index! force: true
+
+          Comment.delete_all
+          Comment.__elasticsearch__.create_index! force: true
         end
 
         should "index and find a document" do
@@ -169,8 +187,8 @@ module Elasticsearch
           Post.__elasticsearch__.refresh_index!
 
           query = { query: {
-                      filtered: {
-                        query: {
+                      bool: {
+                        must: {
                           multi_match: {
                             fields: ['title'],
                             query: 'first'
@@ -299,6 +317,20 @@ module Elasticsearch
 
           assert_equal 0, Post.search('categories:One').size
           assert_equal 1, Post.search('categories:Updated').size
+        end
+
+        should "eagerly load associated records" do
+          post_1 = Post.create(title: 'One')
+          post_2 = Post.create(title: 'Two')
+          post_1.comments.create text: 'First comment'
+          post_1.comments.create text: 'Second comment'
+
+          Comment.__elasticsearch__.refresh_index!
+
+          records = Comment.search('first').records(includes: :post)
+
+          assert records.first.association(:post).loaded?, "The associated Post should be eagerly loaded"
+          assert_equal 'One', records.first.post.title
         end
       end
 

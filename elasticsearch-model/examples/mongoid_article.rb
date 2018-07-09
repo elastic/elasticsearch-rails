@@ -21,7 +21,7 @@ Moped.logger.level = Logger::DEBUG
 
 Mongoid.connect_to 'articles'
 
-Elasticsearch::Model.client = Elasticsearch::Client.new host: 'localhost:9250', log: true
+Elasticsearch::Model.client = Elasticsearch::Client.new host: 'localhost:9200', log: true
 
 class Article
   include Mongoid::Document
@@ -49,7 +49,7 @@ Article.create id: '3', title: 'Foo Foo'
 
 # Index data
 #
-client = Elasticsearch::Client.new host:'localhost:9250', log:true
+client = Elasticsearch::Client.new host:'localhost:9200', log:true
 
 client.indices.delete index: 'articles' rescue nil
 client.bulk index: 'articles',

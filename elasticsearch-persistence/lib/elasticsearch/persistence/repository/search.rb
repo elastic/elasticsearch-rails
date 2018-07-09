@@ -75,8 +75,18 @@ module Elasticsearch
         #
         def count(query_or_definition=nil, options={})
           query_or_definition ||= { query: { match_all: {} } }
-          response = search query_or_definition, options.update(search_type: 'count')
-          response.response.hits.total
+          type = document_type || (klass ? __get_type_from_class(klass) : nil  )
+
+          case
+          when query_or_definition.respond_to?(:to_hash)
+            response = client.count( { index: index_name, type: type, body: query_or_definition.to_hash }.merge(options) )
+          when query_or_definition.is_a?(String)
+            response = client.count( { index: index_name, type: type, q: query_or_definition }.merge(options) )
+          else
+            raise ArgumentError, "[!] Pass the search definition as a Hash-like object or pass the query as a String, not as [#{query_or_definition.class}]"
+          end
+
+          response['count']
         end
       end
 

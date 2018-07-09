@@ -1,14 +1,17 @@
 # $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
 
-# (See: 01-basic.rb)
+unless File.read('README.md').include? '## [1] Basic'
+  say_status  "ERROR", "You have to run the 01-basic.rb template first.", :red
+  exit(1)
+end
 
 puts
 say_status  "README", "Updating Readme...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-append_to_file 'README.rdoc', <<-README
+append_to_file 'README.md', <<-README
 
-== [2] Pretty
+## [2] Pretty
 
 The `pretty` template builds on the `basic` version and brings couple of improvements:
 
@@ -19,7 +22,7 @@ The `pretty` template builds on the `basic` version and brings couple of improve
 
 README
 
-git add:    "README.rdoc"
+git add:    "README.md"
 git commit: "-m '[02] Updated the application README'"
 
 # ----- Update application.rb ---------------------------------------------------------------------
@@ -106,8 +109,13 @@ gsub_file "#{Rails::VERSION::STRING > '4' ? 'test/models' : 'test/unit' }/articl
   end
 CODE
 
+insert_into_file "test/test_helper.rb",
+                 "require 'mocha/minitest'\n\n",
+                 before: "class ActiveSupport::TestCase\n"
+
 git add:    "app/models/article.rb"
 git add:    "test/**/article_test.rb"
+git add:    "test/test_helper.rb"
 git commit: "-m 'Added an `Article.search` method'"
 
 # ----- Add loading Bootstrap assets --------------------------------------------------------------
@@ -123,8 +131,9 @@ gsub_file 'app/views/layouts/application.html.erb', %r{<%= yield %>}, <<-CODE un
 CODE
 
 insert_into_file 'app/views/layouts/application.html.erb', <<-CODE, before: '</head>'
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 CODE
 
 git commit: "-a -m 'Added loading Bootstrap assets in the application layout'"
@@ -139,20 +148,14 @@ gsub_file 'app/views/articles/index.html.erb', %r{<%= label_tag .* :search %>}m 
 <<-CODE
 <div class="input-group">
   <%= text_field_tag :q, params[:q], class: 'form-control', placeholder: 'Search...' %>
-
-  <span class="input-group-btn">
-    <button type="button" class="btn btn-default">
-      <span class="glyphicon glyphicon-search"></span>
-    </button>
-  </span>
 </div>
 CODE
 end
 
 # ----- Customize the header -----------------------------------------------------------------
 
-gsub_file 'app/views/articles/index.html.erb', %r{<h1>Listing articles</h1>} do |match|
-  "<h1><%= controller.action_name == 'search' ? 'Searching articles' : 'Listing articles' %></h1>"
+gsub_file 'app/views/articles/index.html.erb', %r{<h1>.*Articles</h1>} do |match|
+  "<h1><%= controller.action_name == 'search' ? 'Search results' : 'Articles' %></h1>"
 end
 
 # ----- Customize the results listing -------------------------------------------------------------
@@ -163,7 +166,7 @@ end
 
 gsub_file 'app/views/articles/index.html.erb', %r{<td><%= link_to [^%]+} do |match|
   match.gsub!('<td>', '<td style="width: 50px">')
-  match.include?("btn") ? match : (match + ", class: 'btn btn-default btn-xs'")
+  match.include?("btn") ? match : (match + ", class: 'btn btn-outline-primary btn-sm'")
 end
 
 gsub_file 'app/views/articles/index.html.erb', %r{<br>\s*(<\%= link_to 'New Article'.*)}m do |content|
@@ -185,6 +188,12 @@ end
 gsub_file 'app/views/articles/index.html.erb', %r{<%= link_to 'All Articles',\s*articles_path} do |match|
   return match if match.include?('btn')
   "\n  " + match + ", class: 'btn btn-primary btn-xs', style: 'color: #fff'"
+end
+
+# ----- Customize the form -----------------------------------------------------------------
+
+gsub_file 'app/views/articles/_form.html.erb', %r{<div class="field">} do |match|
+  %Q|<div class="form-group">|
 end
 
 git add:    "app/views"
@@ -226,9 +235,9 @@ insert_into_file 'app/views/articles/index.html.erb', after: '</table>' do
   CODE
 end
 
-generate "kaminari:views", "bootstrap2", "--force"
+generate "kaminari:views", "bootstrap3", "--force"
 
-gsub_file 'app/views/kaminari/_paginator.html.erb', %r{<ul>}, '<ul class="pagination">'
+gsub_file 'app/views/kaminari/_paginator.html.erb', %r{<nav>}, '<nav class="pagination">'
 
 git add:    "."
 git commit: "-m 'Added pagination to articles listing'"
@@ -243,21 +252,35 @@ append_to_file 'app/assets/stylesheets/application.css' do
   unless File.read('app/assets/stylesheets/application.css').include?('.label-highlight')
 <<-CODE
 
+ body * {
+   font-size: 100% !important;
+ }
+
+.table {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.table td {
+  vertical-align: middle !important;
+}
+
 .label-highlight {
   font-size: 100% !important;
   font-weight: inherit !important;
   font-style: inherit !important;
   color: #333 !important;
   background: #fff401 !important;
+  padding: 0.25em 0.5em
+  border-radius: 5px;
 }
 
-div.pagination {
+nav.pagination {
   text-align: center;
-  display: block;
+  display: inline-block;
 }
 
-div.pagination ul {
-  display: inline-block;
+ul.pagination {
+  margin-bottom: 0;
 }
 
 CODE

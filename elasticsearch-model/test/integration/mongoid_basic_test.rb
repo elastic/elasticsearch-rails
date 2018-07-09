@@ -1,9 +1,8 @@
 require 'test_helper'
+MongoDB.setup!
 
-Mongo.setup!
-
-if Mongo.available?
-  Mongo.connect_to 'mongoid_articles'
+if MongoDB.available?
+  MongoDB.connect_to 'mongoid_articles'
 
   module Elasticsearch
     module Model
@@ -20,7 +19,7 @@ if Mongo.available?
 
           settings index: { number_of_shards: 1, number_of_replicas: 0 } do
             mapping do
-              indexes :title,      type: 'string', analyzer: 'snowball'
+              indexes :title,      type: 'text', analyzer: 'snowball'
               indexes :created_at, type: 'date'
             end
           end

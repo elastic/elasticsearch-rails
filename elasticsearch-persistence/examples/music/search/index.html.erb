@@ -13,21 +13,22 @@
 
 <section class="artists">
   <% @artists.each do |artist| %>
-    <%= content_tag :div, class: 'result clearfix' do %>
+    <%= content_tag :div, class: 'artist search result clearfix' do %>
       <h2>
+        <%= image_tag "http://ruby.elastic.co.s3-website-us-east-1.amazonaws.com/demo/music/bands/#{artist.id}.jpeg", height: '45px', class: 'band' %>
         <%= link_to artist do %>
           <span class="name"><%= highlighted(artist, :name) %></span>
           <small><%= pluralize artist.album_count, 'album' %></small>
         <% end %>
       </h2>
       <% if highlight = highlight(artist, :members_combined) %>
-      <p class="small">
+      <p class="highlight small">
         <span class="label">Members</span>
         <%= highlight.first.html_safe %>
       </p>
       <% end %>
       <% if highlight = highlight(artist, :profile) %>
-      <p class="small">
+      <p class="highlight small">
         <span class="label">Profile</span>
         <%= highlight.join('&hellip;').html_safe %>
       </p>
@@ -38,8 +39,9 @@
 
 <section class="albums">
   <% @albums.each do |album| %>
-    <%= content_tag :div, class: 'result clearfix' do %>
+    <%= content_tag :div, class: 'album search result clearfix' do %>
       <h2>
+        <%= image_tag "http://ruby.elastic.co.s3-website-us-east-1.amazonaws.com/demo/music/covers/#{album.id}.jpeg", width: '45px', class: 'cover' %>
         <%= link_to artist_path(album.artist_id, anchor: "album_#{album.id}") do %>
           <span class="name"><%= highlighted(album, :title) %></span>
           <small><%= album.artist %></small>
@@ -48,14 +50,14 @@
       </h2>
 
       <% if highlight = highlight(album, 'tracklist.title') %>
-        <p class="small">
+        <p class="highlight small">
           <span class="label">Tracks</span>
           <%= highlight.join('&hellip;').html_safe %>
         </p>
       <% end %>
 
       <% if highlight = highlight(album, :notes) %>
-        <p class="small">
+        <p class="highlight small">
           <span class="label">Notes</span>
           <%= highlight.map { |d| d.gsub(/^\.\s?/, '') }.join('&hellip;').html_safe %>
         </p>
@@ -77,7 +79,7 @@ $.widget( "custom.suggest", $.ui.autocomplete, {
         var category = ul.append( "<li class='ui-autocomplete-category'>" + item.label + "</li>" );
 
         $.each( item.value, function( index, item ) {
-          var li = $('<li class="ui-autocomplete-item"><a href="<%= Rails.application.config.relative_url_root %>'+ item.payload.url +'">'+ item.text +'</a></li>').data('ui-autocomplete-item', item )
+          var li = $('<li class="ui-autocomplete-item"><a href="<%= Rails.application.config.relative_url_root %>'+ item.url +'">'+ item.text +'</a></li>').data('ui-autocomplete-item', item )
           category.append(li)
         } )
       });
@@ -87,7 +89,7 @@ $.widget( "custom.suggest", $.ui.autocomplete, {
 $( "#q" ).suggest({
   source: '<%= suggest_path %>',
   select: function(event, ui) {
-    document.location.href = '<%= Rails.application.config.relative_url_root %>'+ui.item.payload.url
+    document.location.href = '<%= Rails.application.config.relative_url_root %>'+ui.item.url
   }
 });
 </script>

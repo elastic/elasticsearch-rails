@@ -9,8 +9,8 @@ gem 'hashie'
 
 gem 'patron'
 gem 'elasticsearch'
-gem 'elasticsearch-model',       path: File.expand_path('../../../../elasticsearch-model', __FILE__)
-gem 'elasticsearch-persistence', path: File.expand_path('../../../', __FILE__)
+gem 'elasticsearch-model',       git: 'https://github.com/elastic/elasticsearch-rails.git'
+gem 'elasticsearch-persistence', git: 'https://github.com/elastic/elasticsearch-rails.git'
 
 gem 'sinatra', require: false
 gem 'thin'

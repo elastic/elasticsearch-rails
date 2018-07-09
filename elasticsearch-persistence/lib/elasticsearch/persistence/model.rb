@@ -19,7 +19,7 @@ module Elasticsearch
     #     require 'elasticsearch/persistence/model'
     #
     #     class MyObject
-    #       include Elasticsearch::Persistence::Repository
+    #       include Elasticsearch::Persistence::Model
     #     end
     #
     module Model
@@ -108,11 +108,12 @@ module Elasticsearch
               object.instance_variable_set :@_index,   document['_index']
               object.instance_variable_set :@_type,    document['_type']
               object.instance_variable_set :@_version, document['_version']
+              object.instance_variable_set :@_source,  document['_source']
 
               # Store the "hit" information (highlighting, score, ...)
               #
               object.instance_variable_set :@hit,
-                 Hashie::Mash.new(document.except('_index', '_type', '_id', '_version', '_source'))
+                 Elasticsearch::Model::HashWrapper.new(document.except('_index', '_type', '_id', '_version', '_source'))
 
               object.instance_variable_set(:@persisted, true)
               object

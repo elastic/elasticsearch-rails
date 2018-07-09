@@ -2,7 +2,7 @@ require 'test_helper'
 
 class SearchControllerTest < ActionController::TestCase
   setup do
-    Time.stubs(:now).returns(Time.parse('2015-03-16 10:00:00 UTC'))
+    travel_to Time.new(2015, 03, 16, 10, 00, 00, 0)
 
     Article.delete_all
 
@@ -30,56 +30,57 @@ class SearchControllerTest < ActionController::TestCase
 
     Article.find_by_title('Article Three').comments.create body: 'One'
 
-    Sidekiq::Queue.new("elasticsearch").clear
+    Sidekiq::Worker.clear_all
 
     Article.__elasticsearch__.import force: true
     Article.__elasticsearch__.refresh_index!
   end
 
   test "should return search results" do
-    get :index, q: 'one'
+    get :index, params: { q: 'one' }
     assert_response :success
     assert_equal 3, assigns(:articles).size
   end
 
   test "should return search results in comments" do
-    get :index, q: 'one', comments: 'y'
+    get :index, params: { q: 'one', comments: 'y' }
     assert_response :success
+
     assert_equal 4, assigns(:articles).size
   end
 
   test "should return highlighted snippets" do
-    get :index, q: 'one'
+    get :index, params: { q: 'one' }
     assert_response :success
     assert_match %r{<em class="label label-highlight">One</em>}, assigns(:articles).first.highlight.title.first
   end
 
   test "should return suggestions" do
-    get :index, q: 'one'
+    get :index, params: { q: 'one' }
     assert_response :success
 
-    suggestions = assigns(:articles).response.response['suggest']
+    suggestions = assigns(:articles).response.suggestions
 
     assert_equal 'one', suggestions['suggest_title'][0]['text']
   end
 
   test "should return facets" do
-    get :index, q: 'one'
+    get :index, params: { q: 'one' }
     assert_response :success
 
-    facets = assigns(:articles).response.response['facets']
+    aggregations = assigns(:articles).response.response['aggregations']
 
-    assert_equal 2, facets['categories']['terms'].size
-    assert_equal 2, facets['authors']['terms'].size
-    assert_equal 2, facets['published']['entries'].size
+    assert_equal 2, aggregations['categories']['categories']['buckets'].size
+    assert_equal 2, aggregations['authors']['authors']['buckets'].size
+    assert_equal 2, aggregations['published']['published']['buckets'].size
 
-    assert_equal 'One', facets['categories']['terms'][0]['term']
-    assert_equal 'John Smith', facets['authors']['terms'][0]['term']
-    assert_equal 1425254400000, facets['published']['entries'][0]['time']
+    assert_equal 'One', aggregations['categories']['categories']['buckets'][0]['key']
+    assert_equal 'John Smith', aggregations['authors']['authors']['buckets'][0]['key']
+    assert_equal 1425254400000, aggregations['published']['published']['buckets'][0]['key']
   end
 
   test "should sort on the published date" do
-    get :index, q: 'one', s: 'published_on'
+    get :index, params: { q: 'one', s: 'published_on' }
     assert_response :success
 
     assert_equal 3, assigns(:articles).size
@@ -89,7 +90,7 @@ class SearchControllerTest < ActionController::TestCase
   end
 
   test "should sort on the published date when no query is provided" do
-    get :index, q: ''
+    get :index, params: { q: '' }
     assert_response :success
 
     assert_equal 5, assigns(:articles).size
@@ -99,32 +100,32 @@ class SearchControllerTest < ActionController::TestCase
   end
 
   test "should filter search results and the author and published date facets when user selects a category" do
-    get :index, q: 'one', c: 'One'
+    get :index, params: { q: 'one', c: 'One' }
     assert_response :success
 
     assert_equal 2, assigns(:articles).size
 
-    facets = assigns(:articles).response.response['facets']
+    aggregations = assigns(:articles).response.response['aggregations']
 
-    assert_equal 1, facets['authors']['terms'].size
-    assert_equal 1, facets['published']['entries'].size
+    assert_equal 1, aggregations['authors']['authors']['buckets'].size
+    assert_equal 1, aggregations['published']['published']['buckets'].size
 
     # Do NOT filter the category facet
-    assert_equal 2, facets['categories']['terms'].size
+    assert_equal 2, aggregations['categories']['categories']['buckets'].size
   end
 
   test "should filter search results and the category and published date facets when user selects a category" do
-    get :index, q: 'one', a: 'Mary Smith'
+    get :index, params: { q: 'one', a: 'Mary Smith' }
     assert_response :success
 
     assert_equal 1, assigns(:articles).size
 
-    facets = assigns(:articles).response.response['facets']
+    aggregations = assigns(:articles).response.response['aggregations']
 
-    assert_equal 1, facets['categories']['terms'].size
-    assert_equal 1, facets['published']['entries'].size
+    assert_equal 1, aggregations['categories']['categories']['buckets'].size
+    assert_equal 1, aggregations['published']['published']['buckets'].size
 
     # Do NOT filter the authors facet
-    assert_equal 2, facets['authors']['terms'].size
+    assert_equal 2, aggregations['authors']['authors']['buckets'].size
   end
 end

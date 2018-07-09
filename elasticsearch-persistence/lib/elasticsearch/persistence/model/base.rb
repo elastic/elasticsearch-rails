@@ -49,6 +49,12 @@ module Elasticsearch
             @_version
           end
 
+          # Return the raw document `_source`
+          #
+          def _source
+            @_source
+          end
+
           def to_s
             "#<#{self.class} #{attributes.to_hash.inspect.gsub(/:(\w+)=>/, '\1: ')}>"
           end; alias :inspect :to_s
@@ -64,7 +70,7 @@ module Elasticsearch
         def lookup_type(type)
           case
             when type == String
-              'string'
+              'text'
             when type == Integer
               'integer'
             when type == Float

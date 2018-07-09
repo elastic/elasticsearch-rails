@@ -11,7 +11,7 @@ class ::MyRailsModel
   include Elasticsearch::Persistence::Model
   include Elasticsearch::Persistence::Model::Rails
 
-  attribute :name, String, mapping: { analyzer: 'string' }
+  attribute :name, String, mapping: { analyzer: 'english' }
   attribute :published_at, DateTime
   attribute :published_on, Date
 end

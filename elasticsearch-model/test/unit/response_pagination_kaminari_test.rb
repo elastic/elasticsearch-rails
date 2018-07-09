@@ -194,6 +194,17 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
 
         assert_equal 5, @response.page(5).results.current_page
       end
+
+      should "return previous page and next page" do
+        assert_equal nil, @response.page(1).results.prev_page
+        assert_equal 2, @response.page(1).results.next_page
+
+        assert_equal 3, @response.page(4).results.prev_page
+        assert_equal nil, @response.page(4).results.next_page
+
+        assert_equal 2, @response.page(3).results.prev_page
+        assert_equal 4, @response.page(3).results.next_page
+      end
     end
 
     context "records" do
@@ -206,6 +217,17 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
         assert_equal 100, @response.records.total_count
 
         assert_equal 5, @response.page(5).records.current_page
+      end
+
+      should "return previous page and next page" do
+        assert_equal nil, @response.page(1).records.prev_page
+        assert_equal 2, @response.page(1).records.next_page
+
+        assert_equal 3, @response.page(4).records.prev_page
+        assert_equal nil, @response.page(4).records.next_page
+
+        assert_equal 2, @response.page(3).records.prev_page
+        assert_equal 4, @response.page(3).records.next_page
       end
     end
   end
@@ -371,6 +393,17 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
 
         assert_equal 5, @response.page(5).results.current_page
       end
+
+      should "return previous page and next page" do
+        assert_equal nil, @response.page(1).results.prev_page
+        assert_equal 2, @response.page(1).results.next_page
+
+        assert_equal 3, @response.page(4).results.prev_page
+        assert_equal nil, @response.page(4).results.next_page
+
+        assert_equal 2, @response.page(3).results.prev_page
+        assert_equal 4, @response.page(3).results.next_page
+      end
     end
 
     context "records" do
@@ -383,6 +416,17 @@ class Elasticsearch::Model::ResponsePaginationKaminariTest < Test::Unit::TestCas
         assert_equal 100, @response.records.total_count
 
         assert_equal 5, @response.page(5).records.current_page
+      end
+
+      should "return previous page and next page" do
+        assert_equal nil, @response.page(1).records.prev_page
+        assert_equal 2, @response.page(1).records.next_page
+
+        assert_equal 3, @response.page(4).records.prev_page
+        assert_equal nil, @response.page(4).records.next_page
+
+        assert_equal 2, @response.page(3).records.prev_page
+        assert_equal 4, @response.page(3).records.next_page
       end
     end
   end

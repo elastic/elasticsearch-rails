@@ -22,7 +22,7 @@ class Elasticsearch::Persistence::RepositoryIndexingTest < Test::Unit::TestCase
           indexes :title
         end
 
-        assert_equal( {:"my_document"=>{:properties=>{:title=>{:type=>"string"}}}}, subject.mappings.to_hash )
+        assert_equal( {:"my_document"=>{:properties=>{:title=>{:type=>"text"}}}}, subject.mappings.to_hash )
       end
     end
 

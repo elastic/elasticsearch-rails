@@ -8,7 +8,8 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
     end
 
     RESPONSE = { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'}, 'hits' => { 'hits' => [] },
-                 'aggregations' => {'foo' => {'bar' => 10}}}
+                 'aggregations' => {'foo' => {'bar' => 10}},
+                 'suggest' => {'my_suggest' => [ { 'text' => 'foo', 'options' => [ { 'text' => 'Foo', 'score' => 2.0 }, { 'text' => 'Bar', 'score' => 1.0 } ] } ]}}
 
     setup do
       @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
@@ -26,7 +27,7 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       assert_equal 'OK',        response.shards.one
     end
 
-    should "wrap the raw Hash response in Hashie::Mash" do
+    should "wrap the raw Hash response in a HashWrapper" do
       @search  = Elasticsearch::Model::Searching::SearchRequest.new OriginClass, '*'
       @search.stubs(:execute!).returns({'hits' => { 'hits' => [] }, 'aggregations' => { 'dates' => 'FOO' }})
 
@@ -72,6 +73,32 @@ class Elasticsearch::Model::ResponseTest < Test::Unit::TestCase
       assert_respond_to response, :aggregations
       assert_kind_of Hashie::Mash, response.aggregations.foo
       assert_equal 10, response.aggregations.foo.bar
+    end
+
+    should "access the suggest" do
+      @search.expects(:execute!).returns(RESPONSE)
+
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+
+      assert_respond_to response, :suggestions
+      assert_kind_of Hashie::Mash, response.suggestions
+      assert_equal 'Foo', response.suggestions.my_suggest.first.options.first.text
+    end
+
+    should "return array of terms from the suggestions" do
+      @search.expects(:execute!).returns(RESPONSE)
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+
+      assert_not_empty response.suggestions
+      assert_equal [ 'Foo', 'Bar' ], response.suggestions.terms
+    end
+
+    should "return empty array as suggest terms when there are no suggestions" do
+      @search.expects(:execute!).returns({})
+      response = Elasticsearch::Model::Response::Response.new OriginClass, @search
+
+      assert_empty response.suggestions
+      assert_equal [], response.suggestions.terms
     end
   end
 end

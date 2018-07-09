@@ -1,5 +1,5 @@
 module Elasticsearch
   module Model
-    VERSION = "0.1.7"
+    VERSION = "7.0.0"
   end
 end

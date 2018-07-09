@@ -16,34 +16,34 @@ This repository contains various Ruby and Rails integrations for [Elasticsearch]
 Elasticsearch client and Ruby API is provided by the
 **[elasticsearch-ruby](https://github.com/elasticsearch/elasticsearch-ruby)** project.
 
-## Installation
+## Compatibility
 
 The libraries are compatible with Ruby 1.9.3 and higher.
 
-Install the `elasticsearch-model` and/or `elasticsearch-rails` package from
-[Rubygems](https://rubygems.org/gems/elasticsearch):
+The version numbers follow the Elasticsearch major versions, and the `master` branch
+is compatible with the Elasticsearch `master` branch, therefore, with the next major version.
+
+| Rubygem       |   | Elasticsearch |
+|:-------------:|:-:| :-----------: |
+| 0.1           | → | 1.x           |
+| 2.x           | → | 2.x           |
+| 5.x           | → | 5.x           |
+| master        | → | master        |
+
+## Installation
+
+Install each library from [Rubygems](https://rubygems.org/gems/elasticsearch):
 
 ```ruby
-gem install elasticsearch-model elasticsearch-rails
+gem install elasticsearch-model
+gem install elasticsearch-rails
 ```
 
-To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://gembundler.com):
+To use an unreleased version, add it to your `Gemfile` for [Bundler](http://bundler.io):
 
 ```ruby
-gem 'elasticsearch-model', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-gem 'elasticsearch-rails', git: 'git://github.com/elasticsearch/elasticsearch-rails.git'
-```
-
-or install it from a source code checkout:
-
-```bash
-git clone https://github.com/elasticsearch/elasticsearch-rails.git
-cd elasticsearch-model
-bundle install
-rake install
-cd elasticsearch-rails
-bundle install
-rake install
+gem 'elasticsearch-model', github: 'elastic/elasticsearch-rails', branch: '5.x'
+gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
 ```
 
 ## Usage
@@ -132,15 +132,26 @@ Article.create title: 'Test'
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-rails)
 * [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/test)
 
-## Running the Test Suite
+## Development
+
+[![Build Status](https://travis-ci.org/elastic/elasticsearch-rails.svg?branch=master)](https://travis-ci.org/elastic/elasticsearch-rails) [![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
+
+To work on the code, clone the repository and install all dependencies first:
+
+```
+git clone https://github.com/elastic/elasticsearch-rails.git
+cd elasticsearch-rails/
+bundle install
+rake bundle:install
+```
+
+### Running the Test Suite
 
 You can run unit and integration tests for each sub-project by running the respective Rake tasks in their folders.
 
-You can also unit, integration, or both tests in the top level directory for each sub-project:
+You can also unit, integration, or both tests for all sub-projects from the top-level directory:
 
-    rake bundle:clean
-    rake bundle:install
-    bundle exec rake test:all
+    rake test:all
 
 The test suite expects an Elasticsearch cluster running on port 9250, and **will delete all the data**. You can launch an isolated, in-memory Elasticsearch cluster with the following Rake task:
 

@@ -84,7 +84,7 @@ module Elasticsearch
         #
         #     class Article
         #       # ...
-        #       def enrich(batch)
+        #       def self.enrich(batch)
         #         batch.each do |item|
         #           item.metadata = MyAPI.get_metadata(item.id)
         #         end
@@ -92,7 +92,7 @@ module Elasticsearch
         #       end
         #     end
         #
-        #    Article.import preprocess: enrich
+        #    Article.import preprocess: :enrich
         #
         # @example Return an array of error elements instead of the number of errors, eg.
         #          to try importing these records again

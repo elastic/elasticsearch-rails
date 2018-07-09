@@ -52,7 +52,7 @@ module Elasticsearch
 
           if block_given?
             @mapping[name][:type] ||= 'object'
-            properties = TYPES_WITH_EMBEDDED_PROPERTIES.include?(@mapping[name][:type]) ? :properties : :fields
+            properties = TYPES_WITH_EMBEDDED_PROPERTIES.include?(@mapping[name][:type].to_s) ? :properties : :fields
 
             @mapping[name][properties] ||= {}
 
@@ -65,8 +65,8 @@ module Elasticsearch
             end
           end
 
-          # Set the type to `string` by default
-          @mapping[name][:type] ||= 'string'
+          # Set the type to `text` by default
+          @mapping[name][:type] ||= 'text'
 
           self
         end
@@ -220,15 +220,19 @@ module Elasticsearch
         #     Article.__elasticsearch__.create_index! index: 'my-index'
         #
         def create_index!(options={})
-          target_index = options.delete(:index) || self.index_name
+          options = options.clone
+
+          target_index = options.delete(:index)    || self.index_name
+          settings     = options.delete(:settings) || self.settings.to_hash
+          mappings     = options.delete(:mappings) || self.mappings.to_hash
 
           delete_index!(options.merge index: target_index) if options[:force]
 
           unless index_exists?(index: target_index)
             self.client.indices.create index: target_index,
                                        body: {
-                                         settings: self.settings.to_hash,
-                                         mappings: self.mappings.to_hash }
+                                         settings: settings,
+                                         mappings: mappings }
           end
         end
 
@@ -303,17 +307,23 @@ module Elasticsearch
 
         def self.included(base)
           # Register callback for storing changed attributes for models
-          # which implement `before_save` and `changed_attributes` methods
+          # which implement `before_save` and return changed attributes
+          # (ie. when `Elasticsearch::Model` is included)
           #
           # @note This is typically triggered only when the module would be
           #       included in the model directly, not within the proxy.
           #
           # @see #update_document
           #
-          base.before_save do |instance|
-            instance.instance_variable_set(:@__changed_attributes,
-                                  Hash[ instance.changes.map { |key, value| [key, value.last] } ])
-          end if base.respond_to?(:before_save) && base.instance_methods.include?(:changed_attributes)
+          base.before_save do |i|
+            if i.class.instance_methods.include?(:changes_to_save) # Rails 5.1
+              i.instance_variable_set(:@__changed_model_attributes,
+                                      Hash[ i.changes_to_save.map { |key, value| [key, value.last] } ])
+            elsif i.class.instance_methods.include?(:changes)
+              i.instance_variable_set(:@__changed_model_attributes,
+                                      Hash[ i.changes.map { |key, value| [key, value.last] } ])
+            end
+          end if base.respond_to?(:before_save)
         end
 
         # Serializes the model instance into JSON (by calling `as_indexed_json`),
@@ -387,11 +397,11 @@ module Elasticsearch
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:update
         #
         def update_document(options={})
-          if changed_attributes = self.instance_variable_get(:@__changed_attributes)
+          if attributes_in_database = self.instance_variable_get(:@__changed_model_attributes)
             attributes = if respond_to?(:as_indexed_json)
-              self.as_indexed_json.select { |k,v| changed_attributes.keys.map(&:to_s).include? k.to_s }
+              self.as_indexed_json.select { |k,v| attributes_in_database.keys.map(&:to_s).include? k.to_s }
             else
-              changed_attributes
+              attributes_in_database
             end
 
             client.update(

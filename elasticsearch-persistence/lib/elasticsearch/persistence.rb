@@ -1,7 +1,10 @@
+require 'hashie/mash'
+
 require 'elasticsearch'
+
+require 'elasticsearch/model/hash_wrapper'
 require 'elasticsearch/model/indexing'
 require 'elasticsearch/model/searching'
-require 'hashie'
 
 require 'active_support/inflector'
 

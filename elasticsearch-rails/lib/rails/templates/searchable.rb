@@ -12,12 +12,12 @@ module Searchable
     #
     settings index: { number_of_shards: 1, number_of_replicas: 0 } do
       mapping do
-        indexes :title, type: 'multi_field' do
+        indexes :title, type: 'text' do
           indexes :title,     analyzer: 'snowball'
           indexes :tokenized, analyzer: 'simple'
         end
 
-        indexes :content, type: 'multi_field' do
+        indexes :content, type: 'text'  do
           indexes :content,   analyzer: 'snowball'
           indexes :tokenized, analyzer: 'simple'
         end
@@ -25,22 +25,22 @@ module Searchable
         indexes :published_on, type: 'date'
 
         indexes :authors do
-          indexes :full_name, type: 'multi_field' do
+          indexes :full_name, type: 'text' do
             indexes :full_name
-            indexes :raw, analyzer: 'keyword'
+            indexes :raw, type: 'keyword'
           end
         end
 
-        indexes :categories, analyzer: 'keyword'
+        indexes :categories, type: 'keyword'
 
         indexes :comments, type: 'nested' do
           indexes :body, analyzer: 'snowball'
           indexes :stars
           indexes :pick
-          indexes :user, analyzer: 'keyword'
-          indexes :user_location, type: 'multi_field' do
+          indexes :user, type: 'keyword'
+          indexes :user_location, type: 'text' do
             indexes :user_location
-            indexes :raw, analyzer: 'keyword'
+            indexes :raw, type: 'keyword'
           end
         end
       end
@@ -71,15 +71,15 @@ module Searchable
     #
     def self.search(query, options={})
 
-      # Prefill and set the filters (top-level `filter` and `facet_filter` elements)
+      # Prefill and set the filters (top-level `post_filter` and aggregation `filter` elements)
       #
       __set_filters = lambda do |key, f|
+        @search_definition[:post_filter][:bool] ||= {}
+        @search_definition[:post_filter][:bool][:must] ||= []
+        @search_definition[:post_filter][:bool][:must]  |= [f]
 
-        @search_definition[:filter][:and] ||= []
-        @search_definition[:filter][:and]  |= [f]
-
-        @search_definition[:facets][key.to_sym][:facet_filter][:and] ||= []
-        @search_definition[:facets][key.to_sym][:facet_filter][:and]  |= [f]
+        @search_definition[:aggregations][key.to_sym][:filter][:bool][:must] ||= []
+        @search_definition[:aggregations][key.to_sym][:filter][:bool][:must]  |= [f]
       end
 
       @search_definition = {
@@ -95,27 +95,22 @@ module Searchable
           }
         },
 
-        filter: {},
+        post_filter: { bool: { must: [ match_all: {} ] } },
 
-        facets: {
+        aggregations: {
           categories: {
-            terms: {
-              field: 'categories'
-            },
-            facet_filter: {}
+            filter: { bool: { must: [ match_all: {} ] } },
+            aggregations: { categories: { terms: { field: 'categories' } } }
           },
           authors: {
-            terms: {
-              field: 'authors.full_name.raw'
-            },
-            facet_filter: {}
+            filter: { bool: { must: [ match_all: {} ] } },
+            aggregations: { authors: { terms: { field: 'authors.full_name.raw' } } }
           },
           published: {
-            date_histogram: {
-              field: 'published_on',
-              interval: 'week'
-            },
-            facet_filter: {}
+            filter: { bool: { must: [ match_all: {} ] } },
+            aggregations: {
+              published: { date_histogram: { field: 'published_on', interval: 'week' } }
+            }
           }
         }
       }
@@ -174,7 +169,7 @@ module Searchable
             query: {
               multi_match: {
                 query: query,
-                fields: ['body'],
+                fields: ['comments.body'],
                 operator: 'and'
               }
             }
