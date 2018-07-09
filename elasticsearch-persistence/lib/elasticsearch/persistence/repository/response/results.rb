@@ -12,6 +12,18 @@ module Elasticsearch
 
           attr_reader :repository
 
+          # The key for accessing the results in an Elasticsearch query response.
+          #
+          HITS = 'hits'.freeze
+
+          # The key for accessing the total number of hits in an Elasticsearch query response.
+          #
+          TOTAL = 'total'.freeze
+
+          # The key for accessing the maximum score in an Elasticsearch query response.
+          #
+          MAX_SCORE = 'max_score'.freeze
+
           # @param repository [Elasticsearch::Persistence::Repository::Class] The repository instance
           # @param response   [Hash]  The full response returned from the Elasticsearch client
           # @param options    [Hash]  Optional parameters
@@ -33,25 +45,25 @@ module Elasticsearch
           # The number of total hits for a query
           #
           def total
-            response['hits']['total']
+            response[HITS][TOTAL]
           end
 
           # The maximum score for a query
           #
           def max_score
-            response['hits']['max_score']
+            response[HITS][MAX_SCORE]
           end
 
           # Yields [object, hit] pairs to the block
           #
           def each_with_hit(&block)
-            results.zip(response['hits']['hits']).each(&block)
+            results.zip(response[HITS][HITS]).each(&block)
           end
 
           # Yields [object, hit] pairs and returns the result
           #
           def map_with_hit(&block)
-            results.zip(response['hits']['hits']).map(&block)
+            results.zip(response[HITS][HITS]).map(&block)
           end
 
           # Return the collection of domain objects
@@ -64,7 +76,7 @@ module Elasticsearch
           # @return [Array]
           #
           def results
-            @results ||= response['hits']['hits'].map do |document|
+            @results ||= response[HITS][HITS].map do |document|
               repository.deserialize(document.to_hash)
             end
           end
