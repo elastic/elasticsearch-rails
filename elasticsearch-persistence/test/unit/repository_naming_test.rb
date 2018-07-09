@@ -50,7 +50,7 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
     end
 
     context "extract an ID from the document" do
-      should "delete the key from theHash" do
+      should "delete the key from the Hash" do
         d1 = { :id   => 1 }
         d2 = { :_id  => 1 }
         d3 = { 'id'  => 1 }
