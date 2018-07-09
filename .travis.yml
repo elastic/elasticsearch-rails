@@ -4,6 +4,8 @@
 
 dist: trusty
 
+sudo: required
+
 rvm:
   - 1.9.3
   - 2.0.0
