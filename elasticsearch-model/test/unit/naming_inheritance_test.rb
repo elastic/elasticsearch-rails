@@ -69,8 +69,8 @@ class Elasticsearch::Model::NamingInheritanceTest < Test::Unit::TestCase
     end
 
     should "return the default document_type" do
-      assert_equal "test_base", TestBase.document_type
-      assert_equal "test_base", TestBase.new.document_type
+      assert_equal "_doc", TestBase.document_type
+      assert_equal "_doc", TestBase.new.document_type
     end
 
     should "return the explicit document_type" do

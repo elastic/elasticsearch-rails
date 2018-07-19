@@ -149,7 +149,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
       should "update and return the index mappings" do
         DummyIndexingModel.mappings foo: 'boo'
         DummyIndexingModel.mappings bar: 'bam'
-        assert_equal( { dummy_indexing_model: { foo: "boo", bar: "bam", properties: {} } },
+        assert_equal( { _doc: { foo: "boo", bar: "bam", properties: {} } },
                       DummyIndexingModel.mappings.to_hash )
       end
 
@@ -544,7 +544,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         indices.expects(:create).with do |payload|
           assert_equal 'dummy_indexing_model_for_recreates', payload[:index]
           assert_equal 1,         payload[:body][:settings][:index][:number_of_shards]
-          assert_equal 'keyword', payload[:body][:mappings][:dummy_indexing_model_for_recreate][:properties][:foo][:analyzer]
+          assert_equal 'keyword', payload[:body][:mappings][:_doc][:properties][:foo][:analyzer]
           true
         end.returns({})
 

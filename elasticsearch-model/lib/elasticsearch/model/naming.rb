@@ -5,6 +5,8 @@ module Elasticsearch
     #
     module Naming
 
+      DEFAULT_DOC_TYPE= '_doc'.freeze
+
       module ClassMethods
 
         # Get or set the name of the index
@@ -90,7 +92,7 @@ module Elasticsearch
           end
 
           def default_document_type
-            self.model_name.element
+            DEFAULT_DOC_TYPE
           end
 
       end

@@ -29,8 +29,8 @@ class Elasticsearch::Model::NamingTest < Test::Unit::TestCase
     end
 
     should "return the default document_type" do
-      assert_equal 'dummy_naming_model', DummyNamingModel.document_type
-      assert_equal 'dummy_naming_model', DummyNamingModel.new.document_type
+      assert_equal '_doc', DummyNamingModel.document_type
+      assert_equal '_doc', DummyNamingModel.new.document_type
     end
 
     should "set and return the index_name" do
