@@ -5,7 +5,7 @@ module Elasticsearch
     #
     module Naming
 
-      DEFAULT_DOC_TYPE= '_doc'.freeze
+      DEFAULT_DOC_TYPE = '_doc'.freeze
 
       module ClassMethods
 
