@@ -41,7 +41,7 @@ module Elasticsearch
 
           a = ArticleWithCustomSerialization.__elasticsearch__.client.get \
                 index: 'article_with_custom_serializations',
-                type:  'article_with_custom_serialization',
+                type:  '_doc',
                 id:    '1'
 
           assert_equal( { 'title' => 'Test' }, a['_source'] )
@@ -55,7 +55,7 @@ module Elasticsearch
 
           a = ArticleWithCustomSerialization.__elasticsearch__.client.get \
                 index: 'article_with_custom_serializations',
-                type:  'article_with_custom_serialization',
+                type:  '_doc',
                 id:    '1'
 
           assert_equal( { 'title' => 'UPDATED' }, a['_source'] )

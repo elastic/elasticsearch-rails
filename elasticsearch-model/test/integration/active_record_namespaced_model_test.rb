@@ -22,6 +22,8 @@ module Elasticsearch
               include Elasticsearch::Model
               include Elasticsearch::Model::Callbacks
 
+              document_type 'article'
+
               mapping { indexes :title }
             end
           end
