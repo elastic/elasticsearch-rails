@@ -48,27 +48,8 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_equal false, subject.exists?('1')
       end
 
-      should "return whether document for klass exists" do
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(MyDocument).at_least_once
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
-
-        @client
-          .expects(:exists)
-          .with do |arguments|
-            assert_equal 'my_document', arguments[:type]
-            assert_equal '1', arguments[:id]
-            true
-          end
-          .returns(true)
-
-        assert_equal true, subject.exists?('1')
-      end
-
       should "return whether document for document_type exists" do
         subject.expects(:document_type).returns('my_document')
-        subject.expects(:klass).returns(MyDocument).at_most_once
-        subject.expects(:__get_type_from_class).never
 
         @client
           .expects(:exists)
@@ -82,9 +63,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_equal true, subject.exists?('1')
       end
 
-      should "return whether document exists" do
-        subject.expects(:klass).returns(nil)
-        subject.expects(:__get_type_from_class).never
+      should "return whether document exists using _all type" do
 
         @client
           .expects(:exists)
@@ -100,39 +79,20 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
       should "pass options to the client" do
         @client.expects(:exists).with do |arguments|
+          assert_equal 'my_document', arguments[:type]
           assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam',    arguments[:routing]
           true
         end
 
-        subject.exists? '1', index: 'foobarbam', routing: 'bambam'
+        subject.exists? '1', index: 'foobarbam', routing: 'bambam', type: 'my_document'
       end
     end
 
     context "'__find_one' method" do
-      should "find document based on klass and return a deserialized object" do
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(MyDocument).at_least_once
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
 
-        subject.expects(:deserialize).with({'_source' => {'foo' => 'bar'}}).returns(MyDocument.new)
-
-        @client
-          .expects(:get)
-          .with do |arguments|
-            assert_equal 'my_document', arguments[:type]
-            assert_equal '1', arguments[:id]
-            true
-          end
-          .returns({'_source' => { 'foo' => 'bar' }})
-
-        assert_instance_of MyDocument, subject.__find_one('1')
-      end
-
-      should "find document based on document_type and return a deserialized object" do
+      should "find a document based on document_type and return a deserialized object" do
         subject.expects(:document_type).returns('my_document')
-        subject.expects(:klass).returns(MyDocument).at_most_once
-        subject.expects(:__get_type_from_class).never
 
         subject.expects(:deserialize).with({'_source' => {'foo' => 'bar'}}).returns(MyDocument.new)
 
@@ -148,10 +108,8 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_instance_of MyDocument, subject.__find_one('1')
       end
 
-      should "find document and return a deserialized object" do
+      should "find a document using _all if document_type is not defined" do
         subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(nil).at_least_once
-        subject.expects(:__get_type_from_class).never
 
         subject.expects(:deserialize).with({'_source' => {'foo' => 'bar'}}).returns(MyDocument.new)
 
@@ -169,7 +127,6 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
       should "raise DocumentNotFound exception when the document cannot be found" do
         subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(nil).at_least_once
 
         subject.expects(:deserialize).never
 
@@ -183,8 +140,6 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "pass other exceptions" do
-        subject.expects(:klass).returns(nil).at_least_once
-
         subject.expects(:deserialize).never
 
         @client
@@ -197,7 +152,6 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "pass options to the client" do
-        subject.expects(:klass).returns(nil).at_least_once
         subject.expects(:deserialize)
 
         @client
@@ -209,7 +163,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
           end
           .returns({'_source' => { 'foo' => 'bar' }})
 
-        subject.__find_one '1', index: 'foobarbam', routing: 'bambam'
+        subject.__find_one '1', index: 'foobarbam', routing: 'bambam', type: 'my_document'
       end
     end
 
@@ -232,39 +186,8 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         ]}
       end
 
-      should "find documents based on klass and return an Array of deserialized objects" do
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(MyDocument).at_least_once
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
-
-        subject
-          .expects(:deserialize)
-          .with(@response['docs'][0])
-          .returns(MyDocument.new)
-
-        subject
-          .expects(:deserialize)
-          .with(@response['docs'][1])
-          .returns(MyDocument.new)
-
-        @client
-          .expects(:mget)
-          .with do |arguments|
-            assert_equal 'my_document', arguments[:type]
-            assert_equal ['1', '2'], arguments[:body][:ids]
-            true
-          end
-          .returns(@response)
-
-        results = subject.__find_many(['1', '2'])
-        assert_instance_of MyDocument, results[0]
-        assert_instance_of MyDocument, results[1]
-      end
-
       should "find documents based on document_type and return an Array of deserialized objects" do
         subject.expects(:document_type).returns('my_document')
-        subject.expects(:klass).returns(MyDocument).at_most_once
-        subject.expects(:__get_type_from_class).never
 
         subject.expects(:deserialize).twice
 
@@ -282,8 +205,6 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
 
       should "find documents and return an Array of deserialized objects" do
         subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(nil).at_least_once
-        subject.expects(:__get_type_from_class).never
 
         subject
           .expects(:deserialize)
@@ -335,9 +256,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
            "_source"=>{"id"=>"2", "title"=>"Test 2"}}
         ]}
 
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).returns(MyDocument).at_least_once
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
+        subject.expects(:document_type).returns('my_document')
 
         subject
           .expects(:deserialize)
@@ -368,19 +287,19 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "pass options to the client" do
-        subject.expects(:klass).returns(nil).at_least_once
         subject.expects(:deserialize).twice
 
         @client
           .expects(:mget)
           .with do |arguments|
+            assert_equal 'my_document', arguments[:type]
             assert_equal 'foobarbam', arguments[:index]
             assert_equal 'bambam',    arguments[:routing]
             true
           end
           .returns(@response)
 
-        subject.__find_many ['1', '2'], index: 'foobarbam', routing: 'bambam'
+        subject.__find_many ['1', '2'], index: 'foobarbam', routing: 'bambam', type: 'my_document'
       end
     end
 

@@ -57,14 +57,14 @@ module Elasticsearch
         # @return [true, false]
         #
         def exists?(id, options={})
-          type     = document_type || (klass ? __get_type_from_class(klass) : ALL)
+          type     = document_type || ALL
           client.exists( { index: index_name, type: type, id: id }.merge(options) )
         end
 
         # @api private
         #
         def __find_one(id, options={})
-          type     = document_type || (klass ? __get_type_from_class(klass) : ALL)
+          type     = document_type || ALL
           document = client.get( { index: index_name, type: type, id: id }.merge(options) )
 
           deserialize(document)
@@ -75,7 +75,7 @@ module Elasticsearch
         # @api private
         #
         def __find_many(ids, options={})
-          type     = document_type || (klass ? __get_type_from_class(klass) : ALL)
+          type     = document_type || ALL
           documents = client.mget( { index: index_name, type: type, body: { ids: ids } }.merge(options) )
 
           documents[DOCS].map { |document| document[FOUND] ? deserialize(document) : nil }
