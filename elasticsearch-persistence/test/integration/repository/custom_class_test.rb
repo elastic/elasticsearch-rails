@@ -30,6 +30,7 @@ module Elasticsearch
             include Elasticsearch::Persistence::Repository
 
             klass MyNote
+            document_type 'my_note'
 
             settings number_of_shards: 1 do
               mapping do
@@ -45,6 +46,8 @@ module Elasticsearch
           end
 
           @repository = MyNotesRepository.new
+          @repository.klass = MyNotesRepository.klass
+          @repository.document_type = MyNotesRepository.document_type
 
           @repository.client.cluster.health wait_for_status: 'yellow'
         end

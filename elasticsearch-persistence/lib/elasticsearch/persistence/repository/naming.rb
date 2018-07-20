@@ -14,8 +14,12 @@ module Elasticsearch
 
         # Get or set the class used to initialize domain objects when deserializing them
         #
-        def klass name=nil
-          @klass = name || @klass
+        def klass(name=nil)
+          if name
+            @klass = name
+          else
+            @klass
+          end
         end
 
         # Set the class used to initialize domain objects when deserializing them

@@ -19,6 +19,8 @@ module Elasticsearch
       context "The default repository class" do
         setup do
           @repository = Elasticsearch::Persistence::Repository.new
+          @repository.klass = ::Note
+          @repository.document_type = 'note'
           @repository.client.cluster.health wait_for_status: 'yellow'
         end
 
@@ -105,6 +107,7 @@ module Elasticsearch
         end
 
         should "save and find a plain hash" do
+          @repository.klass = Hash
           @repository.save id: 1, title: 'Hash'
           result = @repository.find(1)
           assert_equal 'Hash', result['_source']['title']
