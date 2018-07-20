@@ -14,13 +14,9 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       @shoulda_subject.stubs(:client).returns(@client)
     end
 
-    should "search in type based on klass" do
-      subject.expects(:klass).returns(MyDocument).at_least_once
-      subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
-
+    should "search in type does not use the klass setting" do
       @client.expects(:search).with do |arguments|
         assert_equal 'test',        arguments[:index]
-        assert_equal 'my_document', arguments[:type]
         assert_equal({foo: 'bar'},  arguments[:body])
         true
       end
@@ -30,7 +26,6 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
 
     should "search in type based on document_type" do
       subject.expects(:document_type).returns('my_special_document').at_least_once
-      subject.expects(:__get_type_from_class).never
 
       @client.expects(:search).with do |arguments|
         assert_equal 'test',                arguments[:index]
@@ -44,24 +39,19 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
 
     should "search across all types" do
       subject.expects(:document_type).returns(nil).at_least_once
-      subject.expects(:klass).returns(nil).at_least_once
-      subject.expects(:__get_type_from_class).never
 
       @client.expects(:search).with do |arguments|
         assert_equal 'test', arguments[:index]
-        assert_equal nil,    arguments[:type]
+        assert_equal '_all',    arguments[:type]
         assert_equal({foo: 'bar'}, arguments[:body])
         true
       end
 
       assert_instance_of Elasticsearch::Persistence::Repository::Response::Results,
-                         subject.search(foo: 'bar')
+                         subject.search({ foo: 'bar' }, type: '_all')
     end
 
     should "pass options to the client" do
-      subject.expects(:klass).returns(nil).at_least_once
-      subject.expects(:__get_type_from_class).never
-
       @client.expects(:search).twice.with do |arguments|
         assert_equal 'bambam', arguments[:routing]
         true
@@ -74,9 +64,6 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
     end
 
     should "search with simple search" do
-      subject.expects(:klass).returns(nil).at_least_once
-      subject.expects(:__get_type_from_class).never
-
       @client.expects(:search).with do |arguments|
         assert_equal 'foobar', arguments[:q]
         true
@@ -87,9 +74,6 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
     end
 
     should "raise error for incorrect search definitions" do
-      subject.expects(:klass).returns(nil).at_least_once
-      subject.expects(:__get_type_from_class).never
-
       assert_raise ArgumentError do
         subject.search 123
       end
@@ -113,5 +97,4 @@ class Elasticsearch::Persistence::RepositorySearchTest < Test::Unit::TestCase
       assert_equal 1, subject.count( { query: { match: { foo: 'bar' } } }, { ignore_unavailable: true } )
     end
   end
-
 end

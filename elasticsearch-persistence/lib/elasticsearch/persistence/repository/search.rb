@@ -44,7 +44,7 @@ module Elasticsearch
         # @return [Elasticsearch::Persistence::Repository::Response::Results]
         #
         def search(query_or_definition, options={})
-          type = document_type || (klass ? __get_type_from_class(klass) : nil  )
+          type = document_type
 
           case
           when query_or_definition.respond_to?(:to_hash)
@@ -79,7 +79,7 @@ module Elasticsearch
         #
         def count(query_or_definition=nil, options={})
           query_or_definition ||= { query: { match_all: {} } }
-          type = document_type || (klass ? __get_type_from_class(klass) : nil  )
+          type = document_type
 
           case
           when query_or_definition.respond_to?(:to_hash)
