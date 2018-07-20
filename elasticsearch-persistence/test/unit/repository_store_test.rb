@@ -13,51 +13,11 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
     end
 
     context "save" do
-      should "serialize the document, get type from klass and index it" do
-        subject.expects(:serialize).returns({foo: 'bar'})
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(MyDocument)
-        subject.expects(:__get_type_from_class).with(MyDocument).at_least_once.returns('my_document')
-        subject.expects(:__get_id_from_document).returns('1')
-
-        client = mock
-        client.expects(:index).with do |arguments|
-          assert_equal 'my_document', arguments[:type]
-          assert_equal '1', arguments[:id]
-          assert_equal({foo: 'bar'}, arguments[:body])
-          true
-        end
-        subject.expects(:client).returns(client)
-
-        subject.save({foo: 'bar'})
-      end
-
-      should "serialize the document, get type from document class and index it" do
-        subject.expects(:serialize).returns({foo: 'bar'})
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(nil)
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
-        subject.expects(:__get_id_from_document).returns('1')
-
-        client = mock
-        client.expects(:index).with do |arguments|
-          assert_equal 'my_document', arguments[:type]
-          assert_equal '1', arguments[:id]
-          assert_equal({foo: 'bar'}, arguments[:body])
-          true
-        end
-        subject.expects(:client).returns(client)
-
-        subject.save(MyDocument.new)
-      end
 
       should "serialize the document, get type from document_type and index it" do
         subject.expects(:serialize).returns({foo: 'bar'})
 
         subject.expects(:document_type).returns('my_document')
-
-        subject.expects(:klass).never
-        subject.expects(:__get_type_from_class).never
 
         subject.expects(:__get_id_from_document).returns('1')
 
@@ -76,19 +36,18 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
       should "pass the options to the client" do
         subject.expects(:serialize).returns({foo: 'bar'})
         subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(MyDocument)
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
         subject.expects(:__get_id_from_document).returns('1')
 
         client = mock
         client.expects(:index).with do |arguments|
+          assert_equal 'my_document', arguments[:type]
           assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam', arguments[:routing]
           true
         end
         subject.expects(:client).returns(client)
 
-        subject.save({foo: 'bar'}, { index: 'foobarbam', routing: 'bambam' })
+        subject.save({foo: 'bar'}, { index: 'foobarbam', routing: 'bambam', type: 'my_document' })
       end
     end
 
@@ -208,50 +167,12 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
     end
 
     context "delete" do
-      should "get type from klass when passed only ID" do
-        subject.expects(:serialize).never
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(MyDocument)
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
-        subject.expects(:__get_id_from_document).never
-
-        client = mock
-        client.expects(:delete).with do |arguments|
-          assert_equal 'my_document', arguments[:type]
-          assert_equal '1', arguments[:id]
-          true
-        end
-        subject.expects(:client).returns(client)
-
-        subject.delete('1')
-      end
-
-      should "get ID from document and type from klass when passed a document" do
-        subject.expects(:serialize).returns({id: '1', foo: 'bar'})
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(MyDocument)
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
-        subject.expects(:__get_id_from_document).with({id: '1', foo: 'bar'}).returns('1')
-
-        client = mock
-        client.expects(:delete).with do |arguments|
-          assert_equal 'my_document', arguments[:type]
-          assert_equal '1', arguments[:id]
-          true
-        end
-        subject.expects(:client).returns(client)
-
-        subject.delete({id: '1', foo: 'bar'})
-      end
 
       should "get ID from document and type from document_type when passed a document" do
         subject.expects(:serialize).returns({id: '1', foo: 'bar'})
 
         subject.expects(:document_type).returns('my_document')
 
-        subject.expects(:klass).never
-        subject.expects(:__get_type_from_class).never
-
         subject.expects(:__get_id_from_document).with({id: '1', foo: 'bar'}).returns('1')
 
         client = mock
@@ -265,16 +186,14 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
         subject.delete({id: '1', foo: 'bar'})
       end
 
-      should "get ID and type from document when passed a document" do
+      should "get ID and uses the default document type" do
         subject.expects(:serialize).returns({id: '1', foo: 'bar'})
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(nil)
-        subject.expects(:__get_type_from_class).with(MyDocument).returns('my_document')
+        subject.expects(:document_type).returns('_doc')
         subject.expects(:__get_id_from_document).with({id: '1', foo: 'bar'}).returns('1')
 
         client = mock
         client.expects(:delete).with do |arguments|
-          assert_equal 'my_document', arguments[:type]
+          assert_equal '_doc', arguments[:type]
           assert_equal '1', arguments[:id]
           true
         end
@@ -284,19 +203,16 @@ class Elasticsearch::Persistence::RepositoryStoreTest < Test::Unit::TestCase
       end
 
       should "pass the options to the client" do
-        subject.expects(:document_type).returns(nil)
-        subject.expects(:klass).at_least_once.returns(MyDocument)
-        subject.expects(:__get_type_from_class).returns('my_document')
-
         client = mock
         client.expects(:delete).with do |arguments|
+          assert_equal 'my_document', arguments[:type]
           assert_equal 'foobarbam', arguments[:index]
           assert_equal 'bambam', arguments[:routing]
           true
         end
         subject.expects(:client).returns(client)
 
-        subject.delete('1', index: 'foobarbam', routing: 'bambam')
+        subject.delete('1', index: 'foobarbam', routing: 'bambam', type: 'my_document')
       end
     end
   end
