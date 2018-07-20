@@ -11,35 +11,6 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
       @shoulda_subject = Class.new() { include Elasticsearch::Persistence::Repository::Naming }.new
     end
 
-    context "get Ruby class from the Elasticsearch type" do
-      should "get a simple class" do
-        assert_equal Foobar, subject.__get_klass_from_type('foobar')
-      end
-      should "get a camelcased class" do
-        assert_equal FooBar, subject.__get_klass_from_type('foo_bar')
-      end
-      should "get a namespaced class" do
-        assert_equal Foo::Bar, subject.__get_klass_from_type('foo/bar')
-      end
-      should "re-raise a NameError exception" do
-        assert_raise NameError do
-          subject.__get_klass_from_type('foobarbazbam')
-        end
-      end
-    end
-
-    context "get Elasticsearch type from the Ruby class" do
-      should "encode a simple class" do
-        assert_equal 'foobar', subject.__get_type_from_class(Foobar)
-      end
-      should "encode a camelcased class" do
-        assert_equal 'foo_bar', subject.__get_type_from_class(FooBar)
-      end
-      should "encode a namespaced class" do
-        assert_equal 'foo/bar', subject.__get_type_from_class(Foo::Bar)
-      end
-    end
-
     context "get an ID from the document" do
       should "get an ID from Hash" do
         assert_equal 1, subject.__get_id_from_document(id: 1)
@@ -118,17 +89,17 @@ class Elasticsearch::Persistence::RepositoryNamingTest < Test::Unit::TestCase
     end
 
     context "document_type" do
-      should "be nil when no klass is set" do
-        assert_equal nil, subject.document_type
+      should "be the default doc type when no klass is set" do
+        assert_equal '_doc', subject.document_type
       end
 
-      should "default to klass" do
+      should "does not use the klass" do
         subject.klass Foobar
-        assert_equal 'foobar', subject.document_type
+        assert_equal '_doc', subject.document_type
       end
 
       should "be aliased as `type`" do
-        subject.klass Foobar
+        subject.document_type 'foobar'
         assert_equal 'foobar', subject.type
       end
 
