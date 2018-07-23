@@ -25,6 +25,7 @@ module Elasticsearch
           @repository = Elasticsearch::Persistence::Repository.new do
             index :pages
             klass Page
+            document_type 'page'
 
             def deserialize(document)
               page = klass.new document['_source']

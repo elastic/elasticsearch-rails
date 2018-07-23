@@ -8,6 +8,14 @@ module Elasticsearch
       #
       module Serialize
 
+        # Error message raised when documents are attempted to be deserialized and no klass is defined for
+        #   the Repository.
+        #
+        # @since 6.0.0
+        NO_CLASS_ERROR_MESSAGE = "No class is defined for deserializing documents. " +
+                                   "Please define a 'klass' for the Repository or define a custom " +
+                                   "deserialize method.".freeze
+
         # The key for document fields in an Elasticsearch query response.
         #
         SOURCE = '_source'.freeze
@@ -31,8 +39,8 @@ module Elasticsearch
         # Use the `klass` property, if defined, otherwise try to get the class from the document's `_type`.
         #
         def deserialize(document)
-          _klass = klass || __get_klass_from_type(document[TYPE])
-          _klass.new document[SOURCE]
+          raise NameError.new(NO_CLASS_ERROR_MESSAGE) unless klass
+          klass.new document[SOURCE]
         end
       end
     end
