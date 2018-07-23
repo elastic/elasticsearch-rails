@@ -494,7 +494,11 @@ class Article < ActiveRecord::Base
   end
 
   after_commit on: [:update] do
-    __elasticsearch__.update_document if self.published?
+    if self.published?
+      __elasticsearch__.update_document
+    else
+      __elasticsearch__.delete_document
+    end
   end
 
   after_commit on: [:destroy] do
