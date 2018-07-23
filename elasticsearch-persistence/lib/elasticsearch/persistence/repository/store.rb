@@ -17,7 +17,7 @@ module Elasticsearch
         def save(document, options={})
           serialized = serialize(document)
           id   = __get_id_from_document(serialized)
-          type = document_type || __get_type_from_class(klass || document.class)
+          type = document_type
           client.index( { index: index_name, type: type, id: id, body: serialized }.merge(options) )
         end
 
@@ -48,8 +48,7 @@ module Elasticsearch
 
           type = options.delete(:type) || \
                  (defined?(serialized) && serialized && serialized.delete(:type)) || \
-                 document_type || \
-                 __get_type_from_class(klass)
+                 document_type
 
           if defined?(serialized) && serialized
             body = if serialized[:script]
@@ -80,11 +79,11 @@ module Elasticsearch
         def delete(document, options={})
           if document.is_a?(String) || document.is_a?(Integer)
             id   = document
-            type = document_type || __get_type_from_class(klass)
+            type = document_type
           else
             serialized = serialize(document)
             id   = __get_id_from_document(serialized)
-            type = document_type || __get_type_from_class(klass || document.class)
+            type = document_type
           end
           client.delete( { index: index_name, type: type, id: id }.merge(options) )
         end

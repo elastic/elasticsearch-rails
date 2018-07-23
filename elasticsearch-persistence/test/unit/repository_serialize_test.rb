@@ -24,33 +24,17 @@ class Elasticsearch::Persistence::RepositorySerializeTest < Test::Unit::TestCase
     context "deserialize" do
       should "get the class name from #klass" do
         subject.expects(:klass)
-               .returns(MyDocument)
+               .returns(MyDocument).twice
 
         MyDocument.expects(:new)
 
         subject.deserialize( {} )
       end
 
-      should "get the class name from Elasticsearch _type" do
-        subject.expects(:klass)
-               .returns(nil)
-
-        subject.expects(:__get_klass_from_type)
-               .returns(MyDocument)
-
-        MyDocument.expects(:new)
-
-        subject.deserialize( {} )
-      end
-
-      should "create the class instance with _source attributes" do
+      should "raise an error when klass isn't set" do
         subject.expects(:klass).returns(nil)
 
-        subject.expects(:__get_klass_from_type).returns(MyDocument)
-
-        MyDocument.expects(:new).with({ 'foo' => 'bar' })
-
-        subject.deserialize( {'_source' => { 'foo' => 'bar' } } )
+        assert_raise(NameError) { subject.deserialize( {} ) }
       end
     end
   end
