@@ -494,7 +494,11 @@ class Article < ActiveRecord::Base
   end
 
   after_commit on: [:update] do
-    __elasticsearch__.update_document if self.published?
+    if self.published?
+      __elasticsearch__.update_document
+    else
+      __elasticsearch__.delete_document
+    end
   end
 
   after_commit on: [:destroy] do
@@ -536,7 +540,11 @@ class Indexer
         record = Article.find(record_id)
         Client.index  index: 'articles', type: 'article', id: record.id, body: record.__elasticsearch__.as_indexed_json
       when /delete/
-        Client.delete index: 'articles', type: 'article', id: record_id
+        begin
+          Client.delete index: 'articles', type: 'article', id: record_id
+        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+          logger.debug "Article not found, ID: #{record_id}"
+        end
       else raise ArgumentError, "Unknown operation '#{operation}'"
     end
   end
