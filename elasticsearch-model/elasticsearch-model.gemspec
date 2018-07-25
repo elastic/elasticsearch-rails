@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "elasticsearch-extensions"
 
-  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "sqlite3" unless defined?(JRUBY_VERSION)
   s.add_development_dependency "activemodel",   "> 3"
 
   s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
@@ -45,7 +45,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
   s.add_development_dependency "yard"
-  s.add_development_dependency "ruby-prof"
+  s.add_development_dependency "ruby-prof" unless defined?(JRUBY_VERSION)
   s.add_development_dependency "pry"
 
   s.add_development_dependency "simplecov"
