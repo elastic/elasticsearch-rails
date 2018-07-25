@@ -39,6 +39,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "mocha"
   s.add_development_dependency "turn"
   s.add_development_dependency "yard"
+  s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
   s.add_development_dependency "ruby-prof" unless defined?(JRUBY_VERSION)
   s.add_development_dependency "pry"
 
