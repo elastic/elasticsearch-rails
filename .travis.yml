@@ -37,9 +37,9 @@ matrix:
       jdk: oraclejdk8
       env: TEST_SUITE=unit
 
-#    - rvm: jruby-9.1
-#      jdk: oraclejdk8
-#      env: TEST_SUITE=unit
+    - rvm: jruby-9.1
+      jdk: oraclejdk8
+      env: TEST_SUITE=unit
 
     - rvm: 2.5
       jdk: oraclejdk8
