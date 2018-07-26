@@ -1,9 +1,0 @@
-<% module_namespacing do -%>
-class <%= class_name %>
-  include Elasticsearch::Persistence::Model
-
-<% attributes.each do |attribute| -%>
-  <%= "attribute :#{attribute.name},".ljust(@padding+12) %> <%= attribute.type %>
-<% end -%>
-end
-<% end -%>
