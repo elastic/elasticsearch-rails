@@ -49,7 +49,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "return whether document for document_type exists" do
-        subject.expects(:document_type).returns('my_document')
+        subject.expects(:document_type).twice.returns('my_document')
 
         @client
           .expects(:exists)
@@ -63,12 +63,12 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_equal true, subject.exists?('1')
       end
 
-      should "return whether document exists using _all type" do
+      should "return whether document exists using no document type" do
 
         @client
           .expects(:exists)
           .with do |arguments|
-            assert_equal '_all', arguments[:type]
+            assert_equal nil, arguments[:type]
             assert_equal '1', arguments[:id]
             true
           end
@@ -92,7 +92,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
     context "'__find_one' method" do
 
       should "find a document based on document_type and return a deserialized object" do
-        subject.expects(:document_type).returns('my_document')
+        subject.expects(:document_type).twice.returns('my_document')
 
         subject.expects(:deserialize).with({'_source' => {'foo' => 'bar'}}).returns(MyDocument.new)
 
@@ -108,7 +108,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         assert_instance_of MyDocument, subject.__find_one('1')
       end
 
-      should "find a document using _all if document_type is not defined" do
+      should "find a document using no type if document_type is not defined" do
         subject.expects(:document_type).returns(nil)
 
         subject.expects(:deserialize).with({'_source' => {'foo' => 'bar'}}).returns(MyDocument.new)
@@ -116,7 +116,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         @client
           .expects(:get)
           .with do |arguments|
-            assert_equal '_all', arguments[:type]
+            assert_equal nil, arguments[:type]
             assert_equal '1', arguments[:id]
             true
           end
@@ -187,7 +187,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
       end
 
       should "find documents based on document_type and return an Array of deserialized objects" do
-        subject.expects(:document_type).returns('my_document')
+        subject.expects(:document_type).twice.returns('my_document')
 
         subject.expects(:deserialize).twice
 
@@ -219,7 +219,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
         @client
           .expects(:mget)
           .with do |arguments|
-            assert_equal '_all', arguments[:type]
+            assert_equal nil, arguments[:type]
             assert_equal ['1', '2'], arguments[:body][:ids]
             true
           end
@@ -256,7 +256,7 @@ class Elasticsearch::Persistence::RepositoryFindTest < Test::Unit::TestCase
            "_source"=>{"id"=>"2", "title"=>"Test 2"}}
         ]}
 
-        subject.expects(:document_type).returns('my_document')
+        subject.expects(:document_type).twice.returns('my_document')
 
         subject
           .expects(:deserialize)
