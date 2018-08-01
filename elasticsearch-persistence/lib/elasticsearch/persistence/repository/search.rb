@@ -6,9 +6,23 @@ module Elasticsearch
       #
       module Search
 
-        # The key for accessing the count in a Elasticsearch query response.
+        # Base methods for the class and single repository instance.
         #
-        COUNT = 'count'.freeze
+        # @return [ Array<Symbol> ] The base methods.
+        #
+        # @since 6.0.0
+        BASE_METHODS = [ :search,
+                         :count ].freeze
+
+        def self.included(base)
+
+          # Define each base method explicitly so that #method_missing does not have to be used
+          #  each time the method is called.
+          #
+          BASE_METHODS.each do |_method|
+            base.class_eval("def self.#{_method}(*args); instance.send(__method__, *args); end", __FILE__, __LINE__)
+          end
+        end
 
         # Returns a collection of domain objects by an Elasticsearch query
         #
@@ -92,8 +106,13 @@ module Elasticsearch
 
           response[COUNT]
         end
-      end
 
+        private
+
+        # The key for accessing the count in a Elasticsearch query response.
+        #
+        COUNT = 'count'.freeze
+      end
     end
   end
 end
