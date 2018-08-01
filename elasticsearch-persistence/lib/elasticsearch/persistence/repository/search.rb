@@ -6,10 +6,6 @@ module Elasticsearch
       #
       module Search
 
-        # The key for accessing the count in a Elasticsearch query response.
-        #
-        COUNT = 'count'.freeze
-
         # Returns a collection of domain objects by an Elasticsearch query
         #
         # Pass the query either as a string or a Hash-like object
@@ -92,8 +88,13 @@ module Elasticsearch
 
           response[COUNT]
         end
-      end
 
+        private
+
+        # The key for accessing the count in a Elasticsearch query response.
+        #
+        COUNT = 'count'.freeze
+      end
     end
   end
 end
