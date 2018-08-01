@@ -4,7 +4,7 @@ require 'elasticsearch/persistence'
 #
 # @since 6.0.0
 DEFAULT_CLIENT = Elasticsearch::Client.new(host: "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}",
-                                           tracer: (ENV['QUIET'] ? nil : tracer))
+                                           tracer: (ENV['QUIET'] ? nil : ::Logger.new(STDERR)))
 
 RSpec.configure do |config|
   config.formatter = 'documentation'
