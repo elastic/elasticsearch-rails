@@ -64,19 +64,17 @@ module Elasticsearch
           #
           def __find_in_batches(options={}, &block)
             options[:batch_size] ||= 1_000
-            items = []
 
-            all.no_timeout.each do |item|
-              items << item
-
-              if items.length % options[:batch_size] == 0
-                yield items
-                items = []
-              end
-            end
-
-            unless items.empty?
+            xlen = all.count
+            xi = 0
+            xper = options[:batch_size]
+            xfr = 0
+            loop do
+              xfr = xi * xper
+              break if xfr >= xlen
+              items = asc(:_id).skip(xfr).limit(xper)
               yield items
+              xi += 1
             end
           end
 
