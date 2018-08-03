@@ -7,15 +7,23 @@ module Elasticsearch
       #
       module Find
 
-        # The key for accessing the document found and returned from an
-        #   Elasticsearch _mget query.
+        # Base methods for the class and single repository instance.
         #
-        DOCS = 'docs'.freeze
+        # @return [ Array<Symbol> ] The base methods.
+        #
+        # @since 6.0.0
+        BASE_METHODS = [ :find,
+                         :exists? ].freeze
 
-        # The key for the boolean value indicating whether a particular id
-        #   has been successfully found in an Elasticsearch _mget query.
-        #
-        FOUND = 'found'.freeze
+        def self.included(base)
+
+          # Define each base method explicitly so that #method_missing does not have to be used
+          #  each time the method is called.
+          #
+          BASE_METHODS.each do |_method|
+            base.class_eval("def self.#{_method}(*args); instance.send(__method__, *args); end", __FILE__, __LINE__)
+          end
+        end
 
         # Retrieve a single object or multiple objects from Elasticsearch by ID or IDs
         #
@@ -58,6 +66,18 @@ module Elasticsearch
           client.exists(request.merge(options))
         end
 
+        private
+
+        # The key for accessing the document found and returned from an
+        #   Elasticsearch _mget query.
+        #
+        DOCS = 'docs'.freeze
+
+        # The key for the boolean value indicating whether a particular id
+        #   has been successfully found in an Elasticsearch _mget query.
+        #
+        FOUND = 'found'.freeze
+
         # @api private
         #
         def __find_one(id, options={})
@@ -75,7 +95,9 @@ module Elasticsearch
           request = { index: index_name, body: { ids: ids } }
           request[:type] = document_type if document_type
           documents = client.mget(request.merge(options))
-          documents[DOCS].map { |document| document[FOUND] ? deserialize(document) : nil }
+          documents[DOCS].map do |document|
+            deserialize(document) if document[FOUND]
+          end
         end
       end
     end
