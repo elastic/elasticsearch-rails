@@ -577,6 +577,44 @@ describe Elasticsearch::Persistence::Repository::Base do
         end
       end
     end
+
+    context 'when an anonymous class is defined' do
+
+      let(:repository) do
+        Class.new(Elasticsearch::Persistence::Repository::Base)
+      end
+
+      it_behaves_like 'a base repository'
+      it_behaves_like 'a singleton'
+
+      context 'when a block is passed to the class definition' do
+
+        let(:repository) do
+          Class.new(Elasticsearch::Persistence::Repository::Base) do
+            document_type 'other_type'
+            index_name 'other_name'
+            client 'client'
+            klass Hash
+          end
+        end
+
+        it 'allows the document type to be set in the block' do
+          expect(repository.document_type).to eq('other_type')
+        end
+
+        it 'allows the index name to be set in the block' do
+          expect(repository.index_name).to eq('other_name')
+        end
+
+        it 'allows the client to be set in the block' do
+          expect(repository.client).to eq('client')
+        end
+
+        it 'allows the class to be set in the block' do
+          expect(repository.klass).to eq(Hash)
+        end
+      end
+    end
   end
 
   context 'when methods are called on the class' do
