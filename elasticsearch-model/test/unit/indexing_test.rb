@@ -176,6 +176,19 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
+      class ::DummyIndexingModelWithNoChanges
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def changes_to_save
+          {}
+        end
+      end
+
       class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson
         extend  Elasticsearch::Model::Indexing::ClassMethods
         include Elasticsearch::Model::Indexing::InstanceMethods
@@ -391,6 +404,26 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance.expects(:id).returns('1')
 
         instance.update_document
+      end
+
+      should "index instead of update when nothing was changed" do
+        client   = mock('client')
+        instance = ::DummyIndexingModelWithNoChanges.new
+
+        # Set the fake `changes` hash
+        instance.instance_variable_set(:@__changed_model_attributes, {})
+        # Overload as_indexed_json for running index
+        instance.expects(:as_indexed_json).returns({ 'foo' => 'BAR' })
+
+        client.expects(:index)
+        client.expects(:update).never
+
+        instance.expects(:client).returns(client)
+        instance.expects(:index_name).returns('foo')
+        instance.expects(:document_type).returns('bar')
+        instance.expects(:id).returns('1')
+
+        instance.update_document({})
       end
 
       should "update only the specific attributes" do
