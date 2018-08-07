@@ -4,7 +4,6 @@ This repository contains various Ruby and Rails integrations for [Elasticsearch]
 
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
 * _Repository pattern_ based persistence layer for Ruby objects
-* _Active Record pattern_ based persistence layer for Ruby models
 * Enumerable-based wrapper for search results
 * ActiveRecord::Relation-based wrapper for returning search results as records
 * Convenience model methods such as `search`, `mapping`, `import`, etc
