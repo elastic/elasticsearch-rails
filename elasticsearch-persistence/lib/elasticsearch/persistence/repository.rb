@@ -22,46 +22,58 @@ module Elasticsearch
         base.send(:extend, Elasticsearch::Model::Indexing::ClassMethods)
       end
 
+      # These methods are necessary to define at the class-level so that the methods available
+      # via Elasticsearch::Model::Indexing::ClassMethod have the references they need.
+      #
+      # @since 6.0.0
       module ClassMethods
 
-        # Get the class-level document type setting.
+        # Get or set the class-level document type setting.
         #
         # @example
         #   MyRepository.document_type
         #
-        # @return [ String, Symbol ] The repository's document type.
+        # @return [ String, Symbol ] _type The repository's document type.
         #
         # @since 6.0.0
-        def document_type(type = nil)
-          @document_type ||= (type || DEFAULT_DOC_TYPE)
+        def document_type(_type = nil)
+          @document_type ||= (_type || DEFAULT_DOC_TYPE)
         end
 
-        # Get the class-level index name setting.
+        # Get or set the class-level index name setting.
         #
         # @example
         #   MyRepository.index_name
         #
-        # @return [ String, Symbol ] The repository's index name.
+        # @return [ String, Symbol ] _name The repository's index name.
         #
         # @since 6.0.0
-        def index_name(name = nil)
-          @index_name ||= (name || DEFAULT_INDEX_NAME)
+        def index_name(_name = nil)
+          @index_name ||= (_name || DEFAULT_INDEX_NAME)
         end
 
-        # Get the class-level setting for the class used by the repository when deserializing.
+        # Get or set the class-level setting for the class used by the repository when deserializing.
         #
         # @example
         #   MyRepository.klass
         #
-        # @return [ Class ] The repository's klass for deserializing.
+        # @return [ Class ] _class The repository's klass for deserializing.
         #
         # @since 6.0.0
         def klass(_class = nil)
           instance_variables.include?(:@klass) ? @klass : @klass = _class
         end
 
-        def client(client = client)
-          @client ||= (client || Elasticsearch::Transport::Client.new)
+        # Get or set the class-level setting for the client used by the repository.
+        #
+        # @example
+        #   MyRepository.client
+        #
+        # @return [ Class ] _client The repository's client.
+        #
+        # @since 6.0.0
+        def client(_client = nil)
+          @client ||= (_client || Elasticsearch::Transport::Client.new)
         end
       end
 

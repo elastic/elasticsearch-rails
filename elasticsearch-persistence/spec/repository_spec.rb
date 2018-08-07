@@ -14,6 +14,10 @@ describe Elasticsearch::Persistence::Repository do
     end
   end
 
+  after do
+    begin; DEFAULT_REPOSITORY.delete_index!; rescue; end
+  end
+
   describe '#initialize' do
 
     context 'when options are not provided' do
@@ -118,19 +122,13 @@ describe Elasticsearch::Persistence::Repository do
 
   describe 'class methods' do
 
-    before do
-      if defined?(NoteRepository)
-        Object.send(:remove_const, NoteRepository.name)
-      end
+    before(:all) do
       class NoteRepository
         include Elasticsearch::Persistence::Repository
 
         document_type 'note'
-
         index_name 'notes_repo'
-
         klass Hash
-
         client(_class: 'client')
 
         settings number_of_shards: 1, number_of_replicas: 0 do
@@ -142,6 +140,16 @@ describe Elasticsearch::Persistence::Repository do
           end
         end
       end
+    end
+
+    after(:all) do
+      if defined?(NoteRepository)
+        Object.send(:remove_const, NoteRepository.name)
+      end
+    end
+
+    after do
+      begin; NoteRepository.delete_index!; rescue; end
     end
 
     context '#client' do
@@ -160,7 +168,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'allows the value to be overwritten with options on the instance' do
-        expect(NoteRepository.new(client: double('client', class: 'other_client')).client.class).to eq('other_client')
+        expect(NoteRepository.new(client: double('client', instance: 'other')).client.instance).to eq('other')
       end
     end
 
@@ -239,12 +247,33 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when the method is called on an instance' do
 
+        let(:repository) do
+          DEFAULT_REPOSITORY
+        end
+
         before do
-          DEFAULT_REPOSITORY.create_index!
+          begin; repository.delete_index!; rescue; end
+          repository.create_index!
         end
 
         it 'creates the index' do
-          expect(DEFAULT_REPOSITORY.index_exists?).to be(true)
+          expect(repository.index_exists?).to be(true)
+        end
+      end
+
+      context 'when the method is called on the class' do
+
+        let(:repository) do
+          DEFAULT_REPOSITORY.class
+        end
+
+        before do
+          begin; repository.delete_index!; rescue; end
+          repository.create_index!
+        end
+
+        it 'creates the index' do
+          expect(repository.index_exists?).to be(true)
         end
       end
     end
@@ -253,13 +282,33 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when the method is called on an instance' do
 
+        let(:repository) do
+          DEFAULT_REPOSITORY
+        end
+
         before do
-          DEFAULT_REPOSITORY.create_index!
-          DEFAULT_REPOSITORY.delete_index!
+          repository.create_index!
+          begin; repository.delete_index!; rescue; end
         end
 
         it 'creates the index' do
-          expect(DEFAULT_REPOSITORY.index_exists?).to be(false)
+          expect(repository.index_exists?).to be(false)
+        end
+      end
+
+      context 'when the method is called on the class' do
+
+        let(:repository) do
+          DEFAULT_REPOSITORY.class
+        end
+
+        before do
+          begin; repository.delete_index!; rescue; end
+          repository.create_index!
+        end
+
+        it 'creates the index' do
+          expect(repository.index_exists?).to be(true)
         end
       end
     end
@@ -268,12 +317,31 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when the method is called on an instance' do
 
+        let(:repository) do
+          DEFAULT_REPOSITORY
+        end
+
         before do
-          DEFAULT_REPOSITORY.create_index!
+          repository.create_index!
         end
 
         it 'creates the index' do
-          expect(DEFAULT_REPOSITORY.refresh_index!['_shards']).to be_a(Hash)
+          expect(repository.refresh_index!['_shards']).to be_a(Hash)
+        end
+      end
+
+      context 'when the method is called on the class' do
+
+        let(:repository) do
+          DEFAULT_REPOSITORY.class
+        end
+
+        before do
+          repository.create_index!
+        end
+
+        it 'creates the index' do
+          expect(repository.refresh_index!['_shards']).to be_a(Hash)
         end
       end
     end
@@ -282,12 +350,31 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when the method is called on an instance' do
 
+        let(:repository) do
+          DEFAULT_REPOSITORY
+        end
+
         before do
-          DEFAULT_REPOSITORY.create_index!
+          repository.create_index!
         end
 
         it 'creates the index' do
-          expect(DEFAULT_REPOSITORY.index_exists?).to be(true)
+          expect(repository.index_exists?).to be(true)
+        end
+      end
+
+      context 'when the method is called on the class' do
+
+        let(:repository) do
+          DEFAULT_REPOSITORY.class
+        end
+
+        before do
+          repository.create_index!
+        end
+
+        it 'creates the index' do
+          expect(repository.index_exists?).to be(true)
         end
       end
     end
@@ -301,11 +388,6 @@ describe Elasticsearch::Persistence::Repository do
                                 baz: { type: 'text' } }
                 }
         }
-      end
-
-      it 'allows the value to be set only once' do
-        NoteRepository.mapping(dynamic: 'strict') { indexes :foo, type: 'long' }
-        #expect(NoteRepository.mapping.to_hash).to eq('note')
       end
 
       it 'sets the value at the class level' do
@@ -342,11 +424,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#settings' do
-
-      it 'allows the value to be set only once' do
-        NoteRepository.settings(number_of_shards: 3)
-        #expect(NoteRepository.settings.to_hash).to eq()
-      end
 
       it 'sets the value at the class level' do
         expect(NoteRepository.settings.to_hash).to eq(number_of_shards: 1, number_of_replicas: 0)
