@@ -119,27 +119,6 @@ module Elasticsearch
         @options = options
       end
 
-      # Get a new instance of this repository with different options.
-      # Any options that are not passed into the method will be kept from the original instance.
-      #
-      # Provides a new repository object with the passed options merged over the existing
-      # options of this repository. Useful for one-offs to change specific options
-      # without altering the original repository itself.
-      #
-      # @example Get a repository with changed options.
-      #   repository.with(index_name: 'other_index')
-      #
-      # @param [ Hash ] new_options The new options to use.
-      #
-      # @return [ Elasticsearch::Persistence::Repository ] A new repository instance.
-      #
-      # @since 6.0.0
-      def with(new_options = {})
-        clone.tap do |repository|
-          repository.options.update(new_options)
-        end
-      end
-
       # Get the client used by the repository.
       #
       # @example

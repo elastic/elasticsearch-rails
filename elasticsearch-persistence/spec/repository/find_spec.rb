@@ -99,8 +99,6 @@ describe Elasticsearch::Persistence::Repository::Find do
                                               { 'a' => 1 },
                                               { 'a' => 2 }])
         end
-
-
       end
 
       context 'when the document cannot be found' do
@@ -149,7 +147,7 @@ describe Elasticsearch::Persistence::Repository::Find do
     context 'when a document_type is defined on the class' do
 
       let(:repository) do
-        DEFAULT_REPOSITORY.with(document_type:'other_type', client: DEFAULT_CLIENT)
+        MyTestRepository.new(document_type:'other_type', client: DEFAULT_CLIENT)
       end
 
       let!(:ids) do

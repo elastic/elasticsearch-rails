@@ -71,55 +71,6 @@ describe Elasticsearch::Persistence::Repository do
     end
   end
 
-  describe '#with' do
-
-    let(:repository) do
-      UserRepo.new(index_name: 'users', document_type: 'user', klass: Hash)
-    end
-
-    context 'when all the options are changed' do
-
-      let(:new_repository) do
-        repository.with(index_name: 'other_users',
-                        document_type: 'other_user',
-                        klass: Array,
-                        client: double('client)', class: Elasticsearch::Transport::Client))
-      end
-
-      it 'changes the options' do
-        expect(new_repository.index_name).to eq('other_users')
-        expect(new_repository.document_type).to eq('other_user')
-        expect(new_repository.klass).to eq(Array)
-        expect(new_repository.client.class).to eq(Elasticsearch::Transport::Client)
-      end
-
-      it 'returns a new instance of the repository class' do
-        expect(new_repository).not_to be(repository)
-      end
-
-      it 'clones the options' do
-        expect(new_repository.options).not_to be(repository.options)
-      end
-    end
-
-    context 'when only some options are changed' do
-
-      let(:new_repository) do
-        repository.with(index_name: 'other_users')
-      end
-
-      it 'only changes the new option' do
-        expect(new_repository.index_name).to eq('other_users')
-        expect(new_repository.document_type).to eq('user')
-        expect(new_repository.klass).to eq(Hash)
-      end
-
-      it 'returns a new instance of the repository class' do
-        expect(new_repository).not_to be(repository)
-      end
-    end
-  end
-
   describe 'class methods' do
 
     before(:all) do
@@ -402,10 +353,6 @@ describe Elasticsearch::Persistence::Repository do
         expect(NoteRepository.new(mapping: double('mapping', to_hash: { note: {} })).mapping.to_hash).to eq(note: {})
       end
 
-      it 'allows the value to be overwritten when #with is called on an instance' do
-        expect(NoteRepository.new.with(mapping: double('mapping', to_hash: { note: {} })).mapping.to_hash).to eq(note: {})
-      end
-
       context 'when the instance has a different document type' do
 
         let(:expected_mapping) do
@@ -418,7 +365,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         it 'updates the mapping to use the document type' do
-          expect(NoteRepository.new.with(document_type: 'other_note').mapping.to_hash).to eq(expected_mapping)
+          expect(NoteRepository.new(document_type: 'other_note').mapping.to_hash).to eq(expected_mapping)
         end
       end
     end
@@ -435,10 +382,6 @@ describe Elasticsearch::Persistence::Repository do
 
       it 'allows the value to be overwritten with options on the instance' do
         expect(NoteRepository.new(settings: { number_of_shards: 3 }).settings.to_hash).to eq({ number_of_shards: 3 })
-      end
-
-      it 'allows the value to be overwritten when #with is called on an instance' do
-        expect(NoteRepository.new.with(settings: { number_of_shards: 3 }).settings.to_hash).to eq({ number_of_shards: 3 })
       end
     end
   end

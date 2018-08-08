@@ -53,7 +53,7 @@ describe Elasticsearch::Persistence::Repository::Search do
     context 'when the repository does have a type set' do
 
       let(:repository) do
-        DEFAULT_REPOSITORY.with(document_type: 'other_note')
+        MyTestRepository.new(document_type: 'other_note')
       end
 
       before do
@@ -126,7 +126,7 @@ describe Elasticsearch::Persistence::Repository::Search do
     context 'when the repository does have a type set' do
 
       let(:repository) do
-        DEFAULT_REPOSITORY.with(document_type: 'other_note')
+        MyTestRepository.new(document_type: 'other_note')
       end
 
       before do

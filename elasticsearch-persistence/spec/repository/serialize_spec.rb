@@ -31,7 +31,7 @@ describe Elasticsearch::Persistence::Repository::Serialize do
 
       let(:repository) do
         require 'set'
-        DEFAULT_REPOSITORY.with(klass: Set)
+        MyTestRepository.new(klass: Set)
       end
 
       it 'instantiates an object of the klass' do
