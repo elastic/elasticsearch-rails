@@ -18,8 +18,8 @@ module Elasticsearch
       include Elasticsearch::Model::Indexing::ClassMethods
 
       def self.included(base)
-        base.send(:extend, ClassMethods)
         base.send(:extend, Elasticsearch::Model::Indexing::ClassMethods)
+        base.send(:extend, ClassMethods)
       end
 
       # These methods are necessary to define at the class-level so that the methods available
@@ -74,6 +74,28 @@ module Elasticsearch
         # @since 6.0.0
         def client(_client = nil)
           @client ||= (_client || Elasticsearch::Transport::Client.new)
+        end
+
+        def create_index!(*args)
+          raise_not_implemented_error(__method__)
+        end
+
+        def delete_index!(*args)
+        raise_not_implemented_error(__method__)
+        end
+
+        def refresh_index!(*args)
+          raise_not_implemented_error(__method__)
+        end
+
+        def index_exists?(*args)
+          raise_not_implemented_error(__method__)
+        end
+
+        private
+
+        def raise_not_implemented_error(_method_)
+          raise NotImplementedError, "The '#{_method_}' method is not implemented at the Repository class-level."
         end
       end
 

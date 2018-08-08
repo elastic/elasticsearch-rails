@@ -99,10 +99,6 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    after do
-      begin; NoteRepository.delete_index!; rescue; end
-    end
-
     context '#client' do
 
       it 'allows the value to be set only once' do
@@ -218,13 +214,10 @@ describe Elasticsearch::Persistence::Repository do
           DEFAULT_REPOSITORY.class
         end
 
-        before do
-          begin; repository.delete_index!; rescue; end
-          repository.create_index!
-        end
-
-        it 'creates the index' do
-          expect(repository.index_exists?).to be(true)
+        it 'raises a NotImplementedError' do
+          expect {
+            repository.create_index!
+          }.to raise_exception(NotImplementedError)
         end
       end
     end
@@ -253,13 +246,10 @@ describe Elasticsearch::Persistence::Repository do
           DEFAULT_REPOSITORY.class
         end
 
-        before do
-          begin; repository.delete_index!; rescue; end
-          repository.create_index!
-        end
-
-        it 'creates the index' do
-          expect(repository.index_exists?).to be(true)
+        it 'raises a NotImplementedError' do
+          expect {
+            repository.delete_index!
+          }.to raise_exception(NotImplementedError)
         end
       end
     end
@@ -287,12 +277,10 @@ describe Elasticsearch::Persistence::Repository do
           DEFAULT_REPOSITORY.class
         end
 
-        before do
-          repository.create_index!
-        end
-
-        it 'creates the index' do
-          expect(repository.refresh_index!['_shards']).to be_a(Hash)
+        it 'raises a NotImplementedError' do
+          expect {
+            repository.refresh_index!
+          }.to raise_exception(NotImplementedError)
         end
       end
     end
@@ -320,12 +308,10 @@ describe Elasticsearch::Persistence::Repository do
           DEFAULT_REPOSITORY.class
         end
 
-        before do
-          repository.create_index!
-        end
-
-        it 'creates the index' do
-          expect(repository.index_exists?).to be(true)
+        it 'raises a NotImplementedError' do
+          expect {
+            repository.index_exists?
+          }.to raise_exception(NotImplementedError)
         end
       end
     end
