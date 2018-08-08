@@ -27,7 +27,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rake", "~> 11.1"
 
   s.add_development_dependency "elasticsearch-extensions"
-  s.add_development_dependency "elasticsearch-model"
 
   s.add_development_dependency "rails",  ">= 3.1"
 
