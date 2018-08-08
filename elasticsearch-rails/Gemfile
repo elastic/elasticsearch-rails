@@ -7,3 +7,8 @@ gemspec
 # if File.exists? File.expand_path("../../elasticsearch-model", __FILE__)
 #   gem 'elasticsearch-model', :path => File.expand_path("../../elasticsearch-model", __FILE__), :require => true
 # end
+
+
+
+gem 'elasticsearch-model', :path => File.expand_path("../../elasticsearch-model", __FILE__), :require => false
+gem 'elasticsearch-persistence', :path => File.expand_path("../../elasticsearch-persistence", __FILE__), :require => false
