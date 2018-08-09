@@ -23,7 +23,7 @@ require 'shoulda-context'
 require 'turn' unless ENV["TM_FILEPATH"] || ENV["NOTURN"] || defined?(RUBY_VERSION) && RUBY_VERSION > '2.2'
 
 require 'ansi'
-require 'oj'
+require 'oj' unless defined?(JRUBY_VERSION)
 
 require 'rails/version'
 require 'active_record'
