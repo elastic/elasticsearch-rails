@@ -2,10 +2,6 @@ require 'spec_helper'
 
 describe Elasticsearch::Persistence::Repository::Serialize do
 
-  after do
-    begin; repository.delete_index!; rescue; end
-  end
-
   let(:repository) do
     DEFAULT_REPOSITORY
   end

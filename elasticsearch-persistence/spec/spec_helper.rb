@@ -1,8 +1,13 @@
+require 'pry-nav'
 require 'elasticsearch/persistence'
 
 RSpec.configure do |config|
   config.formatter = 'documentation'
   config.color = true
+
+  config.after(:suite) do
+    DEFAULT_CLIENT.indices.delete(index: '_all')
+  end
 end
 
 # The default client to be used by the repositories.
@@ -13,6 +18,7 @@ DEFAULT_CLIENT = Elasticsearch::Client.new(host: "localhost:#{(ENV['TEST_CLUSTER
 
 class MyTestRepository
   include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
   client DEFAULT_CLIENT
 end
 

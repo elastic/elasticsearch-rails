@@ -147,7 +147,7 @@ describe Elasticsearch::Persistence::Repository::Find do
     context 'when a document_type is defined on the class' do
 
       let(:repository) do
-        MyTestRepository.new(document_type:'other_type', client: DEFAULT_CLIENT)
+        MyTestRepository.new(document_type:'other_type', client: DEFAULT_CLIENT, index_name: 'test')
       end
 
       let!(:ids) do

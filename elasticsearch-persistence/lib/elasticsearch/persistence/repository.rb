@@ -1,3 +1,4 @@
+require 'elasticsearch/persistence/repository/dsl'
 require 'elasticsearch/persistence/repository/find'
 require 'elasticsearch/persistence/repository/store'
 require 'elasticsearch/persistence/repository/serialize'
@@ -18,84 +19,39 @@ module Elasticsearch
       include Elasticsearch::Model::Indexing::ClassMethods
 
       def self.included(base)
-        base.send(:extend, Elasticsearch::Model::Indexing::ClassMethods)
         base.send(:extend, ClassMethods)
       end
 
-      # These methods are necessary to define at the class-level so that the methods available
-      # via Elasticsearch::Model::Indexing::ClassMethod have the references they need.
-      #
-      # @since 6.0.0
       module ClassMethods
 
-        # Get or set the class-level document type setting.
+        # Initialize a repository instance. Optionally provide a block to define index mappings or
+        #   settings on the repository instance.
         #
-        # @example
-        #   MyRepository.document_type
+        # @example Create a new repository.
+        #   MyRepository.create(options)
         #
-        # @return [ String, Symbol ] _type The repository's document type.
+        # @example Create a new repository and pass a block to it.
+        #   MyRepository.create(options) do
+        #     mapping dynamic: 'strict' do
+        #       indexes :foo
+        #     end
+        #   end
         #
-        # @since 6.0.0
-        def document_type(_type = nil)
-          @document_type ||= (_type || DEFAULT_DOC_TYPE)
-        end
-
-        # Get or set the class-level index name setting.
+        # @param [ Hash ] options The options to use.
         #
-        # @example
-        #   MyRepository.index_name
-        #
-        # @return [ String, Symbol ] _name The repository's index name.
-        #
-        # @since 6.0.0
-        def index_name(_name = nil)
-          @index_name ||= (_name || DEFAULT_INDEX_NAME)
-        end
-
-        # Get or set the class-level setting for the class used by the repository when deserializing.
-        #
-        # @example
-        #   MyRepository.klass
-        #
-        # @return [ Class ] _class The repository's klass for deserializing.
+        # @option options [ Symbol ] :index_name The name of the index.
+        # @option options [ Symbol ] :document_type The type of documents persisted in this repository.
+        # @option options [ Symbol ] :client The client used to send and receive requests to and from Elasticsearch.
+        # @option options [ Symbol ] :klass The class used to instantiate an object when documents are
+        #   deserialized. The default is nil, in which case the raw document will be returned.
+        # @option options [ Elasticsearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
+        # @option options [ Elasticsearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
         #
         # @since 6.0.0
-        def klass(_class = nil)
-          instance_variables.include?(:@klass) ? @klass : @klass = _class
-        end
-
-        # Get or set the class-level setting for the client used by the repository.
-        #
-        # @example
-        #   MyRepository.client
-        #
-        # @return [ Class ] _client The repository's client.
-        #
-        # @since 6.0.0
-        def client(_client = nil)
-          @client ||= (_client || Elasticsearch::Transport::Client.new)
-        end
-
-        def create_index!(*args)
-          raise_not_implemented_error(__method__)
-        end
-
-        def delete_index!(*args)
-        raise_not_implemented_error(__method__)
-        end
-
-        def refresh_index!(*args)
-          raise_not_implemented_error(__method__)
-        end
-
-        def index_exists?(*args)
-          raise_not_implemented_error(__method__)
-        end
-
-        private
-
-        def raise_not_implemented_error(_method_)
-          raise NotImplementedError, "The '#{_method_}' method is not implemented at the Repository class-level."
+        def create(options = {}, &block)
+          new(options).tap do |obj|
+            obj.instance_eval(&block) if block_given?
+          end
         end
       end
 
@@ -135,6 +91,8 @@ module Elasticsearch
       # @option options [ Symbol ] :client The client used to send and receive requests to and from Elasticsearch.
       # @option options [ Symbol ] :klass The class used to instantiate an object when documents are
       #   deserialized. The default is nil, in which case the raw document will be returned.
+      # @option options [ Elasticsearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
+      # @option options [ Elasticsearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
       #
       # @since 6.0.0
       def initialize(options = {})
@@ -150,7 +108,9 @@ module Elasticsearch
       #
       # @since 6.0.0
       def client
-        @client ||= (@options[:client] || self.class.client)
+        @client ||= @options[:client] ||
+                      __get_class_value(:client) ||
+                      Elasticsearch::Transport::Client.new
       end
 
       # Get the document type used by the repository object.
@@ -162,7 +122,9 @@ module Elasticsearch
       #
       # @since 6.0.0
       def document_type
-        @document_type ||= (@options[:document_type] || self.class.document_type)
+        @document_type ||= @options[:document_type] ||
+                             __get_class_value(:document_type) ||
+                             DEFAULT_DOC_TYPE
       end
 
       # Get the index name used by the repository.
@@ -174,7 +136,9 @@ module Elasticsearch
       #
       # @since 6.0.0
       def index_name
-        @index_name ||= (@options[:index_name] || self.class.index_name)
+        @index_name ||= @options[:index_name] ||
+                          __get_class_value(:index_name) ||
+                          DEFAULT_INDEX_NAME
       end
 
       # Get the class used by the repository when deserializing.
@@ -186,23 +150,30 @@ module Elasticsearch
       #
       # @since 6.0.0
       def klass
-        @klass ||= @options[:klass] || self.class.klass
+        @klass ||= @options[:klass] || __get_class_value(:klass)
       end
 
-      # Get the index mapping.
+      # Get the index mapping. Optionally pass a block to define the mappings.
       #
       # @example
       #   repository.mapping
       #
+      # @example Set the mappings with a block.
+      #     repository.mapping dynamic: 'strict' do
+      #       indexes :foo
+      #     end
+      #   end
+      #
       # @return [ Elasticsearch::Model::Indexing::Mappings ] The index mappings.
       #
       # @since 6.0.0
-      def mapping
-        @mapping ||= (@options[:mapping] || begin
-          _mapping = self.class.mapping.dup
-          _mapping.instance_variable_set(:@type, document_type)
-          _mapping
-        end)
+      def mapping(*args)
+        @memoized_mapping ||= @options[:mapping] || (begin
+          if _mapping = __get_class_value(:mapping)
+            _mapping.instance_variable_set(:@type, document_type)
+            _mapping
+          end
+        end) || (super && @mapping)
       end
       alias :mappings :mapping
 
@@ -211,11 +182,20 @@ module Elasticsearch
       # @example
       #   repository.settings
       #
+      # @example Set the settings with a block.
+      #   repository.settings number_of_shards: 1, number_of_replicas: 0 do
+      #     mapping dynamic: 'strict' do
+      #       indexes :foo do
+      #         indexes :bar
+      #       end
+      #     end
+      #   end
+      #
       # @return [ Elasticsearch::Model::Indexing::Settings ] The index settings.
       #
       # @since 6.0.0
-      def settings
-        @settings ||= (@options[:settings] || self.class.settings)
+      def settings(*args)
+        @memoized_settings ||= @options[:settings] || __get_class_value(:settings) || (super && @settings)
       end
 
       # Determine whether the index with this repository's index name exists.
@@ -232,8 +212,8 @@ module Elasticsearch
 
       private
 
-      def initialize_copy(original)
-        @options = original.options.dup
+      def __get_class_value(_method_)
+        self.class.send(_method_) if self.class.respond_to?(_method_)
       end
     end
   end

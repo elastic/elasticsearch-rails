@@ -29,6 +29,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       before do
         class OtherNoteRepository
           include Elasticsearch::Persistence::Repository
+          include Elasticsearch::Persistence::Repository::DSL
           client DEFAULT_CLIENT
           def serialize(document)
             { b: 1 }
