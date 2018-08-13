@@ -32,6 +32,15 @@ describe Elasticsearch::Persistence::Repository::Search do
         end
       end
 
+      context 'when the query definition is neither a String nor a Hash' do
+
+        it 'raises an ArgumentError' do
+          expect {
+            repository.search(1)
+          }.to raise_exception(ArgumentError)
+        end
+      end
+
       context 'when options are provided' do
 
         context 'when a query definition is provided as a hash' do
@@ -45,6 +54,15 @@ describe Elasticsearch::Persistence::Repository::Search do
 
           it 'uses the default document type' do
             expect(repository.search('user', type: 'other').first).to be_nil
+          end
+        end
+
+        context 'when the query definition is neither a String nor a Hash' do
+
+          it 'raises an ArgumentError' do
+            expect {
+              repository.search(1)
+            }.to raise_exception(ArgumentError)
           end
         end
       end
@@ -73,6 +91,15 @@ describe Elasticsearch::Persistence::Repository::Search do
 
           it 'uses the options' do
             expect(repository.search('user', type: 'other').first).to be_nil
+          end
+        end
+
+        context 'when the query definition is neither a String nor a Hash' do
+
+          it 'raises an ArgumentError' do
+            expect {
+              repository.search(1)
+            }.to raise_exception(ArgumentError)
           end
         end
       end
