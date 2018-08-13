@@ -11,14 +11,10 @@ require 'rspec/core/rake_task'
 
 namespace :test do
 
+  RSpec::Core::RakeTask.new(:spec)
   Rake::TestTask.new(:unit) do |test|
-    test.libs << 'lib' << 'test'
-    #test.test_files = FileList["test/unit/**/*_test.rb"]
-    test.verbose = false
-    test.warning = false
   end
 
-  RSpec::Core::RakeTask.new(:spec)
   Rake::TestTask.new(:integration) do |test|
     test.verbose = false
     test.warning = false
@@ -26,8 +22,9 @@ namespace :test do
   end
 
   Rake::TestTask.new(:all) do |test|
-    test.libs << 'lib' << 'test'
-    test.test_files = FileList["test/unit/**/*_test.rb", "test/integration/**/*_test.rb"]
+    test.verbose = false
+    test.warning = false
+    test.deps = [ :spec ]
   end
 end
 
