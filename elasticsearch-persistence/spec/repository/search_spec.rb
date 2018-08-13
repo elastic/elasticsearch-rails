@@ -15,20 +15,20 @@ describe Elasticsearch::Persistence::Repository::Search do
     context 'when the repository does not have a type set' do
 
       before do
-        repository.save({ name: 'emily' }, refresh: true)
+        repository.save({ name: 'user' }, refresh: true)
       end
 
       context 'when a query definition is provided as a hash' do
 
         it 'uses the default document type' do
-          expect(repository.search({ query: { match: { name: 'emily' } } }).first).to eq('name' => 'emily')
+          expect(repository.search({ query: { match: { name: 'user' } } }).first).to eq('name' => 'user')
         end
       end
 
       context 'when a query definition is provided as a string' do
 
         it 'uses the default document type' do
-          expect(repository.search('emily').first).to eq('name' => 'emily')
+          expect(repository.search('user').first).to eq('name' => 'user')
         end
       end
 
@@ -37,14 +37,14 @@ describe Elasticsearch::Persistence::Repository::Search do
         context 'when a query definition is provided as a hash' do
 
           it 'uses the default document type' do
-            expect(repository.search({ query: { match: { name: 'emily' } } }, type: 'other').first).to be_nil
+            expect(repository.search({ query: { match: { name: 'user' } } }, type: 'other').first).to be_nil
           end
         end
 
         context 'when a query definition is provided as a string' do
 
           it 'uses the default document type' do
-            expect(repository.search('emily', type: 'other').first).to be_nil
+            expect(repository.search('user', type: 'other').first).to be_nil
           end
         end
       end
@@ -57,7 +57,7 @@ describe Elasticsearch::Persistence::Repository::Search do
       end
 
       before do
-        repository.save({ name: 'emily' }, refresh: true)
+        repository.save({ name: 'user' }, refresh: true)
       end
 
       context 'when options are provided' do
@@ -65,14 +65,14 @@ describe Elasticsearch::Persistence::Repository::Search do
         context 'when a query definition is provided as a hash' do
 
           it 'uses the options' do
-            expect(repository.search({ query: { match: { name: 'emily' } } }, type: 'other').first).to be_nil
+            expect(repository.search({ query: { match: { name: 'user' } } }, type: 'other').first).to be_nil
           end
         end
 
         context 'when a query definition is provided as a string' do
 
           it 'uses the options' do
-            expect(repository.search('emily', type: 'other').first).to be_nil
+            expect(repository.search('user', type: 'other').first).to be_nil
           end
         end
       end
@@ -88,20 +88,20 @@ describe Elasticsearch::Persistence::Repository::Search do
       end
 
       before do
-        repository.save({ name: 'emily' }, refresh: true)
+        repository.save({ name: 'user' }, refresh: true)
       end
 
       context 'when a query definition is provided as a hash' do
 
         it 'uses the default document type' do
-          expect(repository.count({ query: { match: { name: 'emily' } } })).to eq(1)
+          expect(repository.count({ query: { match: { name: 'user' } } })).to eq(1)
         end
       end
 
       context 'when a query definition is provided as a string' do
 
         it 'uses the default document type' do
-          expect(repository.count('emily')).to eq(1)
+          expect(repository.count('user')).to eq(1)
         end
       end
 
@@ -110,14 +110,14 @@ describe Elasticsearch::Persistence::Repository::Search do
         context 'when a query definition is provided as a hash' do
 
           it 'uses the options' do
-            expect(repository.count({ query: { match: { name: 'emily' } } }, type: 'other')).to eq(0)
+            expect(repository.count({ query: { match: { name: 'user' } } }, type: 'other')).to eq(0)
           end
         end
 
         context 'when a query definition is provided as a string' do
 
           it 'uses the options' do
-            expect(repository.count('emily', type: 'other')).to eq(0)
+            expect(repository.count('user', type: 'other')).to eq(0)
           end
         end
       end
@@ -130,7 +130,7 @@ describe Elasticsearch::Persistence::Repository::Search do
       end
 
       before do
-        repository.save({ name: 'emily' }, refresh: true)
+        repository.save({ name: 'user' }, refresh: true)
       end
 
       context 'when options are provided' do
@@ -138,14 +138,14 @@ describe Elasticsearch::Persistence::Repository::Search do
         context 'when a query definition is provided as a hash' do
 
           it 'uses the options' do
-            expect(repository.count({ query: { match: { name: 'emily' } } }, type: 'other')).to eq(0)
+            expect(repository.count({ query: { match: { name: 'user' } } }, type: 'other')).to eq(0)
           end
         end
 
         context 'when a query definition is provided as a string' do
 
           it 'uses the options' do
-            expect(repository.count('emily', type: 'other')).to eq(0)
+            expect(repository.count('user', type: 'other')).to eq(0)
           end
         end
       end

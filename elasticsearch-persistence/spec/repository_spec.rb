@@ -49,7 +49,9 @@ describe Elasticsearch::Persistence::Repository do
 
         let(:repository) do
           RepositoryWithoutDSL.create(mapping: double('mapping', to_hash: {}), document_type: 'note') do
-            mapping dynamic: 'strict'
+            mapping dynamic: 'strict' do
+              indexes :foo
+            end
           end
         end
 
@@ -74,12 +76,6 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    after(:all) do
-      if defined?(RepositoryWithoutDSL)
-        Object.send(:remove_const, RepositoryWithoutDSL.name)
-      end
-    end
-
     after do
       begin; repository.delete_index!; rescue; end
     end
@@ -94,11 +90,11 @@ describe Elasticsearch::Persistence::Repository do
         expect(repository.client).to be_a(Elasticsearch::Transport::Client)
       end
 
-      it 'sets default document type' do
+      it 'sets a default document type' do
         expect(repository.document_type).to eq('_doc')
       end
 
-      it 'sets default index name' do
+      it 'sets a default index name' do
         expect(repository.index_name).to eq('repository')
       end
 
@@ -114,7 +110,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       let(:repository) do
-        RepositoryWithoutDSL.new(client: client, document_type: 'user', index_name: 'users', klass: Hash)
+        RepositoryWithoutDSL.new(client: client, document_type: 'user', index_name: 'users', klass: Array)
       end
 
       it 'sets the client' do
@@ -130,7 +126,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets the klass' do
-        expect(repository.klass).to eq(Hash)
+        expect(repository.klass).to eq(Array)
       end
     end
   end
@@ -300,7 +296,7 @@ describe Elasticsearch::Persistence::Repository do
           begin; repository.delete_index!; rescue; end
         end
 
-        it 'creates the index' do
+        it 'deletes the index' do
           expect(repository.index_exists?).to be(false)
         end
       end
@@ -327,7 +323,7 @@ describe Elasticsearch::Persistence::Repository do
           repository.create_index!
         end
 
-        it 'creates the index' do
+        it 'refreshes the index' do
           expect(repository.refresh_index!['_shards']).to be_a(Hash)
         end
       end
@@ -354,7 +350,7 @@ describe Elasticsearch::Persistence::Repository do
           repository.create_index!
         end
 
-        it 'creates the index' do
+        it 'determines if the index exists' do
           expect(repository.index_exists?).to be(true)
         end
       end
@@ -373,9 +369,9 @@ describe Elasticsearch::Persistence::Repository do
 
       let(:expected_mapping) do
         { note: { dynamic: 'strict',
-                properties: { foo: { type: 'object',
-                                   properties: { bar: { type: 'text' } } },
-                             baz: { type: 'text' } }
+                  properties: { foo: { type: 'object',
+                                       properties: { bar: { type: 'text' } } },
+                                baz: { type: 'text' } }
                 }
         }
       end
@@ -396,9 +392,9 @@ describe Elasticsearch::Persistence::Repository do
 
         let(:expected_mapping) do
           { other_note: { dynamic: 'strict',
-                        properties: { foo: { type: 'object',
-                                           properties: { bar: { type: 'text' } } },
-                                     baz: { type: 'text' } }
+                          properties: { foo: { type: 'object',
+                                               properties: { bar: { type: 'text' } } },
+                                        baz: { type: 'text' } }
                         }
           }
         end
@@ -439,14 +435,6 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    after do
-      begin; repository.delete_index; rescue; end
-    end
-
-    let(:repository) do
-      RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
-    end
-
     context '#client' do
 
       it 'does not define the method at the class level' do
@@ -456,7 +444,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default on the instance' do
-        expect(repository.client).to be_a(Elasticsearch::Transport::Client)
+        expect(RepositoryWithoutDSL.new.client).to be_a(Elasticsearch::Transport::Client)
       end
 
       it 'allows the value to be overridden with options on the instance' do
@@ -472,8 +460,8 @@ describe Elasticsearch::Persistence::Repository do
         }.to raise_exception(NoMethodError)
       end
 
-      it 'does not set a default on the instance' do
-        expect(repository.klass).to be_nil
+      it 'does not set a default on an instance' do
+        expect(RepositoryWithoutDSL.new.klass).to be_nil
       end
 
       it 'allows the value to be overridden with options on the instance' do
@@ -490,7 +478,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default on the instance' do
-        expect(repository.document_type).to eq('_doc')
+        expect(RepositoryWithoutDSL.new.document_type).to eq('_doc')
       end
 
       it 'allows the value to be overridden with options on the instance' do
@@ -507,7 +495,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default on the instance' do
-        expect(repository.index_name).to eq('repository')
+        expect(RepositoryWithoutDSL.new.index_name).to eq('repository')
       end
 
       it 'allows the value to be overridden with options on the instance' do
@@ -516,6 +504,14 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#create_index!' do
+
+      let(:repository) do
+        RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
+      end
+
+      after do
+        begin; repository.delete_index!; rescue; end
+      end
 
       it 'does not define the method at the class level' do
         expect {
@@ -530,6 +526,10 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#delete_index!' do
+
+      let(:repository) do
+        RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
+      end
 
       it 'does not define the method at the class level' do
         expect {
@@ -546,6 +546,14 @@ describe Elasticsearch::Persistence::Repository do
 
     describe '#refresh_index!' do
 
+      let(:repository) do
+        RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
+      end
+
+      after do
+        begin; repository.delete_index!; rescue; end
+      end
+
       it 'does not define the method at the class level' do
         expect {
           RepositoryWithoutDSL.refresh_index!
@@ -559,6 +567,14 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#index_exists?' do
+
+      let(:repository) do
+        RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
+      end
+
+      after do
+        begin; repository.delete_index!; rescue; end
+      end
 
       it 'does not define the method at the class level' do
         expect {
@@ -580,8 +596,8 @@ describe Elasticsearch::Persistence::Repository do
         }.to raise_exception(NoMethodError)
       end
 
-      it 'sets a default on the instance' do
-        expect(repository.mapping.to_hash).to eq(_doc: { properties: {} })
+      it 'sets a default on an instance' do
+        expect(RepositoryWithoutDSL.new.mapping.to_hash).to eq(_doc: { properties: {} })
       end
 
       it 'allows the mapping to be set as an option' do
@@ -642,8 +658,8 @@ describe Elasticsearch::Persistence::Repository do
         }.to raise_exception(NoMethodError)
       end
 
-      it 'sets a default on the instance' do
-        expect(repository.settings.to_hash).to eq({})
+      it 'sets a default on an instance' do
+        expect(RepositoryWithoutDSL.new.settings.to_hash).to eq({})
       end
 
       it 'allows the settings to be set as an option' do

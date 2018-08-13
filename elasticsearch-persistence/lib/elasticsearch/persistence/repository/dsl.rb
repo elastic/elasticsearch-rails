@@ -2,7 +2,7 @@ module Elasticsearch
   module Persistence
     module Repository
 
-      # Include this module to get class-level methods for index administration.
+      # Include this module to get class-level methods for repository configuration.
       #
       # @since 6.0.0
       module DSL
@@ -85,7 +85,7 @@ module Elasticsearch
           private
 
           def __raise_not_implemented_error(_method_)
-            raise NotImplementedError, "The '#{_method_}' method is not implemented at the Repository class-level."
+            raise NotImplementedError, "The '#{_method_}' method is not implemented on the Repository class."
           end
         end
       end

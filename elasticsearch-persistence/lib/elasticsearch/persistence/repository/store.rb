@@ -12,7 +12,10 @@ module Elasticsearch
         #     repository.save(myobject)
         #     => {"_index"=>"...", "_type"=>"...", "_id"=>"...", "_version"=>1, "created"=>true}
         #
-        # @return {Hash} The response from Elasticsearch
+        # @param [ Object ] document The document to save into Elasticsearch.
+        # @param [ Hash ] options The save request options.
+        #
+        # @return [ Hash ] The response from Elasticsearch
         #
         def save(document, options={})
           serialized = serialize(document)
@@ -36,7 +39,10 @@ module Elasticsearch
         #     repository.update 1, script: 'ctx._source.views += 1'
         #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>3}
         #
-        # @return {Hash} The response from Elasticsearch
+        # @param [ Object ] document_or_id The document to update or the id of the document to update.
+        # @param [ Hash ] options The update request options.
+        #
+        # @return [ Hash ] The response from Elasticsearch
         #
         def update(document_or_id, options = {})
           if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)
@@ -63,18 +69,19 @@ module Elasticsearch
         #     repository.delete(1)
         #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>4}
         #
-        # @return {Hash} The response from Elasticsearch
+        # @param [ Object ] document_or_id The document to delete or the id of the document to delete.
+        # @param [ Hash ] options The delete request options.
         #
-        def delete(document, options = {})
-          if document.is_a?(String) || document.is_a?(Integer)
-            id = document
-            type = document_type
+        # @return [ Hash ] The response from Elasticsearch
+        #
+        def delete(document_or_id, options = {})
+          if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)
+            id = document_or_id
           else
-            serialized = serialize(document)
+            serialized = serialize(document_or_id)
             id = __get_id_from_document(serialized)
-            type = document_type
           end
-          client.delete({ index: index_name, type: type, id: id }.merge(options))
+          client.delete({ index: index_name, type: document_type, id: id }.merge(options))
         end
       end
     end

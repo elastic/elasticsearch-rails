@@ -37,6 +37,9 @@ module Elasticsearch
         #     # GET http://localhost:9200/notes/note/_search
         #     # > {"query":{"match":{"title":"fox dog"}},"size":25}
         #
+        # @param [ Hash, String ] query_or_definition The query or search definition.
+        # @param [ Hash ] options The search options.
+        #
         # @return [Elasticsearch::Persistence::Repository::Response::Results]
         #
         def search(query_or_definition, options={})
@@ -70,6 +73,9 @@ module Elasticsearch
         #
         #    repository.search(query: { match: { title: 'fox dog' } })
         #    # => 1
+        #
+        # @param [ Hash, String ] query_or_definition The query or search definition.
+        # @param [ Hash ] options The search options.
         #
         # @return [Integer]
         #

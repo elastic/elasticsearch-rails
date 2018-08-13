@@ -46,7 +46,7 @@ describe Elasticsearch::Persistence::Repository::Find do
 
     context 'when options are not provided' do
 
-      context 'when a single id is passed' do
+      context 'when a single id is provided' do
 
         let!(:id) do
           repository.save(a: 1)['_id']
@@ -57,7 +57,7 @@ describe Elasticsearch::Persistence::Repository::Find do
         end
       end
 
-      context 'when an array of ids is passed' do
+      context 'when an array of ids is provided' do
 
         let!(:ids) do
           3.times.collect do |i|
@@ -78,7 +78,7 @@ describe Elasticsearch::Persistence::Repository::Find do
             ids
           end
 
-          it 'nil is returned in the result list for the documents not found' do
+          it 'returns nil in the result list for the documents not found' do
             expect(repository.find(ids)).to eq([{ 'a' =>0 },
                                                  nil,
                                                  { 'a' => 2 }])
@@ -86,7 +86,7 @@ describe Elasticsearch::Persistence::Repository::Find do
         end
       end
 
-      context 'when multiple ids is passed' do
+      context 'when multiple ids are provided' do
 
         let!(:ids) do
           3.times.collect do |i|
@@ -140,6 +140,19 @@ describe Elasticsearch::Persistence::Repository::Find do
 
         it 'applies the options' do
           expect(repository.find(ids, type: 'none')).to eq([nil, nil, nil])
+        end
+      end
+
+      context 'when multiple ids are passed' do
+
+        let!(:ids) do
+          3.times.collect do |i|
+            repository.save(a: i)['_id']
+          end
+        end
+
+        it 'applies the options' do
+          expect(repository.find(*ids, type: 'none')).to eq([nil, nil, nil])
         end
       end
     end

@@ -28,22 +28,23 @@ module Elasticsearch
         #   settings on the repository instance.
         #
         # @example Create a new repository.
-        #   MyRepository.create(options)
+        #   MyRepository.create(index_name: 'notes', klass: Note)
         #
-        # @example Create a new repository and pass a block to it.
-        #   MyRepository.create(options) do
+        # @example Create a new repository and evaluate a block on it.
+        #   MyRepository.create(index_name: 'notes', klass: Note) do
         #     mapping dynamic: 'strict' do
-        #       indexes :foo
+        #       indexes :title
         #     end
         #   end
         #
         # @param [ Hash ] options The options to use.
+        # @param [ Proc ] block A block to evaluate on the new repository instance.
         #
-        # @option options [ Symbol ] :index_name The name of the index.
-        # @option options [ Symbol ] :document_type The type of documents persisted in this repository.
-        # @option options [ Symbol ] :client The client used to send and receive requests to and from Elasticsearch.
-        # @option options [ Symbol ] :klass The class used to instantiate an object when documents are
-        #   deserialized. The default is nil, in which case the raw document will be returned.
+        # @option options [ Symbol, String ] :index_name The name of the index.
+        # @option options [ Symbol, String ] :document_type The type of documents persisted in this repository.
+        # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
+        # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
+        #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
         # @option options [ Elasticsearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
         # @option options [ Elasticsearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
         #
@@ -57,7 +58,7 @@ module Elasticsearch
 
       # The default index name.
       #
-      # @return [ String ] The default repository name.
+      # @return [ String ] The default index name.
       #
       # @since 6.0.0
       DEFAULT_INDEX_NAME = 'repository'.freeze
@@ -82,15 +83,15 @@ module Elasticsearch
       # Initialize a repository instance.
       #
       # @example Initialize the repository.
-      #   MyRepository.new(options)
+      #   MyRepository.new(index_name: 'notes', klass: Note)
       #
       # @param [ Hash ] options The options to use.
       #
-      # @option options [ Symbol ] :index_name The name of the index.
-      # @option options [ Symbol ] :document_type The type of documents persisted in this repository.
-      # @option options [ Symbol ] :client The client used to send and receive requests to and from Elasticsearch.
-      # @option options [ Symbol ] :klass The class used to instantiate an object when documents are
-      #   deserialized. The default is nil, in which case the raw document will be returned.
+      # @option options [ Symbol, String ] :index_name The name of the index.
+      # @option options [ Symbol, String ] :document_type The type of documents persisted in this repository.
+      # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
+      # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
+      #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
       # @option options [ Elasticsearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
       # @option options [ Elasticsearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
       #
@@ -104,7 +105,7 @@ module Elasticsearch
       # @example
       #   repository.client
       #
-      # @return [ Elasticsearch::Client ] The repository's client.
+      # @return [ Elasticsearch::Transport::Client ] The repository's client.
       #
       # @since 6.0.0
       def client
@@ -164,6 +165,9 @@ module Elasticsearch
       #     end
       #   end
       #
+      # @note If mappings were set when the repository was created, a block passed to this
+      #   method will not be evaluated.
+      #
       # @return [ Elasticsearch::Model::Indexing::Mappings ] The index mappings.
       #
       # @since 6.0.0
@@ -203,7 +207,7 @@ module Elasticsearch
       # @example
       #   repository.index_exists?
       #
-      # @return [ Hash ] Response from Elasticsearch when determining if an index exists.
+      # @return [ true, false ] Whether the index exists.
       #
       # @since 6.0.0
       def index_exists?(*args)

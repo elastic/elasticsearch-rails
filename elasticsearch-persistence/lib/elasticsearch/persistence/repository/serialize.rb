@@ -2,28 +2,35 @@ module Elasticsearch
   module Persistence
     module Repository
 
-      # Provide serialization and deserialization between Ruby objects and Elasticsearch documents
+      # Provide serialization and deserialization between Ruby objects and Elasticsearch documents.
       #
       # Override these methods in your repository class to customize the logic.
       #
       module Serialize
 
-        # Serialize the object for storing it in Elasticsearch
+        # Serialize the object for storing it in Elasticsearch.
         #
         # In the default implementation, call the `to_hash` method on the passed object.
+        #
+        # @param [ Object ] document The Ruby object to serialize.
+        #
+        # @return [ Hash ] The serialized document.
         #
         def serialize(document)
           document.to_hash
         end
 
-        # Deserialize the document retrieved from Elasticsearch into a Ruby object
-        #
-        # Use the `klass` property, if defined, otherwise try to get the class from the document's `_type`.
+        # Deserialize the document retrieved from Elasticsearch into a Ruby object.
+        # If no klass is set for the Repository then the raw document '_source' field will be returned.
         #
         # def deserialize(document)
-        #   raise NameError.new(NO_CLASS_ERROR_MESSAGE) unless klass
-        #   klass.new document[SOURCE]
+        #   Note.new document[SOURCE]
         # end
+        #
+        # @param [ Hash ] document The raw document.
+        #
+        # @return [ Object ] The deserialized object.
+        #
         def deserialize(document)
           klass ? klass.new(document[SOURCE]) : document[SOURCE]
         end

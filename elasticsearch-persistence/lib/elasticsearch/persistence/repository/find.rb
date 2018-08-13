@@ -40,6 +40,9 @@ module Elasticsearch
         #     repository.exists?(1)
         #     => true
         #
+        # @param [ String, Integer ] id The id to search.
+        # @param [ Hash ] options The options.
+        #
         # @return [true, false]
         #
         def exists?(id, options={})

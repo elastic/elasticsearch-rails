@@ -29,8 +29,6 @@ describe Elasticsearch::Persistence::Repository::Store do
       before do
         class OtherNoteRepository
           include Elasticsearch::Persistence::Repository
-          include Elasticsearch::Persistence::Repository::DSL
-          client DEFAULT_CLIENT
           def serialize(document)
             { b: 1 }
           end
@@ -44,7 +42,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       end
 
       let(:repository) do
-        OtherNoteRepository.new
+        OtherNoteRepository.new(client: DEFAULT_CLIENT)
       end
 
       let(:response) do
@@ -73,7 +71,7 @@ describe Elasticsearch::Persistence::Repository::Store do
 
   describe '#update' do
 
-    before do
+    before(:all) do
       class Note
         def to_hash
           { text: 'testing', views: 0 }
@@ -81,7 +79,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       end
     end
 
-    after do
+    after(:all) do
       if defined?(Note)
         Object.send(:remove_const, :Note)
       end
@@ -148,13 +146,13 @@ describe Elasticsearch::Persistence::Repository::Store do
                                   doc_as_upsert: true)
           end
 
-          it 'applies the update' do
+          it 'performs an upsert' do
             expect(repository.find(id)).to eq('text' => 'testing_2', 'views' => 0)
           end
         end
       end
 
-      context 'when a document is provided' do
+      context 'when a document is provided as the query criteria' do
 
         context 'when no options are provided' do
 
@@ -236,7 +234,7 @@ describe Elasticsearch::Persistence::Repository::Store do
             repository.update(1, doc: { text: 'testing' }, doc_as_upsert: true)
           end
 
-          it 'inserts the document' do
+          it 'upserts the document' do
             expect(repository.find(1)).to eq('text' => 'testing')
           end
         end
@@ -256,7 +254,7 @@ describe Elasticsearch::Persistence::Repository::Store do
             repository.update({ id: 1, text: 'testing' }, doc_as_upsert: true)
           end
 
-          it 'inserts the document' do
+          it 'upserts the document' do
             expect(repository.find(1)).to eq('text' => 'testing')
           end
         end
@@ -266,7 +264,7 @@ describe Elasticsearch::Persistence::Repository::Store do
 
   describe '#delete' do
 
-    before do
+    before(:all) do
       class Note
         def to_hash
           { text: 'testing', views: 0 }
@@ -274,7 +272,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       end
     end
 
-    after do
+    after(:all) do
       if defined?(Note)
         Object.send(:remove_const, :Note)
       end
@@ -305,7 +303,7 @@ describe Elasticsearch::Persistence::Repository::Store do
           repository.delete(id: id, text: 'testing')
         end
 
-        it 'deletes the document using the id' do
+        it 'deletes the document using the document' do
           expect {
             repository.find(id)
           }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
@@ -319,7 +317,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         repository.create_index!
       end
 
-      it 'deletes the document using the id' do
+      it 'raises an exception' do
         expect {
           repository.delete(1)
         }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
