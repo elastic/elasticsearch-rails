@@ -214,6 +214,18 @@ module Elasticsearch
         super(index_name: index_name)
       end
 
+      # Get the nicer formatted string for use in inspection.
+      #
+      # @example Inspect the repository.
+      #   repository.inspect
+      #
+      # @return [ String ] The repository inspection.
+      #
+      # @since 6.0.0
+      def inspect
+        "#<#{self.class}:0x#{object_id} index_name=#{index_name} document_type=#{document_type} klass=#{klass}>"
+      end
+
       private
 
       def __get_class_value(_method_)
