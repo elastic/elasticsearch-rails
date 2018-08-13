@@ -1,6 +1,6 @@
 # Elasticsearch::Persistence
 
-Persistence layer for Ruby domain objects in Elasticsearch, using the Repository and ActiveRecord patterns.
+Persistence layer for Ruby domain objects in Elasticsearch, using the Repository pattern.
 
 ## Compatibility
 
@@ -14,6 +14,7 @@ is compatible with the Elasticsearch `master` branch, therefore, with the next m
 | 0.1           | → | 1.x           |
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
+| 6.x           | → | 6.x           |
 | master        | → | master        |
 
 ## Installation
@@ -24,7 +25,7 @@ Install the package from [Rubygems](https://rubygems.org):
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-persistence', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: '5.x'
+    gem 'elasticsearch-persistence', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: '6.x'
 
 or install it from a source code checkout:
 
@@ -35,9 +36,7 @@ or install it from a source code checkout:
 
 ## Usage
 
-The library provides two different patterns for adding persistence to your Ruby objects:
-
-* [Repository Pattern](#the-repository-pattern)
+The library provides the Repository pattern for adding persistence to your Ruby objects.
 
 ### The Repository Pattern
 
@@ -67,7 +66,8 @@ Let's create a default, "dumb" repository, as a first step:
 
 ```ruby
 require 'elasticsearch/persistence'
-repository = Elasticsearch::Persistence::Repository.new
+class MyRepository; include Elasticsearch::Persistence::Repository; end
+repository = MyRepository.new
 ```
 
 We can save a `Note` instance into the repository...
@@ -120,32 +120,17 @@ The repository module provides a number of features and facilities to configure 
 * Providing access to the Elasticsearch response for search results (aggregations, total, ...)
 * Defining the methods for serialization and deserialization
 
-You can use the default repository class, or include the module in your own. Let's review it in detail.
+There are two mixins you can include in your Repository class. The first `Elasticsearch::Persistence::Repository`,
+provides the basic methods and settings you'll need. The second, `Elasticsearch::Persistence::Repository::DSL` adds
+some additional class methods that allow you to set options that instances of the class will share.
 
-#### The Default Class
+#### Basic Repository mixin
 
-For simple cases, you can use the default, bundled repository class, and configure/customize it:
+For simple cases, you can just include the Elasticsearch::Persistence::Repository mixin to your class:
 
 ```ruby
-repository = Elasticsearch::Persistence::Repository.new do
-  # Configure the Elasticsearch client
-  client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
-
-  # Set a custom index name
-  index :my_notes
-
-  # Set a custom document type
-  type  :my_note
-
-  # Specify the class to initialize when deserializing documents
-  klass Note
-
-  # Configure the settings and mappings for the Elasticsearch index
-  settings number_of_shards: 1 do
-    mapping do
-      indexes :text, analyzer: 'snowball'
-    end
-  end
+class MyRepository
+  include Elasticsearch::Persistence::Repository
 
   # Customize the serialization logic
   def serialize(document)
@@ -154,8 +139,16 @@ repository = Elasticsearch::Persistence::Repository.new do
 
   # Customize the de-serialization logic
   def deserialize(document)
-    puts "# ***** CUSTOM DESERIALIZE LOGIC KICKING IN... *****"
+    puts "# ***** CUSTOM DESERIALIZE LOGIC... *****"
     super
+  end
+end
+
+client = Elasticsearch::Client.new(url: ENV['ELASTICSEARCH_URL'], log: true)
+repository = MyRepository.new(client: client, index_name: :my_notes, type: :my_note, klass: Note)
+repository.settings number_of_shards: 1 do
+  mapping do
+    indexes :text, analyzer: 'snowball'
   end
 end
 ```
@@ -188,28 +181,27 @@ repository.find(1)
 <Note:0x007f9bd782b7a0 @attributes={... "my_special_key"=>"my_special_stuff"}>
 ```
 
-#### A Custom Class
+#### The DSL mixin
 
-In most cases, though, you'll want to use a custom class for the repository, so let's do that:
+In some cases, you'll want to set some of the repository configurations at the class level. This makes
+most sense when the instances of the repository will use that same configuration:
 
 ```ruby
 require 'base64'
 
 class NoteRepository
   include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
 
-  def initialize(options={})
-    index  options[:index] || 'notes'
-    client Elasticsearch::Client.new url: options[:url], log: options[:log]
-  end
-
+  index_name 'notes'
+  document_type 'note'
   klass Note
 
   settings number_of_shards: 1 do
     mapping do
       indexes :text,  analyzer: 'snowball'
       # Do not index images
-      indexes :image, index: 'no'
+      indexes :image, index: false
     end
   end
 
@@ -231,23 +223,26 @@ class NoteRepository
 end
 ```
 
-Include the `Elasticsearch::Persistence::Repository` module to add the repository methods into the class.
-
-You can customize the repository in the familiar way, by calling the DSL-like methods.
-
-You can implement a custom initializer for your repository, add complex logic in its
-class and instance methods -- in general, have all the freedom of a standard Ruby class.
+You can create an instance of this custom class and get each of the configurations.
 
 ```ruby
-repository = NoteRepository.new url: 'http://localhost:9200', log: true
+client = Elasticsearch::Client.new(url: 'http://localhost:9200', log: true)
+repository = NoteRepository.new(client: client)
+repository.index_name
+# => 'notes'
 
-# Configure the repository instance
-repository.index = 'notes_development'
-repository.client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
+```
 
-repository.create_index! force: true
+You can also override the default configuration with options passed to the initialize method:
 
-note = Note.new 'id' => 1, 'text' => 'Document with image', 'image' => '... BINARY DATA ...'
+```ruby
+client = Elasticsearch::Client.new(url: 'http://localhost:9250', log: true)
+client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
+repository = NoteRepository.new(client: client, index_name: 'notes_development')
+
+repository.create_index!(force: true)
+
+note = Note.new('id' => 1, 'text' => 'Document with image', 'image' => '... BINARY DATA ...')
 
 repository.save(note)
 # PUT http://localhost:9200/notes_development/note/1
@@ -258,47 +253,110 @@ puts repository.find(1).attributes['image']
 # => ... BINARY DATA ...
 ```
 
-#### Methods Provided by the Repository
+#### Functionality Provided by the Repository mixin
+
+Each of the following configurations can be set for a repository instance.
+If you have included the `Elasticsearch::Persistence::Repository::DSL` mixin, then you can use the class-level DSL
+methods to set each configuration. You can override the configuration for any instance by passing options to the
+`#initialize` method.
+If you don't use the DSL mixin, you can set also the instance configuration with options passed the `#initialize` method.
 
 ##### Client
 
-The repository uses the standard Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage),
-which is accessible with the `client` getter and setter methods:
+The repository uses the standard Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage).
 
 ```ruby
-repository.client = Elasticsearch::Client.new url: 'http://search.server.org'
+client = Elasticsearch::Client.new(url: 'http://search.server.org')
+repository = NoteRepository.new(client: client)
 repository.client.transport.logger = Logger.new(STDERR)
+```
+
+or with the DSL mixin:
+
+```ruby
+class NoteRepository
+  include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
+
+  client Elasticsearch::Client.new url: 'http://search.server.org'
+end
+
+repository = NoteRepository.new
+
 ```
 
 ##### Naming
 
-The `index` method specifies the Elasticsearch index to use for storage, lookup and search
-(when not set, the value is inferred from the repository class name):
+The `index_name` method specifies the Elasticsearch index to use for storage, lookup and search. The default index name
+is 'repository'.
 
 ```ruby
-repository.index = 'notes_development'
+repository = NoteRepository.new(index_name: 'notes_development')
 ```
 
-The `type` method specifies the Elasticsearch document type to use for storage, lookup and search
-(when not set, the value is inferred from the document class name, or `_all` is used):
+or with the DSL mixin:
 
 ```ruby
-repository.type = 'my_note'
+class NoteRepository
+  include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
+
+  index_name 'notes_development'
+end
+
+repository = NoteRepository.new
+
+```
+
+The `type` method specifies the Elasticsearch document type to use for storage, lookup and search. The default value is
+'_doc'. Keep in mind that future versions of Elasticsearch will not allow you to set this yourself and will use the type,
+'_doc'.
+
+```ruby
+repository = NoteRepository.new(document_type: 'note')
+```
+
+or with the DSL mixin:
+
+```ruby
+class NoteRepository
+  include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
+
+  document_type 'note'
+end
+
+repository = NoteRepository.new
+
 ```
 
 The `klass` method specifies the Ruby class name to use when initializing objects from
-documents retrieved from the repository (when not set, the value is inferred from the
-document `_type` as fetched from Elasticsearch):
+documents retrieved from the repository. If this value is not set, a Hash representation of the document will be 
+returned instead.
 
 ```ruby
-repository.klass = MyNote
+repository = NoteRepository.new(klass: Note)
+```
+
+or with the DSL mixin:
+
+```ruby
+class NoteRepository
+  include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
+
+  klass Note
+end
+
+repository = NoteRepository.new
+
 ```
 
 ##### Index Configuration
 
 The `settings` and `mappings` methods, provided by the
 [`elasticsearch-model`](http://rubydoc.info/gems/elasticsearch-model/Elasticsearch/Model/Indexing/ClassMethods)
-gem, allow to configure the index properties:
+gem, allow you to configure the index properties:
 
 ```ruby
 repository.settings number_of_shards: 1
@@ -310,7 +368,39 @@ repository.mappings.to_hash
 # => { :note => {:properties=> ... }}
 ```
 
+or with the DSL mixin:
+
+```ruby
+class NoteRepository
+  include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
+
+  mappings { indexes :title, analyzer: 'snowball' }
+  settings number_of_shards: 1
+end
+
+repository = NoteRepository.new
+
+```
+
+You can also use the `#create` method defined on the repository class to create and set the mappings and settings 
+on an instance with a block in one call:
+
+```ruby
+repository = NoteRepository.create(index_name: 'notes_development') do
+  settings number_of_shards: 1, number_of_replicas: 0 do
+    mapping dynamic: 'strict' do
+      indexes :foo do
+        indexes :bar
+      end
+      indexes :baz
+    end
+  end
+end
+```
+
 The convenience methods `create_index!`, `delete_index!` and `refresh_index!` allow you to manage the index lifecycle.
+These methods can only be called on repository instances and are not implemented at the class level.
 
 ##### Serialization
 
@@ -319,9 +409,12 @@ to the storage, and the initialization procedure when loading it from the storag
 
 ```ruby
 class NoteRepository
+  include Elasticsearch::Persistence::Repository
+
   def serialize(document)
     Hash[document.to_hash.map() { |k,v|  v.upcase! if k == :title; [k,v] }]
   end
+
   def deserialize(document)
     MyNote.new ActiveSupport::HashWithIndifferentAccess.new(document['_source']).deep_symbolize_keys
   end
@@ -426,9 +519,15 @@ end
 results.total
 # => 2
 
-# Access the raw response as a Hashie::Mash instance
+# Access the raw response as a Hashie::Mash instance.
+# Note that a Hashie::Mash will only be created if the 'response' method is called on the results. 
 results.response._shards.failed
 # => 0
+
+# Access the raw response
+results.raw_response
+# => 0
+
 ```
 
 #### Example Application
