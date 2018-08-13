@@ -2,19 +2,40 @@ module Elasticsearch
   module Persistence
     module Repository
 
-      # Provide serialization and deserialization between Ruby objects and Elasticsearch documents
+      # Provide serialization and deserialization between Ruby objects and Elasticsearch documents.
       #
       # Override these methods in your repository class to customize the logic.
       #
       module Serialize
 
-        # Error message raised when documents are attempted to be deserialized and no klass is defined for
-        #   the Repository.
+        # Serialize the object for storing it in Elasticsearch.
         #
-        # @since 6.0.0
-        NO_CLASS_ERROR_MESSAGE = "No class is defined for deserializing documents. " +
-                                   "Please define a 'klass' for the Repository or define a custom " +
-                                   "deserialize method.".freeze
+        # In the default implementation, call the `to_hash` method on the passed object.
+        #
+        # @param [ Object ] document The Ruby object to serialize.
+        #
+        # @return [ Hash ] The serialized document.
+        #
+        def serialize(document)
+          document.to_hash
+        end
+
+        # Deserialize the document retrieved from Elasticsearch into a Ruby object.
+        # If no klass is set for the Repository then the raw document '_source' field will be returned.
+        #
+        # def deserialize(document)
+        #   Note.new document[SOURCE]
+        # end
+        #
+        # @param [ Hash ] document The raw document.
+        #
+        # @return [ Object ] The deserialized object.
+        #
+        def deserialize(document)
+          klass ? klass.new(document[SOURCE]) : document[SOURCE]
+        end
+
+        private
 
         # The key for document fields in an Elasticsearch query response.
         #
@@ -26,21 +47,41 @@ module Elasticsearch
         #
         TYPE = '_type'.freeze
 
-        # Serialize the object for storing it in Elasticsearch
+        IDS = [:id, 'id', :_id, '_id'].freeze
+
+        # Get a document ID from the document (assuming Hash or Hash-like object)
         #
-        # In the default implementation, call the `to_hash` method on the passed object.
+        # @example
+        #     repository.__get_id_from_document title: 'Test', id: 'abc123'
+        #     => "abc123"
         #
-        def serialize(document)
-          document.to_hash
+        # @api private
+        #
+        def __get_id_from_document(document)
+          document[IDS.find { |id| document[id] }]
         end
 
-        # Deserialize the document retrieved from Elasticsearch into a Ruby object
+        # Extract a document ID from the document (assuming Hash or Hash-like object)
         #
-        # Use the `klass` property, if defined, otherwise try to get the class from the document's `_type`.
+        # @note Calling this method will *remove* the `id` or `_id` key from the passed object.
         #
-        def deserialize(document)
-          raise NameError.new(NO_CLASS_ERROR_MESSAGE) unless klass
-          klass.new document[SOURCE]
+        # @example
+        #     options = { title: 'Test', id: 'abc123' }
+        #     repository.__extract_id_from_document options
+        #     # => "abc123"
+        #     options
+        #     # => { title: 'Test' }
+        #
+        # @api private
+        #
+        def __extract_id_from_document(document)
+          IDS.inject(nil) do |deleted, id|
+            if document[id]
+              document.delete(id)
+            else
+              deleted
+            end
+          end
         end
       end
     end

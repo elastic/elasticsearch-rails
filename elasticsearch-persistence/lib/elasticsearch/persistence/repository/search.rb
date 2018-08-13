@@ -6,10 +6,6 @@ module Elasticsearch
       #
       module Search
 
-        # The key for accessing the count in a Elasticsearch query response.
-        #
-        COUNT = 'count'.freeze
-
         # Returns a collection of domain objects by an Elasticsearch query
         #
         # Pass the query either as a string or a Hash-like object
@@ -40,6 +36,9 @@ module Elasticsearch
         #     repository.search query: { match: { title: 'fox dog' } }, size: 25
         #     # GET http://localhost:9200/notes/note/_search
         #     # > {"query":{"match":{"title":"fox dog"}},"size":25}
+        #
+        # @param [ Hash, String ] query_or_definition The query or search definition.
+        # @param [ Hash ] options The search options.
         #
         # @return [Elasticsearch::Persistence::Repository::Response::Results]
         #
@@ -75,6 +74,9 @@ module Elasticsearch
         #    repository.search(query: { match: { title: 'fox dog' } })
         #    # => 1
         #
+        # @param [ Hash, String ] query_or_definition The query or search definition.
+        # @param [ Hash ] options The search options.
+        #
         # @return [Integer]
         #
         def count(query_or_definition=nil, options={})
@@ -92,8 +94,13 @@ module Elasticsearch
 
           response[COUNT]
         end
-      end
 
+        private
+
+        # The key for accessing the count in a Elasticsearch query response.
+        #
+        COUNT = 'count'.freeze
+      end
     end
   end
 end

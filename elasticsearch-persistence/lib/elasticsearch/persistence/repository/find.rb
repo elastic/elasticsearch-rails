@@ -7,16 +7,6 @@ module Elasticsearch
       #
       module Find
 
-        # The key for accessing the document found and returned from an
-        #   Elasticsearch _mget query.
-        #
-        DOCS = 'docs'.freeze
-
-        # The key for the boolean value indicating whether a particular id
-        #   has been successfully found in an Elasticsearch _mget query.
-        #
-        FOUND = 'found'.freeze
-
         # Retrieve a single object or multiple objects from Elasticsearch by ID or IDs
         #
         # @example Retrieve a single object by ID
@@ -50,6 +40,9 @@ module Elasticsearch
         #     repository.exists?(1)
         #     => true
         #
+        # @param [ String, Integer ] id The id to search.
+        # @param [ Hash ] options The options.
+        #
         # @return [true, false]
         #
         def exists?(id, options={})
@@ -57,6 +50,18 @@ module Elasticsearch
           request[:type] = document_type if document_type
           client.exists(request.merge(options))
         end
+
+        private
+
+        # The key for accessing the document found and returned from an
+        #   Elasticsearch _mget query.
+        #
+        DOCS = 'docs'.freeze
+
+        # The key for the boolean value indicating whether a particular id
+        #   has been successfully found in an Elasticsearch _mget query.
+        #
+        FOUND = 'found'.freeze
 
         # @api private
         #
@@ -75,7 +80,9 @@ module Elasticsearch
           request = { index: index_name, body: { ids: ids } }
           request[:type] = document_type if document_type
           documents = client.mget(request.merge(options))
-          documents[DOCS].map { |document| document[FOUND] ? deserialize(document) : nil }
+          documents[DOCS].map do |document|
+            deserialize(document) if document[FOUND]
+          end
         end
       end
     end

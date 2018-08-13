@@ -12,13 +12,19 @@ module Elasticsearch
         #     repository.save(myobject)
         #     => {"_index"=>"...", "_type"=>"...", "_id"=>"...", "_version"=>1, "created"=>true}
         #
-        # @return {Hash} The response from Elasticsearch
+        # @param [ Object ] document The document to save into Elasticsearch.
+        # @param [ Hash ] options The save request options.
+        #
+        # @return [ Hash ] The response from Elasticsearch
         #
         def save(document, options={})
           serialized = serialize(document)
-          id   = __get_id_from_document(serialized)
-          type = document_type
-          client.index( { index: index_name, type: type, id: id, body: serialized }.merge(options) )
+          id = __get_id_from_document(serialized)
+          request = { index: index_name,
+                      id: id,
+                      body: serialized }
+          request[:type] = document_type if document_type
+          client.index(request.merge(options))
         end
 
         # Update the serialized object in Elasticsearch with partial data or script
@@ -33,38 +39,27 @@ module Elasticsearch
         #     repository.update 1, script: 'ctx._source.views += 1'
         #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>3}
         #
-        # @return {Hash} The response from Elasticsearch
+        # @param [ Object ] document_or_id The document to update or the id of the document to update.
+        # @param [ Hash ] options The update request options.
         #
-        def update(document, options={})
-          case
-            when document.is_a?(String) || document.is_a?(Integer)
-              id = document
-            when document.respond_to?(:to_hash)
-              serialized = document.to_hash
-              id = __extract_id_from_document(serialized)
-            else
-              raise ArgumentError, "Expected a document ID or a Hash-like object, #{document.class} given"
-          end
-
-          type = options.delete(:type) || \
-                 (defined?(serialized) && serialized && serialized.delete(:type)) || \
-                 document_type
-
-          if defined?(serialized) && serialized
-            body = if serialized[:script]
-                       serialized.select { |k, v| [:script, :params, :upsert].include? k }
-                     else
-                       { doc: serialized }
-                   end
+        # @return [ Hash ] The response from Elasticsearch
+        #
+        def update(document_or_id, options = {})
+          if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)
+            id = document_or_id
+            body = options
+            type = document_type
           else
-            body = {}
-            body.update( doc: options.delete(:doc)) if options[:doc]
-            body.update( script: options.delete(:script)) if options[:script]
-            body.update( params: options.delete(:params)) if options[:params]
-            body.update( upsert: options.delete(:upsert)) if options[:upsert]
+            document = serialize(document_or_id)
+            id = __extract_id_from_document(document)
+            if options[:script]
+              body = options
+            else
+              body = { doc: document }.merge(options)
+            end
+            type = document.delete(:type) || document_type
           end
-
-          client.update( { index: index_name, type: type, id: id, body: body }.merge(options) )
+          client.update(index: index_name, id: id, type: type, body: body)
         end
 
         # Remove the serialized object or document with specified ID from Elasticsearch
@@ -74,21 +69,21 @@ module Elasticsearch
         #     repository.delete(1)
         #     # => {"_index"=>"...", "_type"=>"...", "_id"=>"1", "_version"=>4}
         #
-        # @return {Hash} The response from Elasticsearch
+        # @param [ Object ] document_or_id The document to delete or the id of the document to delete.
+        # @param [ Hash ] options The delete request options.
         #
-        def delete(document, options={})
-          if document.is_a?(String) || document.is_a?(Integer)
-            id   = document
-            type = document_type
+        # @return [ Hash ] The response from Elasticsearch
+        #
+        def delete(document_or_id, options = {})
+          if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)
+            id = document_or_id
           else
-            serialized = serialize(document)
-            id   = __get_id_from_document(serialized)
-            type = document_type
+            serialized = serialize(document_or_id)
+            id = __get_id_from_document(serialized)
           end
-          client.delete( { index: index_name, type: type, id: id }.merge(options) )
+          client.delete({ index: index_name, type: document_type, id: id }.merge(options))
         end
       end
-
     end
   end
 end
