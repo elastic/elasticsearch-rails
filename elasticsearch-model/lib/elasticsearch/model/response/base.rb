@@ -13,6 +13,7 @@ module Elasticsearch
         def initialize(klass, response, options={})
           @klass     = klass
           @response  = response
+          @raw_response = response
         end
 
         # @abstract Implement this method in specific class

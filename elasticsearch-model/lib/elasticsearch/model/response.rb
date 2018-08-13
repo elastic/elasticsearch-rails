@@ -27,9 +27,7 @@ module Elasticsearch
         # @return [Hash]
         #
         def response
-          @response ||= begin
-            HashWrapper.new(search.execute!)
-          end
+          @response ||= HashWrapper.new(search.execute!)
         end
 
         # Returns the collection of "hits" from Elasticsearch
@@ -63,7 +61,7 @@ module Elasticsearch
         # Returns the statistics on shards
         #
         def shards
-          HashWrapper.new(response['_shards'])
+          response['_shards']
         end
 
         # Returns a Hashie::Mash of the aggregations
@@ -76,6 +74,10 @@ module Elasticsearch
         #
         def suggestions
           Suggestions.new(response['suggest'])
+        end
+
+        def raw_response
+          @raw_response ||= search.execute!
         end
       end
     end
