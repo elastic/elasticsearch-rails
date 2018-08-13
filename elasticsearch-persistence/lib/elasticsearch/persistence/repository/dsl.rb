@@ -63,7 +63,7 @@ module Elasticsearch
           #
           # @since 6.0.0
           def client(_client = nil)
-            @client ||= (_client || Elasticsearch::Transport::Client.new)
+            @client ||= (_client || Elasticsearch::Client.new)
           end
 
           def create_index!(*args)

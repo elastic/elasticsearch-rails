@@ -106,7 +106,7 @@ describe Elasticsearch::Persistence::Repository do
     context 'when options are provided' do
 
       let(:client) do
-        Elasticsearch::Transport::Client.new
+        Elasticsearch::Client.new
       end
 
       let(:repository) do
