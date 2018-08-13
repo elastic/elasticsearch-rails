@@ -526,7 +526,7 @@ results.response._shards.failed
 
 # Access the raw response
 results.raw_response
-# => 0
+# => {...}
 
 ```
 
