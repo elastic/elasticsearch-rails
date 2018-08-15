@@ -43,18 +43,18 @@ module Elasticsearch
         # @return [Elasticsearch::Persistence::Repository::Response::Results]
         #
         def search(query_or_definition, options={})
-          type = document_type
-
-          case
-          when query_or_definition.respond_to?(:to_hash)
-            response = client.search( { index: index_name, type: type, body: query_or_definition.to_hash }.merge(options) )
-          when query_or_definition.is_a?(String)
-            response = client.search( { index: index_name, type: type, q: query_or_definition }.merge(options) )
+          request = { index: index_name,
+                      type: document_type }
+          if query_or_definition.respond_to?(:to_hash)
+            request[:body] = query_or_definition.to_hash
+          elsif query_or_definition.is_a?(String)
+            request[:q] = query_or_definition
           else
             raise ArgumentError, "[!] Pass the search definition as a Hash-like object or pass the query as a String" +
-                                 " -- #{query_or_definition.class} given."
+              " -- #{query_or_definition.class} given."
           end
-          Response::Results.new(self, response)
+
+          Response::Results.new(self, client.search(request.merge(options)))
         end
 
         # Return the number of domain object in the index
@@ -81,18 +81,19 @@ module Elasticsearch
         #
         def count(query_or_definition=nil, options={})
           query_or_definition ||= { query: { match_all: {} } }
-          type = document_type
+          request = { index: index_name,
+                      type: document_type }
 
-          case
-          when query_or_definition.respond_to?(:to_hash)
-            response = client.count( { index: index_name, type: type, body: query_or_definition.to_hash }.merge(options) )
-          when query_or_definition.is_a?(String)
-            response = client.count( { index: index_name, type: type, q: query_or_definition }.merge(options) )
+          if query_or_definition.respond_to?(:to_hash)
+            request[:body] = query_or_definition.to_hash
+          elsif query_or_definition.is_a?(String)
+            request[:q] = query_or_definition
           else
-            raise ArgumentError, "[!] Pass the search definition as a Hash-like object or pass the query as a String, not as [#{query_or_definition.class}]"
+            raise ArgumentError, "[!] Pass the search definition as a Hash-like object or pass the query as a String" +
+                " -- #{query_or_definition.class} given."
           end
 
-          response[COUNT]
+          client.count(request.merge(options))[COUNT]
         end
 
         private
