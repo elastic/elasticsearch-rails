@@ -54,19 +54,18 @@ end
 
 class NoteRepository
   include Elasticsearch::Persistence::Repository
+  include Elasticsearch::Persistence::Repository::DSL
 
   client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
 
-  index :notes
-  type  :note
+  index_name :notes
+  document_type  :note
 
   mapping do
     indexes :text,       analyzer: 'snowball'
     indexes :tags,       type:     'keyword'
     indexes :created_at, type:     'date'
   end
-
-  create_index!
 
   def deserialize(document)
     Note.new document['_source'].merge('id' => document['_id'])
