@@ -42,7 +42,7 @@ The library provides the Repository pattern for adding persistence to your Ruby 
 
 The `Elasticsearch::Persistence::Repository` module provides an implementation of the
 [repository pattern](http://martinfowler.com/eaaCatalog/repository.html) and allows
-to save, delete, find and search objects stored in Elasticsearch, as well as configure
+you to save, delete, find and search objects stored in Elasticsearch, as well as configure
 mappings and settings for the index. It's an unobtrusive and decoupled way of adding
 persistence to your Ruby objects.
 
@@ -257,9 +257,9 @@ puts repository.find(1).attributes['image']
 
 Each of the following configurations can be set for a repository instance.
 If you have included the `Elasticsearch::Persistence::Repository::DSL` mixin, then you can use the class-level DSL
-methods to set each configuration. You can override the configuration for any instance by passing options to the
+methods to set each value. You can still override the configuration for any instance by passing options to the
 `#initialize` method.
-If you don't use the DSL mixin, you can set also the instance configuration with options passed the `#initialize` method.
+Even if you don't use the DSL mixin, you can set the instance configuration with options passed the `#initialize` method.
 
 ##### Client
 
@@ -269,6 +269,9 @@ The repository uses the standard Elasticsearch [client](https://github.com/elast
 client = Elasticsearch::Client.new(url: 'http://search.server.org')
 repository = NoteRepository.new(client: client)
 repository.client.transport.logger = Logger.new(STDERR)
+repository.client
+# => Elasticsearch::Client
+
 ```
 
 or with the DSL mixin:
@@ -282,6 +285,8 @@ class NoteRepository
 end
 
 repository = NoteRepository.new
+repository.client
+# => Elasticsearch::Client
 
 ```
 
@@ -292,6 +297,9 @@ is 'repository'.
 
 ```ruby
 repository = NoteRepository.new(index_name: 'notes_development')
+repository.index_name
+# => 'notes_development'
+
 ```
 
 or with the DSL mixin:
@@ -305,15 +313,20 @@ class NoteRepository
 end
 
 repository = NoteRepository.new
+repository.index_name
+# => 'notes_development'
 
 ```
 
-The `type` method specifies the Elasticsearch document type to use for storage, lookup and search. The default value is
+The `document_type` method specifies the Elasticsearch document type to use for storage, lookup and search. The default value is
 '_doc'. Keep in mind that future versions of Elasticsearch will not allow you to set this yourself and will use the type,
 '_doc'.
 
 ```ruby
 repository = NoteRepository.new(document_type: 'note')
+repository.document_type
+# => 'note'
+
 ```
 
 or with the DSL mixin:
@@ -327,6 +340,8 @@ class NoteRepository
 end
 
 repository = NoteRepository.new
+repository.document_type
+# => 'note'
 
 ```
 
@@ -336,6 +351,9 @@ returned instead.
 
 ```ruby
 repository = NoteRepository.new(klass: Note)
+repository.klass
+# => Note
+
 ```
 
 or with the DSL mixin:
@@ -349,6 +367,8 @@ class NoteRepository
 end
 
 repository = NoteRepository.new
+repository.klass
+# => Note
 
 ```
 
@@ -383,8 +403,10 @@ repository = NoteRepository.new
 
 ```
 
-You can also use the `#create` method defined on the repository class to create and set the mappings and settings 
-on an instance with a block in one call:
+##### Create a Repository and set its configuration with a block
+
+You can also use the `#create` method to instantiate and set the mappings and settings on an instance
+with a block in one call:
 
 ```ruby
 repository = NoteRepository.create(index_name: 'notes_development') do
@@ -399,13 +421,15 @@ repository = NoteRepository.create(index_name: 'notes_development') do
 end
 ```
 
+##### Index Management
+
 The convenience methods `create_index!`, `delete_index!` and `refresh_index!` allow you to manage the index lifecycle.
 These methods can only be called on repository instances and are not implemented at the class level.
 
 ##### Serialization
 
-The `serialize` and `deserialize` methods allow you to customize the serialization of the document when passing it
-to the storage, and the initialization procedure when loading it from the storage:
+The `serialize` and `deserialize` methods allow you to customize the serialization of the document when it
+is persisted to Elasticsearch, and define the initialization procedure when loading it from the storage:
 
 ```ruby
 class NoteRepository
@@ -447,7 +471,7 @@ repository.update 1, script: 'if (!ctx._source.tags.contains(t)) { ctx._source.t
 ```
 
 
-The `delete` method allows to remove objects from the repository (pass either the object itself or its ID):
+The `delete` method allows you to remove objects from the repository (pass either the object itself or its ID):
 
 ```ruby
 repository.delete(note)
@@ -456,7 +480,7 @@ repository.delete(1)
 
 ##### Finding
 
-The `find` method allows to find one or many documents in the storage and returns them as deserialized Ruby objects:
+The `find` method allows you to find one or many documents in the storage and returns them as deserialized Ruby objects:
 
 ```ruby
 repository.save Note.new(id: 2, title: 'Fast White Dog')
@@ -479,7 +503,7 @@ Handle the missing objects in the application code, or call `compact` on the res
 
 ##### Search
 
-The `search` method to retrieve objects from the repository by a query string or definition in the Elasticsearch DSL:
+The `search` method is used to retrieve objects from the repository by a query string or definition in the Elasticsearch DSL:
 
 ```ruby
 repository.search('fox or dog').to_a
