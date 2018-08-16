@@ -76,7 +76,7 @@ We can save a `Note` instance into the repository...
 note = Note.new id: 1, text: 'Test'
 
 repository.save(note)
-# PUT http://localhost:9200/repository/note/1 [status:201, request:0.210s, query:n/a]
+# PUT http://localhost:9200/repository/_doc/1 [status:201, request:0.210s, query:n/a]
 # > {"id":1,"text":"Test"}
 # < {"_index":"repository","_type":"note","_id":"1","_version":1,"created":true}
 ```
@@ -85,7 +85,7 @@ repository.save(note)
 
 ```ruby
 n = repository.find(1)
-# GET http://localhost:9200/repository/_all/1 [status:200, request:0.003s, query:n/a]
+# GET http://localhost:9200/repository/_doc/1 [status:200, request:0.003s, query:n/a]
 # < {"_index":"repository","_type":"note","_id":"1","_version":2,"found":true, "_source" : {"id":1,"text":"Test"}}
 => <Note:0x007fcbfc0c4980 @attributes={"id"=>1, "text"=>"Test"}>
 ```
@@ -104,7 +104,7 @@ repository.search(query: { match: { text: 'test' } }).first
 
 ```ruby
 repository.delete(note)
-# DELETE http://localhost:9200/repository/note/1 [status:200, request:0.014s, query:n/a]
+# DELETE http://localhost:9200/repository/_doc/1 [status:200, request:0.014s, query:n/a]
 # < {"found":true,"_index":"repository","_type":"note","_id":"1","_version":3}
 => {"found"=>true, "_index"=>"repository", "_type"=>"note", "_id"=>"1", "_version"=>2}
 ```
@@ -145,7 +145,7 @@ class MyRepository
 end
 
 client = Elasticsearch::Client.new(url: ENV['ELASTICSEARCH_URL'], log: true)
-repository = MyRepository.new(client: client, index_name: :my_notes, type: :my_note, klass: Note)
+repository = MyRepository.new(client: client, index_name: :my_notes, type: :note, klass: Note)
 repository.settings number_of_shards: 1 do
   mapping do
     indexes :text, analyzer: 'snowball'
@@ -168,7 +168,7 @@ Save the document with extra properties added by the `serialize` method:
 
 ```ruby
 repository.save(note)
-# PUT http://localhost:9200/my_notes/my_note/1
+# PUT http://localhost:9200/my_notes/note/1
 # > {"id":1,"text":"Test","my_special_key":"my_special_stuff"}
 {"_index"=>"my_notes", "_type"=>"my_note", "_id"=>"1", "_version"=>4, ... }
 ```
@@ -177,7 +177,7 @@ And `deserialize` it:
 
 ```ruby
 repository.find(1)
-# ***** CUSTOM DESERIALIZE LOGIC KICKING IN... *****
+# ***** CUSTOM DESERIALIZE LOGIC... *****
 <Note:0x007f9bd782b7a0 @attributes={... "my_special_key"=>"my_special_stuff"}>
 ```
 
@@ -245,10 +245,10 @@ repository.create_index!(force: true)
 note = Note.new('id' => 1, 'text' => 'Document with image', 'image' => '... BINARY DATA ...')
 
 repository.save(note)
-# PUT http://localhost:9200/notes_development/note/1
+# PUT http://localhost:9200/notes_development/_doc/1
 # > {"id":1,"text":"Document with image","image":"Li4uIEJJTkFSWSBEQVRBIC4uLg==\n"}
 puts repository.find(1).attributes['image']
-# GET http://localhost:9200/notes_development/note/1
+# GET http://localhost:9200/notes_development/_doc/1
 # < {... "_source" : { ... "image":"Li4uIEJJTkFSWSBEQVRBIC4uLg==\n"}}
 # => ... BINARY DATA ...
 ```
@@ -452,7 +452,7 @@ The `save` method allows you to store a domain object in the repository:
 ```ruby
 note = Note.new id: 1, title: 'Quick Brown Fox'
 repository.save(note)
-# => {"_index"=>"notes_development", "_type"=>"my_note", "_id"=>"1", "_version"=>1, "created"=>true}
+# => {"_index"=>"notes_development", "_type"=>"_doc", "_id"=>"1", "_version"=>1, "created"=>true}
 ```
 
 The `update` method allows you to perform a partial update of a document in the repository.
@@ -460,14 +460,14 @@ Use either a partial document:
 
 ```ruby
 repository.update id: 1, title: 'UPDATED',  tags: []
-# => {"_index"=>"notes_development", "_type"=>"note", "_id"=>"1", "_version"=>2}
+# => {"_index"=>"notes_development", "_type"=>"_doc", "_id"=>"1", "_version"=>2}
 ```
 
 Or a script (optionally with parameters):
 
 ```ruby
 repository.update 1, script: 'if (!ctx._source.tags.contains(t)) { ctx._source.tags += t }', params: { t: 'foo' }
-# => {"_index"=>"notes_development", "_type"=>"note", "_id"=>"1", "_version"=>3}
+# => {"_index"=>"notes_development", "_type"=>"_doc", "_id"=>"1", "_version"=>3}
 ```
 
 
@@ -507,11 +507,11 @@ The `search` method is used to retrieve objects from the repository by a query s
 
 ```ruby
 repository.search('fox or dog').to_a
-# GET http://localhost:9200/notes_development/my_note/_search?q=fox
+# GET http://localhost:9200/notes_development/_doc/_search?q=fox
 # => [<MyNote ... FOX ...>, <MyNote ... DOG ...>]
 
 repository.search(query: { match: { title: 'fox dog' } }).to_a
-# GET http://localhost:9200/notes_development/my_note/_search
+# GET http://localhost:9200/notes_development/_doc/_search
 # > {"query":{"match":{"title":"fox dog"}}}
 # => [<MyNote ... FOX ...>, <MyNote ... DOG ...>]
 ```
