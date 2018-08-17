@@ -19,13 +19,14 @@ module Elasticsearch
           # Returns an `ActiveRecord::Relation` instance
           #
           def records
-            sql_records = klass.where(klass.primary_key => ids)
+            sql_records = klass.where((options[:elasticsearch_lookup_field] || klass.primary_key) => ids)
             sql_records = sql_records.includes(self.options[:includes]) if self.options[:includes]
 
             # Re-order records based on the order from Elasticsearch hits
             # by redefining `to_a`, unless the user has called `order()`
             #
-            sql_records.instance_exec(response.response['hits']['hits']) do |hits|
+            hits = response.response['hits']['hits']
+            sql_records.instance_exec(hits, options[:record_lookup_field], options[:elasticsearch_lookup_field]) do |hits, record_lookup, elasticsearch_lookup|
               ar_records_method_name = :to_a
               ar_records_method_name = :records if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 5
 
@@ -35,7 +36,16 @@ module Elasticsearch
                 else
                   self.__send__(:exec_queries)
                 end
-                @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
+
+                @records.sort_by do |record|
+                  hits.index do |hit|
+                    if record_lookup
+                      hit['_source'][record_lookup].to_s == record.send(elasticsearch_lookup || record.class.primary_key).to_s
+                    else
+                      hit['_id'].to_s == record.send(elasticsearch_lookup || record.class.primary_key).to_s
+                    end
+                  end
+                end
               end if self
             end
 

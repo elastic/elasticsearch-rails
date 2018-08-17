@@ -12,31 +12,33 @@ module Elasticsearch
   module Model
     class ActiveRecordBasicIntegrationTest < Elasticsearch::Test::IntegrationTestCase
 
-      class ::Article < ActiveRecord::Base
-        include Elasticsearch::Model
-        include Elasticsearch::Model::Callbacks
+      context "ActiveRecord basic integration" do
 
-        document_type 'article'
+        class ::Article < ActiveRecord::Base
+          include Elasticsearch::Model
+          include Elasticsearch::Model::Callbacks
 
-        settings index: { number_of_shards: 1, number_of_replicas: 0 } do
-          mapping do
-            indexes :title,         type: 'text', analyzer: 'snowball'
-            indexes :body,          type: 'text'
-            indexes :clicks,        type: 'integer'
-            indexes :created_at,    type: 'date'
+          document_type 'article'
+
+          settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+            mapping do
+              indexes :title,         type: 'text', analyzer: 'snowball'
+              indexes :body,          type: 'text'
+              indexes :clicks,        type: 'integer'
+              indexes :created_at,    type: 'date'
+            end
+          end
+
+          def as_indexed_json(options = {})
+            attributes
+                .symbolize_keys
+                .slice(:title, :body, :clicks, :created_at)
+                .merge(suggest_title: title)
           end
         end
 
-        def as_indexed_json(options = {})
-          attributes
-            .symbolize_keys
-            .slice(:title, :body, :clicks, :created_at)
-            .merge(suggest_title: title)
-        end
-      end
-
-      context "ActiveRecord basic integration" do
         setup do
+
           ActiveRecord::Schema.define(:version => 1) do
             create_table :articles do |t|
               t.string   :title
@@ -248,6 +250,73 @@ module Elasticsearch
         end
       end
 
+      context 'ActiveRecord integration with foreign lookup field' do
+
+        class ::ArticleWithRecordLookup < ActiveRecord::Base
+          include Elasticsearch::Model
+
+          document_type 'article'
+
+          settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+            mapping do
+              indexes :title,         type: 'text', analyzer: 'snowball'
+              indexes :body,          type: 'text'
+              indexes :clicks,        type: 'integer'
+              indexes :created_at,    type: 'date'
+            end
+          end
+
+          def as_indexed_json(options = {})
+            attributes
+                .symbolize_keys
+                .slice(:title, :body, :ip_addr, :created_at)
+                .merge(suggest_title: title)
+                .merge(relational_id: ip_addr)
+          end
+        end
+
+        setup do
+
+          ActiveRecord::Schema.define(:version => 1) do
+            create_table :article_with_record_lookups do |t|
+              t.string   :title
+              t.string   :body
+              t.integer  :ip_addr
+              t.datetime :created_at, :default => 'NOW()'
+            end
+          end
+
+          ArticleWithRecordLookup.delete_all
+          ArticleWithRecordLookup.__elasticsearch__.create_index! force: true
+
+          article = ::ArticleWithRecordLookup.create! title: 'Test1', body: '', ip_addr: 50
+          article.__elasticsearch__.index_document
+
+          article = ::ArticleWithRecordLookup.create! title: 'Test2', body: '', ip_addr: 60
+          article.__elasticsearch__.index_document
+
+          ::ArticleWithRecordLookup.create! title: 'Test3', body: '', ip_addr: 50
+
+          ArticleWithRecordLookup.__elasticsearch__.refresh_index!
+        end
+
+        should "allow a foreign lookup id to be defined" do
+          response = ArticleWithRecordLookup.search(query: { match: { title: 'Test1' } })
+
+          assert response.any?, "Response should not be empty: #{response.to_a.inspect}"
+
+          assert_equal 1, response.results.size
+          assert_equal 3, ArticleWithRecordLookup.all.size
+          assert_equal 2, response.records(record_lookup_field: 'relational_id', elasticsearch_lookup_field: 'ip_addr').size
+
+          assert_instance_of Elasticsearch::Model::Response::Result, response.results.first
+          assert_instance_of ArticleWithRecordLookup, response.records.first
+
+          assert_equal 'Test1', response.results.first.title
+          assert_equal 'Test1', response.records.first.title
+          assert_equal 'Test3', response.records.second.title
+        end
+      end
     end
   end
 end

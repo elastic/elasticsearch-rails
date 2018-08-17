@@ -21,7 +21,8 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
     RESPONSE = { 'hits' => { 'total' => 123, 'max_score' => 456, 'hits' => [] } }
 
     setup do
-      @records = [ stub(id: 1, inspect: '<Model-1>'), stub(id: 2, inspect: '<Model-2>') ]
+      @records = [ stub(id: 1, inspect: '<Model-1>', class: stub('class', primary_key: :id)),
+                   stub(id: 2, inspect: '<Model-2>', class: stub('class', primary_key: :id)) ]
       @records.stubs(:load).returns(true)
       @records.stubs(:exec_queries).returns(true)
     end

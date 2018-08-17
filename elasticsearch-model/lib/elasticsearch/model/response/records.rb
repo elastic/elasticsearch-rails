@@ -34,7 +34,13 @@ module Elasticsearch
         # Returns the hit IDs
         #
         def ids
-          response.response['hits']['hits'].map { |hit| hit['_id'] }
+          response.response['hits']['hits'].map do |hit|
+            if options[:record_lookup_field]
+              hit['_source'][options[:record_lookup_field]]
+            else
+              hit['_id']
+            end
+          end
         end
 
         # Returns the {Results} collection
