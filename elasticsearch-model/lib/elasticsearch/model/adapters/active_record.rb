@@ -56,7 +56,10 @@ module Elasticsearch
             # Redefine the `to_a` method to the original one
             #
             sql_records.instance_exec do
-              define_singleton_method(:to_a) do
+              ar_records_method_name = :to_a
+              ar_records_method_name = :records if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 5
+
+              define_singleton_method(ar_records_method_name) do
                 if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
                   self.load
                 else

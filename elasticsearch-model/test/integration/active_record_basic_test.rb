@@ -223,8 +223,10 @@ module Elasticsearch
 
           if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
             assert_equal 'Testing Coding', response.records.order(title: :desc).first.title
+            assert_equal 'Testing Coding', response.records.order(title: :desc)[0].title
           else
             assert_equal 'Testing Coding', response.records.order('title DESC').first.title
+            assert_equal 'Testing Coding', response.records.order('title DESC')[0].title
           end
         end
 
