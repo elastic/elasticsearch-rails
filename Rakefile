@@ -70,10 +70,10 @@ namespace :test do
             --env "cluster.routing.allocation.disk.threshold_enabled=false" \
             --publish 9250:9200 \
             --rm \
-            docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+            docker.elastic.co/elasticsearch/elasticsearch:6.4.0
       COMMAND
       require 'elasticsearch/extensions/test/cluster'
-      Elasticsearch::Extensions::Test::Cluster::Cluster.new(version: '6.3.0',
+      Elasticsearch::Extensions::Test::Cluster::Cluster.new(version: '6.4.0',
                                                             number_of_nodes: 1).wait_for_green
     rescue
     end
