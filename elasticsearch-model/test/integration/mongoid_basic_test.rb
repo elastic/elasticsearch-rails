@@ -167,6 +167,70 @@ if MongoDB.available?
               assert response.results.any?, "Search has not returned results: #{response.to_a}"
             end
           end
+
+          context "importing when the model has a default scope" do
+            class ::MongoidArticleWithDefaultScope
+              include Mongoid::Document
+              include Elasticsearch::Model
+
+              default_scope -> { where(status: 'active') }
+
+              field :id, type: String
+              field :title, type: String
+              field :status, type: String, default: 'active'
+
+              attr_accessible :title if respond_to? :attr_accessible
+              attr_accessible :status if respond_to? :attr_accessible
+
+              settings index: { number_of_shards: 1, number_of_replicas: 0 } do
+                mapping do
+                  indexes :title,      type: 'text', analyzer: 'snowball'
+                  indexes :status,     type: 'text'
+                  indexes :created_at, type: 'date'
+                end
+              end
+
+              def as_indexed_json(options={})
+                as_json(except: [:id, :_id])
+              end
+            end
+
+            setup do
+              Elasticsearch::Model::Adapter.register \
+                Elasticsearch::Model::Adapter::Mongoid,
+                lambda { |klass| !!defined?(::Mongoid::Document) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Mongoid::Document) }
+
+              MongoidArticleWithDefaultScope.__elasticsearch__.create_index! force: true
+
+              MongoidArticleWithDefaultScope.delete_all
+
+              MongoidArticleWithDefaultScope.create! title: 'Test'
+              MongoidArticleWithDefaultScope.create! title: 'Testing Coding'
+              MongoidArticleWithDefaultScope.create! title: 'Coding'
+              MongoidArticleWithDefaultScope.create! title: 'Test legacy code', status: 'removed'
+
+              MongoidArticleWithDefaultScope.__elasticsearch__.refresh_index!
+              MongoidArticleWithDefaultScope.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
+            end
+
+            should "import only documents from the default scope" do
+              assert_equal 3, MongoidArticleWithDefaultScope.count
+
+              assert_equal 0, MongoidArticleWithDefaultScope.import
+
+              MongoidArticleWithDefaultScope.__elasticsearch__.refresh_index!
+              assert_equal 3, MongoidArticleWithDefaultScope.search('*').results.total
+            end
+
+            should "import only documents from a specific query combined with the default scope" do
+              assert_equal 3, MongoidArticleWithDefaultScope.count
+
+              assert_equal 0, MongoidArticleWithDefaultScope.import(query: -> { where(title: /^Test/) })
+
+              MongoidArticleWithDefaultScope.__elasticsearch__.refresh_index!
+              assert_equal 2, MongoidArticleWithDefaultScope.search('*').results.total
+            end
+          end
         end
 
       end
