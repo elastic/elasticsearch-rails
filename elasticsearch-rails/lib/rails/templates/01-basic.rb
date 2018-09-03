@@ -37,7 +37,7 @@ docker_command =<<-CMD.gsub(/\s{1,}/, ' ').strip
     --env "cluster.name=elasticsearch-rails" \
     --env "cluster.routing.allocation.disk.threshold_enabled=false" \
     --rm \
-    docker.elastic.co/elasticsearch/elasticsearch-oss:6.3.0
+    docker.elastic.co/elasticsearch/elasticsearch-oss:6.4.0
 CMD
 
 begin
