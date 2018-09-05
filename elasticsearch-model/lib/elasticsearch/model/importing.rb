@@ -130,7 +130,7 @@ module Elasticsearch
             errors +=  response['items'].select { |k, v| k.values.first['error'] }
           end
 
-          self.refresh_index! if refresh
+          self.refresh_index! index: target_index if refresh
 
           case return_value
             when 'errors'
