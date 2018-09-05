@@ -2,7 +2,7 @@ module Elasticsearch
   module Model
     module Response
 
-      class Aggregations < Hashie::Mash
+      class Aggregations < HashWrapper
         disable_warnings if respond_to?(:disable_warnings)
 
         def initialize(attributes={})

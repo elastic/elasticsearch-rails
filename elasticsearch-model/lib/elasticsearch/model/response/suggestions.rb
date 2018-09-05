@@ -2,7 +2,7 @@ module Elasticsearch
   module Model
     module Response
 
-      class Suggestions < Hashie::Mash
+      class Suggestions < HashWrapper
         disable_warnings if respond_to?(:disable_warnings)
 
         def terms
