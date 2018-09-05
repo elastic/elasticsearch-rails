@@ -4,7 +4,7 @@ module Elasticsearch
       # Common funtionality for classes in the {Elasticsearch::Model::Response} module
       #
       module Base
-        attr_reader :klass, :response
+        attr_reader :klass, :response, :raw_response
 
         # @param klass    [Class] The name of the model class
         # @param response [Hash]  The full response returned from Elasticsearch client
@@ -12,7 +12,8 @@ module Elasticsearch
         #
         def initialize(klass, response, options={})
           @klass     = klass
-          @response  = response
+          @raw_response = response
+          @response = response
         end
 
         # @abstract Implement this method in specific class

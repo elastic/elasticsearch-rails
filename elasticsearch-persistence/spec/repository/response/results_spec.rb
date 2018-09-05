@@ -66,6 +66,22 @@ describe Elasticsearch::Persistence::Repository::Response::Results do
     it 'wraps the response in a HashWrapper' do
       expect(results.response._shards.total).to eq(5)
     end
+
+    context 'when the response method is not called' do
+
+      it 'does not create an instance of HashWrapper' do
+        expect(Elasticsearch::Model::HashWrapper).not_to receive(:new)
+        results
+      end
+    end
+
+    context 'when the response method is called' do
+
+      it 'does create an instance of HashWrapper' do
+        expect(Elasticsearch::Model::HashWrapper).to receive(:new)
+        results.response
+      end
+    end
   end
 
   describe '#total' do
@@ -100,6 +116,13 @@ describe Elasticsearch::Persistence::Repository::Response::Results do
 
     it 'returns the result of the block called on a pair of each raw document and the deserialized object' do
       expect(results.map_with_hit { |pair| pair[0] }).to eq(['Object', 'Object'])
+    end
+  end
+
+  describe '#raw_response' do
+
+    it 'returns the raw response from Elasticsearch' do
+      expect(results.raw_response).to eq(response)
     end
   end
 end

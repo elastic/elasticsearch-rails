@@ -10,8 +10,7 @@ module Elasticsearch
       # Implements Enumerable and forwards its methods to the {#results} object.
       #
       class Response
-        attr_reader :klass, :search, :response,
-                    :took, :timed_out, :shards
+        attr_reader :klass, :search
 
         include Enumerable
 
@@ -27,9 +26,7 @@ module Elasticsearch
         # @return [Hash]
         #
         def response
-          @response ||= begin
-            HashWrapper.new(search.execute!)
-          end
+          @response ||= HashWrapper.new(search.execute!)
         end
 
         # Returns the collection of "hits" from Elasticsearch
@@ -51,31 +48,35 @@ module Elasticsearch
         # Returns the "took" time
         #
         def took
-          response['took']
+          raw_response['took']
         end
 
         # Returns whether the response timed out
         #
         def timed_out
-          response['timed_out']
+          raw_response['timed_out']
         end
 
         # Returns the statistics on shards
         #
         def shards
-          HashWrapper.new(response['_shards'])
+          @shards ||= HashWrapper.new(raw_response['_shards'])
         end
 
         # Returns a Hashie::Mash of the aggregations
         #
         def aggregations
-          Aggregations.new(response['aggregations'])
+          @aggregations ||= Aggregations.new(raw_response['aggregations'])
         end
 
         # Returns a Hashie::Mash of the suggestions
         #
         def suggestions
-          Suggestions.new(response['suggest'])
+          @suggestions ||= Suggestions.new(raw_response['suggest'])
+        end
+
+        def raw_response
+          @raw_response ||= search.execute!
         end
       end
     end
