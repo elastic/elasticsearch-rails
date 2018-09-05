@@ -10,21 +10,22 @@ module Elasticsearch
   module Model
     class ActiveRecordImportIntegrationTest < Elasticsearch::Test::IntegrationTestCase
 
-      class ::ImportArticle < ActiveRecord::Base
-        include Elasticsearch::Model
-
-        scope :popular, -> { where('views >= 50') }
-
-        mapping do
-          indexes :title,      type: 'text'
-          indexes :views,      type: 'integer'
-          indexes :numeric,    type: 'integer'
-          indexes :created_at, type: 'date'
-        end
-      end
-
       context "ActiveRecord importing" do
         setup do
+          Object.send(:remove_const, :ImportArticle) if defined?(ImportArticle)
+          class ::ImportArticle < ActiveRecord::Base
+            include Elasticsearch::Model
+
+            scope :popular, -> { where('views >= 50') }
+
+            mapping do
+              indexes :title,      type: 'text'
+              indexes :views,      type: 'integer'
+              indexes :numeric,    type: 'integer'
+              indexes :created_at, type: 'date'
+            end
+          end
+
           ActiveRecord::Schema.define(:version => 1) do
             create_table :import_articles do |t|
               t.string   :title
@@ -110,6 +111,58 @@ module Elasticsearch
         end
       end
 
+      context "ActiveRecord importing when the model has a default scope" do
+
+        setup do
+          Object.send(:remove_const, :ImportArticle) if defined?(ImportArticle)
+          class ::ImportArticle < ActiveRecord::Base
+            include Elasticsearch::Model
+
+            default_scope { where('views >= 8') }
+
+            mapping do
+              indexes :title,      type: 'text'
+              indexes :views,      type: 'integer'
+              indexes :numeric,    type: 'integer'
+              indexes :created_at, type: 'date'
+            end
+          end
+
+          ActiveRecord::Schema.define(:version => 1) do
+            create_table :import_articles do |t|
+              t.string   :title
+              t.integer  :views
+              t.string   :numeric # For the sake of invalid data sent to Elasticsearch
+              t.datetime :created_at, :default => 'NOW()'
+            end
+          end
+
+          ImportArticle.delete_all
+          ImportArticle.__elasticsearch__.delete_index! force: true
+          ImportArticle.__elasticsearch__.create_index! force: true
+          ImportArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
+
+          10.times { |i| ImportArticle.create! title: "Test #{i}", views: i }
+        end
+
+        should "import only documents from the default scope" do
+          assert_equal 2, ImportArticle.count
+
+          assert_equal 0, ImportArticle.import
+
+          ImportArticle.__elasticsearch__.refresh_index!
+          assert_equal 2, ImportArticle.search('*').results.total
+        end
+
+        should "import only documents from a specific query combined with the default scope" do
+          assert_equal 2, ImportArticle.count
+
+          assert_equal 0, ImportArticle.import(query: -> { where("title = 'Test 9'") })
+
+          ImportArticle.__elasticsearch__.refresh_index!
+          assert_equal 1, ImportArticle.search('*').results.total
+        end
+      end
     end
   end
 end
