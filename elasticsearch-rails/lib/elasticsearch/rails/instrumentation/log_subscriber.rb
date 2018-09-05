@@ -28,7 +28,7 @@ module Elasticsearch
 
           payload = event.payload
           name    = "#{payload[:klass]} #{payload[:name]} (#{event.duration.round(1)}ms)"
-          search  = payload[:search].inspect.gsub(/:(\w+)=>/, '\1: ')
+          search  = payload[:search].to_json
 
           debug %Q|  #{color(name, GREEN, true)} #{colorize_logging ? "\e[2m#{search}\e[0m" : search}|
         end
