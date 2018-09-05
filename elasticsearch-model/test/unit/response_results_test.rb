@@ -27,5 +27,8 @@ class Elasticsearch::Model::ResultsTest < Test::Unit::TestCase
       assert_equal 'bar', @results.first.foo
     end
 
+    should "provide access to the raw response" do
+      assert_equal RESPONSE, @response.raw_response
+    end
   end
 end
