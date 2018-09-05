@@ -58,13 +58,13 @@ module Elasticsearch
           # Yields [object, hit] pairs to the block
           #
           def each_with_hit(&block)
-            results.zip(response[HITS][HITS]).each(&block)
+            results.zip(raw_response[HITS][HITS]).each(&block)
           end
 
           # Yields [object, hit] pairs and returns the result
           #
           def map_with_hit(&block)
-            results.zip(response[HITS][HITS]).map(&block)
+            results.zip(raw_response[HITS][HITS]).map(&block)
           end
 
           # Return the collection of domain objects
