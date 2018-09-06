@@ -29,6 +29,7 @@ is compatible with the Elasticsearch `master` branch, therefore, with the next m
 | 0.1           | → | 1.x           |
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
+| 6.x           | → | 6.x           |
 | master        | → | master        |
 
 ## Installation
