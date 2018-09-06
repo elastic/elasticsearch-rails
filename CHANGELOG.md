@@ -1,3 +1,25 @@
+## 6.0.0
+
+* Update to test against Elasticsearch 6.4
+* Fix sort order on ActiveRecord >= 5. re issue #546 (#831)
+
+### ActiveModel
+
+* Inherit from HashWrapper for disabling warnings
+* Fix import method to pass index name on refresh (#692)
+* Use default scope on ActiveRecord model when importing (#827)
+* Support scope, query and preprocess importing options in Mongoid Adapter in 6.x (#829)
+* Address performance of HashWrapper in Response objects (#825)
+
+### Persistence
+
+* Address performance of HashWrapper in Response objects (#825)
+* Minor refactor in Repository::Search
+* Remove example music app that demonstrates the AR pattern
+* Update Sinatra app
+* Update README
+* Change document type references to _doc
+
 ## 6.0.0.pre
 
 * Added the "Compatibility" chapter to the READMEs
