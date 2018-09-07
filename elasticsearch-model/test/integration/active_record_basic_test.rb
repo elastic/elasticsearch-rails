@@ -111,6 +111,7 @@ module Elasticsearch
           response = Article.search query: { match: { title: 'code' }}, sort: { clicks: :desc }
 
           assert_equal response.records[0].clicks, 3
+          assert_equal response.records[0], response.records.first
           assert_equal response.records[1].clicks, 2
 
           response.records.each_with_hit do |r, h|
