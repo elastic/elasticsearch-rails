@@ -121,20 +121,37 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         DummyClassForActiveRecord.__find_in_batches(query: -> { where(color: "red") }) do; end
       end
 
-      should "preprocess the batch if option provided" do
-        class << DummyClassForActiveRecord
-          # Updates/transforms the batch while fetching it from the database
-          # (eg. with information from an external system)
-          #
-          def update_batch(batch)
-            batch.collect { |b| b.to_s + '!' }
+      context "when preprocessing batches" do
+        setup do
+          class << DummyClassForActiveRecord
+            def find_in_batches(options = {}, &block)
+              yield [:a, :b]
+            end
           end
         end
 
-        DummyClassForActiveRecord.expects(:__find_in_batches).returns( [:a, :b] )
+        should "preprocess the batch if option provided" do
+          class << DummyClassForActiveRecord
+            def update_batch(batch)
+              batch.collect { |b| b.to_s + '!' }
+            end
+          end
 
-        DummyClassForActiveRecord.__find_in_batches(preprocess: :update_batch) do |batch|
-          assert_same_elements ["a!", "b!"], batch
+          DummyClassForActiveRecord.__find_in_batches(preprocess: :update_batch) do |batch|
+            assert_same_elements ["a!", "b!"], batch
+          end
+        end
+
+        should "skip batch if preprocess option provided and returns empty collection" do
+          class << DummyClassForActiveRecord
+            def update_batch(batch)
+              []
+            end
+          end
+
+          DummyClassForActiveRecord.__find_in_batches(preprocess: :update_batch) do |batch|
+            flunk("block should not have been called on empty batch")
+          end
         end
       end
 
