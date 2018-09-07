@@ -92,7 +92,7 @@ module Elasticsearch
           # Returns the total number of results
           #
           def total_count
-            results.total
+            results.size
           end
 
           # Returns the models's `per_page` value or the default
@@ -174,7 +174,7 @@ module Elasticsearch
           # Returns the total number of results
           #
           def total_entries
-            results.total
+            results.size
           end
 
           # Returns the models's `per_page` value or the default
