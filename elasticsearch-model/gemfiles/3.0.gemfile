@@ -11,3 +11,8 @@ gem 'activemodel',  '>= 3.0'
 gem 'activerecord', '~> 3.2'
 gem 'mongoid',      '>= 3.0'
 gem 'sqlite3' unless defined?(JRUBY_VERSION)
+
+group :development, :testing do
+  gem 'rspec'
+  gem 'pry-nav'
+end

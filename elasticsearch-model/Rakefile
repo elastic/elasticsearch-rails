@@ -17,6 +17,7 @@ end
 
 require 'rake/testtask'
 namespace :test do
+
   Rake::TestTask.new(:run_unit) do |test|
     test.libs << 'lib' << 'test'
     test.test_files = FileList["test/unit/**/*_test.rb"]
@@ -33,9 +34,11 @@ namespace :test do
 
   desc "Run unit tests against ActiveModel 3, 4 and 5"
   task :unit do
-    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/3.0.gemfile', __FILE__)}' bundle exec rake test:run_unit"
-    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/4.0.gemfile', __FILE__)}' bundle exec rake test:run_unit"
-    sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/5.0.gemfile', __FILE__)}' bundle exec rake test:run_unit"
+    ['3.0.gemfile', '4.0.gemfile', '5.0.gemfile'].each do |gemfile|
+      ['bundle exec rake test:run_unit', 'bundle exec rspec'].each do |cmd|
+        sh "BUNDLE_GEMFILE='#{File.expand_path('../gemfiles/'+gemfile, __FILE__)}' #{cmd}"
+      end
+    end
   end
 
   desc "Run integration tests against latest stable ActiveModel (5)"
