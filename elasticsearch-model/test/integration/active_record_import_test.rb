@@ -163,6 +163,36 @@ module Elasticsearch
           assert_equal 1, ImportArticle.search('*').results.total
         end
       end
+
+      context 'ActiveRecord importing when the batch is empty' do
+
+        setup do
+          Object.send(:remove_const, :ImportArticle) if defined?(ImportArticle)
+          class ::ImportArticle < ActiveRecord::Base
+            include Elasticsearch::Model
+            mapping { indexes :title, type: 'text' }
+          end
+
+          ActiveRecord::Schema.define(:version => 1) do
+            create_table :import_articles do |t|
+              t.string   :title
+            end
+          end
+
+          ImportArticle.delete_all
+          ImportArticle.__elasticsearch__.delete_index! force: true
+          ImportArticle.__elasticsearch__.create_index! force: true
+          ImportArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
+        end
+
+        should 'not make any requests to create documents to Elasticsearch' do
+          assert_equal 0, ImportArticle.count
+          assert_equal 0, ImportArticle.import
+
+          ImportArticle.__elasticsearch__.refresh_index!
+          assert_equal 0, ImportArticle.search('*').results.total
+        end
+      end
     end
   end
 end
