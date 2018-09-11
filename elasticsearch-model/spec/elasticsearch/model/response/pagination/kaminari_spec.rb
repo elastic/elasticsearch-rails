@@ -28,7 +28,6 @@ describe Elasticsearch::Model::Response::Response do
     Elasticsearch::Model::Response::Response.new(model, search, response_document).tap do |resp|
       allow(resp).to receive(:client).and_return(client)
     end
-
   end
 
   let(:client) do
