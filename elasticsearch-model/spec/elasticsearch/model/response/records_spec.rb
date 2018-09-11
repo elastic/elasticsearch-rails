@@ -108,6 +108,7 @@ describe Elasticsearch::Model::Response::Records do
     end
 
     after do
+      Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyAdapter)
       Object.send(:remove_const, :DummyAdapter) if defined?(DummyAdapter)
     end
 
