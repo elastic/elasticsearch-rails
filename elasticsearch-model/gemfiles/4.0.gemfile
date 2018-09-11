@@ -10,3 +10,8 @@ gemspec path: '../'
 gem 'activemodel',  '~> 4'
 gem 'activerecord', '~> 4'
 gem 'sqlite3' unless defined?(JRUBY_VERSION)
+
+group :development, :testing do
+  gem 'rspec'
+  gem 'pry-nav'
+end
