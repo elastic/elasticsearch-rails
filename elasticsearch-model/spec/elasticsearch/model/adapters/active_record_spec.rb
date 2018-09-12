@@ -19,7 +19,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
   end
 
   let(:response) do
-    { 'hits' => {'hits' => [ {'_id' => 2}, {'_id' => 1} ]} }
+    { 'hits' => {'hits' => [ {'_id' => 2 }, {'_id' => 1 } ]} }
   end
 
   let(:ids) do

@@ -67,25 +67,33 @@ describe Elasticsearch::Model::Adapter::Multiple do
   end
 
   let(:hits) do
-    [{_index: 'dummy',
-      _type: 'dummy_two',
-      _id: '2',
-     }, {
-         _index: 'dummy',
-         _type: 'dummy_one',
-         _id: '2',
-     }, {
-         _index: 'other_index',
-         _type: 'dummy_two',
-         _id: '1',
-     }, {
-         _index: 'dummy',
-         _type: 'dummy_two',
-         _id: '1',
-     }, {
-         _index: 'dummy',
-         _type: 'dummy_one',
-         _id: '3'}]
+    [
+      {
+        _index: 'dummy',
+        _type: 'dummy_two',
+        _id: '2'
+      },
+      {
+        _index: 'dummy',
+        _type: 'dummy_one',
+        _id: '2'
+      },
+      {
+        _index: 'other_index',
+        _type: 'dummy_two',
+        _id: '1'
+      },
+      {
+        _index: 'dummy',
+        _type: 'dummy_two',
+        _id: '1'
+      },
+      {
+        _index: 'dummy',
+        _type: 'dummy_one',
+        _id: '3'
+      }
+    ]
   end
 
   let(:response) do
