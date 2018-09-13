@@ -1,3 +1,81 @@
+## 6.0.0
+
+* Update to test against Elasticsearch 6.4
+* Fix sort order on ActiveRecord >= 5. re issue #546 (#831)
+
+### ActiveModel
+
+* Inherit from HashWrapper for disabling warnings
+* Fix import method to pass index name on refresh (#692)
+* Use default scope on ActiveRecord model when importing (#827)
+* Support scope, query and preprocess importing options in Mongoid Adapter in 6.x (#829)
+* Address performance of HashWrapper in Response objects (#825)
+
+### Persistence
+
+* Address performance of HashWrapper in Response objects (#825)
+* Minor refactor in Repository::Search
+* Remove example music app that demonstrates the AR pattern
+* Update Sinatra app
+* Update README
+* Change document type references to _doc
+
+## 6.0.0.pre
+
+* Added the "Compatibility" chapter to the READMEs
+* Updated the Bundler instructions and Github URLs in the READMEs
+* Updated the version on the `master` branch to `6.0.0.alpha1`
+* Update versions to 6.0.0.beta
+* minor: Fix spacing
+* Update various gemspecs to conditionally depend on gems incompatible with JRuby (#810)
+* Update versions
+* Use local as source for gem dependencies when possible
+* Only require 'oj' gem if not using JRuby
+* Update versions to .pre
+
+### ActiveModel
+
+* Added an example with a custom "pattern" analyzer
+* Added a "trigram" custom analyzer to the example
+* Fix README typo (s/situation/situations)
+* Fix reference to @ids in example and README
+* Add Callbacks to the example datamapper adapter
+* Fix `Asynchronous Callbacks` example
+* Fixed a typo in the README
+* Improved the custom analyzer example
+* Removed left-overs from previous implementation in the "completion suggester" example
+* Updated the `changes` method name in `Indexing` to `changes_to_save` for compatibility with Rails 5.1
+* Fixed the handling of changed attributes in `Indexing` to work with older Rails versions
+* Update child-parent integration test to use single index type for ES 6.3 (#805)
+* Use default doc type: _doc (#814)
+* Avoid making an update when no attributes are changed (#762)
+
+### Persistence
+
+* Updated the failing integration tests for Elasticsearch 5.x
+* Updated the dependency for "elasticsearch" and "elasticsearch-model" to `5.x`
+* Documentation for Model should include Model and not Repository
+* Depend on version >= 6 of elasticsearch gems
+* Undo last commit; depend on version 5 of elasticsearch gems
+* Reduce repeated string instantiation (#813)
+* Make default doc type '_doc' in preparation for deprecation of mapping types (#816)
+* Remove Elasticsearch::Persistence::Model (ActiveRecord persistence pattern) (#812)
+* Deprecate _all field in ES 6.x (#820)
+* Remove development dependency on virtus, include explicitly in Gemfile for integration test
+* Refactor Repository as mixin (#824)
+* Add missing Repository::Response::Results spec
+* Update README for Repository mixin refactor
+* Minor typo in README
+* Add #inspect method for Repository
+* Update references to Elasticsearch::Client
+
+### Ruby on Rails
+
+* Fixed typo in README
+* Fix typo in rake import task
+* Updated the templates for example Rails applications
+* Add 'oj' back as a development dependency in gemspec
+
 ## 6.0.0.alpha1
 
 * Updated the Rake dependency to 11.1
