@@ -95,6 +95,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
 
         before do
           records.instance_variable_set(:@records, records)
+          allow(records).to receive(:order_values).and_return([])
         end
 
         it 'reorders the records based on hits order' do
@@ -111,6 +112,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
         before do
           records.instance_variable_set(:@records, records)
           expect(instance.records).to receive(:order).and_return(records)
+          allow(records).to receive(:order_values).and_return([])
         end
 
         it 'reorders the records based on hits order' do

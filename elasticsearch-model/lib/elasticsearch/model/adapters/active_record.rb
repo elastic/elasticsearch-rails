@@ -35,7 +35,11 @@ module Elasticsearch
                 else
                   self.__send__(:exec_queries)
                 end
-                @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
+                if !self.order_values.present?
+                  @records.sort_by { |record| hits.index { |hit| hit['_id'].to_s == record.id.to_s } }
+                else
+                  @records
+                end
               end if self
             end
 
