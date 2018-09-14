@@ -51,30 +51,6 @@ module Elasticsearch
           def load
             records.__send__(:load)
           end
-
-          # Intercept call to the `order` method, so we can ignore the order from Elasticsearch
-          #
-          def order(*args)
-            sql_records = records.__send__ :order, *args
-
-            # Redefine the `to_a` method to the original one
-            #
-            sql_records.instance_exec do
-              ar_records_method_name = :to_a
-              ar_records_method_name = :records if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 5
-
-              define_singleton_method(ar_records_method_name) do
-                if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
-                  self.load
-                else
-                  self.__send__(:exec_queries)
-                end
-                @records
-              end
-            end
-
-            sql_records
-          end
         end
 
         module Callbacks
