@@ -26,6 +26,7 @@ require 'ansi'
 require 'oj' unless defined?(JRUBY_VERSION)
 
 require 'active_model'
+require 'pry-nav'
 
 require 'kaminari'
 
