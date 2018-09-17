@@ -231,6 +231,13 @@ module Elasticsearch
           end
         end
 
+        should "allow ordering following any method chain in SQL" do
+          if defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
+            response = Article.search query: { match: { title: { query: 'test' } } }
+            assert_equal 'Testing Coding', response.records.distinct.order(id: :desc).first.title
+          end
+        end
+
         should "allow dot access to response" do
           response = Article.search query: { match: { title: { query: 'test' } } },
                                     aggregations: {
