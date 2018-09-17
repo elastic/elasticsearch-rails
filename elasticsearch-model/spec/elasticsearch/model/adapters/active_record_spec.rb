@@ -66,6 +66,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     let(:instance) do
       model.tap do |inst|
         allow(inst).to receive(:klass).and_return(double('class', primary_key: :some_key, where: records)).at_least(:once)
+        allow(inst).to receive(:order).and_return(double('class', primary_key: :some_key, where: records)).at_least(:once)
       end
     end
 
@@ -95,6 +96,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
 
         before do
           records.instance_variable_set(:@records, records)
+          allow(records).to receive(:order_values).and_return([])
         end
 
         it 'reorders the records based on hits order' do
@@ -109,14 +111,12 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
       context 'when the records have a different order than the hits' do
 
         before do
-          records.instance_variable_set(:@records, records)
-          expect(instance.records).to receive(:order).and_return(records)
+          records.instance_variable_set(:@records, [record_2, record_1])
+          allow(records).to receive(:order_values).and_return([double('order_definition')])
         end
 
         it 'reorders the records based on hits order' do
-          expect(records.collect(&:id)).to eq([1, 2])
           expect(instance.records.to_a.collect(&:id)).to eq([2, 1])
-          expect(instance.order(:foo).to_a.collect(&:id)).to eq([1, 2])
         end
       end
     end
