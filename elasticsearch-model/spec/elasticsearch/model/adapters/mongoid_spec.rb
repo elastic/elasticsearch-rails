@@ -9,7 +9,7 @@ describe Elasticsearch::Model::Adapter::Mongoid do
 
   after(:all) do
     Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyClassForMongoid)
-    Object.send(:remove_const, :DummyClassForMongoid) if defined?(DummyClassForMongoid)
+    remove_classes(DummyClassForMongoid)
   end
 
   let(:response) do

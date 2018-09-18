@@ -21,8 +21,7 @@ describe 'naming' do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyNamingModel) if defined?(DummyNamingModel)
-    Object.send(:remove_const, :MyNamespace) if defined?(MyNamespace)
+    remove_classes(DummyNamingModel, MyNamespace)
   end
 
   it 'returns the default index name' do

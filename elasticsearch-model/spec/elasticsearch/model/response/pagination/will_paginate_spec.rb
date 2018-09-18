@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Response do
+describe 'Elasticsearch::Model::Response::Response WillPaginate' do
 
   before(:all) do
     class ModelClass
@@ -19,8 +19,7 @@ describe Elasticsearch::Model::Response::Response do
   end
 
   after(:all) do
-    Object.send(:remove_const, :ModelClass) if defined?(ModelClass)
-    Object.send(:remove_const, :WillPaginateResponse) if defined?(WillPaginateResponse)
+    remove_classes(ModelClass, WillPaginateResponse)
   end
 
   let(:response_document) do

@@ -10,7 +10,7 @@ describe Elasticsearch::Model::Adapter::Default do
 
   after(:all) do
     Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyClassForDefaultAdapter)
-    Object.send(:remove_const, :DummyClassForDefaultAdapter) if defined?(DummyClassForDefaultAdapter)
+    remove_classes(DummyClassForDefaultAdapter)
   end
 
   let(:instance) do

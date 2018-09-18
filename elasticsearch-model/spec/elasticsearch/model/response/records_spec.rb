@@ -23,8 +23,7 @@ describe Elasticsearch::Model::Response::Records do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyCollection) if defined?(DummyCollection)
-    Object.send(:remove_const, :DummyModel) if defined?(DummyModel)
+    remove_classes(DummyCollection, DummyModel)
   end
 
   let(:response_document) do
