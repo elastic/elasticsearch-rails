@@ -40,8 +40,7 @@ describe Elasticsearch::Model::Multimodel do
     end
 
     after(:all) do
-      Object.send(:remove_const, :JustAModel) if defined?(JustAModel)
-      Object.send(:remove_const, :JustAnotherModel) if defined?(JustAnotherModel)
+      remove_classes(JustAModel, JustAnotherModel)
     end
 
     let(:multimodel) do

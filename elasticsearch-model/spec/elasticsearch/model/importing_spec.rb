@@ -23,8 +23,7 @@ describe Elasticsearch::Model::Importing do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyImportingModel) if defined?(DummyImportingModel)
-    Object.send(:remove_const, :DummyImportingAdapter) if defined?(DummyImportingAdapter)
+    remove_classes(DummyImportingModel, DummyImportingAdapter)
   end
 
   before do

@@ -17,8 +17,7 @@ describe Elasticsearch::Model::Indexing do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyIndexingModel) if defined?(DummyIndexingModel)
-    Object.send(:remove_const, :NotFound) if defined?(NotFound)
+    remove_classes(DummyIndexingModel, NotFound)
   end
 
   describe 'the Settings class' do

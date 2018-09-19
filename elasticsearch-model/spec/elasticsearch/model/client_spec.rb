@@ -10,7 +10,7 @@ describe Elasticsearch::Model::Client do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyClientModel) if defined?(DummyClientModel)
+    remove_classes(DummyClientModel)
   end
 
   context 'when a class includes the client module class methods' do

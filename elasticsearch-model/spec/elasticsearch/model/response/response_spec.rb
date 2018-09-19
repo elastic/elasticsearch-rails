@@ -10,7 +10,7 @@ describe Elasticsearch::Model::Response::Response do
   end
 
   after(:all) do
-    Object.send(:remove_const, :OriginClass) if defined?(OriginClass)
+    remove_classes(OriginClass)
   end
 
   let(:response_document) do

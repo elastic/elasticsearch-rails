@@ -58,12 +58,11 @@ describe Elasticsearch::Model::Adapter::Multiple do
   end
 
   after(:all) do
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyOne)
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(Namespace::DummyTwo)
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyTwo)
-    Object.send(:remove_const, :DummyOne) if defined?(DummyOne)
-    Object.send(:remove_const, :Namespace) if defined?(Namespace::DummyTwo)
-    Object.send(:remove_const, :DummyTwo) if defined?(DummyTwo)
+    [DummyOne, Namespace::DummyTwo, DummyTwo].each do |adapter|
+      Elasticsearch::Model::Adapter::Adapter.adapters.delete(adapter)
+    end
+    Namespace.send(:remove_const, :DummyTwo) if defined?(Namespace::DummyTwo)
+    remove_classes(DummyOne, DummyTwo, Namespace)
   end
 
   let(:hits) do

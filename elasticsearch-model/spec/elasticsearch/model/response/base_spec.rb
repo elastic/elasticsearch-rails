@@ -14,8 +14,7 @@ describe Elasticsearch::Model::Response::Base do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyBaseClass) if defined?(DummyBaseClass)
-    Object.send(:remove_const, :OriginClass) if defined?(OriginClass)
+    remove_classes(DummyBaseClass, OriginClass)
   end
 
   let(:response_document) do

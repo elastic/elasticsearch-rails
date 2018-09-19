@@ -3,8 +3,6 @@ require 'spec_helper'
 describe 'naming inheritance' do
 
   before(:all) do
-    Elasticsearch::Model.settings[:inheritance_enabled] = true
-
     class ::TestBase
       extend ActiveModel::Naming
 
@@ -43,12 +41,16 @@ describe 'naming inheritance' do
   end
 
   after(:all) do
-    Elasticsearch::Model.settings[:inheritance_enabled] = false
-    Object.send(:remove_const, :TestBase) if defined?(TestBase)
-    Object.send(:remove_const, :Animal) if defined?(Animal)
-    Object.send(:remove_const, :MyNamespace) if defined?(MyNamespace)
-    Object.send(:remove_const, :Cat) if defined?(Cat)
+    remove_classes(TestBase, Animal, MyNamespace, Cat)
   end
+
+  around(:all) do |example|
+    original_value = Elasticsearch::Model.settings[:inheritance_enabled]
+    Elasticsearch::Model.settings[:inheritance_enabled] = true
+    example.run
+    Elasticsearch::Model.settings[:inheritance_enabled] = original_value
+  end
+
 
   describe '#index_name' do
 

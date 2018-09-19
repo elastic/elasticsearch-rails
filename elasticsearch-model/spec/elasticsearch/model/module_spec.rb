@@ -29,15 +29,12 @@ describe Elasticsearch::Model do
           "SEARCH"
         end
       end
+
+      DummyIncludingModel.__send__ :include, Elasticsearch::Model
     end
 
     after(:all) do
-      Object.send(:remove_const, :DummyIncludingModel) if defined?(DummyIncludingModel)
-      Object.send(:remove_const, :DummyIncludingModelWithSearchMethodDefined) if defined?(DummyIncludingModelWithSearchMethodDefined)
-    end
-
-    before do
-      DummyIncludingModel.__send__ :include, Elasticsearch::Model
+      remove_classes(DummyIncludingModel, DummyIncludingModelWithSearchMethodDefined)
     end
 
     it 'should include and set up the proxy' do

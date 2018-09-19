@@ -13,7 +13,7 @@ describe Elasticsearch::Model::Serializing do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyClass) if defined?(DummyClass)
+    remove_classes(DummyClass)
   end
 
   it 'delegates to #as_json by default' do

@@ -28,15 +28,12 @@ describe Elasticsearch::Model::Proxy do
         {:foo => ['One', 'Two']}
       end
     end
+
+    DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyProxyModel) if defined?(DummyProxyModel)
-    Object.send(:remove_const, :DummyProxyModelWithCallbacks) if defined?(DummyProxyModelWithCallbacks)
-  end
-
-  before do
-    DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
+    remove_classes(DummyProxyModel, DummyProxyModelWithCallbacks)
   end
 
   it 'sets up a proxy method on the class' do

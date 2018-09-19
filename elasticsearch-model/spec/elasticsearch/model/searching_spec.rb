@@ -12,7 +12,7 @@ describe Elasticsearch::Model::Searching::ClassMethods do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummySearchingModel) if defined?(DummySearchingModel)
+    remove_classes(DummySearchingModel)
   end
 
   it 'has the search method' do

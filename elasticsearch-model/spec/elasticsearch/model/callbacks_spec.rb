@@ -17,8 +17,7 @@ describe Elasticsearch::Model::Callbacks do
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummyCallbacksModel) if defined?(DummyCallbacksModel)
-    Object.send(:remove_const, :DummyCallbacksAdapter) if defined?(DummyCallbacksAdapter)
+    remove_classes(DummyCallbacksModel, DummyCallbacksAdapter)
   end
 
   context 'when a model includes the Callbacks module' do
