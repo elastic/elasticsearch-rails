@@ -227,5 +227,17 @@ describe Elasticsearch::Model::Importing do
         end
       end
     end
+
+    context 'when a pipeline is provided as an options' do
+
+      before do
+        expect(DummyImportingModel).to receive(:client).and_return(client)
+        expect(client).to receive(:bulk).with(body: nil, index: 'foo', type: 'foo', pipeline: 'my-pipeline').and_return(response)
+      end
+
+      it 'uses the pipeline option' do
+        expect(DummyImportingModel.import(pipeline: 'my-pipeline')).to eq(0)
+      end
+    end
   end
 end
