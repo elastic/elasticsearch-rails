@@ -10,6 +10,7 @@ gemspec path: '../'
 gem 'activemodel',  '~> 5'
 gem 'activerecord', '~> 5'
 gem 'sqlite3' unless defined?(JRUBY_VERSION)
+gem 'mongoid', '~> 6'
 
 group :development, :testing do
   gem 'rspec'

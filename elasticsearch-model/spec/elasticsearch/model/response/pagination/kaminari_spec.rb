@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Response do
+describe 'Elasticsearch::Model::Response::Response Kaminari' do
 
   before(:all) do
     class ModelClass
@@ -11,7 +11,7 @@ describe Elasticsearch::Model::Response::Response do
   end
 
   after(:all) do
-    Object.send(:remove_const, :ModelClass) if defined?(ModelClass)
+    remove_classes(ModelClass)
   end
 
   let(:response_document) do

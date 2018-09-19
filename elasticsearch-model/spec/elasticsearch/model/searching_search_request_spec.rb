@@ -5,15 +5,13 @@ describe Elasticsearch::Model::Serializing do
   before(:all) do
     class ::DummySearchingModel
       extend Elasticsearch::Model::Searching::ClassMethods
-
       def self.index_name;    'foo'; end
       def self.document_type; 'bar'; end
-
     end
   end
 
   after(:all) do
-    Object.send(:remove_const, :DummySearchingModel) if defined?(DummySearchingModel)
+    remove_classes(DummySearchingModel)
   end
 
   before do

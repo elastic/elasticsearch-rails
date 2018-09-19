@@ -13,12 +13,10 @@ describe Elasticsearch::Model::Adapter do
   end
 
   after(:all) do
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyAdapterClassWithAdapter)
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyAdapterClass)
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyAdapter)
-    Object.send(:remove_const, :DummyAdapterClass) if defined?(DummyAdapterClass)
-    Object.send(:remove_const, :DummyAdapterClassWithAdapter) if defined?(DummyAdapterClassWithAdapter)
-    Object.send(:remove_const, :DummyAdapter) if defined?(DummyAdapter)
+    [DummyAdapterClassWithAdapter, DummyAdapterClass, DummyAdapter].each do |adapter|
+      Elasticsearch::Model::Adapter::Adapter.adapters.delete(adapter)
+    end
+    remove_classes(DummyAdapterClass, DummyAdapterClassWithAdapter, DummyAdapter)
   end
 
   describe '#from_class' do
