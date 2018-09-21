@@ -10,6 +10,7 @@ language: ruby
 
 services:
   - mongodb
+  - elasticsearch
 
 branches:
   only:
@@ -23,29 +24,40 @@ matrix:
   include:
     - rvm: 2.2
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
+      env: RAILS_VERSIONS=3.0
 
     - rvm: 2.3
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
+      env: RAILS_VERSIONS=5.0
 
     - rvm: 2.4
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
+      env: RAILS_VERSIONS=5.0
 
     - rvm: 2.5
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
+      env: RAILS_VERSIONS=5.0
 
     - rvm: jruby-9.1
       jdk: oraclejdk8
-      env: TEST_SUITE=unit
+      env: RAILS_VERSIONS=5.0
 
     - rvm: 2.5
       jdk: oraclejdk8
-      env: TEST_SUITE=integration QUIET=y
+      env: RAILS_VERSIONS=4.0,5.0
+
+env:
+  global:
+    - ELASTICSEARCH_VERSION=6.4.0
+    - QUIET=true
+
 
 before_install:
+  - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb
+  - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
+  - shasum -a 512 -c elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
+  - sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb
+  - sudo service elasticsearch restart
   - gem update --system -q
   - gem update bundler -q
   - gem --version
@@ -57,7 +69,7 @@ install:
   - rake bundle:install
 
 script:
-  - rake test:$TEST_SUITE
+  - rake test:all
 
 notifications:
   disable: true
