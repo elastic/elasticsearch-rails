@@ -1,4 +1,7 @@
 RUBY_1_8 = defined?(RUBY_VERSION) && RUBY_VERSION < '1.9'
+unless defined?(ELASTICSEARCH_URL)
+  ELASTICSEARCH_URL = ENV['ELASTICSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"
+end
 
 exit(0) if RUBY_1_8
 
@@ -56,7 +59,7 @@ module Elasticsearch
         tracer = ::Logger.new(STDERR)
         tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
 
-        Elasticsearch::Model.client = Elasticsearch::Client.new host: "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9250)}",
+        Elasticsearch::Model.client = Elasticsearch::Client.new host: ELASTICSEARCH_URL,
                                                                 tracer: (ENV['QUIET'] ? nil : tracer)
       end
     end
