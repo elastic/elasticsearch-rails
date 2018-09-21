@@ -3,12 +3,12 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in elasticsearch-rails.gemspec
 gemspec
 
-# TODO: Figure out how to specify dependency on local elasticsearch-model without endless "Resolving dependencies"
-# if File.exists? File.expand_path("../../elasticsearch-model", __FILE__)
-#   gem 'elasticsearch-model', :path => File.expand_path("../../elasticsearch-model", __FILE__), :require => true
-# end
-
-
-
 gem 'elasticsearch-model', :path => File.expand_path("../../elasticsearch-model", __FILE__), :require => false
 gem 'elasticsearch-persistence', :path => File.expand_path("../../elasticsearch-persistence", __FILE__), :require => false
+
+
+group :development, :testing do
+  gem 'rspec'
+  gem 'pry-nav'
+  gem 'sqlite3' unless defined?(JRUBY_VERSION)
+end
