@@ -1,6 +1,7 @@
 require 'pathname'
 
-subprojects = %w| elasticsearch-rails elasticsearch-persistence elasticsearch-model |
+subprojects = [ 'elasticsearch-rails', 'elasticsearch-persistence' ]
+subprojects << 'elasticsearch-model' unless defined?(JRUBY_VERSION)
 
 __current__ = Pathname( File.expand_path('..', __FILE__) )
 
@@ -25,15 +26,9 @@ namespace :bundle do
   task :install do
     subprojects.each do |project|
       puts '-'*80
-      sh "bundle install --gemfile #{__current__.join(project)}/Gemfile"
+      sh "cd #{__current__.join(project)} && bundle exec rake bundle:install"
       puts
     end
-    puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile"
-    puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile"
-    puts '-'*80
-    sh "bundle install --gemfile #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile"
   end
 
   desc "Remove Gemfile.lock in all subprojects"
@@ -60,7 +55,7 @@ namespace :test do
   end
 
   desc "Run Elasticsearch (Docker)"
-  task :setup_elasticsearch do
+  task :setup_elasticsearch_docker do
     begin
       sh <<-COMMAND.gsub(/^\s*/, '').gsub(/\s{1,}/, ' ')
           docker run -d=true \
@@ -70,11 +65,26 @@ namespace :test do
             --env "cluster.routing.allocation.disk.threshold_enabled=false" \
             --publish 9250:9200 \
             --rm \
-            docker.elastic.co/elasticsearch/elasticsearch:6.4.0
+            docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
       COMMAND
       require 'elasticsearch/extensions/test/cluster'
-      Elasticsearch::Extensions::Test::Cluster::Cluster.new(version: '6.4.0',
+      Elasticsearch::Extensions::Test::Cluster::Cluster.new(version: ENV['ELASTICSEARCH_VERSION'],
                                                             number_of_nodes: 1).wait_for_green
+    rescue
+    end
+  end
+
+  desc "Setup MongoDB (Docker)"
+  task :setup_mongodb_docker do
+    begin
+      if ENV['MONGODB_VERSION']
+        sh <<-COMMAND.gsub(/^\s*/, '').gsub(/\s{1,}/, ' ')
+            wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-${MONGODB_VERSION}.tgz -O /tmp/mongodb.tgz &&
+            tar -xvf /tmp/mongodb.tgz &&
+            mkdir /tmp/data &&
+            ${PWD}/mongodb-linux-x86_64-${MONGODB_VERSION}/bin/mongod --setParameter enableTestCommands=1 --dbpath /tmp/data --bind_ip 127.0.0.1 --auth &> /dev/null &
+        COMMAND
+      end
     rescue
     end
   end
@@ -106,8 +116,13 @@ namespace :test do
 
   desc "Run all tests in all subprojects"
   task :all do
-    Rake::Task['test:unit'].invoke
-    Rake::Task['test:integration'].invoke
+    subprojects.each do |project|
+      puts '-'*80
+      sh "cd #{project} && " +
+             "unset BUNDLE_GEMFILE && " +
+             "bundle exec rake test:all"
+      puts "\n"
+    end
   end
 
   namespace :cluster do
