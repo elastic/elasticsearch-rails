@@ -49,7 +49,7 @@ env:
 
 
 before_install:
-  - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb
+  - wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/7.0.0/elasticsearch-${ELASTICSEARCH_VERSION}.deb
   - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
   - shasum -a 512 -c elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
   - sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb
@@ -60,6 +60,7 @@ before_install:
   - bundle version
 
 install:
+  - bundle install
   - bundle install
   - rake bundle:clean
   - rake bundle:install
