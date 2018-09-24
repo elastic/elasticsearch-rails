@@ -45,23 +45,24 @@ matrix:
 env:
   global:
     - ELASTICSEARCH_VERSION=7.0.0.alpha
+    - TEST_CLUSTER_PORT=9250
     - QUIET=true
 
 
 before_install:
-  - wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/deb/elasticsearch/7.0.0/elasticsearch-${ELASTICSEARCH_VERSION}.deb
-  - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
-  - shasum -a 512 -c elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
-  - sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb
-  - sudo service elasticsearch restart
+  #- wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb
+  #- wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
+  #- shasum -a 512 -c elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
+  #- sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb
+  #- sudo service elasticsearch restart
   - gem update --system -q
   - gem update bundler -q
   - gem --version
   - bundle version
 
 install:
-  - bundle install
-  - bundle install
+  - bundle install test:setup_elasticsearch_docker
+  - bundle exec rake test:set
   - rake bundle:clean
   - rake bundle:install
 
