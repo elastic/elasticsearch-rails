@@ -44,7 +44,7 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=6.4.0
+    - ELASTICSEARCH_VERSION=7.0.0.alpha
     - QUIET=true
 
 
