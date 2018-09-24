@@ -7,24 +7,16 @@ task :test    => 'test:unit'
 # ----- Test tasks ------------------------------------------------------------
 
 require 'rake/testtask'
-namespace :test do
-  Rake::TestTask.new(:unit) do |test|
-    test.libs << 'lib' << 'test'
-    test.test_files = FileList["test/unit/**/*_test.rb"]
-    test.verbose = false
-    test.warning = false
-  end
+require 'rspec/core/rake_task'
 
-  Rake::TestTask.new(:integration) do |test|
-    test.libs << 'lib' << 'test'
-    test.test_files = FileList["test/integration/**/*_test.rb"]
-    test.verbose = false
-    test.warning = false
-  end
+namespace :test do
+
+  RSpec::Core::RakeTask.new(:spec)
 
   Rake::TestTask.new(:all) do |test|
-    test.libs << 'lib' << 'test'
-    test.test_files = FileList["test/unit/**/*_test.rb", "test/integration/**/*_test.rb"]
+    test.verbose = false
+    test.warning = false
+    test.deps = [ :spec ] unless defined?(JRUBY_VERSION)
   end
 end
 
