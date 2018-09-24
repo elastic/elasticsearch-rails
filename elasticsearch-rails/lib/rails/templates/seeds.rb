@@ -3,7 +3,8 @@ require 'yaml'
 
 Zlib::GzipReader.open(File.expand_path('../articles.yml.gz', __FILE__)) do |gzip|
   puts "Reading articles from gzipped YAML..."
-  @documents = YAML.load_documents(gzip.read)
+  @documents = YAML.respond_to?(:load_documents) ? YAML.load_documents(gzip.read) : 
+    YAML.load_stream(gzip.read)
 end
 
 # Truncate the default ActiveRecord logger output
