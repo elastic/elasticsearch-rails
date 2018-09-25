@@ -24,6 +24,7 @@ RSpec.configure do |config|
     tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
     Elasticsearch::Model.client = Elasticsearch::Client.new host: ELASTICSEARCH_URL,
                                                             tracer: (ENV['QUIET'] ? nil : tracer)
+    puts "Elasticsearch Version: #{Elasticsearch::Model.client.info['version']}"
 
     unless ActiveRecord::Base.connected?
       ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" )
