@@ -9,6 +9,7 @@ RSpec.configure do |config|
   config.formatter = 'documentation'
   config.color = true
 
+  config.before(:suite) { puts "Elasticsearch Version: #{DEFAULT_CLIENT.info['version']}" }
   config.after(:suite) do
     DEFAULT_CLIENT.indices.delete(index: '_all')
   end
