@@ -23,10 +23,13 @@ module Elasticsearch
 
         # Returns the Elasticsearch response
         #
+        # @param cached [Boolean] Optional parameter that returns the cached initial call
+        #                         instead of executing a new search every time
+        #
         # @return [Hash]
         #
-        def response
-          @response ||= HashWrapper.new(search.execute!)
+        def response(cached = false)
+          @response ||= HashWrapper.new(cached ? raw_results : search.execute!)
         end
 
         # Returns the collection of "hits" from Elasticsearch
