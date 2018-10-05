@@ -25,8 +25,8 @@ module Elasticsearch
         #
         # @return [Hash]
         #
-        def response
-          @response ||= HashWrapper.new(search.execute!)
+        def response(cache = false)
+          @response ||= HashWrapper.new(cache ? raw_results : search.execute!)
         end
 
         # Returns the collection of "hits" from Elasticsearch
@@ -65,7 +65,7 @@ module Elasticsearch
 
         # Returns a Hashie::Mash of the aggregations
         #
-        def aggregations
+        def aggregations()
           @aggregations ||= Aggregations.new(raw_response['aggregations'])
         end
 
