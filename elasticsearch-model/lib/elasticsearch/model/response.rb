@@ -26,7 +26,7 @@ module Elasticsearch
         # @return [Hash]
         #
         def response
-          @response ||= HashWrapper.new(search.execute!)
+          @response ||= HashWrapper.new(raw_response)
         end
 
         # Returns the collection of "hits" from Elasticsearch
