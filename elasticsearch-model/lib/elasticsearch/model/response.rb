@@ -25,8 +25,8 @@ module Elasticsearch
         #
         # @return [Hash]
         #
-        def response
-          @response ||= HashWrapper.new(search.execute!)
+        def response(cache = false)
+          @response ||= HashWrapper.new(cache ? raw_results : search.execute!)
         end
 
         # Returns the collection of "hits" from Elasticsearch
@@ -59,20 +59,20 @@ module Elasticsearch
 
         # Returns the statistics on shards
         #
-        def shards(raw_shards = raw_response['_shards'])
-          @shards ||= HashWrapper.new(raw_shards)
+        def shards
+          @shards ||= HashWrapper.new(raw_response['_shards'])
         end
 
         # Returns a Hashie::Mash of the aggregations
         #
-        def aggregations(raw_aggregations = raw_response['aggregations'])
-          @aggregations ||= Aggregations.new(raw_aggregations)
+        def aggregations()
+          @aggregations ||= Aggregations.new(raw_response['aggregations'])
         end
 
         # Returns a Hashie::Mash of the suggestions
         #
-        def suggestions(raw_suggestions = raw_response['suggest'])
-          @suggestions ||= Suggestions.new(raw_suggestions)
+        def suggestions
+          @suggestions ||= Suggestions.new(raw_response['suggest'])
         end
 
         def raw_response
