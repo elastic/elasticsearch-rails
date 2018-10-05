@@ -29,7 +29,7 @@ module Elasticsearch
         # @return [Hash]
         #
         def response(cached = false)
-          @response ||= HashWrapper.new(cached ? raw_results : search.execute!)
+          @response ||= HashWrapper.new(cached ? raw_response : search.execute!)
         end
 
         # Returns the collection of "hits" from Elasticsearch
