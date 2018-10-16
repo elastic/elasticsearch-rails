@@ -60,7 +60,7 @@ module Elasticsearch
         # Returns the statistics on shards
         #
         def shards
-          @shards ||= HashWrapper.new(raw_response['_shards'])
+          @shards ||= response['_shards']
         end
 
         # Returns a Hashie::Mash of the aggregations
@@ -76,7 +76,7 @@ module Elasticsearch
         end
 
         def raw_response
-          @raw_response ||= search.execute!
+          @raw_response ||= @response ? @response.to_hash : search.execute!
         end
       end
     end
