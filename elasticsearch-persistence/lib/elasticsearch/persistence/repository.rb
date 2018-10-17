@@ -211,7 +211,9 @@ module Elasticsearch
       #
       # @since 6.0.0
       def index_exists?(*args)
-        super(index_name: index_name)
+        params = { index_name: index_name }
+        params.merge!(args.first) unless args.empty?
+        super(params)
       end
 
       # Get the nicer formatted string for use in inspection.
