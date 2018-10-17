@@ -353,6 +353,13 @@ describe Elasticsearch::Persistence::Repository do
         it 'determines if the index exists' do
           expect(repository.index_exists?).to be(true)
         end
+
+        context 'when arguments are passed in' do
+
+          it 'passes the arguments to the request' do
+            expect(repository.index_exists?(index: 'other')).to be(false)
+          end
+        end
       end
 
       context 'when the method is called on the class' do
