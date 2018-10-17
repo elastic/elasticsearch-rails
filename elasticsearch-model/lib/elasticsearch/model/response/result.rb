@@ -46,7 +46,7 @@ module Elasticsearch
 
         # Respond to methods from `@result` or `@result._source`
         #
-        def respond_to?(method_name, include_private = false)
+        def respond_to_missing?(method_name, include_private = false)
           @result.respond_to?(method_name.to_sym) || \
           @result._source && @result._source.respond_to?(method_name.to_sym) || \
           super
