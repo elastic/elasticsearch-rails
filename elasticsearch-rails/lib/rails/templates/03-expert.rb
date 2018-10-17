@@ -270,9 +270,8 @@ Elasticsearch::Model.client = Elasticsearch::Client.new host: ELASTICSEARCH_URL
 if Rails.env.development?
   tracer = ActiveSupport::Logger.new('log/elasticsearch.log')
   tracer.level =  Logger::DEBUG
+  Elasticsearch::Model.client.transport.tracer = tracer
 end
-
-Elasticsearch::Model.client.transport.tracer = tracer
 CODE
 
 git add:    "config/initializers"
