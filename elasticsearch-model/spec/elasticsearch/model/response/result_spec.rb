@@ -53,6 +53,14 @@ describe Elasticsearch::Model::Response::Result do
       expect(result._source).to eq('bar' => { 'bam' => 'baz' })
     end
 
+    it 'is recognized by #method' do
+      expect(result.method :bar).to be_a Method
+    end
+
+    it 'respond_to? still works' do
+      expect(result.respond_to? :bar).to be true
+    end
+
     context 'when methods map to keys in subdocuments of the response from Elasticsearch' do
 
       it 'provides access to top level fields via a method' do
