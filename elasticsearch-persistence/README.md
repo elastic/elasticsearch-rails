@@ -568,7 +568,7 @@ and demonstrates a rich set of features:
 ### The ActiveRecord Pattern
 
 The ActiveRecord pattern has been deprecated as of version 6.0.0 of this gem. Please use the
-[Repository Pattern](#the-repository-pattern) instead.
+[Repository Pattern](#the-repository-pattern) instead. For more information on migrating 5.x ActiveRecord-based applications to use the Repository Pattern, please see [this blog post](https://www.elastic.co/blog/activerecord-to-repository-changing-persistence-patterns-with-the-elasticsearch-rails-gem).
 
 ## License
 
