@@ -50,20 +50,7 @@ response_1 = Article.search 'foo';
 puts "Article search:".ansi(:bold),
      response_1.to_a.map { |d| "Title: #{d.title}" }.inspect.ansi(:bold, :yellow)
 
-response_2 = Article.__elasticsearch__.client.suggest \
-  index: Article.index_name,
-  body: {
-    articles: {
-      text: 'foo',
-      completion: { field: 'title.suggest' }
-    }
-  };
-
-puts "Article suggest:".ansi(:bold),
-     response_2['articles'].first['options'].map { |d| "#{d['text']} -> #{d['_source']['url']}" }.
-     inspect.ansi(:bold, :green)
-
-response_3 = Article.search \
+response_2 = Article.search \
   query: {
     match: { title: 'foo' }
   },
@@ -76,7 +63,7 @@ response_3 = Article.search \
   _source: ['title', 'url']
 
 puts "Article search with suggest:".ansi(:bold),
-     response_3.response['suggest']['articles'].first['options'].map { |d| "#{d['text']} -> #{d['_source']['url']}" }.
+     response_2.response['suggest']['articles'].first['options'].map { |d| "#{d['text']} -> #{d['_source']['url']}" }.
      inspect.ansi(:bold, :blue)
 
 require 'pry'; binding.pry;
