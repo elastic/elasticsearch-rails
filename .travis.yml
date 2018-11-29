@@ -48,7 +48,7 @@ env:
     - QUIET=true
 
 before_install:
-  - ELASTICSEARCH_VERSION=7.0.0-alpha1 TEST_CLUSTER_PORT=9250 source ./travis_before_script.sh
+  - ELASTICSEARCH_VERSION=7.0.0 TEST_CLUSTER_PORT=9250 source ./travis_before_script.sh
   - gem update --system -q
   - gem update bundler -q
   - gem --version
