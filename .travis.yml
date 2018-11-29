@@ -43,7 +43,7 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=7.0.0-alpha1
+    - ELASTICSEARCH_VERSION=7.0.0
     - TEST_CLUSTER_PORT=9250
     - QUIET=true
 
