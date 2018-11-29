@@ -12,4 +12,4 @@ echo 'Unzipping file'
 unzip -q /tmp/elasticsearch.zip
 
 echo "Starting elasticsearch on port ${TEST_CLUSTER_PORT}"
-${PWD}/elasticsearch-7.0.0-alpha1-SNAPSHOT/bin/elasticsearch -E http.port=${TEST_CLUSTER_PORT} &> /dev/null &
+${PWD}/elasticsearch-${ELASTICSEARCH_VERSION}-SNAPSHOT/bin/elasticsearch -E http.port=${TEST_CLUSTER_PORT} &> /dev/null &
