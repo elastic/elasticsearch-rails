@@ -38,6 +38,10 @@ module Elasticsearch
           #
           TOTAL = 'total'.freeze
 
+          # The key for accessing the value field in an Elasticsearch query response when 'total' is an object.
+          #
+          VALUE = 'value'.freeze
+
           # The key for accessing the maximum score in an Elasticsearch query response.
           #
           MAX_SCORE = 'max_score'.freeze
@@ -63,7 +67,11 @@ module Elasticsearch
           # The number of total hits for a query
           #
           def total
-            raw_response[HITS][TOTAL]
+            if raw_response[HITS][TOTAL].respond_to?(:keys)
+              raw_response[HITS][TOTAL][VALUE]
+            else
+              raw_response[HITS][TOTAL]
+            end
           end
 
           # The maximum score for a query
