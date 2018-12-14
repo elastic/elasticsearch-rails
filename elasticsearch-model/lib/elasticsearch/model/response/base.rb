@@ -48,7 +48,11 @@ module Elasticsearch
         # Returns the total number of hits
         #
         def total
-          response.response['hits']['total']
+          if response.response['hits']['total'].respond_to?(:keys)
+            response.response['hits']['total']['value']
+          else
+            response.response['hits']['total']
+          end
         end
 
         # Returns the max_score
