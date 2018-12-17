@@ -409,7 +409,7 @@ module Elasticsearch
                 type:  document_type,
                 id:    self.id,
                 body:  { doc: attributes } }.merge(options)
-            )
+            ) unless attributes.empty?
           else
             index_document(options)
           end
