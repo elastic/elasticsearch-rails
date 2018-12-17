@@ -440,10 +440,10 @@ describe Elasticsearch::Model::Indexing do
       context 'when changes are present' do
 
         before do
-          expect(instance).to receive(:client).and_return(client)
-          expect(instance).to receive(:index_name).and_return('foo')
-          expect(instance).to receive(:document_type).and_return('bar')
-          expect(instance).to receive(:id).and_return('1')
+          allow(instance).to receive(:client).and_return(client)
+          allow(instance).to receive(:index_name).and_return('foo')
+          allow(instance).to receive(:document_type).and_return('bar')
+          allow(instance).to receive(:id).and_return('1')
         end
 
         context 'when the changes are included in the as_indexed_json representation' do
@@ -471,6 +471,21 @@ describe Elasticsearch::Model::Indexing do
 
           it 'updates the document' do
             expect(instance.update_document).to be(true)
+          end
+        end
+
+        context 'when none of the changes are included in the as_indexed_json representation' do
+
+          let(:instance) do
+            DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
+          end
+
+          before do
+            instance.instance_variable_set(:@__changed_model_attributes, {'bar' => 'D' })
+          end
+
+          it 'does not update the document' do
+            expect(instance.update_document).to_not be(true)
           end
         end
 
