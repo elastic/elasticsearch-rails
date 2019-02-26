@@ -269,7 +269,8 @@ module Elasticsearch
             self.client.indices.delete index: target_index
           rescue Exception => e
             if e.class.to_s =~ /NotFound/ && options[:force]
-              STDERR.puts "[!!!] Index does not exist (#{e.class})"
+              client.transport.logger.debug("[!!!] Index does not exist (#{e.class})") if client.transport.logger
+              nil
             else
               raise e
             end
@@ -295,7 +296,8 @@ module Elasticsearch
             self.client.indices.refresh index: target_index
           rescue Exception => e
             if e.class.to_s =~ /NotFound/ && options[:force]
-              STDERR.puts "[!!!] Index does not exist (#{e.class})"
+              client.transport.logger.debug("[!!!] Index does not exist (#{e.class})") if client.transport.logger
+              nil
             else
               raise e
             end
