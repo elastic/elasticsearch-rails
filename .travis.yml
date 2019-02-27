@@ -53,6 +53,7 @@ before_install:
   - shasum -a 512 -c elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
   - sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb
   - sudo service elasticsearch start
+  - rm Gemfile.lock
   - gem update --system -q
   - gem update bundler -q
   - gem --version
