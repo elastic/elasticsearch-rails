@@ -25,21 +25,17 @@ matrix:
       jdk: oraclejdk8
       env: RAILS_VERSIONS=3.0
 
-    - rvm: 2.3
+    - rvm: 2.3.8
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0
 
-    - rvm: 2.4
-      jdk: oraclejdk8
-      env: RAILS_VERSIONS=5.0
-
-    - rvm: jruby-9.1
-      jdk: oraclejdk8
-      env: RAILS_VERSIONS=5.0
-
-    - rvm: 2.5
+    - rvm: 2.6.1
       jdk: oraclejdk8
       env: RAILS_VERSIONS=4.0,5.0
+
+    - rvm: jruby-9.2.5.0
+      jdk: oraclejdk8
+      env: RAILS_VERSIONS=5.0
 
 env:
   global:
@@ -49,8 +45,8 @@ env:
 
 before_install:
   - ELASTICSEARCH_VERSION=7.0.0 TEST_CLUSTER_PORT=9250 source ./travis_before_script.sh
-  - gem update --system -q
-  - gem update bundler -q
+  - gem update --system
+  - gem update bundler
   - gem --version
   - bundle version
 

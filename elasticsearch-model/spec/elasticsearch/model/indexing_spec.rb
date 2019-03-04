@@ -629,7 +629,7 @@ describe Elasticsearch::Model::Indexing do
     context 'when the index is not found' do
 
       let(:client) do
-        double('client', indices: indices)
+        double('client', indices: indices, transport: double('transport', { logger: nil }))
       end
 
       let(:indices) do
@@ -639,13 +639,33 @@ describe Elasticsearch::Model::Indexing do
       end
 
       before do
-        expect(DummyIndexingModelForRecreate).to receive(:client).and_return(client)
+        expect(DummyIndexingModelForRecreate).to receive(:client).at_most(3).times.and_return(client)
       end
 
       context 'when the force option is true' do
 
         it 'deletes the index without raising an exception' do
           expect(DummyIndexingModelForRecreate.delete_index!(force: true)).to be_nil
+        end
+
+        context 'when the client has a logger' do
+
+          let(:logger) do
+            Logger.new(STDOUT).tap { |l| l.level = Logger::DEBUG }
+          end
+
+          let(:client) do
+            double('client', indices: indices, transport: double('transport', { logger: logger }))
+          end
+
+          it 'deletes the index without raising an exception' do
+            expect(DummyIndexingModelForRecreate.delete_index!(force: true)).to be_nil
+          end
+
+          it 'logs the message that the index is not found' do
+            expect(logger).to receive(:debug)
+            expect(DummyIndexingModelForRecreate.delete_index!(force: true)).to be_nil
+          end
         end
       end
 
@@ -816,6 +836,8 @@ describe Elasticsearch::Model::Indexing do
         expect(DummyIndexingModelForCreate.create_index!(index: 'custom-foo'))
       end
     end
+
+    context 'when the logging level is debug'
   end
 
   describe '#refresh_index!' do
@@ -841,7 +863,7 @@ describe Elasticsearch::Model::Indexing do
     end
 
     let(:client) do
-      double('client', indices: indices)
+      double('client', indices: indices, transport: double('transport', { logger: nil }))
     end
 
     let(:indices) do
@@ -849,7 +871,7 @@ describe Elasticsearch::Model::Indexing do
     end
 
     before do
-      expect(DummyIndexingModelForRefresh).to receive(:client).and_return(client)
+      expect(DummyIndexingModelForRefresh).to receive(:client).at_most(3).times.and_return(client)
     end
 
     context 'when the force option is true' do
@@ -862,6 +884,26 @@ describe Elasticsearch::Model::Indexing do
 
         it 'does not raise an exception' do
           expect(DummyIndexingModelForRefresh.refresh_index!(force: true)).to be_nil
+        end
+
+        context 'when the client has a logger' do
+
+          let(:logger) do
+            Logger.new(STDOUT).tap { |l| l.level = Logger::DEBUG }
+          end
+
+          let(:client) do
+            double('client', indices: indices, transport: double('transport', { logger: logger }))
+          end
+
+          it 'does not raise an exception' do
+            expect(DummyIndexingModelForRefresh.refresh_index!(force: true)).to be_nil
+          end
+
+          it 'logs the message that the index is not found' do
+            expect(logger).to receive(:debug)
+            expect(DummyIndexingModelForRefresh.refresh_index!(force: true)).to be_nil
+          end
         end
       end
 
