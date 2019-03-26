@@ -46,7 +46,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activemodel",         '> 4'
   s.add_dependency "hashie"
 
-  s.add_development_dependency "bundler", "~> 1.5"
+  s.add_development_dependency "bundler"
   s.add_development_dependency "rake", "~> 11.1"
 
   s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
