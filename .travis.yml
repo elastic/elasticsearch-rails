@@ -39,12 +39,12 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=7.0.0
+    - ELASTICSEARCH_VERSION=7.0.0-beta1
     - TEST_CLUSTER_PORT=9250
     - QUIET=true
 
 before_install:
-  - ELASTICSEARCH_VERSION=7.0.0 TEST_CLUSTER_PORT=9250 source ./travis_before_script.sh
+  - TEST_CLUSTER_PORT=9250 source ./travis_before_script.sh
   - gem update --system
   - gem update bundler
   - gem --version
