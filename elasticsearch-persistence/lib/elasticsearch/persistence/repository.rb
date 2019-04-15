@@ -80,16 +80,6 @@ module Elasticsearch
       # @since 6.0.0
       DEFAULT_INDEX_NAME = 'repository'.freeze
 
-      # The default document type.
-      #
-      # @return [ String ] The default document type.
-      #
-      # @note the document type will no longer be configurable in future versions
-      #   of Elasticsearch.
-      #
-      # @since 6.0.0
-      DEFAULT_DOC_TYPE = '_doc'.freeze
-
       # The repository options.
       #
       # @return [ Hash ]
@@ -141,8 +131,7 @@ module Elasticsearch
       # @since 6.0.0
       def document_type
         @document_type ||= @options[:document_type] ||
-                             __get_class_value(:document_type) ||
-                             DEFAULT_DOC_TYPE
+                             __get_class_value(:document_type)
       end
 
       # Get the index name used by the repository.

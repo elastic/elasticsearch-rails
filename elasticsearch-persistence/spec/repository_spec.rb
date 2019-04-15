@@ -107,9 +107,6 @@ describe Elasticsearch::Persistence::Repository do
         expect(repository.client).to be_a(Elasticsearch::Transport::Client)
       end
 
-      it 'sets a default document type' do
-        expect(repository.document_type).to eq('_doc')
-      end
 
       it 'sets a default index name' do
         expect(repository.index_name).to eq('repository')
@@ -501,10 +498,6 @@ describe Elasticsearch::Persistence::Repository do
         }.to raise_exception(NoMethodError)
       end
 
-      it 'sets a default on the instance' do
-        expect(RepositoryWithoutDSL.new.document_type).to eq('_doc')
-      end
-
       it 'allows the value to be overridden with options on the instance' do
         expect(RepositoryWithoutDSL.new(document_type: 'notes').document_type).to eq('notes')
       end
@@ -621,7 +614,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default on an instance' do
-        expect(RepositoryWithoutDSL.new.mapping.to_hash).to eq(_doc: { properties: {} })
+        expect(RepositoryWithoutDSL.new.mapping.to_hash).to eq(properties: {})
       end
 
       it 'allows the mapping to be set as an option' do
