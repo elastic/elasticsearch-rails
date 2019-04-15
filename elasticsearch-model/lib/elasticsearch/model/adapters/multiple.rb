@@ -75,8 +75,8 @@ module Elasticsearch
                 klass.where(klass.primary_key => ids)
               when Elasticsearch::Model::Adapter::Mongoid.equal?(adapter)
                 klass.where(:id.in => ids)
-              else
-                klass.find(ids)
+            else
+              klass.find(ids)
             end
           end
 
@@ -108,11 +108,19 @@ module Elasticsearch
           def __type_for_hit(hit)
             @@__types ||= {}
 
-            @@__types[ "#{hit[:_index]}::#{hit[:_type]}" ] ||= begin
+            key = "#{hit[:_index]}::#{hit[:_type]}" if hit[:_type] && hit[:_type] != '_doc'
+            key = hit[:_index] unless key
+
+            @@__types[key] ||= begin
               Registry.all.detect do |model|
-                model.index_name == hit[:_index] && model.document_type == hit[:_type]
+                (model.index_name == hit[:_index] && __no_type?(hit)) ||
+                    (model.index_name == hit[:_index] && model.document_type == hit[:_type])
               end
             end
+          end
+
+          def __no_type?(hit)
+            hit[:_type].nil? || hit[:_type] == '_doc'
           end
 
           # Returns the adapter registered for a particular `klass` or `nil` if not available

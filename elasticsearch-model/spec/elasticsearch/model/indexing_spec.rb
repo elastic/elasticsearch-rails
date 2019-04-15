@@ -101,10 +101,8 @@ describe Elasticsearch::Model::Indexing do
       expect(DummyIndexingModel.mappings).to be_a(Elasticsearch::Model::Indexing::Mappings)
     end
 
-    it 'raises an exception when there is no type passed to the #initialize method' do
-      expect {
-        Elasticsearch::Model::Indexing::Mappings.new
-      }.to raise_exception(ArgumentError)
+    it 'does not raise an exception when there is no type passed to the #initialize method' do
+      expect(Elasticsearch::Model::Indexing::Mappings.new)
     end
 
     it 'should be convertible to a hash' do
@@ -115,10 +113,69 @@ describe Elasticsearch::Model::Indexing do
       expect(Elasticsearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).as_json).to eq(expected_mapping_hash)
     end
 
-    context 'when specific mappings are defined' do
+    context 'when a type is specified' do
 
       let(:mappings) do
         Elasticsearch::Model::Indexing::Mappings.new(:mytype)
+      end
+
+      before do
+        mappings.indexes :foo, { type: 'boolean', include_in_all: false }
+        mappings.indexes :bar
+      end
+
+      it 'creates the correct mapping definition' do
+        expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('boolean')
+      end
+
+      it 'uses text as the default field type' do
+        expect(mappings.to_hash[:mytype][:properties][:bar][:type]).to eq('text')
+      end
+
+      context 'when the \'include_type_name\' option is specified' do
+
+        let(:mappings) do
+          Elasticsearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
+        end
+
+        before do
+          mappings.indexes :foo, { type: 'boolean', include_in_all: false }
+        end
+
+        it 'creates the correct mapping definition' do
+          expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('boolean')
+        end
+
+        it 'sets the \'include_type_name\' option' do
+          expect(mappings.to_hash[:mytype][:include_type_name]).to eq(true)
+        end
+      end
+    end
+
+    context 'when a type is not specified' do
+
+      let(:mappings) do
+        Elasticsearch::Model::Indexing::Mappings.new
+      end
+
+      before do
+        mappings.indexes :foo, { type: 'boolean', include_in_all: false }
+        mappings.indexes :bar
+      end
+
+      it 'creates the correct mapping definition' do
+        expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
+      end
+
+      it 'uses text as the default type' do
+        expect(mappings.to_hash[:properties][:bar][:type]).to eq('text')
+      end
+    end
+
+    context 'when specific mappings are defined' do
+
+      let(:mappings) do
+        Elasticsearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
       end
 
       before do
@@ -186,6 +243,10 @@ describe Elasticsearch::Model::Indexing do
           expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:properties]).not_to be_nil
           expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:fields]).to be_nil
         end
+
+        it 'defines the settings' do
+          expect(mappings.to_hash[:mytype][:include_type_name]).to be(true)
+        end
       end
     end
 
@@ -197,7 +258,7 @@ describe Elasticsearch::Model::Indexing do
       end
 
       let(:expected_mappings_hash) do
-        { _doc: { foo: "boo", bar: "bam", properties: {} } }
+        { foo: "boo", bar: "bam", properties: {} }
       end
 
       it 'sets the mappings' do
@@ -213,7 +274,25 @@ describe Elasticsearch::Model::Indexing do
         end
 
         it 'sets the mappings' do
-          expect(DummyIndexingModel.mapping.to_hash[:_doc][:properties][:foo][:type]).to eq('boolean')
+          expect(DummyIndexingModel.mapping.to_hash[:properties][:foo][:type]).to eq('boolean')
+        end
+      end
+
+      context 'when the class has a document_type' do
+
+        before do
+          DummyIndexingModel.instance_variable_set(:@mapping, nil)
+          DummyIndexingModel.document_type(:mytype)
+          DummyIndexingModel.mappings(foo: 'boo')
+          DummyIndexingModel.mappings(bar: 'bam')
+        end
+
+        let(:expected_mappings_hash) do
+          { mytype: { foo: "boo", bar: "bam", properties: {} } }
+        end
+
+        it 'sets the mappings' do
+          expect(DummyIndexingModel.mappings.to_hash).to eq(expected_mappings_hash)
         end
       end
     end
@@ -755,8 +834,8 @@ describe Elasticsearch::Model::Indexing do
       context 'when options are not provided' do
 
         let(:expected_body) do
-          { mappings: { _doc: { properties: { foo: { analyzer: 'keyword',
-                                                     type: 'text' } } } },
+          { mappings: { properties: { foo: { analyzer: 'keyword',
+                                                     type: 'text' } } },
             settings: { index: { number_of_shards: 1 } } }
         end
 
@@ -806,8 +885,8 @@ describe Elasticsearch::Model::Indexing do
 
       before do
         expect(DummyIndexingModelForCreate).to receive(:client).and_return(client)
-        expect(DummyIndexingModelForCreate).to receive(:index_exists?).and_return(false)
         expect(DummyIndexingModelForCreate).to receive(:delete_index!).and_return(true)
+        expect(DummyIndexingModelForCreate).to receive(:index_exists?).and_return(false)
         expect(indices).to receive(:create).and_raise(Exception)
       end
 
@@ -827,8 +906,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       let(:expected_body) do
-        { mappings: { _doc: { properties: { foo: { analyzer: 'keyword',
-                                                   type: 'text' } } } },
+        { mappings: { properties: { foo: { analyzer: 'keyword',
+                                                   type: 'text' } } },
           settings: { index: { number_of_shards: 1 } } }
       end
 

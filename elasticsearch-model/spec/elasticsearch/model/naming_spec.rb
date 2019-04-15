@@ -51,9 +51,9 @@ describe 'naming' do
     expect(::MyNamespace::DummyNamingModelInNamespace.new.index_name).to eq('my_namespace-dummy_naming_model_in_namespaces')
   end
 
-  it 'returns the document type' do
-    expect(DummyNamingModel.document_type).to eq('_doc')
-    expect(DummyNamingModel.new.document_type).to eq('_doc')
+  it 'returns nil' do
+    expect(DummyNamingModel.document_type).to be_nil
+    expect(DummyNamingModel.new.document_type).to be_nil
   end
 
   describe '#index_name' do
@@ -141,8 +141,8 @@ describe 'naming' do
 
   describe '#document_type' do
 
-    it 'returns the document type' do
-      expect(DummyNamingModel.document_type).to eq('_doc')
+    it 'returns nil' do
+      expect(DummyNamingModel.document_type).to be_nil
     end
 
     context 'when the method is called with an argument' do

@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = ">= 1.9.3"
 
-  s.add_dependency "elasticsearch",       '> 1'
+  s.add_dependency "elasticsearch",       '7.0.0.pre'
   s.add_dependency "activesupport",       '> 3'
   s.add_dependency "hashie"
 

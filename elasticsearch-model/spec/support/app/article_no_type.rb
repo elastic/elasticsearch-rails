@@ -15,25 +15,23 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require 'active_record'
+class ::ArticleNoType < ActiveRecord::Base
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
-require 'support/app/question'
-require 'support/app/answer'
-require 'support/app/parent_and_child_searchable'
-require 'support/app/article_with_custom_serialization'
-require 'support/app/import_article'
-require 'support/app/namespaced_book'
-require 'support/app/article_for_pagination'
-require 'support/app/article_with_dynamic_index_name'
-require 'support/app/episode'
-require 'support/app/image'
-require 'support/app/series'
-require 'support/app/mongoid_article'
-require 'support/app/article'
-require 'support/app/article_no_type'
-require 'support/app/searchable'
-require 'support/app/category'
-require 'support/app/author'
-require 'support/app/authorship'
-require 'support/app/comment'
-require 'support/app/post'
+  settings index: {number_of_shards: 1, number_of_replicas: 0} do
+    mapping do
+      indexes :title, type: 'text', analyzer: 'snowball'
+      indexes :body, type: 'text'
+      indexes :clicks, type: 'integer'
+      indexes :created_at, type: 'date'
+    end
+  end
+
+  def as_indexed_json(options = {})
+    attributes
+        .symbolize_keys
+        .slice(:title, :body, :clicks, :created_at)
+        .merge(suggest_title: title)
+  end
+end

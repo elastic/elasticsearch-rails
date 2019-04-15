@@ -97,9 +97,9 @@ describe 'naming inheritance' do
 
   describe '#document_type' do
 
-    it 'returns the default document type' do
-      expect(TestBase.document_type).to eq('_doc')
-      expect(TestBase.new.document_type).to eq('_doc')
+    it 'returns nil' do
+      expect(TestBase.document_type).to be_nil
+      expect(TestBase.new.document_type).to be_nil
     end
 
     it 'returns the explicit document type' do

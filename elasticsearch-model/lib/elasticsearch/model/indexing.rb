@@ -56,9 +56,7 @@ module Elasticsearch
         # @private
         TYPES_WITH_EMBEDDED_PROPERTIES = %w(object nested)
 
-        def initialize(type, options={})
-          raise ArgumentError, "`type` is missing" if type.nil?
-
+        def initialize(type = nil, options={})
           @type    = type
           @options = options
           @mapping = {}
@@ -89,7 +87,11 @@ module Elasticsearch
         end
 
         def to_hash
-          { @type.to_sym => @options.merge( properties: @mapping ) }
+          if @type
+            { @type.to_sym => @options.merge( properties: @mapping ) }
+          else
+            @options.merge( properties: @mapping )
+          end
         end
 
         def as_json(options={})
@@ -246,10 +248,12 @@ module Elasticsearch
           delete_index!(options.merge index: target_index) if options[:force]
 
           unless index_exists?(index: target_index)
-            self.client.indices.create index: target_index,
-                                       body: {
-                                         settings: settings,
-                                         mappings: mappings }
+            options.delete(:force)
+            self.client.indices.create({ index: target_index,
+                                         body: {
+                                           settings: settings,
+                                           mappings: mappings }
+                                       }.merge(options))
           end
         end
 
