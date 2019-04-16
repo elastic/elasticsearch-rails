@@ -53,9 +53,7 @@ namespace :bundle do
     subprojects.each do |project|
       sh "rm -f #{__current__.join(project)}/Gemfile.lock"
     end
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile.lock"
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile.lock"
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile.lock"
+    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/*.lock"
   end
 end
 
