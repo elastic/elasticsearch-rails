@@ -20,6 +20,7 @@
 # $ BUNDLE_GEMFILE=./gemfiles/6.0.gemfile bundle install
 # $ BUNDLE_GEMFILE=./gemfiles/6.0.gemfile bundle exec rake test:integration
 
+
 source 'https://rubygems.org'
 
 gemspec path: '../'
