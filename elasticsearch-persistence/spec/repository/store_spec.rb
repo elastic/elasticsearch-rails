@@ -331,7 +331,7 @@ describe Elasticsearch::Persistence::Repository::Store do
     context 'when the document does not exist' do
 
       before do
-        repository.create_index!
+        repository.create_index!(include_type_name: true)
       end
 
       it 'raises an exception' do
