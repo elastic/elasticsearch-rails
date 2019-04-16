@@ -14,10 +14,7 @@ services:
 branches:
   only:
     - master
-    - travis
-    - 5.x
     - 6.x
-    - 2.x
 
 matrix:
   include:
@@ -29,7 +26,7 @@ matrix:
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0
 
-    - rvm: 2.6.1
+    - rvm: 2.6.2
       jdk: oraclejdk8
       env: RAILS_VERSIONS=4.0,5.0,6.0
 
@@ -39,12 +36,13 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=7.0.0-beta1
+    - ELASTICSEARCH_VERSION=7.0.0
+    - TEST_ES_SERVER=http://localhost:9250
     - TEST_CLUSTER_PORT=9250
     - QUIET=true
 
 before_install:
-  - TEST_CLUSTER_PORT=9250 source ./travis_before_script.sh
+  - source ./travis_before_script.sh
   - gem update --system
   - gem update bundler
   - gem --version
