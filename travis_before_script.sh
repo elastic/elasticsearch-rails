@@ -13,3 +13,4 @@ curl $url | tar xz -C /tmp
 echo "Starting elasticsearch on port ${TEST_CLUSTER_PORT}"
 /tmp/elasticsearch-${ELASTICSEARCH_VERSION}/bin/elasticsearch-keystore create
 /tmp/elasticsearch-${ELASTICSEARCH_VERSION}/bin/elasticsearch -E http.port=${TEST_CLUSTER_PORT} &> /dev/null &
+
