@@ -31,11 +31,6 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
     remove_classes(ModelClass)
   end
 
-  let(:response_document) do
-    { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'},
-      'hits' => { 'total' => 100, 'hits' => (1..100).to_a.map { |i| { _id: i } } } }
-  end
-
   let(:search) do
     Elasticsearch::Model::Searching::SearchRequest.new(model, '*')
   end
@@ -391,37 +386,87 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
     end
   end
 
-  context 'when the model is a single one' do
+  context 'when Elasticsearch version is < 7.0' do
 
-    let(:model) do
-      ModelClass
+    let(:response_document) do
+      { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'},
+        'hits' => { 'total' => 100, 'hits' => (1..100).to_a.map { |i| { _id: i } } } }
     end
 
-    let(:type_field) do
-      'bar'
+    context 'when the model is a single one' do
+
+      let(:model) do
+        ModelClass
+      end
+
+      let(:type_field) do
+        'bar'
+      end
+
+      let(:index_field) do
+        'foo'
+      end
+
+      it_behaves_like 'a search request that can be paginated'
     end
 
-    let(:index_field) do
-      'foo'
-    end
+    context 'when the model is a multimodel' do
 
-    it_behaves_like 'a search request that can be paginated'
+      let(:model) do
+        Elasticsearch::Model::Multimodel.new(ModelClass)
+      end
+
+      let(:type_field) do
+        ['bar']
+      end
+
+      let(:index_field) do
+        ['foo']
+      end
+
+      it_behaves_like 'a search request that can be paginated'
+    end
   end
 
-  context 'when the model is a multimodel' do
+  context 'when Elasticsearch version is >= 7.0' do
 
-    let(:model) do
-      Elasticsearch::Model::Multimodel.new(ModelClass)
+    let(:response_document) do
+      { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'},
+        'hits' => { 'total' => { 'value' => 100, 'relation' => 'eq' }, 'hits' => (1..100).to_a.map { |i| { _id: i } } } }
     end
 
-    let(:type_field) do
-      ['bar']
+    context 'when the model is a single one' do
+
+      let(:model) do
+        ModelClass
+      end
+
+      let(:type_field) do
+        'bar'
+      end
+
+      let(:index_field) do
+        'foo'
+      end
+
+      it_behaves_like 'a search request that can be paginated'
     end
 
-    let(:index_field) do
-      ['foo']
-    end
+    context 'when the model is a multimodel' do
 
-    it_behaves_like 'a search request that can be paginated'
+      let(:model) do
+        Elasticsearch::Model::Multimodel.new(ModelClass)
+      end
+
+      let(:type_field) do
+        ['bar']
+      end
+
+      let(:index_field) do
+        ['foo']
+      end
+
+      it_behaves_like 'a search request that can be paginated'
+    end
   end
 end
