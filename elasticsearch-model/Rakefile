@@ -24,7 +24,7 @@ task :test    => 'test:unit'
 if RUBY_VERSION < '2.3'
   GEMFILES = ['3.0.gemfile', '4.0.gemfile', '5.0.gemfile']
 else
-  GEMFILES = ['4.0.gemfile', '5.0.gemfile']
+  GEMFILES = ['4.0.gemfile', '5.0.gemfile', '6.0.gemfile']
 end
 
 namespace :bundle do
