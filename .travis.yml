@@ -28,12 +28,7 @@ matrix:
 
     - rvm: 2.6.2
       jdk: oraclejdk8
-<<<<<<< HEAD
       env: RAILS_VERSIONS=4.0,5.0,6.0
-=======
-      env: RAILS_VERSIONS=4.0,5.0
-      env: ELASTICSEARCH_VERSION=7.0.0
->>>>>>> Leave testing against ES 6.x to the 6.x branch
 
     - rvm: jruby-9.2.5.0
       jdk: oraclejdk8

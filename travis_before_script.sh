@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 if [ "$ELASTICSEARCH_VERSION" == "6.7.1" ]
 then
     url="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz"
