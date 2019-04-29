@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 if [ "$ELASTICSEARCH_VERSION" == "6.7.1" ]
 then
     url="https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.tar.gz"
@@ -13,4 +14,3 @@ curl $url | tar xz -C /tmp
 echo "Starting elasticsearch on port ${TEST_CLUSTER_PORT}"
 /tmp/elasticsearch-${ELASTICSEARCH_VERSION}/bin/elasticsearch-keystore create
 /tmp/elasticsearch-${ELASTICSEARCH_VERSION}/bin/elasticsearch -E http.port=${TEST_CLUSTER_PORT} &> /dev/null &
-
