@@ -108,10 +108,7 @@ module Elasticsearch
             self.model_name.collection.gsub(/\//, '-')
           end
 
-          def default_document_type
-            DEFAULT_DOC_TYPE
-          end
-
+          def default_document_type; end
       end
 
       module InstanceMethods

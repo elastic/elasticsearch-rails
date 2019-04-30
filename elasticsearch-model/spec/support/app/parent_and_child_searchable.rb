@@ -21,7 +21,7 @@ module ParentChildSearchable
 
   def create_index!(options={})
     client = Question.__elasticsearch__.client
-    client.indices.delete index: INDEX_NAME rescue nil if options[:force]
+    client.indices.delete index: INDEX_NAME rescue nil if options.delete(:force)
 
     settings = Question.settings.to_hash.merge Answer.settings.to_hash
     mapping_properties = { join_field: { type: JOIN,
@@ -31,10 +31,10 @@ module ParentChildSearchable
         Answer.mappings.to_hash[:doc][:properties])
     mappings = { doc: { properties: merged_properties }}
 
-    client.indices.create index: INDEX_NAME,
-                          body: {
+    client.indices.create({ index: INDEX_NAME,
+                            body: {
                               settings: settings.to_hash,
-                              mappings: mappings }
+                              mappings: mappings } }.merge(options))
   end
 
   extend self

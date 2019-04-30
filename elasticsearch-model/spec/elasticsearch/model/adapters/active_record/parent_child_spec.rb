@@ -38,7 +38,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Parent-Child' do
       add_index(:answers, :question_id) unless index_exists?(:answers, :question_id)
 
       clear_tables(Question)
-      ParentChildSearchable.create_index!(force: true)
+      ParentChildSearchable.create_index!(force: true, include_type_name: true)
 
       q_1 = Question.create!(title: 'First Question',  author: 'John')
       q_2 = Question.create!(title: 'Second Question', author: 'Jody')

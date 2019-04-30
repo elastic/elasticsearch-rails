@@ -44,7 +44,7 @@ module Elasticsearch
           #
           # @since 6.0.0
           def document_type(_type = nil)
-            @document_type ||= (_type || DEFAULT_DOC_TYPE)
+            @document_type ||= _type
           end
 
           # Get or set the class-level index name setting.

@@ -48,3 +48,12 @@ end
 #
 # @since 6.0.0
 DEFAULT_REPOSITORY = MyTestRepository.new(index_name: 'my_test_repository', document_type: 'test')
+
+# Get the Elasticsearch server version.
+#
+# @return [ String ] The version of Elasticsearch.
+#
+# @since 7.0.0
+def server_version(client = nil)
+  (client || DEFAULT_CLIENT).info['version']['number']
+end

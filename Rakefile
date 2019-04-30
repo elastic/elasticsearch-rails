@@ -22,6 +22,33 @@ subprojects << 'elasticsearch-model' unless defined?(JRUBY_VERSION)
 
 __current__ = Pathname( File.expand_path('..', __FILE__) )
 
+def admin_client
+  $admin_client ||= begin
+    transport_options = {}
+    test_suite = ENV['TEST_SUITE'].freeze
+
+    if hosts = ENV['TEST_ES_SERVER'] || ENV['ELASTICSEARCH_HOSTS']
+      split_hosts = hosts.split(',').map do |host|
+        /(http\:\/\/)?(\S+)/.match(host)[2]
+      end
+
+      host, port = split_hosts.first.split(':')
+    end
+
+    if test_suite == 'security'
+      transport_options.merge!(:ssl => { verify: false,
+                                         ca_path: CERT_DIR })
+
+      password = ENV['ELASTIC_PASSWORD']
+      user = ENV['ELASTIC_USER'] || 'elastic'
+      url = "https://#{user}:#{password}@#{host}:#{port}"
+    else
+      url = "http://#{host || 'localhost'}:#{port || 9200}"
+    end
+    Elasticsearch::Client.new(host: url, transport_options: transport_options)
+  end
+end
+
 task :default do
   system "rake --tasks"
 end
@@ -53,9 +80,7 @@ namespace :bundle do
     subprojects.each do |project|
       sh "rm -f #{__current__.join(project)}/Gemfile.lock"
     end
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/3.0.gemfile.lock"
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/4.0.gemfile.lock"
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/5.0.gemfile.lock"
+    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/*.lock"
   end
 end
 
@@ -132,7 +157,7 @@ namespace :test do
   end
 
   desc "Run all tests in all subprojects"
-  task :all do
+  task :all => :wait_for_green do
     subprojects.each do |project|
       puts '-'*80
       sh "cd #{project} && " +
@@ -160,6 +185,32 @@ namespace :test do
       (puts "\e[31m[!] Test cluster not running\e[0m"; exit(1)) unless Elasticsearch::Extensions::Test::Cluster.running?
       Elasticsearch::Extensions::Test::Cluster.__print_cluster_info(ENV['TEST_CLUSTER_PORT'] || 9250)
     end
+  end
+end
+
+
+desc "Wait for elasticsearch cluster to be in green state"
+task :wait_for_green do
+  require 'elasticsearch'
+
+  ready = nil
+  5.times do |i|
+    begin
+      puts "Attempting to wait for green status: #{i + 1}"
+      if admin_client.cluster.health(wait_for_status: 'green', timeout: '50s')
+        ready = true
+        break
+      end
+    rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => ex
+      puts "Couldn't confirm green status.\n#{ex.inspect}."
+    rescue Faraday::ConnectionFailed => ex
+      puts "Couldn't connect to Elasticsearch.\n#{ex.inspect}."
+      sleep(30)
+    end
+  end
+  unless ready
+    puts "Couldn't connect to Elasticsearch, aborting program."
+    exit(1)
   end
 end
 

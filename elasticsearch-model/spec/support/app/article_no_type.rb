@@ -15,22 +15,23 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Usage:
-#
-# $ BUNDLE_GEMFILE=./gemfiles/6.0.gemfile bundle install
-# $ BUNDLE_GEMFILE=./gemfiles/6.0.gemfile bundle exec rake test:integration
+class ::ArticleNoType < ActiveRecord::Base
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
+  settings index: {number_of_shards: 1, number_of_replicas: 0} do
+    mapping do
+      indexes :title, type: 'text', analyzer: 'snowball'
+      indexes :body, type: 'text'
+      indexes :clicks, type: 'integer'
+      indexes :created_at, type: 'date'
+    end
+  end
 
-source 'https://rubygems.org'
-
-gemspec path: '../'
-
-gem 'activemodel',  '6.0.0.rc1'
-gem 'activerecord', '6.0.0.rc1'
-gem 'sqlite3' unless defined?(JRUBY_VERSION)
-gem 'mongoid', '~> 6'
-
-group :development, :testing do
-  gem 'rspec'
-  gem 'pry-nav'
+  def as_indexed_json(options = {})
+    attributes
+        .symbolize_keys
+        .slice(:title, :body, :clicks, :created_at)
+        .merge(suggest_title: title)
+  end
 end

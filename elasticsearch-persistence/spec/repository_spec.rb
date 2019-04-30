@@ -107,9 +107,6 @@ describe Elasticsearch::Persistence::Repository do
         expect(repository.client).to be_a(Elasticsearch::Transport::Client)
       end
 
-      it 'sets a default document type' do
-        expect(repository.document_type).to eq('_doc')
-      end
 
       it 'sets a default index name' do
         expect(repository.index_name).to eq('repository')
@@ -282,7 +279,7 @@ describe Elasticsearch::Persistence::Repository do
 
         before do
           begin; repository.delete_index!; rescue; end
-          repository.create_index!
+          repository.create_index!(include_type_name: true)
         end
 
         it 'creates the index' do
@@ -337,7 +334,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!
+          repository.create_index!(include_type_name: true)
         end
 
         it 'refreshes the index' do
@@ -364,7 +361,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!
+          repository.create_index!(include_type_name: true)
         end
 
         it 'determines if the index exists' do
@@ -501,10 +498,6 @@ describe Elasticsearch::Persistence::Repository do
         }.to raise_exception(NoMethodError)
       end
 
-      it 'sets a default on the instance' do
-        expect(RepositoryWithoutDSL.new.document_type).to eq('_doc')
-      end
-
       it 'allows the value to be overridden with options on the instance' do
         expect(RepositoryWithoutDSL.new(document_type: 'notes').document_type).to eq('notes')
       end
@@ -547,6 +540,33 @@ describe Elasticsearch::Persistence::Repository do
         repository.create_index!
         expect(repository.index_exists?).to eq(true)
       end
+
+      context 'when the repository has a document type defined' do
+
+        let(:repository) do
+          RepositoryWithoutDSL.new(client: DEFAULT_CLIENT, document_type: 'mytype')
+        end
+
+        context 'when the server is version >= 7.0', if: server_version > '7.0' do
+
+          context 'when the include_type_name option is specified' do
+
+            it 'creates an index' do
+              repository.create_index!(include_type_name: true)
+              expect(repository.index_exists?).to eq(true)
+            end
+          end
+
+          context 'when the include_type_name option is not specified' do
+
+            it 'raises an error' do
+              expect {
+                repository.create_index!
+              }.to raise_exception(Elasticsearch::Transport::Transport::Errors::BadRequest)
+            end
+          end
+        end
+      end
     end
 
     describe '#delete_index!' do
@@ -562,7 +582,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'deletes an index' do
-        repository.create_index!
+        repository.create_index!(include_type_name: true)
         repository.delete_index!
         expect(repository.index_exists?).to eq(false)
       end
@@ -585,7 +605,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'refreshes an index' do
-        repository.create_index!
+        repository.create_index!(include_type_name: true)
         expect(repository.refresh_index!['_shards']).to be_a(Hash)
       end
     end
@@ -607,7 +627,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'returns whether the index exists' do
-        repository.create_index!
+        repository.create_index!(include_type_name: true)
         expect(repository.index_exists?).to be(true)
       end
     end
@@ -621,7 +641,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default on an instance' do
-        expect(RepositoryWithoutDSL.new.mapping.to_hash).to eq(_doc: { properties: {} })
+        expect(RepositoryWithoutDSL.new.mapping.to_hash).to eq(properties: {})
       end
 
       it 'allows the mapping to be set as an option' do
