@@ -88,7 +88,7 @@ module Elasticsearch
         #
         # @example Return the count of domain object matching a query in the Elasticsearch DSL
         #
-        #    repository.search(query: { match: { title: 'fox dog' } })
+        #    repository.count(query: { match: { title: 'fox dog' } })
         #    # => 1
         #
         # @param [ Hash, String ] query_or_definition The query or search definition.
