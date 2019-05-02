@@ -30,6 +30,10 @@ matrix:
       jdk: oraclejdk8
       env: RAILS_VERSIONS=4.0,5.0,6.0
 
+    - rvm: 2.6.2
+      jdk: oraclejdk8
+      env: RAILS_VERSIONS=5.0, ELASTICSEARCH_VERSION=6.7.1
+
     - rvm: jruby-9.2.5.0
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0
