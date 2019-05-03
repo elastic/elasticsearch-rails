@@ -338,6 +338,10 @@ puts        '-'*80, ''
 git tag: "basic"
 git log: "--reverse --oneline"
 
+# ----- Install Webpacker -------------------------------------------------------------------------
+
+run 'rails webpacker:install'
+
 # ----- Start the application ---------------------------------------------------------------------
 
 unless ENV['RAILS_NO_SERVER_START']
