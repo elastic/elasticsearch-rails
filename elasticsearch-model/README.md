@@ -5,7 +5,7 @@ the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
 
 It aims to simplify integration of Ruby classes ("models"), commonly found
 e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the
-[Elasticsearch](http://www.elasticsearch.org) search and analytics engine.
+[Elasticsearch](https://www.elastic.co) search and analytics engine.
 
 ## Compatibility
 
@@ -322,7 +322,7 @@ Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model
 #### The Elasticsearch DSL
 
 In most situations, you'll want to pass the search definition
-in the Elasticsearch [domain-specific language](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
+in the Elasticsearch [domain-specific language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
 
 ```ruby
 response = Article.search query:     { match:  { title: "Fox Dogs" } },
@@ -760,7 +760,7 @@ SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/elasticsearch-1.0.0.RC1/bin/elasticse
 
 This software is licensed under the Apache 2 license, quoted below.
 
-    Copyright (c) 2014 Elasticsearch <http://www.elasticsearch.org>
+    Copyright (c) 2014 Elasticsearch <https://www.elastic.co>
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
