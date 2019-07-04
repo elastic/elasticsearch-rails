@@ -30,7 +30,7 @@ module Elasticsearch
     #
     module Indexing
 
-      # Wraps the [index settings](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/setup-configuration.html#configuration-index-settings)
+      # Wraps the [index settings](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
       #
       class Settings
         attr_accessor :settings
@@ -48,7 +48,7 @@ module Elasticsearch
         end
       end
 
-      # Wraps the [index mappings](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/mapping.html)
+      # Wraps the [index mappings](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html)
       #
       class Mappings
         attr_accessor :options, :type
@@ -308,7 +308,7 @@ module Elasticsearch
         #
         #     Article.__elasticsearch__.refresh_index! index: 'my-index'
         #
-        # @see http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-refresh.html
+        # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-refresh.html
         #
         def refresh_index!(options={})
           target_index = options.delete(:index) || self.index_name
