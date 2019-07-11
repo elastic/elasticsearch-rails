@@ -36,7 +36,7 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=7.0.0
+    - ELASTICSEARCH_VERSION=7.2.0
     - TEST_ES_SERVER=http://localhost:9250
     - TEST_CLUSTER_PORT=9250
     - QUIET=true
