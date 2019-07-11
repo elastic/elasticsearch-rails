@@ -30,7 +30,7 @@ matrix:
       jdk: oraclejdk8
       env: RAILS_VERSIONS=4.0,5.0,6.0
 
-    - rvm: jruby-9.2.5.0
+    - rvm: jruby-9.2.7.0
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0
 
