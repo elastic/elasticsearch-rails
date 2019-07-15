@@ -34,7 +34,8 @@ begin
 rescue Redis::CannotConnectError
   puts
   say_status  "ERROR", "Redis not available", :red
-  say_status  "", "This template uses an asynchronous indexer via Sidekiq, and requires a running Redis server."
+  say_status  "", "This template uses an asynchronous indexer via Sidekiq, and requires a running Redis server.
+  Make sure you have installed Redis (brew install redis) and that you have launched the server"
   exit(1)
 end
 
