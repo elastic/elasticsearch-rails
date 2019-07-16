@@ -48,7 +48,12 @@ module Elasticsearch
       # Adds a model to the registry
       #
       def add(klass)
-        @models << klass
+        if i = @models.index { |_class| _class.name == klass.name }
+          @models[i] = klass
+          Model::Multiple.__clear_types!
+        else
+          @models << klass
+        end
       end
 
       # Returns a copy of the registered models

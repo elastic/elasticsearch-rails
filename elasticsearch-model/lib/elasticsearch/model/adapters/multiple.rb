@@ -28,6 +28,17 @@ module Elasticsearch
         Adapter.register self, lambda { |klass| klass.is_a? Multimodel }
 
         module Records
+
+          def self.included(base)
+            base.extend(ClassMethods)
+          end
+
+          module ClassMethods
+            def __clear_types!
+              @@__types = nil
+            end
+          end
+
           # Returns a collection of model instances, possibly of different classes (ActiveRecord, Mongoid, ...)
           #
           # @note The order of results in the Elasticsearch response is preserved
