@@ -53,7 +53,29 @@ module Elasticsearch
         #
         # @yield [Hash] Gives the Hash with the Elasticsearch response to the block
         #
-        # @return [Fixnum] Number of errors encountered during importing
+        # @return [Fixnum] default, number of errors encountered during importing
+        # @return [Array<Hash>] if +return+ option is specified to be +"errors"+,
+        #   contains only those failed items in the response +items+ key, e.g.:
+        #
+        #     [
+        #       {
+        #         "index" => {
+        #           "error" => 'FAILED',
+        #           "_index" => "test",
+        #           "_type" => "_doc",
+        #           "_id" => '1',
+        #           "_version" => 1,
+        #           "result" => "foo",
+        #           "_shards" => {
+        #             "total" => 1,
+        #             "successful" => 0,
+        #             "failed" => 1
+        #           },
+        #           "status" => 400
+        #         }
+        #       }
+        #     ]
+        #
         #
         # @example Import all records into the index
         #
@@ -99,20 +121,19 @@ module Elasticsearch
         #
         # @example Update the batch before yielding it
         #
-        #     class Article
-        #       # ...
-        #       def self.enrich(batch)
-        #         batch.each do |item|
-        #           item.metadata = MyAPI.get_metadata(item.id)
-        #         end
-        #         batch
-        #       end
-        #     end
+        #    class Article
+        #      # ...
+        #      def self.enrich(batch)
+        #        batch.each do |item|
+        #          item.metadata = MyAPI.get_metadata(item.id)
+        #        end
+        #        batch
+        #      end
+        #    end
         #
         #    Article.import preprocess: :enrich
         #
-        # @example Return an array of error elements instead of the number of errors, eg.
-        #          to try importing these records again
+        # @example Return an array of error elements instead of the number of errors, e.g. to try importing these records again
         #
         #    Article.import return: 'errors'
         #
