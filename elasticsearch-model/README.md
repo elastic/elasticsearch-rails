@@ -151,7 +151,7 @@ for information about the Ruby client API.
 
 ### Importing the data
 
-The first thing you'll want to do is importing your data into the index:
+The first thing you'll want to do is import your data into the index:
 
 ```ruby
 Article.import
