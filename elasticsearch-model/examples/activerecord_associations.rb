@@ -98,6 +98,22 @@ module Searchable
 
   module Indexing
 
+  #Index only the specified fields
+  settings do
+    mappings dynamic: false do
+      indexes :categories, type: :object do
+        indexes :title
+      end
+      indexes :authors, type: :object do
+        indexes :full_name
+        indexes :department
+      end
+      indexes :comments, type: :object do
+        indexes :text 
+      end
+    end
+  end
+    
     # Customize the JSON serialization for Elasticsearch
     def as_indexed_json(options={})
       self.as_json(
