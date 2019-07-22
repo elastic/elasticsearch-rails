@@ -229,10 +229,12 @@ module Elasticsearch
           delete_index!(options.merge index: target_index) if options[:force]
 
           unless index_exists?(index: target_index)
-            self.client.indices.create index: target_index,
-                                       body: {
-                                         settings: settings,
-                                         mappings: mappings }
+            options.delete(:force)
+            self.client.indices.create({ index: target_index,
+                                         body: {
+                                             settings: settings,
+                                             mappings: mappings }
+                                       }.merge(options))
           end
         end
 

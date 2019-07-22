@@ -84,12 +84,6 @@ describe Elasticsearch::Model::Indexing do
       expect(DummyIndexingModel.mappings).to be_a(Elasticsearch::Model::Indexing::Mappings)
     end
 
-    it 'raises an exception when there is no type passed to the #initialize method' do
-      expect {
-        Elasticsearch::Model::Indexing::Mappings.new
-      }.to raise_exception(ArgumentError)
-    end
-
     it 'should be convertible to a hash' do
       expect(Elasticsearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).to_hash).to eq(expected_mapping_hash)
     end
@@ -728,6 +722,58 @@ describe Elasticsearch::Model::Indexing do
       double('indices')
     end
 
+    context 'when connected to Elasticsearch >= 7.0', if: elasticsearch_gte_7? do
+
+      let(:client) do
+        Elasticsearch::Model.client
+      end
+
+      before do
+        allow(DummyIndexingModelForCreate).to receive(:client).and_return(client)
+      end
+
+      context 'when include_type_name is provided' do
+
+        it 'creates the index' do
+          expect(DummyIndexingModelForCreate.create_index!(force: true, include_type_name: true))
+        end
+      end
+
+      context 'when include_type_name is not provided' do
+
+        it 'raises an error' do
+          expect {
+            DummyIndexingModelForCreate.create_index!(force: true)
+          }.to raise_exception(Elasticsearch::Transport::Transport::Errors::BadRequest)
+        end
+      end
+    end
+
+    context 'when connected to Elasticsearch < 7.0', if: elasticsearch_lt_7? do
+
+      let(:client) do
+        Elasticsearch::Model.client
+      end
+
+      before do
+        allow(DummyIndexingModelForCreate).to receive(:client).and_return(client)
+      end
+
+      context 'when include_type_name is provided' do
+
+        it 'creates the index' do
+          expect(DummyIndexingModelForCreate.create_index!(force: true, include_type_name: true))
+        end
+      end
+
+      context 'when include_type_name is not provided' do
+
+        it 'creates the index' do
+          expect(DummyIndexingModelForCreate.create_index!(force: true, include_type_name: true))
+        end
+      end
+    end
+
     context 'when the index does not exist' do
 
       before do
@@ -819,8 +865,6 @@ describe Elasticsearch::Model::Indexing do
         expect(DummyIndexingModelForCreate.create_index!(index: 'custom-foo'))
       end
     end
-
-    context 'when the logging level is debug'
   end
 
   describe '#refresh_index!' do

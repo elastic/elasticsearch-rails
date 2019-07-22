@@ -118,6 +118,24 @@ def remove_classes(*classes)
   end and true
 end
 
+# Determine whether we are connected to Elasticsearch server version >= 7.0
+#
+# @return [ true, false ] Whether we are connected to at least version 7.0 of Elasticsearch.
+#
+# @since 6.1.0
+def elasticsearch_gte_7?
+  Elasticsearch::Model.client.info['version']['number'] >= '7.0'
+end
+
+# Determine whether we are connected to Elasticsearch server version < 7.0
+#
+# @return [ true, false ] Whether we are connected to less than version 7.0 of Elasticsearch.
+#
+# @since 6.1.0
+def elasticsearch_lt_7?
+  Elasticsearch::Model.client.info['version']['number'] < '7.0'
+end
+
 # Determine whether the tests with Mongoid should be run.
 # Depends on whether MongoDB is running on the default host and port, `localhost:27017`.
 #
