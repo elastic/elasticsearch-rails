@@ -1,6 +1,5 @@
 source 'https://rubygems.org'
 
-gem "bundler", "~> 1"
 gem "rake", "~> 11.1"
 
 gem 'elasticsearch-extensions'
