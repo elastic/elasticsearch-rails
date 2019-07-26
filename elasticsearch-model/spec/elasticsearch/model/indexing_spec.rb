@@ -418,7 +418,7 @@ describe Elasticsearch::Model::Indexing do
         expect(instance).to receive(:client).and_return(client)
         expect(instance).to receive(:as_indexed_json).and_return('JSON')
         expect(instance).to receive(:index_name).and_return('foo')
-        expect(instance).to receive(:document_type).and_return('bar')
+        expect(instance).to receive(:document_type).twice.and_return('bar')
         expect(instance).to receive(:id).and_return('1')
       end
 
@@ -458,7 +458,7 @@ describe Elasticsearch::Model::Indexing do
       before do
         expect(instance).to receive(:client).and_return(client)
         expect(instance).to receive(:index_name).and_return('foo')
-        expect(instance).to receive(:document_type).and_return('bar')
+        expect(instance).to receive(:document_type).twice.and_return('bar')
         expect(instance).to receive(:id).and_return('1')
       end
 
@@ -602,7 +602,7 @@ describe Elasticsearch::Model::Indexing do
         before do
           expect(instance).to receive(:client).and_return(client)
           expect(instance).to receive(:index_name).and_return('foo')
-          expect(instance).to receive(:document_type).and_return('bar')
+          expect(instance).to receive(:document_type).twice.and_return('bar')
           expect(instance).to receive(:id).and_return('1')
           instance.instance_variable_set(:@__changed_model_attributes, { author: 'john' })
         end
