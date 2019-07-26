@@ -368,14 +368,13 @@ module Elasticsearch
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:index
         #
         def index_document(options={})
-          document = self.as_indexed_json
+          document = as_indexed_json
+          request = { index: index_name,
+                      id:    id,
+                      body:  document }
+          request.merge!(type: document_type) if document_type
 
-          client.index(
-            { index: index_name,
-              type:  document_type,
-              id:    self.id,
-              body:  document }.merge(options)
-          )
+          client.index(request.merge!(options))
         end
 
         # Deletes the model instance from the index
@@ -392,11 +391,11 @@ module Elasticsearch
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:delete
         #
         def delete_document(options={})
-          client.delete(
-            { index: index_name,
-              type:  document_type,
-              id:    self.id }.merge(options)
-          )
+          request = { index: index_name,
+                      id:    self.id }
+          request.merge!(type: document_type) if document_type
+
+          client.delete(request.merge!(options))
         end
 
         # Tries to gather the changed attributes of a model instance
@@ -431,12 +430,14 @@ module Elasticsearch
               attributes_in_database
             end
 
-            client.update(
-              { index: index_name,
-                type:  document_type,
-                id:    self.id,
-                body:  { doc: attributes } }.merge(options)
-            ) unless attributes.empty?
+            unless attributes.empty?
+              request = { index: index_name,
+                          id:    self.id,
+                          body:  { doc: attributes } }
+              request.merge!(type: document_type) if document_type
+
+              client.update(request.merge!(options))
+            end
           else
             index_document(options)
           end
@@ -457,12 +458,12 @@ module Elasticsearch
         # @return [Hash] The response from Elasticsearch
         #
         def update_document_attributes(attributes, options={})
-          client.update(
-            { index: index_name,
-              type:  document_type,
-              id:    self.id,
-              body:  { doc: attributes } }.merge(options)
-          )
+          request = { index: index_name,
+                      id:    self.id,
+                      body:  { doc: attributes } }
+          request.merge!(type: document_type) if document_type
+
+          client.update(request.merge!(options))
         end
       end
 
