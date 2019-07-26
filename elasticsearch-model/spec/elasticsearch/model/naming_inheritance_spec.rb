@@ -61,10 +61,10 @@ describe 'naming inheritance' do
     end
 
     around(:all) do |example|
-      original_value = Elasticsearch::Model.settings[:inheritance_enabled]
-      Elasticsearch::Model.settings[:inheritance_enabled] = true
+      original_value = Elasticsearch::Model.inheritance_enabled
+      Elasticsearch::Model.inheritance_enabled = true
       example.run
-      Elasticsearch::Model.settings[:inheritance_enabled] = original_value
+      Elasticsearch::Model.inheritance_enabled = original_value
     end
 
 

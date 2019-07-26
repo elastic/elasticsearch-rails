@@ -732,13 +732,8 @@ module and its submodules for technical information.
 
 The module provides a common `settings` method to customize various features.
 
-At the moment, the only supported setting is `:inheritance_enabled`, which makes the class receiving the module
-respect index names and document types of a super-class, eg. in case you're using "single table inheritance" (STI)
-in Rails:
-
-```ruby
-Elasticsearch::Model.settings[:inheritance_enabled] = true
-```
+Before version 7.0.0 of the gem, the only supported setting was `:inheritance_enabled`. This setting has been deprecated
+and removed.
 
 ## Development and Community
 
@@ -755,6 +750,15 @@ To run all tests against a test Elasticsearch cluster, use a command like this:
 curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.0.RC1.tar.gz | tar xz -C tmp/
 SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/elasticsearch-1.0.0.RC1/bin/elasticsearch bundle exec rake test:all
 ```
+
+### Single Table Inheritance support
+
+Versions < 7.0.0 of this gem supported inheritance-- more specifically, `Single Table Inheritance`. With this feature,
+settings on a parent model could be inherited by a child model leading to different model documents being indexed
+into the same Elasticsearch index. This feature depended on the ability to set a `type` for a document in Elasticsearch.
+The Elasticsearch team has deprecated support for `types`, as is described [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html)
+so this gem has also removed support as it encourages an anti-pattern. Please save different model documents in
+separate indices or implement an artificial `type` field manually in each document.
 
 ## License
 
