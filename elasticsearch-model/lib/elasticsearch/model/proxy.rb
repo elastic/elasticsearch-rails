@@ -82,7 +82,7 @@ module Elasticsearch
 
             if changes_to_save
               attrs = obj.__elasticsearch__.instance_variable_get(:@__changed_model_attributes) || {}
-              latest_changes = changes_to_save.transform_values { |v| v.last }
+              latest_changes = changes_to_save.inject({}) { |latest_changes, (k,v)| latest_changes.merge!(k => v.last) }
               obj.__elasticsearch__.instance_variable_set(:@__changed_model_attributes, attrs.merge(latest_changes))
             end
           end if respond_to?(:before_save)
