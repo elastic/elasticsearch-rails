@@ -338,13 +338,17 @@ module Elasticsearch
           #
           # @see #update_document
           #
-          base.before_save do |i|
-            if i.class.instance_methods.include?(:changes_to_save) # Rails 5.1
-              i.instance_variable_set(:@__changed_model_attributes,
-                                      Hash[ i.changes_to_save.map { |key, value| [key, value.last] } ])
-            elsif i.class.instance_methods.include?(:changes)
-              i.instance_variable_set(:@__changed_model_attributes,
-                                      Hash[ i.changes.map { |key, value| [key, value.last] } ])
+          base.before_save do |obj|
+            if obj.respond_to?(:changes_to_save) # Rails 5.1
+              changes_to_save = obj.changes_to_save
+            elsif obj.respond_to?(:changes)
+              changes_to_save = obj.changes
+            end
+
+            if changes_to_save
+              attrs = obj.instance_variable_get(:@__changed_model_attributes) || {}
+              latest_changes = changes_to_save.inject({}) { |latest_changes, (k,v)| latest_changes.merge!(k => v.last) }
+              obj.instance_variable_set(:@__changed_model_attributes, attrs.merge(latest_changes))
             end
           end if base.respond_to?(:before_save)
         end
