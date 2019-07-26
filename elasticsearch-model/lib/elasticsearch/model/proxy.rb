@@ -19,15 +19,15 @@ module Elasticsearch
   module Model
 
     # This module provides a proxy interfacing between the including class and
-    # {Elasticsearch::Model}, preventing the pollution of the including class namespace.
+    # `Elasticsearch::Model`, preventing the pollution of the including class namespace.
     #
     # The only "gateway" between the model and Elasticsearch::Model is the
-    # `__elasticsearch__` class and instance method.
+    # `#__elasticsearch__` class and instance method.
     #
     # The including class must be compatible with
     # [ActiveModel](https://github.com/rails/rails/tree/master/activemodel).
     #
-    # @example Include the {Elasticsearch::Model} module into an `Article` model
+    # @example Include the `Elasticsearch::Model` module into an `Article` model
     #
     #     class Article < ActiveRecord::Base
     #       include Elasticsearch::Model
@@ -53,21 +53,19 @@ module Elasticsearch
       #       module and the functionality is accessible via the proxy.
       #
       def self.included(base)
+
         base.class_eval do
-          # {ClassMethodsProxy} instance, accessed as `MyModel.__elasticsearch__`
-          #
+
+          # `ClassMethodsProxy` instance, accessed as `MyModel.__elasticsearch__`
           def self.__elasticsearch__ &block
             @__elasticsearch__ ||= ClassMethodsProxy.new(self)
             @__elasticsearch__.instance_eval(&block) if block_given?
             @__elasticsearch__
           end
 
-          # {InstanceMethodsProxy}, accessed as `@mymodel.__elasticsearch__`
-          #
-          def __elasticsearch__ &block
-            @__elasticsearch__ ||= InstanceMethodsProxy.new(self)
-            @__elasticsearch__.instance_eval(&block) if block_given?
-            @__elasticsearch__
+          # Mix the importing module into the `ClassMethodsProxy`
+          self.__elasticsearch__.class_eval do
+            include Adapter.from_class(base).importing_mixin
           end
 
           # Register a callback for storing changed attributes for models which implement
@@ -75,17 +73,27 @@ module Elasticsearch
           #
           # @see http://api.rubyonrails.org/classes/ActiveModel/Dirty.html
           #
-          before_save do |i|
-            if i.class.instance_methods.include?(:changes_to_save) # Rails 5.1
-              a = i.__elasticsearch__.instance_variable_get(:@__changed_model_attributes) || {}
-              i.__elasticsearch__.instance_variable_set(:@__changed_model_attributes,
-                                                        a.merge(Hash[ i.changes_to_save.map { |key, value| [key, value.last] } ]))
-            elsif i.class.instance_methods.include?(:changes)
-              a = i.__elasticsearch__.instance_variable_get(:@__changed_model_attributes) || {}
-              i.__elasticsearch__.instance_variable_set(:@__changed_model_attributes,
-                                                        a.merge(Hash[ i.changes.map { |key, value| [key, value.last] } ]))
+          before_save do |obj|
+            if obj.respond_to?(:changes_to_save) # Rails 5.1
+              changes_to_save = obj.changes_to_save
+            elsif obj.respond_to?(:changes)
+              changes_to_save = obj.changes
+            end
+
+            if changes_to_save
+              attrs = obj.__elasticsearch__.instance_variable_get(:@__changed_model_attributes) || {}
+              latest_changes = changes_to_save.inject({}) { |latest_changes, (k,v)| latest_changes.merge!(k => v.last) }
+              obj.__elasticsearch__.instance_variable_set(:@__changed_model_attributes, attrs.merge(latest_changes))
             end
           end if respond_to?(:before_save)
+        end
+
+        # {InstanceMethodsProxy}, accessed as `@mymodel.__elasticsearch__`
+        #
+        def __elasticsearch__ &block
+          @__elasticsearch__ ||= InstanceMethodsProxy.new(self)
+          @__elasticsearch__.instance_eval(&block) if block_given?
+          @__elasticsearch__
         end
       end
 
@@ -130,6 +138,11 @@ module Elasticsearch
       #
       class ClassMethodsProxy
         include Base
+        include Elasticsearch::Model::Client::ClassMethods
+        include Elasticsearch::Model::Naming::ClassMethods
+        include Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Searching::ClassMethods
+        include Elasticsearch::Model::Importing::ClassMethods
       end
 
       # A proxy interfacing between Elasticsearch::Model instance methods and model instance methods
@@ -138,6 +151,10 @@ module Elasticsearch
       #
       class InstanceMethodsProxy
         include Base
+        include Elasticsearch::Model::Client::InstanceMethods
+        include Elasticsearch::Model::Naming::InstanceMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+        include Elasticsearch::Model::Serializing::InstanceMethods
 
         def klass
           target.class
@@ -153,8 +170,11 @@ module Elasticsearch
         def as_json(options={})
           target.as_json(options)
         end
-      end
 
+        def as_indexed_json(options={})
+          target.respond_to?(:as_indexed_json) ? target.__send__(:as_indexed_json, options) : super
+        end
+      end
     end
   end
 end

@@ -89,9 +89,10 @@ module Elasticsearch
 
     # Adds the `Elasticsearch::Model` functionality to the including class.
     #
-    # * Creates the `__elasticsearch__` class and instance methods, pointing to the proxy object
-    # * Includes the necessary modules in the proxy classes
-    # * Sets up delegation for crucial methods such as `search`, etc.
+    # * Creates the `__elasticsearch__` class and instance method. These methods return a proxy object with
+    #   other common methods defined on them.
+    # * The module includes other modules with further functionality.
+    # * Sets up delegation for common methods such as `import` and `search`.
     #
     # @example Include the module in the `Article` model definition
     #
@@ -108,44 +109,16 @@ module Elasticsearch
       base.class_eval do
         include Elasticsearch::Model::Proxy
 
-        Elasticsearch::Model::Proxy::ClassMethodsProxy.class_eval do
-          include Elasticsearch::Model::Client::ClassMethods
-          include Elasticsearch::Model::Naming::ClassMethods
-          include Elasticsearch::Model::Indexing::ClassMethods
-          include Elasticsearch::Model::Searching::ClassMethods
-        end
-
-        Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval do
-          include Elasticsearch::Model::Client::InstanceMethods
-          include Elasticsearch::Model::Naming::InstanceMethods
-          include Elasticsearch::Model::Indexing::InstanceMethods
-          include Elasticsearch::Model::Serializing::InstanceMethods
-        end
-
-        Elasticsearch::Model::Proxy::InstanceMethodsProxy.class_eval <<-CODE, __FILE__, __LINE__ + 1
-          def as_indexed_json(options={})
-            target.respond_to?(:as_indexed_json) ? target.__send__(:as_indexed_json, options) : super
-          end
-        CODE
-
-        # Delegate important methods to the `__elasticsearch__` proxy, unless they are defined already
-        #
+        # Delegate common methods to the `__elasticsearch__` ClassMethodsProxy, unless they are defined already
         class << self
           METHODS.each do |method|
-            delegate method, to: :__elasticsearch__ unless self.public_instance_methods.include?(method)
+            delegate method, to: :__elasticsearch__ unless self.respond_to?(method)
           end
         end
-
-        # Mix the importing module into the proxy
-        #
-        self.__elasticsearch__.class_eval do
-          include Elasticsearch::Model::Importing::ClassMethods
-          include Adapter.from_class(base).importing_mixin
-        end
-
-        # Add to the registry if it's a class (and not in intermediate module)
-        Registry.add(base) if base.is_a?(Class)
       end
+
+      # Add to the model to the registry if it's a class (and not in intermediate module)
+      Registry.add(base) if base.is_a?(Class)
     end
 
     # Access the module settings
