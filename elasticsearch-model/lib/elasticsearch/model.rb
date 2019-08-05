@@ -201,7 +201,7 @@ module Elasticsearch
 
       STI_DEPRECATION_WARNING = "DEPRECATION WARNING: Support for Single Table Inheritance (STI) is deprecated " +
         "and will be removed in version 7.0.0.\nPlease save different model documents in separate indices and refer " +
-        "to the Elasticsearch documentation for more information."
+        "to the Elasticsearch documentation for more information.".freeze
     end
     extend ClassMethods
 
