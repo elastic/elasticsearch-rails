@@ -121,12 +121,6 @@ module Elasticsearch
       Registry.add(base) if base.is_a?(Class)
     end
 
-    # Access the module settings
-    #
-    def self.settings
-      @settings ||= {}
-    end
-
     module ClassMethods
       # Get the client common for all models
       #
@@ -183,7 +177,7 @@ module Elasticsearch
       # @note Inheritance is disabled by default.
       #
       def inheritance_enabled
-        @inheritance_enabled ||= false
+        @settings[:inheritance_enabled] ||= false
       end
 
       # Enable inheritance of index_name and document_type
@@ -193,8 +187,21 @@ module Elasticsearch
       #     Elasticsearch::Model.inheritance_enabled = true
       #
       def inheritance_enabled=(inheritance_enabled)
-        @inheritance_enabled = inheritance_enabled
+        warn STI_DEPRECATION_WARNING
+        @settings[:inheritance_enabled] = inheritance_enabled
       end
+
+      # Access the module settings
+      #
+      def settings
+        @settings ||= {}
+      end
+
+      private
+
+      STI_DEPRECATION_WARNING = "DEPRECATION WARNING: Support for Single Table Inheritance (STI) is deprecated " +
+        "and will be removed in version 7.0.0.\nPlease save different model documents in separate indices and refer " +
+        "to the Elasticsearch documentation for more information.".freeze
     end
     extend ClassMethods
 
