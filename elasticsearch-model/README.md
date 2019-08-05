@@ -743,14 +743,15 @@ curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticse
 SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/elasticsearch-1.0.0.RC1/bin/elasticsearch bundle exec rake test:all
 ```
 
-### Single Table Inheritance support
+### Single Table Inheritance deprecation
 
-Versions < 7.0.0 of this gem supported inheritance-- more specifically, `Single Table Inheritance`. With this feature,
+`Single Table Inheritance` has been supported until the 6.x series of this gem. With this feature,
 settings on a parent model could be inherited by a child model leading to different model documents being indexed
 into the same Elasticsearch index. This feature depended on the ability to set a `type` for a document in Elasticsearch.
 The Elasticsearch team has deprecated support for `types`, as is described [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html)
-so this gem has also removed support as it encourages an anti-pattern. Please save different model documents in
-separate indices or implement an artificial `type` field manually in each document.
+This gem will also remove support for types and Single Table Inheritance in version 7.0 as it encourages an anti-pattern. 
+Please save different model documents in separate indices or implement an artificial `type` field manually in each 
+document.
 
 ## License
 
