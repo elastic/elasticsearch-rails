@@ -35,7 +35,6 @@ class Note
     __add_date
     __extract_tags
     __truncate_text
-    self
   end
 
   def method_missing(method_name, *arguments, &block)

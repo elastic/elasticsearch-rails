@@ -45,7 +45,6 @@ module Elasticsearch
           metaclass.__send__ :include, adapter.records_mixin
 
           self.options = options
-          self
         end
 
         # Returns the hit IDs
