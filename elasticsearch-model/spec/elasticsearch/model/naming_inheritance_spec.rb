@@ -20,7 +20,11 @@ describe 'naming inheritance' do
       document_type "mammal"
     end
 
-    class ::Dog < ::Animal
+    around(:all) do |example|
+      original_value = Elasticsearch::Model.inheritance_enabled
+      Elasticsearch::Model.inheritance_enabled = true
+      example.run
+      Elasticsearch::Model.inheritance_enabled = original_value
     end
 
     module ::MyNamespace
