@@ -79,8 +79,8 @@ describe 'naming inheritance' do
     describe '#document_type' do
 
       it 'returns nil' do
-        expect(TestBase.document_type).to be_nil
-        expect(TestBase.new.document_type).to be_nil
+        expect(TestBase.document_type).to eq('_doc')
+        expect(TestBase.new.document_type).to eq('_doc')
       end
 
       it 'returns the explicit document type' do
@@ -139,12 +139,6 @@ describe 'naming inheritance' do
       Elasticsearch::Model.settings[:inheritance_enabled] = original_value
     end
 
-
-    it 'returns the default document type' do
-      expect(TestBase.document_type).to eq('_doc')
-      expect(TestBase.new.document_type).to eq('_doc')
-    end
-
     describe '#index_name' do
 
       it 'returns the default index name' do
@@ -169,7 +163,7 @@ describe 'naming inheritance' do
     describe '#document_type' do
 
       it 'returns nil' do
-        expect(TestBase.document_type).to be_nil
+        expect(TestBase.document_type).to eq('_doc')
       end
 
       it 'returns the explicit document type' do
