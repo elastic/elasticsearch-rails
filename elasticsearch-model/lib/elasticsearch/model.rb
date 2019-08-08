@@ -187,7 +187,7 @@ module Elasticsearch
       #     Elasticsearch::Model.inheritance_enabled = true
       #
       def inheritance_enabled=(inheritance_enabled)
-        warn STI_DEPRECATION_WARNING
+        warn STI_DEPRECATION_WARNING if inheritance_enabled
         @settings[:inheritance_enabled] = inheritance_enabled
       end
 
