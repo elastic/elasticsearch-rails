@@ -1,3 +1,39 @@
+## 6.1.0
+
+* Update test tasks and travis (#840)
+* `respond_to_missing?` to silence Ruby 2.4 warnings (#838)
+* Only execute update if document attributes is not empty (#862)
+* Update bundler dependencies in gemspec files (#899)
+* Ensure that 6.x is in the Compatibility table
+
+### ActiveModel
+
+* Fix import when preprocess returns empty collection (#720)
+* Add test for not importing when ActiveRecord query is empty
+* Validate that #first called on response records equals #[] with 0
+* Port basic response tests to rspec (#833)
+* Add newlines at the end of files that are missing it
+* Port adapter tests to rspec (#834)
+* Ensure that specified ActiveRecord order is not overwritten by Elasticsearch search results order (#835)
+* Port remainder of Elasticsearch::Model unit tests to rspec (#836)
+* Port all integration tests to rspec (#837)
+* Avoid executing search twice; Reuse response in Response#raw_response (#850)
+* Update example to account for deprecation of _suggest endpoint in favor of _search
+* Use logger to log index not found message (#868)
+* Add warning and documentation about STI support being deprecated (#898)
+* Tweak STI deprecation description
+
+### Persistence
+
+* Ensure that arguments are passed to super (#853)
+* Index name option is handled by super, no need to pass options expicitly
+
+### Ruby on Rails
+
+* Convert tests to rspec (#842)
+* Fix seeds file to stop using outdated YAML method (#843)
+* Fixed 03-expert.rb set tracer only in dev env (#621)
+
 ## 6.0.0
 
 * Update to test against Elasticsearch 6.4
