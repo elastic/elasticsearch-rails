@@ -25,10 +25,10 @@ source 'https://rubygems.org'
 
 gemspec path: '../'
 
-gem 'activemodel',  '6.0.0.rc1'
-gem 'activerecord', '6.0.0.rc1'
+gem 'activemodel',  '6.0.0'
+gem 'activerecord', '6.0.0'
 gem 'sqlite3' unless defined?(JRUBY_VERSION)
-gem 'mongoid', '~> 6'
+#gem 'mongoid', '~> 6'
 
 group :development, :testing do
   gem 'rspec'
