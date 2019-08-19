@@ -82,6 +82,7 @@ namespace :bundle do
     end
     sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/*.lock"
   end
+  sh "rm -f Gemfile.lock"
 end
 
 namespace :test do
