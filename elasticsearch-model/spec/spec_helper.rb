@@ -23,7 +23,11 @@ require 'will_paginate/collection'
 require 'elasticsearch/model'
 require 'hashie/version'
 require 'active_model'
-require 'mongoid'
+begin
+  require 'mongoid'
+rescue LoadError
+  $stderr.puts("'mongoid' gem could not be loaded")
+end
 require 'yaml'
 require 'active_record'
 
@@ -151,8 +155,10 @@ def test_mongoid?
         client.database.command(ping: 1) && true
       end
     end and true
-  rescue Timeout::Error, LoadError, Mongo::Error => e
-    client.close
+  rescue LoadError
+    $stderr.puts("'mongoid' gem could not be loaded")
+  rescue Timeout::Error, Mongo::Error => e
+    client.close if client
     $stderr.puts("MongoDB not installed or running: #{e}")
   end
 end

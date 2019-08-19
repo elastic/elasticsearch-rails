@@ -26,9 +26,7 @@ require 'support/app/namespaced_book'
 require 'support/app/article_for_pagination'
 require 'support/app/article_with_dynamic_index_name'
 require 'support/app/episode'
-require 'support/app/image'
 require 'support/app/series'
-require 'support/app/mongoid_article'
 require 'support/app/article'
 require 'support/app/article_no_type'
 require 'support/app/searchable'
@@ -37,3 +35,12 @@ require 'support/app/author'
 require 'support/app/authorship'
 require 'support/app/comment'
 require 'support/app/post'
+
+
+# Mongoid models
+begin
+  require 'support/app/image'
+  require 'support/app/mongoid_article'
+rescue
+  $stderr.puts("'mongoid' gem is not installed, could not load Mongoid models")
+end
