@@ -92,21 +92,7 @@ module Elasticsearch
         private
 
           def implicit(prop)
-            value = nil
-
-            if Elasticsearch::Model.settings[:inheritance_enabled]
-              self.ancestors.each do |klass|
-                # When Naming is included in Proxy::ClassMethods the actual model
-                # is among its ancestors. We don't want to call the actual model
-                # since it will result in the same call to the same instance of
-                # Proxy::ClassMethods. To prevent this we also skip the ancestor
-                # that is the target.
-                next if klass == self || self.respond_to?(:target) && klass == self.target
-                break if value = klass.respond_to?(prop) && klass.send(prop)
-              end
-            end
-
-            value || self.send("default_#{prop}")
+            self.send("default_#{prop}")
           end
 
           def default_index_name

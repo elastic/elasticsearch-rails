@@ -89,30 +89,5 @@ describe Elasticsearch::Model do
         expect(Elasticsearch::Model.settings[:foo]).to eq('bar')
       end
     end
-
-    context 'when \'inheritance_enabled\' is set' do
-
-      around do |example|
-        original_value = Elasticsearch::Model.settings[:inheritance_enabled]
-        example.run
-        Elasticsearch::Model.settings[:inheritance_enabled] = original_value
-      end
-
-      context 'when \'inheritance_enabled\' is true' do
-
-        it 'warns with a deprecation message' do
-          expect(Elasticsearch::Model).to receive(:warn)
-          Elasticsearch::Model.inheritance_enabled = true
-        end
-      end
-
-      context 'when \'inheritance_enabled\' is false' do
-
-        it 'does not warn' do
-          expect(Elasticsearch::Model).not_to receive(:warn)
-          Elasticsearch::Model.inheritance_enabled = false
-        end
-      end
-    end
   end
 end
