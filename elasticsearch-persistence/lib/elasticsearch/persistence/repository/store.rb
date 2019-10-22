@@ -59,7 +59,9 @@ module Elasticsearch
             end
             type = document.delete(:type) || document_type
           end
-          client.update(index: index_name, id: id, type: type, body: body)
+          update_params = {index: index_name, id: id, type: type, body: body}
+          update_params = update_params.merge(refresh: options[:refresh]) if options[:refresh]
+          client.update(update_params)
         end
 
         # Remove the serialized object or document with specified ID from Elasticsearch
