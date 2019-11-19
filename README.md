@@ -21,8 +21,8 @@ Elasticsearch client and Ruby API is provided by the
 
 The libraries are compatible with Ruby 1.9.3 and higher.
 
-The version numbers follow the Elasticsearch major versions, and the `master` branch
-is compatible with the Elasticsearch `master` branch, therefore, with the next major version.
+The version numbers follow the Elasticsearch major versions. The `master` branch is compatible with
+the Elasticsearch `master` branch, therefore, with the next major version.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -30,7 +30,14 @@ is compatible with the Elasticsearch `master` branch, therefore, with the next m
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
+| 7.x           | → | 7.x           |
 | master        | → | master        |
+
+Use a release that matches the major version of Elasticsearch in your stack. Each client version is
+backwards compatible with all minor versions of the same major version.
+
+Check out [Elastic product end of life dates](https://www.elastic.co/support/eol)
+to learn which releases are still actively supported and tested.
 
 ## Installation
 
