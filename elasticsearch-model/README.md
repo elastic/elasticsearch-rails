@@ -533,7 +533,7 @@ class Indexer
   Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
   Client = Elasticsearch::Client.new host: 'localhost:9200', logger: Logger
 
-  def perform_async(operation, record_id)
+  def perform(operation, record_id)
     logger.debug [operation, "ID: #{record_id}"]
 
     case operation.to_s
