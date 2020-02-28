@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
   s.add_dependency "hashie"
 
   s.add_development_dependency "bundler"
-  s.add_development_dependency "rake", "~> 11.1"
+  s.add_development_dependency "rake", "~> 12"
 
   s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
 

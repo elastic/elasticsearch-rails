@@ -17,7 +17,7 @@
 
 source 'https://rubygems.org'
 
-gem "rake", "~> 11.1"
+gem "rake", "~> 12"
 
 gem 'elasticsearch-extensions'
 
