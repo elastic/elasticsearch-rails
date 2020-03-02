@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
-
   before(:all) do
     ActiveRecord::Schema.define(:version => 1) do
       create_table :import_articles do |t|
@@ -43,11 +42,9 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
   end
 
   describe '#import' do
-
     context 'when no search criteria is specified' do
-
       before do
-        10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
+        10.times { |i| ImportArticle.create! title: 'Test', views: i.to_s }
         ImportArticle.import
         ImportArticle.__elasticsearch__.refresh_index!
       end
@@ -58,7 +55,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when batch size is specified' do
-
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
       end
@@ -82,7 +78,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when a scope is specified' do
-
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.import(scope: 'popular', force: true)
@@ -95,7 +90,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when a query is specified' do
-
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.import(query: -> { where('views >= 3') })
@@ -108,7 +102,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when there are invalid documents' do
-
       let!(:result) do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         new_article
@@ -132,7 +125,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when a transform proc is specified' do
-
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.import( transform: ->(a) {{ index: { data: { name: a.title, foo: 'BAR' } }}} )
@@ -151,7 +143,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when the model has a default scope' do
-
       around(:all) do |example|
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.instance_eval { default_scope { where('views > 3') } }
@@ -170,7 +161,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when there is a default scope and a query specified' do
-
       around(:all) do |example|
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.instance_eval { default_scope { where('views > 3') } }
@@ -189,7 +179,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     context 'when the batch is empty' do
-
       before do
         ImportArticle.delete_all
         ImportArticle.import
