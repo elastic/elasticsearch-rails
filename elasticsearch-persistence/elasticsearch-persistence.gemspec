@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files  = [ "README.md", "LICENSE.txt" ]
   s.rdoc_options      = [ "--charset=UTF-8" ]
 
-  s.required_ruby_version = ">= 1.9.3"
+  s.required_ruby_version = ">= 2.2"
 
   s.add_dependency "elasticsearch",       '~> 6'
   s.add_dependency "elasticsearch-model", '>= 5'
