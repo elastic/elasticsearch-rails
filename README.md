@@ -19,7 +19,7 @@ Elasticsearch client and Ruby API is provided by the
 
 ## Compatibility
 
-The libraries are compatible with Ruby 1.9.3 and higher.
+The libraries are compatible with Ruby 2.4 and higher.
 
 The version numbers follow the Elasticsearch major versions. The `master` branch is compatible with
 the Elasticsearch `master` branch, therefore, with the next major version.

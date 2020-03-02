@@ -19,14 +19,6 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.2.10
-      jdk: oraclejdk8
-      env: RAILS_VERSIONS=5.0
-
-    - rvm: 2.3.8
-      jdk: oraclejdk8
-      env: RAILS_VERSIONS=5.0
-
     - rvm: 2.4.9
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0
@@ -37,7 +29,7 @@ matrix:
 
     - rvm: 2.6.5
       jdk: oraclejdk8
-      env: RAILS_VERSIONS=4.0,5.0,6.0
+      env: RAILS_VERSIONS=5.0,6.0
 
     - rvm: 2.7.0
       jdk: oraclejdk8
@@ -65,9 +57,7 @@ env:
 
 before_install:
   - source ./.ci/travis_before_script.sh
-  - if [ $TRAVIS_RUBY_VERSION != "2.2.10" ]; then
-      gem update --system;
-    fi
+  - gem update --system;
   - gem update bundler
   - gem --version
   - bundle version
