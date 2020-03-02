@@ -15,17 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require "bundler/gem_tasks"
+require 'bundler/gem_tasks'
 
-desc "Run unit tests"
-task :default => 'test:unit'
-task :test    => 'test:unit'
+desc 'Run unit tests'
+task default: 'test:all'
+task test:    'test:all'
 
-if RUBY_VERSION < '2.3'
-  GEMFILES = ['3.0.gemfile', '4.0.gemfile', '5.0.gemfile']
-else
-  GEMFILES = ['4.0.gemfile', '5.0.gemfile', '6.0.gemfile']
-end
+GEMFILES = ['4.0.gemfile', '5.0.gemfile', '6.0.gemfile']
 
 namespace :bundle do
   desc 'Install dependencies for all the Gemfiles in /gemfiles. Optionally define env variable RAILS_VERSIONS. E.g. RAILS_VERSIONS=3.0,5.0'
@@ -47,7 +43,6 @@ end
 
 require 'rake/testtask'
 namespace :test do
-
   desc 'Run all tests. Optionally define env variable RAILS_VERSIONS. E.g. RAILS_VERSIONS=3.0,5.0'
   task :all, [:rails_versions] do |task, args|
     gemfiles = ENV['RAILS_VERSIONS'] ? ENV['RAILS_VERSIONS'].split(',').map {|v| "#{v}.gemfile"} : GEMFILES
