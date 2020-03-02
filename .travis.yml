@@ -17,21 +17,32 @@ branches:
     - travis
     - 5.x
     - 6.x
-    - 2.x
 
 matrix:
   include:
-    - rvm: 2.2
+    - rvm: 2.2.10
       jdk: oraclejdk8
-      env: RAILS_VERSIONS=3.0
+      env: RAILS_VERSIONS=3.0,4.0
 
     - rvm: 2.3.8
       jdk: oraclejdk8
-      env: RAILS_VERSIONS=5.0
+      env: RAILS_VERSIONS=4.0,5.0
 
-    - rvm: 2.6.1
+    - rvm: 2.4.8
       jdk: oraclejdk8
       env: RAILS_VERSIONS=4.0,5.0
+
+    - rvm: 2.5.7
+      jdk: oraclejdk8
+      env: RAILS_VERSIONS=4.0,5.0,6.0
+
+    - rvm: 2.6.5
+      jdk: oraclejdk8
+      env: RAILS_VERSIONS=4.0,5.0,6.0
+
+    - rvm: 2.7.0
+      jdk: oraclejdk8
+      env: RAILS_VERSIONS=5.0,6.0
 
     - rvm: jruby-9.2.5.0
       jdk: oraclejdk8
@@ -39,7 +50,7 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=6.4.0
+    - ELASTICSEARCH_VERSION=6.8.6
     - QUIET=true
 
 
@@ -48,8 +59,11 @@ before_install:
   - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
   - shasum -a 512 -c elasticsearch-${ELASTICSEARCH_VERSION}.deb.sha512
   - sudo dpkg -i --force-confnew elasticsearch-${ELASTICSEARCH_VERSION}.deb
+  - sudo chown -R elasticsearch:elasticsearch /etc/default/elasticsearch
   - sudo service elasticsearch start
-  - gem update --system
+  - if [ $TRAVIS_RUBY_VERSION != "2.2.10" ]; then
+      gem update --system;
+    fi
   - gem update bundler
   - gem --version
   - bundle version
