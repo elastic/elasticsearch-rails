@@ -24,10 +24,10 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Multimodel', if: test_mong
 
     begin
       ActiveRecord::Schema.define(:version => 1) do
-      create_table Episode.table_name do |t|
-        t.string :name
-        t.datetime :created_at, :default => 'NOW()'
-      end
+        create_table Episode.table_name do |t|
+          t.string :name
+          t.datetime :created_at, :default => 'NOW()'
+        end
       end
     rescue
     end
@@ -36,22 +36,22 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Multimodel', if: test_mong
   before do
     clear_tables(Episode, Image)
     Episode.__elasticsearch__.create_index! force: true
-    Episode.create name: "TheEpisode"
-    Episode.create name: "A great Episode"
-    Episode.create name: "The greatest Episode"
+    Episode.create name: 'TheEpisode'
+    Episode.create name: 'A great Episode'
+    Episode.create name: 'The greatest Episode'
     Episode.__elasticsearch__.refresh_index!
 
     Image.__elasticsearch__.create_index! force: true
-    Image.create! name: "The Image"
-    Image.create! name: "A great Image"
-    Image.create! name: "The greatest Image"
+    Image.create! name: 'The Image'
+    Image.create! name: 'A great Image'
+    Image.create! name: 'The greatest Image'
     Image.__elasticsearch__.refresh_index!
     Image.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
   end
 
   after do
     [Episode, Image].each do |model|
-      model.__elasticsearch__.client.delete_by_query(index: model.index_name, q: '*')
+      model.__elasticsearch__.client.delete_by_query(index: model.index_name, q: '*', body: {})
       model.delete_all
       model.__elasticsearch__.refresh_index!
     end
