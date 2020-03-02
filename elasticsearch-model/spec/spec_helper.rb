@@ -81,8 +81,16 @@ end
 # @since 6.0.1
 def clear_indices(*models)
   models.each do |model|
-    begin; Elasticsearch::Model.client.delete_by_query(index: model.index_name, q: '*'); rescue; end
-  end and true
+    begin
+      Elasticsearch::Model.client.delete_by_query(
+        index: model.index_name,
+        q: '*',
+        body: {}
+      )
+    rescue
+    end
+  end
+  true
 end
 
 # Delete all documents from the tables of the provided list of models.
