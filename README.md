@@ -15,7 +15,7 @@ This repository contains various Ruby and Rails integrations for [Elasticsearch]
 * Templates for generating example Rails application
 
 Elasticsearch client and Ruby API is provided by the
-**[elasticsearch-ruby](https://github.com/elasticsearch/elasticsearch-ruby)** project.
+**[elasticsearch-ruby](https://github.com/elastic/elasticsearch-ruby)** project.
 
 ## Compatibility
 
@@ -59,13 +59,13 @@ gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
 
 This project is split into three separate gems:
 
-* [**`elasticsearch-model`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-model),
+* [**`elasticsearch-model`**](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-model),
   which contains search integration for Ruby/Rails models such as ActiveRecord::Base and Mongoid,
 
-* [**`elasticsearch-persistence`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-persistence),
+* [**`elasticsearch-persistence`**](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-persistence),
   which provides a standalone persistence layer for Ruby/Rails objects and models
 
-* [**`elasticsearch-rails`**](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails),
+* [**`elasticsearch-rails`**](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails),
   which contains various features for Ruby on Rails applications
 
 Example of a basic integration into an ActiveRecord-based model:
@@ -88,7 +88,7 @@ Article.import
 ```
 
 You can generate a simple Ruby on Rails application with a single command
-(see the [other available templates](https://github.com/elasticsearch/elasticsearch-rails/tree/master/elasticsearch-rails#rails-application-templates)):
+(see the [other available templates](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails#rails-application-templates)):
 
 ```bash
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
@@ -115,21 +115,21 @@ repository.save Article.new(title: 'Test')
 
 ### Model
 
-* [[README]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-model/README.md)
+* [[README]](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-model/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-model/)
-* [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-model/test)
+* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-model/spec/elasticsearch/model)
 
 ### Persistence
 
-* [[README]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-persistence/README.md)
+* [[README]](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-persistence/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-persistence/)
-* [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-persistence/test)
+* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-persistence/spec)
 
 ### Rails
 
-* [[README]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/README.md)
+* [[README]](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-rails/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-rails)
-* [[Test Suite]](https://github.com/elasticsearch/elasticsearch-rails/blob/master/elasticsearch-rails/test)
+* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails/spec)
 
 ## Development
 
@@ -154,7 +154,7 @@ The test suite expects an Elasticsearch cluster running on port 9250, and **will
 
     TEST_CLUSTER_COMMAND=/tmp/builds/elasticsearch-2.0.0-SNAPSHOT/bin/elasticsearch TEST_CLUSTER_NODES=1 bundle exec rake test:cluster:start
 
-See more information in the documentation  for the [`elasticsearch-extensions`](https://github.com/elasticsearch/elasticsearch-ruby/tree/master/elasticsearch-extensions#testcluster) gem.
+See more information in the documentation  for the [`elasticsearch-extensions`](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-extensions#testcluster) gem.
 
 ## License
 
