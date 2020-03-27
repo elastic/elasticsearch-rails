@@ -43,10 +43,8 @@ to learn which releases are still actively supported and tested.
 
 Install each library from [Rubygems](https://rubygems.org/gems/elasticsearch):
 
-```ruby
-gem install elasticsearch-model
-gem install elasticsearch-rails
-```
+    gem install elasticsearch-model
+    gem install elasticsearch-rails
 
 To use an unreleased version, add it to your `Gemfile` for [Bundler](http://bundler.io):
 
