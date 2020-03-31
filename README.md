@@ -1,6 +1,7 @@
 # Elasticsearch
 
 [![Build Status](https://travis-ci.org/elastic/elasticsearch-rails.svg?branch=master)](https://travis-ci.org/elastic/elasticsearch-rails) [![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Felastic%2Felasticsearch-rails.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Felastic%2Felasticsearch-rails?ref=badge_shield)
 
 This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
@@ -174,3 +175,6 @@ This software is licensed under the Apache 2 license, quoted below.
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Felastic%2Felasticsearch-rails.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Felastic%2Felasticsearch-rails?ref=badge_large)
