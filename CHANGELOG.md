@@ -1,3 +1,9 @@
+## 7.1.0.pre
+
+* Tested with elasticsearch Ruby client version 7.6.0
+* Updates rake version
+* Adds pipeline to bulk params [commit](https://github.com/elastic/elasticsearch-rails/commit/63c24c9fe48a74d00c65145cc55c32f4c6907448)
+
 ## 7.0.0.pre
 
 * Update test tasks and travis (#840)
