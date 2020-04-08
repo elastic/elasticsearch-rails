@@ -19,19 +19,19 @@ branches:
 
 matrix:
   include:
-    - rvm: 2.4.9
+    - rvm: 2.4
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0
 
-    - rvm: 2.5.7
+    - rvm: 2.5
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0,6.0
 
-    - rvm: 2.6.5
+    - rvm: 2.6
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0,6.0
 
-    - rvm: 2.7.0
+    - rvm: 2.7
       jdk: oraclejdk8
       env: RAILS_VERSIONS=5.0,6.0
 
@@ -50,7 +50,7 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=7.2.0
+    - ELASTICSEARCH_VERSION=7.6.2
     - TEST_ES_SERVER=http://localhost:9250
     - TEST_CLUSTER_PORT=9250
     - QUIET=true
