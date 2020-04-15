@@ -1,4 +1,10 @@
-## 7.0.0.pre
+## 7.1.0
+
+* Tested with elasticsearch Ruby client version 7.6.0
+* Updates rake version
+* Adds pipeline to bulk params [commit](https://github.com/elastic/elasticsearch-rails/commit/63c24c9fe48a74d00c65145cc55c32f4c6907448)
+
+## 7.0.0
 
 * Update test tasks and travis (#840)
 * `respond_to_missing?` to silence Ruby 2.4 warnings (#838)
@@ -7,7 +13,6 @@
 * Only execute update if document attributes is not empty (#862)
 * Remove bundler version requirement in gemspec files
 * 7.0 support (#875)
-* Update version to 7.0.0.pre
 
 ### ActiveModel
 
