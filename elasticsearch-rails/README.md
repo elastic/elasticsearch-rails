@@ -17,6 +17,7 @@ is compatible with the Elasticsearch `master` branch, therefore, with the next m
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
+| 7.x           | → | 7.x           |
 | master        | → | master        |
 
 ## Installation
@@ -98,8 +99,8 @@ You should see the duration of the request to Elasticsearch as part of each log 
 ### Rails Application Templates
 
 You can generate a fully working example Ruby on Rails application, with an `Article` model and a search form,
-to play with (it even downloads _Elasticsearch_ itself, generates the application skeleton and leaves you with
-a _Git_ repository to explore the steps and the code) with the
+to play with (it generates the application skeleton and leaves you with a _Git_ repository to explore the
+steps and the code) with the
 [`01-basic.rb`](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-rails/lib/rails/templates/01-basic.rb) template:
 
 ```bash
