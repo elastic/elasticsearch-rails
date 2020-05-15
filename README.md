@@ -86,7 +86,20 @@ Article.import
 ```
 
 You can generate a simple Ruby on Rails application with a single command
-(see the [other available templates](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails#rails-application-templates)):
+(see the [other available templates](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails#rails-application-templates)). You'll need to have an Elasticsearch cluster running on your system before generating the app. The easiest way of getting this set up is by running it with Docker with this command:
+
+```bash
+  docker run \
+    --name elasticsearch-rails-searchapp \
+    --publish 9200:9200 \
+    --env "discovery.type=single-node" \
+    --env "cluster.name=elasticsearch-rails" \
+    --env "cluster.routing.allocation.disk.threshold_enabled=false" \
+    --rm \
+    docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0
+```
+
+Once Elasticsearch is running, you can generate the simple app with this command:
 
 ```bash
 rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
