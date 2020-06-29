@@ -17,28 +17,6 @@ This repository contains various Ruby and Rails integrations for [Elasticsearch]
 Elasticsearch client and Ruby API is provided by the
 **[elasticsearch-ruby](https://github.com/elastic/elasticsearch-ruby)** project.
 
-## Compatibility
-
-The libraries are compatible with Ruby 2.4 and higher.
-
-The version numbers follow the Elasticsearch major versions. The `master` branch is compatible with
-the Elasticsearch `master` branch, therefore, with the next major version.
-
-| Rubygem       |   | Elasticsearch |
-|:-------------:|:-:| :-----------: |
-| 0.1           | → | 1.x           |
-| 2.x           | → | 2.x           |
-| 5.x           | → | 5.x           |
-| 6.x           | → | 6.x           |
-| 7.x           | → | 7.x           |
-| master        | → | master        |
-
-Use a release that matches the major version of Elasticsearch in your stack. Each client version is
-backwards compatible with all minor versions of the same major version.
-
-Check out [Elastic product end of life dates](https://www.elastic.co/support/eol)
-to learn which releases are still actively supported and tested.
-
 ## Installation
 
 Install each library from [Rubygems](https://rubygems.org/gems/elasticsearch):
@@ -52,6 +30,24 @@ To use an unreleased version, add it to your `Gemfile` for [Bundler](http://bund
 gem 'elasticsearch-model', github: 'elastic/elasticsearch-rails', branch: '5.x'
 gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
 ```
+
+## Compatibility
+
+The libraries are compatible with Ruby 2.4 and higher.
+
+The version numbers follow the Elasticsearch major versions. The `master` branch is compatible with the latest Elasticsearch stack stable release.
+
+| Rubygem       |   | Elasticsearch |
+|:-------------:|:-:| :-----------: |
+| 0.1           | → | 1.x           |
+| 2.x           | → | 2.x           |
+| 5.x           | → | 5.x           |
+| 6.x           | → | 6.x           |
+| master        | → | 7.x           |
+
+Use a release that matches the major version of Elasticsearch in your stack. Each client version is backwards compatible with all minor versions of the same major version.
+
+Check out [Elastic product end of life dates](https://www.elastic.co/support/eol) to learn which releases are still actively supported and tested.
 
 ## Usage
 
@@ -108,10 +104,8 @@ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elast
 Example of using Elasticsearch as a repository for a Ruby domain object:
 
 ```ruby
-require 'virtus'
 class Article
-  include Virtus.model
-  attribute :title, String
+  attr_accessor :title
 end
 
 require 'elasticsearch/persistence'

@@ -1,18 +1,14 @@
 # Elasticsearch::Model
 
-The `elasticsearch-model` library builds on top of the
-the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
+The `elasticsearch-model` library builds on top of the the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
 
-It aims to simplify integration of Ruby classes ("models"), commonly found
-e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the
-[Elasticsearch](https://www.elastic.co) search and analytics engine.
+It aims to simplify integration of Ruby classes ("models"), commonly found e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the [Elasticsearch](https://www.elastic.co) search and analytics engine.
 
 ## Compatibility
 
-This library is compatible with Ruby 1.9.3 and higher.
+This library is compatible with Ruby 2.4 and higher.
 
-The library version numbers follow the Elasticsearch major versions, and the `master` branch
-is compatible with the Elasticsearch `master` branch, therefore, with the next major version.
+The library version numbers follow the Elasticsearch major versions. The `master` branch is compatible with the latest Elasticsearch stack stable release.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -20,7 +16,7 @@ is compatible with the Elasticsearch `master` branch, therefore, with the next m
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
-| master        | → | master        |
+| master        | → | 7.x           |
 
 ## Installation
 
@@ -73,9 +69,7 @@ This will extend the model with functionality related to Elasticsearch.
 
 #### Feature Extraction Pattern
 
-Instead of including the `Elasticsearch::Model` module directly in your model,
-you can include it in a "concern" or "trait" module, which is quite common pattern in Rails applications,
-using e.g.  `ActiveSupport::Concern` as the instrumentation:
+Instead of including the `Elasticsearch::Model` module directly in your model, you can include it in a "concern" or "trait" module, which is quite common pattern in Rails applications, using e.g.  `ActiveSupport::Concern` as the instrumentation:
 
 ```ruby
 # In: app/models/concerns/searchable.rb
@@ -290,11 +284,8 @@ NOTE: It is _not_ possible to chain other methods on top of the `records` object
 
 #### Pagination
 
-You can implement pagination with the `from` and `size` search parameters. However, search results
-can be automatically paginated with the [`kaminari`](http://rubygems.org/gems/kaminari) or
-[`will_paginate`](https://github.com/mislav/will_paginate) gems.
-(The pagination gems must be added before the Elasticsearch gems in your Gemfile,
-or loaded first in your application.)
+You can implement pagination with the `from` and `size` search parameters. However, search results can be automatically paginated with the [`kaminari`](http://rubygems.org/gems/kaminari) or [`will_paginate`](https://github.com/mislav/will_paginate) gems.
+(The pagination gems must be added before the Elasticsearch gems in your Gemfile, or loaded first in your application.)
 
 If Kaminari or WillPaginate is loaded, use the familiar paging methods:
 
@@ -322,8 +313,7 @@ Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model
 
 #### The Elasticsearch DSL
 
-In most situations, you'll want to pass the search definition
-in the Elasticsearch [domain-specific language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
+In most situations, you'll want to pass the search definition in the Elasticsearch [domain-specific language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
 
 ```ruby
 response = Article.search query:     { match:  { title: "Fox Dogs" } },
@@ -333,8 +323,7 @@ response.results.first.highlight.title
 # ["Quick brown <em>fox</em>"]
 ```
 
-You can pass any object which implements a `to_hash` method, which is called automatically,
-so you can use a custom class or your favourite JSON builder to build the search definition:
+You can pass any object which implements a `to_hash` method, which is called automatically, so you can use a custom class or your favourite JSON builder to build the search definition:
 
 ```ruby
 require 'jbuilder'
@@ -354,8 +343,7 @@ response.results.first.title
 # => "Quick brown fox"
 ```
 
-Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-dsl) library, which provides a specialized Ruby API for
-the Elasticsearch Query DSL:
+Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
 
 ```ruby
 require 'elasticsearch/dsl'

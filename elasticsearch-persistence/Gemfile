@@ -24,8 +24,6 @@ gem 'elasticsearch-model',
     path: File.expand_path('../elasticsearch-model', __dir__),
     require: false
 
-gem 'virtus'
-
 group :development, :testing do
   gem 'pry-nav'
   gem 'rspec'
