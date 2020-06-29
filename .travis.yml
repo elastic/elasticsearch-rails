@@ -3,11 +3,8 @@
 # -----------------------------------------------------------------------------
 
 dist: trusty
-
 sudo: required
-
 language: ruby
-
 services:
   - mongodb
 
@@ -50,7 +47,7 @@ matrix:
 
 env:
   global:
-    - ELASTICSEARCH_VERSION=7.6.2
+    - ELASTICSEARCH_VERSION=7.8.0
     - TEST_ES_SERVER=http://localhost:9250
     - TEST_CLUSTER_PORT=9250
     - QUIET=true
