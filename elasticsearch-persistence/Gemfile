@@ -20,11 +20,13 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in elasticsearch-persistence.gemspec
 gemspec
 
-gem 'elasticsearch-model', :path => File.expand_path("../../elasticsearch-model", __FILE__), :require => false
+gem 'elasticsearch-model',
+    path: File.expand_path('../elasticsearch-model', __dir__),
+    require: false
 
 gem 'virtus'
 
 group :development, :testing do
-  gem 'rspec'
   gem 'pry-nav'
+  gem 'rspec'
 end
