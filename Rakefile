@@ -17,10 +17,10 @@
 
 require 'pathname'
 
-subprojects = [ 'elasticsearch-rails', 'elasticsearch-persistence' ]
+subprojects = ['elasticsearch-rails', 'elasticsearch-persistence']
 subprojects << 'elasticsearch-model' unless defined?(JRUBY_VERSION)
 
-__current__ = Pathname( File.expand_path('..', __FILE__) )
+__current__ = Pathname(File.expand_path(__dir__))
 
 def admin_client
   $admin_client ||= begin
@@ -50,7 +50,7 @@ def admin_client
 end
 
 task :default do
-  system "rake --tasks"
+  system 'rake --tasks'
 end
 
 task :subprojects do
@@ -62,11 +62,11 @@ task :subprojects do
   end
 end
 
-desc "Alias for `bundle:install`"
-task :bundle => 'bundle:install'
+desc 'Alias for `bundle:install`'
+task bundle: 'bundle:install'
 
 namespace :bundle do
-  desc "Run `bundle install` in all subprojects"
+  desc 'Run `bundle install` in all subprojects'
   task :install do
     subprojects.each do |project|
       puts '-'*80

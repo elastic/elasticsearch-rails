@@ -20,12 +20,16 @@ source 'https://rubygems.org'
 # Specify your gem's dependencies in elasticsearch-rails.gemspec
 gemspec
 
-gem 'elasticsearch-model', :path => File.expand_path("../../elasticsearch-model", __FILE__), :require => false
-gem 'elasticsearch-persistence', :path => File.expand_path("../../elasticsearch-persistence", __FILE__), :require => false
+gem 'elasticsearch-model',
+    path: File.expand_path('../elasticsearch-model', __dir__),
+    require: false
 
+gem 'elasticsearch-persistence',
+    path: File.expand_path('../elasticsearch-persistence', __dir__),
+    require: false
 
 group :development, :testing do
-  gem 'rspec'
   gem 'pry-nav'
+  gem 'rspec'
   gem 'sqlite3' unless defined?(JRUBY_VERSION)
 end
