@@ -1,0 +1,41 @@
+name: master
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  test-master:
+    env:
+      TEST_ES_SERVER: http://localhost:9200
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [ 2.5, 2.6, 2.7, jruby ]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Increase system limits
+      run: |
+        sudo swapoff -a
+        sudo sysctl -w vm.swappiness=1
+        sudo sysctl -w fs.file-max=262144
+        sudo sysctl -w vm.max_map_count=262144
+    - uses: elastic/elastic-github-actions/elasticsearch@master
+      with:
+        stack-version: 7.8.0
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - name: Bundle
+      run: |
+        sudo apt-get install libsqlite3-dev
+        gem install bundler
+        bundle install
+        bundle exec rake bundle:clean
+        bundle exec rake bundle:install
+    - name: Test
+      run: bundle exec rake test:all
+        
