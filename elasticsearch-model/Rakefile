@@ -21,7 +21,9 @@ desc 'Run unit tests'
 task default: 'test:all'
 task test:    'test:all'
 
-GEMFILES = ['4.0.gemfile', '5.0.gemfile', '6.0.gemfile']
+gemfiles = ['5.0.gemfile', '6.0.gemfile']
+gemfiles << '4.0.gemfile' if RUBY_VERSION < '2.7'
+GEMFILES = gemfiles.freeze
 
 namespace :bundle do
   desc 'Install dependencies for all the Gemfiles in /gemfiles. Optionally define env variable RAILS_VERSIONS. E.g. RAILS_VERSIONS=3.0,5.0'
