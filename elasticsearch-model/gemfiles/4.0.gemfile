@@ -9,10 +9,11 @@ gemspec path: '../'
 
 gem 'activemodel',  '~> 4'
 gem 'activerecord', '~> 4'
-gem 'sqlite3', '~> 1.3.6' unless defined?(JRUBY_VERSION)
 gem 'mongoid', '~> 5'
+gem 'sqlite3', '~> 1.3.6' unless defined?(JRUBY_VERSION)
 
 group :development, :testing do
-  gem 'rspec'
+  gem 'bigdecimal', '~> 1'
   gem 'pry-nav'
+  gem 'rspec'
 end
