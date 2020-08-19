@@ -1,3 +1,12 @@
+## 7.1.1
+
+* Fix: Ruby 2.7 deprecation warning on `find_in_batches`
+* Updates README for generating app with template. Related: #938
+
+### ActiveModel
+
+* Do not override existing methods (#936)
+
 ## 7.1.0
 
 * Tested with elasticsearch Ruby client version 7.6.0
