@@ -1,3 +1,7 @@
+## 6.1.1
+
+* fix: Ruby 2.7 deprecation warning on `find_in_batches`
+
 ## 6.1.0
 
 * Update test tasks and travis (#840)
