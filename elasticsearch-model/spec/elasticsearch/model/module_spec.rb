@@ -48,6 +48,7 @@ describe Elasticsearch::Model do
       end
 
       DummyIncludingModel.__send__ :include, Elasticsearch::Model
+      DummyIncludingModelWithSearchMethodDefined.__send__ :include, Elasticsearch::Model
     end
 
     after(:all) do

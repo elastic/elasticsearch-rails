@@ -112,7 +112,7 @@ module Elasticsearch
         # Delegate common methods to the `__elasticsearch__` ClassMethodsProxy, unless they are defined already
         class << self
           METHODS.each do |method|
-            delegate method, to: :__elasticsearch__ unless self.respond_to?(method)
+            delegate method, to: :__elasticsearch__ unless self.public_instance_methods.include?(method)
           end
         end
       end
