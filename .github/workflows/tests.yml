@@ -1,13 +1,11 @@
-name: master
+name: 7.1.1
 on:
   push:
     branches:
-      - master
-      - 6.x
+      - 7.1.1
   pull_request:
     branches:
-      - master
-      - 6.x
+      - 7.1.1
 jobs:
   test-master:
     env:
