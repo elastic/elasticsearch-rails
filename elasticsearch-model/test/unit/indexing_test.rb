@@ -173,8 +173,6 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           (@callbacks ||= {})[block.hash] = block
         end
 
-        def changed_attributes; [:foo]; end
-
         def changes
           {:foo => ['One', 'Two']}
         end
@@ -188,8 +186,6 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
           (@callbacks ||= {})[block.hash] = block
         end
 
-        def changed_attributes; [:foo, :bar]; end
-
         def changes
           {:foo => ['A', 'B'], :bar => ['C', 'D']}
         end
@@ -199,15 +195,28 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         end
       end
 
+      class ::DummyIndexingModelWithOldDirty
+        extend  Elasticsearch::Model::Indexing::ClassMethods
+        include Elasticsearch::Model::Indexing::InstanceMethods
+
+        def self.before_save(&block)
+          (@callbacks ||= {})[block.hash] = block
+        end
+
+        def changes
+          {:foo => ['One', 'Two']}
+        end
+      end
+
       should "register before_save callback when included" do
         ::DummyIndexingModelWithCallbacks.expects(:before_save).returns(true)
         ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
       end
 
-      should "set the @__changed_attributes variable before save" do
+      should "set the @__changed_model_attributes variable before save" do
         instance = ::DummyIndexingModelWithCallbacks.new
         instance.expects(:instance_variable_set).with do |name, value|
-          assert_equal :@__changed_attributes, name
+          assert_equal :@__changed_model_attributes, name
           assert_equal({foo: 'Two'}, value)
           true
         end
@@ -215,6 +224,23 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         ::DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
 
         ::DummyIndexingModelWithCallbacks.instance_variable_get(:@callbacks).each do |n,b|
+          instance.instance_eval(&b)
+        end
+      end
+
+      # https://github.com/elastic/elasticsearch-rails/issues/714
+      # https://github.com/rails/rails/pull/25337#issuecomment-225166796
+      should "set the @__changed_model_attributes variable before save for old ActiveModel::Dirty" do
+        instance = ::DummyIndexingModelWithOldDirty.new
+        instance.expects(:instance_variable_set).with do |name, value|
+          assert_equal :@__changed_model_attributes, name
+          assert_equal({foo: 'Two'}, value)
+          true
+        end
+
+        ::DummyIndexingModelWithOldDirty.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+
+        ::DummyIndexingModelWithOldDirty.instance_variable_get(:@callbacks).each do |n,b|
           instance.instance_eval(&b)
         end
       end
@@ -299,7 +325,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacks.new
 
         # Reset the fake `changes`
-        instance.instance_variable_set(:@__changed_attributes, nil)
+        instance.instance_variable_set(:@__changed_model_attributes, nil)
 
         instance.expects(:index_document)
         instance.update_document
@@ -310,7 +336,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacks.new
 
         # Set the fake `changes` hash
-        instance.instance_variable_set(:@__changed_attributes, {foo: 'bar'})
+        instance.instance_variable_set(:@__changed_model_attributes, {foo: 'bar'})
 
         client.expects(:update).with do |payload|
           assert_equal 'foo',  payload[:index]
@@ -333,7 +359,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
 
         # Set the fake `changes` hash
-        instance.instance_variable_set(:@__changed_attributes, {'foo' => 'B', 'bar' => 'D' })
+        instance.instance_variable_set(:@__changed_model_attributes, {'foo' => 'B', 'bar' => 'D' })
 
         client.expects(:update).with do |payload|
           assert_equal({:foo => 'B'}, payload[:body][:doc])
@@ -352,7 +378,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         client   = mock('client')
         instance = ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
 
-        instance.instance_variable_set(:@__changed_attributes, { 'foo' => { 'bar' => 'BAR'} })
+        instance.instance_variable_set(:@__changed_model_attributes, { 'foo' => { 'bar' => 'BAR'} })
         # Overload as_indexed_json
         instance.expects(:as_indexed_json).returns({ 'foo' => 'BAR' })
 
@@ -374,7 +400,7 @@ class Elasticsearch::Model::IndexingTest < Test::Unit::TestCase
         instance = ::DummyIndexingModelWithCallbacks.new
 
         # Set the fake `changes` hash
-        instance.instance_variable_set(:@__changed_attributes, {author: 'john'})
+        instance.instance_variable_set(:@__changed_model_attributes, {author: 'john'})
 
         client.expects(:update).with do |payload|
           assert_equal 'foo',  payload[:index]
