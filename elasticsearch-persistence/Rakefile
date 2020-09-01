@@ -40,11 +40,11 @@ end
 namespace :bundle do
   desc 'Install gem dependencies'
   task :install do
-    puts '-'*80
-    Bundler.with_clean_env do
+    puts '-' * 80
+    Bundler.with_unbundled_env do
       sh 'bundle install'
     end
-    puts '-'*80
+    puts '-' * 80
   end
 end
 
