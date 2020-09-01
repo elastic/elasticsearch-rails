@@ -10,7 +10,7 @@ jobs:
   tests:
     env:
       TEST_ES_SERVER: http://localhost:9200
-      RAILS_VERSIONS: '5.0'
+      RAILS_VERSIONS: '5.0,6.0'
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
