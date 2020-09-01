@@ -1,21 +1,18 @@
-name: master
+name: Ruby 2.7
 on:
   push:
     branches:
       - master
-      - 6.x
   pull_request:
     branches:
       - master
-      - 6.x
 jobs:
-  test-master:
+  tests:
     env:
       TEST_ES_SERVER: http://localhost:9200
+      RAILS_VERSIONS: '5.0,6.0'
     strategy:
       fail-fast: false
-      matrix:
-        ruby: [ 2.5, 2.6, 2.7, jruby ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -27,10 +24,10 @@ jobs:
         sudo sysctl -w vm.max_map_count=262144
     - uses: elastic/elastic-github-actions/elasticsearch@master
       with:
-        stack-version: 7.8.0
+        stack-version: 7.9.0
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby }}
+        ruby-version: 2.7
     - name: Bundle
       run: |
         sudo apt-get install libsqlite3-dev
