@@ -1,6 +1,11 @@
 # Elasticsearch
 
-[![Build Status](https://travis-ci.org/elastic/elasticsearch-rails.svg?branch=master)](https://travis-ci.org/elastic/elasticsearch-rails) [![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
+[![Ruby 2.7](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.7/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
+[![Ruby 2.6](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.6/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
+[![Ruby 2.5](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.5/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
+[![Ruby 2.4](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.4/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
+[![JRuby](https://github.com/elastic/elasticsearch-rails/workflows/JRuby/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
+[![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
 
 This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
