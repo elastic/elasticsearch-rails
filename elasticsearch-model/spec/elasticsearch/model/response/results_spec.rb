@@ -48,6 +48,10 @@ describe Elasticsearch::Model::Response::Results do
     response.results
   end
 
+  let(:records) do
+    response.records
+  end
+
   describe '#results' do
 
     it 'provides access to the results' do
@@ -68,6 +72,14 @@ describe Elasticsearch::Model::Response::Results do
 
     it 'returns the raw response document' do
       expect(response.raw_response).to eq(response_document)
+    end
+  end
+
+  describe '#records' do
+
+    it 'provides access to the records' do
+      expect(results.records.size).to be(results.results.size)
+      expect(results.records.first.foo).to eq(results.results.first.foo)
     end
   end
 end
