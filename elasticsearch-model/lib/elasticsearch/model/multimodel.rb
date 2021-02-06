@@ -85,7 +85,7 @@ module Elasticsearch
       # @return [Array] the list of document types used for retrieving documents
       #
       def document_type
-        models.map { |m| m.document_type }
+        models.map { |m| m.document_type }.compact.presence
       end
 
       # Get the client common for all models
