@@ -16,6 +16,7 @@
 # under the License.
 
 require 'pathname'
+require 'elasticsearch'
 
 subprojects = ['elasticsearch-rails', 'elasticsearch-persistence']
 subprojects << 'elasticsearch-model' unless defined?(JRUBY_VERSION)
@@ -97,26 +98,6 @@ namespace :test do
     end
   end
 
-  desc "Run Elasticsearch (Docker)"
-  task :setup_elasticsearch_docker do
-    begin
-      sh <<-COMMAND.gsub(/^\s*/, '').gsub(/\s{1,}/, ' ')
-          docker run -d=true \
-            --env "discovery.type=single-node" \
-            --env "cluster.name=elasticsearch-rails" \
-            --env "http.port=9200" \
-            --env "cluster.routing.allocation.disk.threshold_enabled=false" \
-            --publish 9250:9200 \
-            --rm \
-            docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_VERSION}
-      COMMAND
-      require 'elasticsearch/extensions/test/cluster'
-      Elasticsearch::Extensions::Test::Cluster::Cluster.new(version: ENV['ELASTICSEARCH_VERSION'],
-                                                            number_of_nodes: 1).wait_for_green
-    rescue
-    end
-  end
-
   desc "Setup MongoDB (Docker)"
   task :setup_mongodb_docker do
     begin
@@ -165,26 +146,6 @@ namespace :test do
              "unset BUNDLE_GEMFILE && " +
              "bundle exec rake test:all"
       puts "\n"
-    end
-  end
-
-  namespace :cluster do
-    desc "Start Elasticsearch nodes for tests"
-    task :start do
-      require 'elasticsearch/extensions/test/cluster'
-      Elasticsearch::Extensions::Test::Cluster.start
-    end
-
-    desc "Stop Elasticsearch nodes for tests"
-    task :stop do
-      require 'elasticsearch/extensions/test/cluster'
-      Elasticsearch::Extensions::Test::Cluster.stop
-    end
-
-    task :status do
-      require 'elasticsearch/extensions/test/cluster'
-      (puts "\e[31m[!] Test cluster not running\e[0m"; exit(1)) unless Elasticsearch::Extensions::Test::Cluster.running?
-      Elasticsearch::Extensions::Test::Cluster.__print_cluster_info(ENV['TEST_CLUSTER_PORT'] || 9250)
     end
   end
 end

@@ -53,8 +53,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rails", '> 4'
 
-  s.add_development_dependency "elasticsearch-extensions"
-
   s.add_development_dependency "minitest"
   s.add_development_dependency "test-unit"
   s.add_development_dependency "shoulda-context"
