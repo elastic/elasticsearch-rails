@@ -659,36 +659,6 @@ describe Elasticsearch::Model::Indexing do
         expect(DummyIndexingModel.index_exists?).to be(false)
       end
     end
-
-    context 'when the index API raises an error' do
-
-      let(:client) do
-        double('client').tap do |cl|
-          expect(cl).to receive(:indices).and_raise(StandardError)
-        end
-      end
-
-      it 'returns false' do
-        expect(DummyIndexingModel.index_exists?).to be(false)
-      end
-    end
-
-    context 'when the indices.exists API raises an error' do
-
-      let(:client) do
-        double('client', indices: indices)
-      end
-
-      let(:indices) do
-        double('indices').tap do |ind|
-          expect(ind).to receive(:exists).and_raise(StandardError)
-        end
-      end
-
-      it 'returns false' do
-        expect(DummyIndexingModel.index_exists?).to be(false)
-      end
-    end
   end
 
   describe '#delete_index!' do
