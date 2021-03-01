@@ -160,11 +160,7 @@ You can also unit, integration, or both tests for all sub-projects from the top-
 
     rake test:all
 
-The test suite expects an Elasticsearch cluster running on port 9250, and **will delete all the data**. You can launch an isolated, in-memory Elasticsearch cluster with the following Rake task:
-
-    TEST_CLUSTER_COMMAND=/tmp/builds/elasticsearch-2.0.0-SNAPSHOT/bin/elasticsearch TEST_CLUSTER_NODES=1 bundle exec rake test:cluster:start
-
-See more information in the documentation  for the [`elasticsearch-extensions`](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-extensions#testcluster) gem.
+The test suite expects an Elasticsearch cluster running on port 9250, and **will delete all the data**.
 
 ## License
 
