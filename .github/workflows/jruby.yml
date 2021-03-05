@@ -35,6 +35,7 @@ jobs:
         bundle install
         bundle exec rake bundle:clean
         bundle exec rake bundle:install
-    - name: Test
-      run: bundle exec rake test:all
-        
+    - name: Test elasticsearch-rails
+      run: cd elasticsearch-rails && bundle exec rake test:all
+    - name: Test elasticsearch-persistence
+      run: cd elasticsearch-persistence && bundle exec rake test:all
