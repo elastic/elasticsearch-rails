@@ -1,3 +1,7 @@
+## 7.1.2.pre
+
+Pre release, backports bugfixes from master. Full CHANGELOG will be published on final release.
+
 ## 7.1.1
 
 * Fix: Ruby 2.7 deprecation warning on `find_in_batches`
