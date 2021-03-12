@@ -24,7 +24,7 @@ jobs:
         sudo sysctl -w vm.max_map_count=262144
     - uses: elastic/elastic-github-actions/elasticsearch@master
       with:
-        stack-version: 7.9.0
+        stack-version: 7.x-SNAPSHOT
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.4
@@ -35,6 +35,9 @@ jobs:
         bundle install
         bundle exec rake bundle:clean
         bundle exec rake bundle:install
-    - name: Test
-      run: bundle exec rake test:all
-        
+    - name: Test elasticsearch-rails
+      run: cd elasticsearch-rails && bundle exec rake test:all
+    - name: Test elasticsearch-persistence
+      run: cd elasticsearch-persistence && bundle exec rake test:all
+    - name: Test elasticsearch-model
+      run: cd elasticsearch-model && bundle exec rake test:all

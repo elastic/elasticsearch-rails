@@ -42,13 +42,12 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.4'
 
   s.add_dependency 'activesupport', '> 3'
-  s.add_dependency 'elasticsearch', '> 1'
+  s.add_dependency 'elasticsearch', '~> 7'
   s.add_dependency 'hashie'
 
   s.add_development_dependency 'activemodel', '> 3'
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'cane'
-  s.add_development_dependency 'elasticsearch-extensions'
   s.add_development_dependency 'kaminari'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
