@@ -71,8 +71,8 @@ module Elasticsearch
             adapter = __adapter_for_klass(klass)
 
             # Allow calling `.records()` with options:
-            # klass.name => [{ method: :includes, args: [:association]}, { method: :scope_name }]
-            if (klass_options = @options.dig(klass.name))
+            # ex: `klass.name => [{ method: :includes, args: [:association]}, { method: :scope_name }]`
+            if (klass_options = options&.dig(klass.name))
               klass_options.each { |opts| klass = klass.public_send(opts[:method], *opts[:args]) }
             end
 
