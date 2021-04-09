@@ -70,6 +70,12 @@ module Elasticsearch
           def __records_for_klass(klass, ids)
             adapter = __adapter_for_klass(klass)
 
+            # Allow calling `.records()` with options:
+            # klass.name => [{ method: :includes, args: [:association]}, { method: :scope_name }]
+            if (klass_options = @options.dig(klass.name))
+              klass_options.each { klass = klass.public_send(_1[:method], *_1[:args]) }
+            end
+
             case
               when Elasticsearch::Model::Adapter::ActiveRecord.equal?(adapter)
                 klass.where(klass.primary_key => ids)
