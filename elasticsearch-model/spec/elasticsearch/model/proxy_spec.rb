@@ -31,6 +31,10 @@ describe Elasticsearch::Model::Proxy do
         'insta barr'
       end
 
+      def keyword_method(foo: 'default value')
+        foo
+      end
+
       def as_json(options)
         {foo: 'bar'}
       end
@@ -98,7 +102,6 @@ describe Elasticsearch::Model::Proxy do
   end
 
   context 'when instances are cloned' do
-
     let!(:model) do
       DummyProxyModel.new
     end
@@ -121,4 +124,9 @@ describe Elasticsearch::Model::Proxy do
       expect(duplicate).to eq(duplicate_target)
     end
   end
+
+  it 'forwards keyword arguments to target methods' do
+    expect(DummyProxyModel.new.__elasticsearch__.keyword_method(foo: 'bar')).to eq('bar')
+  end
+
 end
