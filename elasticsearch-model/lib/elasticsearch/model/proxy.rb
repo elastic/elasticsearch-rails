@@ -117,8 +117,8 @@ module Elasticsearch
 
         # Delegate methods to `@target`
         #
-        def method_missing(method_name, *arguments, &block)
-          target.respond_to?(method_name) ? target.__send__(method_name, *arguments, &block) : super
+        def method_missing(method_name, *args, **kwargs, &block)
+          target.respond_to?(method_name) ? target.__send__(method_name, *args, **kwargs, &block) : super
         end
 
         # Respond to methods from `@target`
