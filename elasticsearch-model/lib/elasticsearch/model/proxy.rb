@@ -115,10 +115,13 @@ module Elasticsearch
           @target = target
         end
 
-        # Delegate methods to `@target`
+        def ruby2_keywords(*) # :nodoc:
+        end if RUBY_VERSION < "2.7"
+
+        # Delegate methods to `@target`. As per [the Ruby 3.0 explanation for keyword arguments](https://www.ruby-lang.org/en/news/2019/12/12/separation-of-positional-and-keyword-arguments-in-ruby-3-0/), the only way to work on Ruby <2.7, and 2.7, and 3.0+ is to use `ruby2_keywords`.
         #
-        def method_missing(method_name, *args, **kwargs, &block)
-          target.respond_to?(method_name) ? target.__send__(method_name, *args, **kwargs, &block) : super
+        ruby2_keywords def method_missing(method_name, *arguments, &block)
+          target.respond_to?(method_name) ? target.__send__(method_name, *arguments, &block) : super
         end
 
         # Respond to methods from `@target`
