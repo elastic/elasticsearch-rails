@@ -42,6 +42,7 @@ module Elasticsearch
           response.response['hits']['hits'].map { |hit| Result.new(hit) }
         end
 
+        alias records results
       end
     end
   end
