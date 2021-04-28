@@ -506,8 +506,8 @@ with a tool like [_Resque_](https://github.com/resque/resque) or [_Sidekiq_](htt
 class Article
   include Elasticsearch::Model
 
-  after_save    { Indexer.perform_async(:index,  self.id) }
-  after_destroy { Indexer.perform_async(:delete, self.id) }
+  after_save    { Indexer.perform_async(:index, self.class.to_s self.id) }
+  after_destroy { Indexer.perform_async(:delete, self.class.to_s, self.id) }
 end
 ```
 
@@ -521,20 +521,17 @@ class Indexer
   Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
   Client = Elasticsearch::Client.new host: 'localhost:9200', logger: Logger
 
-  def perform(operation, record_id)
-    logger.debug [operation, "ID: #{record_id}"]
+  def perform(operation, klass, record_id, options={})
+    logger.debug [operation, "#{klass}##{record_id} #{options.inspect}"]
 
     case operation.to_s
-      when /index/
-        record = Article.find(record_id)
-        Client.index  index: 'articles', type: 'article', id: record.id, body: record.__elasticsearch__.as_indexed_json
-      when /delete/
-        begin
-          Client.delete index: 'articles', type: 'article', id: record_id
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
-          logger.debug "Article not found, ID: #{record_id}"
-        end
-      else raise ArgumentError, "Unknown operation '#{operation}'"
+    when /index|update/
+      record = klass.constantize.find(record_id)
+      record.__elasticsearch__.client = Client
+      record.__elasticsearch__.__send__ "#{operation}_document"
+    when /delete/
+      Client.delete index: klass.constantize.index_name, type: klass.constantize.document_type, id: record_id
+    else raise ArgumentError, "Unknown operation '#{operation}'"
     end
   end
 end
@@ -550,10 +547,10 @@ Article.first.update_attribute :title, 'Updated'
 You'll see the job being processed in the console where you started the _Sidekiq_ worker:
 
 ```
-Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: ["index", "ID: 7"]
+Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: [:index, "Article#1 {}"]
 Indexer JID-eb7e2daf389a1e5e83697128 INFO: PUT http://localhost:9200/articles/article/1 [status:200, request:0.004s, query:n/a]
 Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: > {"id":1,"title":"Updated", ...}
-Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: < {"ok":true,"_index":"articles","_type":"article","_id":"1","_version":6}
+Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: < {"ok":true,"_index":"articles","_type":"_doc","_id":"1","_version":6}
 Indexer JID-eb7e2daf389a1e5e83697128 INFO: done: 0.006 sec
 ```
 
