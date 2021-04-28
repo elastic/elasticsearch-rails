@@ -5,6 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3
     - name: Check license headers
       run: |
-        ./.github/check-license-headers.sh
+        ruby ./.github/check_license_headers.rb
