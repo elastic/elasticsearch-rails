@@ -676,15 +676,13 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the index is not found' do
+      let(:logger) { nil }
+      let(:transport) do
+        Elasticsearch::Transport::Client.new(logger: logger)
+      end
+
       let(:client) do
-        double(
-          'client',
-          indices: indices,
-          transport: double(
-            'transport',
-            double('transport', { logger: nil })
-          )
-        )
+        double('client', indices: indices, transport: transport)
       end
 
       let(:indices) do
@@ -698,19 +696,17 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the force option is true' do
-
         it 'deletes the index without raising an exception' do
           expect(DummyIndexingModelForRecreate.delete_index!(force: true)).to be_nil
         end
 
         context 'when the client has a logger' do
-
           let(:logger) do
             Logger.new(STDOUT).tap { |l| l.level = Logger::DEBUG }
           end
 
           let(:client) do
-            double('client', indices: indices, transport: double('transport', { logger: logger }))
+            double('client', indices: indices, transport: transport)
           end
 
           it 'deletes the index without raising an exception' do
@@ -918,7 +914,11 @@ describe Elasticsearch::Model::Indexing do
     end
 
     let(:client) do
-      double('client', indices: indices, transport: double('transport', { logger: nil }))
+      double('client', indices: indices, transport: transport)
+    end
+
+    let(:transport) do
+      Elasticsearch::Transport::Client.new(logger: nil)
     end
 
     let(:indices) do
@@ -930,9 +930,7 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the force option is true' do
-
       context 'when the operation raises a NotFound exception' do
-
         before do
           expect(indices).to receive(:refresh).and_raise(NotFound)
         end
@@ -942,13 +940,16 @@ describe Elasticsearch::Model::Indexing do
         end
 
         context 'when the client has a logger' do
-
           let(:logger) do
             Logger.new(STDOUT).tap { |l| l.level = Logger::DEBUG }
           end
 
           let(:client) do
-            double('client', indices: indices, transport: double('transport', { logger: logger }))
+            double('client', indices: indices, transport: transport)
+          end
+
+          let(:transport) do
+            Elasticsearch::Transport::Client.new(logger: logger)
           end
 
           it 'does not raise an exception' do
@@ -963,7 +964,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the operation raises another type of exception' do
-
         before do
           expect(indices).to receive(:refresh).and_raise(Exception)
         end
@@ -977,7 +977,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when an index name is provided in the options' do
-
       before do
         expect(indices).to receive(:refresh).with(index: 'custom-foo')
       end
