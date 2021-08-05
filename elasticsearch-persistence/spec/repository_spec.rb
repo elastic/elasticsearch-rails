@@ -104,7 +104,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default client' do
-        expect(repository.client).to be_a(Elasticsearch::Transport::Client)
+        expect(repository.client).to be_a(Elasticsearch::Client)
       end
 
 
@@ -465,7 +465,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'sets a default on the instance' do
-        expect(RepositoryWithoutDSL.new.client).to be_a(Elasticsearch::Transport::Client)
+        expect(RepositoryWithoutDSL.new.client).to be_a(Elasticsearch::Client)
       end
 
       it 'allows the value to be overridden with options on the instance' do
