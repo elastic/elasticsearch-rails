@@ -676,9 +676,15 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the index is not found' do
-
       let(:client) do
-        double('client', indices: indices, transport: double('transport', { logger: nil }))
+        double(
+          'client',
+          indices: indices,
+          transport: double(
+            'transport',
+            double('transport', { logger: nil })
+          )
+        )
       end
 
       let(:indices) do
