@@ -17,13 +17,10 @@
 
 module Elasticsearch
   module Model
-
     # Contains an `Elasticsearch::Client` instance
     #
     module Client
-
       module ClassMethods
-
         # Get the client for a specific model class
         #
         # @example Get the client for `Article` and perform API request
@@ -48,7 +45,6 @@ module Elasticsearch
       end
 
       module InstanceMethods
-
         # Get or set the client for a specific model instance
         #
         # @example Get the client for a specific record and perform API request
@@ -72,7 +68,6 @@ module Elasticsearch
           @client = client
         end
       end
-
     end
   end
 end
