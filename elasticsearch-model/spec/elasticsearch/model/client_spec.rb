@@ -33,14 +33,14 @@ describe Elasticsearch::Model::Client do
   context 'when a class includes the client module class methods' do
 
     it 'defines the client module class methods on the model' do
-      expect(DummyClientModel.client).to be_a(Elasticsearch::Transport::Client)
+      expect(DummyClientModel.client).to be_a(Elasticsearch::Client)
     end
   end
 
   context 'when a class includes the client module instance methods' do
 
     it 'defines the client module class methods on the model' do
-      expect(DummyClientModel.new.client).to be_a(Elasticsearch::Transport::Client)
+      expect(DummyClientModel.new.client).to be_a(Elasticsearch::Client)
     end
   end
 
@@ -77,7 +77,7 @@ describe Elasticsearch::Model::Client do
     end
 
     it 'does not set the client on the class' do
-      expect(DummyClientModel.client).to be_a(Elasticsearch::Transport::Client)
+      expect(DummyClientModel.client).to be_a(Elasticsearch::Client)
     end
   end
 end

@@ -22,7 +22,7 @@ describe Elasticsearch::Model do
   describe '#client' do
 
     it 'should have a default' do
-      expect(Elasticsearch::Model.client).to be_a(Elasticsearch::Transport::Client)
+      expect(Elasticsearch::Model.client).to be_a(Elasticsearch::Client)
     end
   end
 
