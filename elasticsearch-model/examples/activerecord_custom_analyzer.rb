@@ -37,8 +37,8 @@ ActiveRecord::Schema.define(version: 1) do
   end
 end
 
-Elasticsearch::Model.client.transport.logger = ActiveSupport::Logger.new(STDOUT)
-Elasticsearch::Model.client.transport.logger.formatter = lambda { |s, d, p, m| "#{m.ansi(:faint)}\n" }
+Elasticsearch::Model.client.transport.transport.logger = ActiveSupport::Logger.new(STDOUT)
+Elasticsearch::Model.client.transport.transport.logger.formatter = lambda { |s, d, p, m| "#{m.ansi(:faint)}\n" }
 
 class Article < ActiveRecord::Base
   include Elasticsearch::Model

@@ -81,7 +81,7 @@ end
 # ----- Elasticsearch client setup ----------------------------------------------------------------
 
 Elasticsearch::Model.client = Elasticsearch::Client.new log: true
-Elasticsearch::Model.client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
+Elasticsearch::Model.client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
 
 # ----- Search integration ------------------------------------------------------------------------
 
