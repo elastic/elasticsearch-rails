@@ -1,3 +1,30 @@
+## 7.2.0
+
+* Updates specs and dependency to use with `elasticsearch` v7.14.0.
+* Update README, remove Virtus (unmaintained)
+* Updates `Bundler.with_clean_dev` (deprecated) to `with_unbundled_env` [commit](https://github.com/elastic/elasticsearch-rails/commit/e4545e4fe2a1ce80009206c831d5740360bad6c2)
+* Deal with `nil` document types in Multimodel [commit](https://github.com/elastic/elasticsearch-rails/commit/cd9c309b78de443d2e37760998418616ba34276d)
+* Update dependency to explicitly support version 7 [commit](https://github.com/elastic/elasticsearch-rails/commit/65942e3da9cabad2f6965e69c8ef6a0994da9408)
+* Stop emitting FATAL log when checking existence of indices [commit](https://github.com/elastic/elasticsearch-rails/commit/5db9207ca398c5d77f671109360ca7f63e3f2112)
+* Remove unnecessary exception test on index checking [commit](https://github.com/elastic/elasticsearch-rails/commit/ce57cc17e304b0a4af123c1599f37fb892a5d93a)
+* Removes dependency on extensions [commit](https://github.com/elastic/elasticsearch-rails/commit/ed070b8329ca48b4cb12b513ac81ed78c88acc61)
+* Fixes basic template elasticsearch dependency [commit](https://github.com/elastic/elasticsearch-rails/commit/a4ec07b2d097545ca41c13686c9cbfc9eab9e639)
+
+### ActiveModel
+
+* Fixes indexing to use right logger in client
+* Updates ES client spec for client 7.14.0
+* Updates transport references
+
+## 7.1.1
+
+* Fix: Ruby 2.7 deprecation warning on `find_in_batches`
+* Updates README for generating app with template. Related: #938
+
+### ActiveModel
+
+* Do not override existing methods (#936)
+
 ## 7.1.0
 
 * Tested with elasticsearch Ruby client version 7.6.0
