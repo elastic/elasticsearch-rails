@@ -54,12 +54,13 @@ task :default do
   system 'rake --tasks'
 end
 
+desc 'Show subprojects information'
 task :subprojects do
-  puts '-'*80
+  puts '-' * 80
   subprojects.each do |project|
     commit  = `git log --pretty=format:'%h %ar: %s' -1 #{project}`
-    version =  Gem::Specification::load(__current__.join(project, "#{project}.gemspec").to_s).version.to_s
-    puts "[#{version}] \e[1m#{project.ljust(subprojects.map {|s| s.length}.max)}\e[0m | #{commit[ 0..80]}..."
+    version = Gem::Specification.load(__current__.join(project, "#{project}.gemspec").to_s).version.to_s
+    puts "[#{version}] \e[1m#{project.ljust(subprojects.map(&:length).max)}\e[0m | #{commit[0..80]}..."
   end
 end
 
@@ -87,7 +88,7 @@ namespace :bundle do
 end
 
 namespace :test do
-  task :bundle => 'bundle:install'
+  task bundle: 'bundle:install'
 
   desc "Run unit tests in all subprojects"
   task :unit do
@@ -114,7 +115,7 @@ namespace :test do
   end
 
   desc "Run integration tests in all subprojects"
-  task :integration => :setup_elasticsearch do
+  task integration: :setup_elasticsearch do
     # 1/ elasticsearch-model
     #
     puts '-'*80
@@ -139,7 +140,7 @@ namespace :test do
   end
 
   desc "Run all tests in all subprojects"
-  task :all => :wait_for_green do
+  task all: :wait_for_green do
     subprojects.each do |project|
       puts '-'*80
       sh "cd #{project} && " +
@@ -149,7 +150,6 @@ namespace :test do
     end
   end
 end
-
 
 desc "Wait for elasticsearch cluster to be in green state"
 task :wait_for_green do
@@ -176,7 +176,7 @@ task :wait_for_green do
   end
 end
 
-desc "Generate documentation for all subprojects"
+desc 'Generate documentation for all subprojects'
 task :doc do
   subprojects.each do |project|
     sh "cd #{__current__.join(project)} && rake doc"
@@ -184,11 +184,11 @@ task :doc do
   end
 end
 
-desc "Release all subprojects to Rubygems"
+desc 'Release all subprojects to Rubygems'
 task :release do
   subprojects.each do |project|
     sh "cd #{__current__.join(project)} && rake release"
-    puts '-'*80
+    puts '-' * 80
   end
 end
 
@@ -199,17 +199,17 @@ desc <<-DESC
 
       $ rake update_version[5.0.0,5.0.1]
 DESC
-task :update_version, :old, :new do |task, args|
+task :update_version, :old, :new do |_, args|
   require 'ansi'
 
-  puts "[!!!] Required argument [old] missing".ansi(:red) unless args[:old]
-  puts "[!!!] Required argument [new] missing".ansi(:red) unless args[:new]
+  puts '[!!!] Required argument [old] missing'.ansi(:red) unless args[:old]
+  puts '[!!!] Required argument [new] missing'.ansi(:red) unless args[:new]
 
-  files = Dir['**/**/version.rb','**/**/*.gemspec']
+  files = Dir['**/**/version.rb', '**/**/*.gemspec']
 
-  longest_line = files.map { |f| f.size }.max
+  longest_line = files.map(&:size).max
 
-  puts "\n", "= FILES ".ansi(:faint) + ('='*92).ansi(:faint), "\n"
+  puts "\n", '= FILES '.ansi(:faint) + ('=' * 92).ansi(:faint), "\n"
 
   files.each do |file|
     begin
@@ -217,7 +217,7 @@ task :update_version, :old, :new do |task, args|
         content = f.read
         if content.match Regexp.new(args[:old])
           content.gsub! Regexp.new(args[:old]), args[:new]
-          puts "+ [#{file}]".ansi(:green).ljust(longest_line+20) + " [#{args[:old]}] -> [#{args[:new]}]".ansi(:green,:bold)
+          puts "+ [#{file}]".ansi(:green).ljust(longest_line + 20) + " [#{args[:old]}] -> [#{args[:new]}]".ansi(:green, :bold)
           f.rewind
           f.write content
         else
@@ -300,8 +300,8 @@ task :update_version, :old, :new do |task, args|
 
   puts "\n\n", "= COMMIT ".ansi(:faint) + ('='*91).ansi(:faint), "\n"
 
-  puts  "git add CHANGELOG.md elasticsearch-*",
+  puts  'git add CHANGELOG.md elasticsearch-*',
         "git commit --verbose --message='Release #{args[:new]}' --edit",
-        "rake release"
+        'rake release'
         "\n"
 end
