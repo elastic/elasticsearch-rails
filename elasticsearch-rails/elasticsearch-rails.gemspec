@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.license       = 'Apache 2'
   s.metadata = {
     'homepage_uri' => 'https://www.elastic.co/guide/en/elasticsearch/client/ruby-api/current/ruby_on_rails.html',
-    'changelog_uri' => 'https://github.com/elastic/elasticsearch-rails/blob/master/CHANGELOG.md',
+    'changelog_uri' => 'https://github.com/elastic/elasticsearch-rails/blob/main/CHANGELOG.md',
     'source_code_uri' => 'https://github.com/elastic/elasticsearch-rails/',
     'bug_tracker_uri' => 'https://github.com/elastic/elasticsearch-rails/issues'
   }

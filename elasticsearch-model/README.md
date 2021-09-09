@@ -8,7 +8,7 @@ It aims to simplify integration of Ruby classes ("models"), commonly found e.g. 
 
 This library is compatible with Ruby 2.4 and higher.
 
-The library version numbers follow the Elasticsearch major versions. The `master` branch is compatible with the latest Elasticsearch stack stable release.
+The library version numbers follow the Elasticsearch major versions. The `main` branch is compatible with the latest Elasticsearch stack stable release.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -16,7 +16,7 @@ The library version numbers follow the Elasticsearch major versions. The `master
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
-| master        | → | 7.x           |
+| main          | → | 7.x           |
 
 ## Installation
 
@@ -116,7 +116,7 @@ See the `Elasticsearch::Model` module documentation for technical information.
 
 ### The Elasticsearch client
 
-The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch),
+The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch),
 connected to `localhost:9200`, by default. You can access and use it as any other `Elasticsearch::Client`:
 
 ```ruby
@@ -139,7 +139,7 @@ Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
 
 Please refer to the
-[`elasticsearch-transport`](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-transport)
+[`elasticsearch-transport`](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-transport)
 library documentation for all the configuration options, and to the
 [`elasticsearch-api`](http://rubydoc.info/gems/elasticsearch-api) library documentation
 for information about the Ruby client API.
@@ -248,7 +248,7 @@ response.records.order(:title).to_a
 The `records` method returns the real instances of your model, which is useful when you want to access your
 model methods -- at the expense of slowing down your application, of course.
 In most cases, working with `results` coming from Elasticsearch is sufficient, and much faster. See the
-[`elasticsearch-rails`](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails)
+[`elasticsearch-rails`](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails)
 library for more information about compatibility with the Ruby on Rails framework.
 
 When you want to access both the database `records` and search `results`, use the `each_with_hit`
@@ -343,7 +343,7 @@ response.results.first.title
 # => "Quick brown fox"
 ```
 
-Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
+Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
 
 ```ruby
 require 'elasticsearch/dsl'

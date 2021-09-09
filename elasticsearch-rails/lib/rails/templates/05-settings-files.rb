@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-#     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/05-settings-files.rb
+#     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/05-settings-files.rb
 
 # (See: 01-basic.rb, 02-pretty.rb, 03-expert.rb, 04-dsl.rb)
 
@@ -43,7 +43,7 @@ git commit: "-m 'Setup the Searchable module to load settings from file'"
 # ----- Copy the articles_settings.json file -------------------------------------------------------
 
 # copy_file File.expand_path('../articles_settings.json', __FILE__), 'config/elasticsearch/articles_settings.json'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/articles_settings.json',
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/articles_settings.json',
     'config/elasticsearch/articles_settings.json', force: true
 
 git add:    "config/elasticsearch/articles_settings.json"
