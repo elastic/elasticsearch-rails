@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-#     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/04-dsl.rb
+#     $ rails new searchapp --skip --skip-bundle --template https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/04-dsl.rb
 
 unless File.read('README.md').include? '## [3] Expert'
   say_status  "ERROR", "You have to run the 01-basic.rb, 02-pretty.rb and 03-expert.rb templates first.", :red
@@ -56,10 +56,10 @@ run "bundle install"
 # ----- Change the search definition implementation and associated views and tests ----------------
 
 # copy_file File.expand_path('../searchable.dsl.rb', __FILE__), 'app/models/concerns/searchable.rb', force: true
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb', 'app/models/concerns/searchable.rb', force: true
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/searchable.dsl.rb', 'app/models/concerns/searchable.rb', force: true
 
 # copy_file File.expand_path('../index.html.dsl.erb', __FILE__), 'app/views/search/index.html.erb', force: true
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb', 'app/views/search/index.html.erb', force: true
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/index.html.dsl.erb', 'app/views/search/index.html.erb', force: true
 
 gsub_file "test/controllers/search_controller_test.rb", %r{test "should return facets" do.*?end}m, <<-CODE
 test "should return aggregations" do

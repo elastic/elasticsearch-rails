@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/02-pretty.rb
+# $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/02-pretty.rb
 
 unless File.read('README.md').include? '## [1] Basic'
   say_status  "ERROR", "You have to run the 01-basic.rb template first.", :red

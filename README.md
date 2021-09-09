@@ -40,7 +40,7 @@ gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
 
 The libraries are compatible with Ruby 2.4 and higher.
 
-The version numbers follow the Elasticsearch major versions. The `master` branch is compatible with the latest Elasticsearch stack stable release.
+The version numbers follow the Elasticsearch major versions. The `main` branch is compatible with the latest Elasticsearch stack stable release.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -48,7 +48,7 @@ The version numbers follow the Elasticsearch major versions. The `master` branch
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
-| master        | → | 7.x           |
+| main          | → | 7.x           |
 
 Use a release that matches the major version of Elasticsearch in your stack. Each client version is backwards compatible with all minor versions of the same major version.
 
@@ -58,13 +58,13 @@ Check out [Elastic product end of life dates](https://www.elastic.co/support/eol
 
 This project is split into three separate gems:
 
-* [**`elasticsearch-model`**](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-model),
+* [**`elasticsearch-model`**](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-model),
   which contains search integration for Ruby/Rails models such as ActiveRecord::Base and Mongoid,
 
-* [**`elasticsearch-persistence`**](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-persistence),
+* [**`elasticsearch-persistence`**](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-persistence),
   which provides a standalone persistence layer for Ruby/Rails objects and models
 
-* [**`elasticsearch-rails`**](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails),
+* [**`elasticsearch-rails`**](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails),
   which contains various features for Ruby on Rails applications
 
 Example of a basic integration into an ActiveRecord-based model:
@@ -87,7 +87,7 @@ Article.import
 ```
 
 You can generate a simple Ruby on Rails application with a single command
-(see the [other available templates](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails#rails-application-templates)). You'll need to have an Elasticsearch cluster running on your system before generating the app. The easiest way of getting this set up is by running it with Docker with this command:
+(see the [other available templates](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails#rails-application-templates)). You'll need to have an Elasticsearch cluster running on your system before generating the app. The easiest way of getting this set up is by running it with Docker with this command:
 
 ```bash
   docker run \
@@ -103,7 +103,7 @@ You can generate a simple Ruby on Rails application with a single command
 Once Elasticsearch is running, you can generate the simple app with this command:
 
 ```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/01-basic.rb
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/01-basic.rb
 ```
 
 Example of using Elasticsearch as a repository for a Ruby domain object:
@@ -125,21 +125,21 @@ repository.save Article.new(title: 'Test')
 
 ### Model
 
-* [[README]](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-model/README.md)
+* [[README]](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-model/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-model/)
-* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-model/spec/elasticsearch/model)
+* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-model/spec/elasticsearch/model)
 
 ### Persistence
 
-* [[README]](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-persistence/README.md)
+* [[README]](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-persistence/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-persistence/)
-* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-persistence/spec)
+* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-persistence/spec)
 
 ### Rails
 
-* [[README]](https://github.com/elastic/elasticsearch-rails/blob/master/elasticsearch-rails/README.md)
+* [[README]](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-rails/README.md)
 * [[Documentation]](http://rubydoc.info/gems/elasticsearch-rails)
-* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/master/elasticsearch-rails/spec)
+* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails/spec)
 
 ## Development
 

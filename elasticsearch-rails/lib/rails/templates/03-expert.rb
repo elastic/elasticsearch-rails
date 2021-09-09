@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-#     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/03-expert.rb
+#     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/03-expert.rb
 
 unless File.read('README.md').include? '## [2] Pretty'
   say_status  "ERROR", "You have to run the 01-basic.rb and 02-pretty.rb templates first.", :red
@@ -181,7 +181,7 @@ CODE
 gsub_file "test/models/article_test.rb", %r{assert_equal 'foo', definition\[:query\]\[:multi_match\]\[:query\]}, "assert_equal 'foo', definition.to_hash[:query][:bool][:should][0][:multi_match][:query]"
 
 # copy_file File.expand_path('../searchable.rb', __FILE__), 'app/models/concerns/searchable.rb'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/searchable.rb', 'app/models/concerns/searchable.rb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/searchable.rb', 'app/models/concerns/searchable.rb'
 
 insert_into_file "app/models/article.rb", after: "ActiveRecord::Base" do
   <<-CODE
@@ -209,7 +209,7 @@ gem "sidekiq"
 run "bundle install"
 
 # copy_file File.expand_path('../indexer.rb', __FILE__), 'app/workers/indexer.rb'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/indexer.rb', 'app/workers/indexer.rb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/indexer.rb', 'app/workers/indexer.rb'
 
 insert_into_file "test/test_helper.rb",
                  "require 'sidekiq/testing'\n\n",
@@ -244,16 +244,16 @@ create_file 'app/controllers/search_controller.rb' do
 end
 
 # copy_file File.expand_path('../search_controller_test.rb', __FILE__), 'test/controllers/search_controller_test.rb'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/search_controller_test.rb', 'test/controllers/search_controller_test.rb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/search_controller_test.rb', 'test/controllers/search_controller_test.rb'
 
 route "get '/search', to: 'search#index', as: 'search'"
 gsub_file 'config/routes.rb', %r{root to: 'articles#index'$}, "root to: 'search#index'"
 
 # copy_file File.expand_path('../index.html.erb', __FILE__), 'app/views/search/index.html.erb'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/index.html.erb', 'app/views/search/index.html.erb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/index.html.erb', 'app/views/search/index.html.erb'
 
 # copy_file File.expand_path('../search.css', __FILE__), 'app/assets/stylesheets/search.css'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/search.css', 'app/assets/stylesheets/search.css'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/search.css', 'app/assets/stylesheets/search.css'
 
 git add:    "app/controllers/ test/controllers/ config/routes.rb"
 git add:    "app/views/search/ app/assets/stylesheets/search.css"
@@ -315,11 +315,11 @@ say_status  "Database", "Re-creating the database with data and importing into E
 puts        '-'*80, ''; sleep 0.25
 
 # copy_file File.expand_path('../articles.yml.gz', __FILE__), 'db/articles.yml.gz'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/articles.yml.gz', 'db/articles.yml.gz'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/articles.yml.gz', 'db/articles.yml.gz'
 
 remove_file 'db/seeds.rb'
 # copy_file File.expand_path('../seeds.rb', __FILE__), 'db/seeds.rb'
-get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/master/elasticsearch-rails/lib/rails/templates/seeds.rb', 'db/seeds.rb'
+get 'https://raw.githubusercontent.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/seeds.rb', 'db/seeds.rb'
 
 rake "db:reset"
 rake "environment elasticsearch:import:model CLASS='Article' BATCH=100 FORCE=y"
