@@ -28,7 +28,7 @@ module Elasticsearch
               end
             end
 
-            return res
+            res
           end
         end
 
@@ -53,7 +53,7 @@ module Elasticsearch
           #
           # @see http://api.rubyonrails.org/classes/ActiveRecord/Batches.html ActiveRecord::Batches.find_in_batches
           #
-          def __find_in_batches(options={}, &block)
+          def __find_in_batches(options = {}, &block)
             query = options.delete(:query)
             named_scope = options.delete(:scope)
             preprocess = options.delete(:preprocess)
