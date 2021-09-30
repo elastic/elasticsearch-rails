@@ -31,6 +31,7 @@ require 'elasticsearch/model/multimodel'
 require 'elasticsearch/model/adapter'
 require 'elasticsearch/model/adapters/default'
 require 'elasticsearch/model/adapters/active_record'
+require 'elasticsearch/model/adapters/cequel'
 require 'elasticsearch/model/adapters/mongoid'
 require 'elasticsearch/model/adapters/multiple'
 
