@@ -102,7 +102,7 @@ module Elasticsearch
             scope = scope.__send__(named_scope) if named_scope
             scope = scope.instance_exec(&query) if query
 
-            scope.find_in_batches(options) do |batch|
+            scope.find_in_batches(**options) do |batch|
               yield (preprocess ? self.__send__(preprocess, batch) : batch)
             end
           end
