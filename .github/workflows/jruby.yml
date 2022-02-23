@@ -30,7 +30,7 @@ jobs:
         stack-version: 7.x-SNAPSHOT
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: jruby-9.2
+        ruby-version: jruby-9.3
     - name: Bundle
       run: |
         sudo apt-get install libsqlite3-dev
