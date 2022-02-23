@@ -1,3 +1,8 @@
+## 7.2.1
+
+* The default git branch `master` has been renamed to `main`
+* Adds compatibility with Ruby 3 [Pull Request](https://github.com/elastic/elasticsearch-rails/pull/992)
+
 ## 7.2.0
 
 * Updates specs and dependency to use with `elasticsearch` v7.14.0.
