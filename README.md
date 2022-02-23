@@ -40,7 +40,9 @@ gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
 
 The libraries are compatible with Ruby 2.4 and higher.
 
-The version numbers follow the Elasticsearch major versions. The `main` branch is compatible with the latest Elasticsearch stack stable release.
+We follow Ruby’s own maintenance policy and officially support all currently maintained versions per [Ruby Maintenance Branches](https://www.ruby-lang.org/en/downloads/branches/).
+
+The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -49,8 +51,6 @@ The version numbers follow the Elasticsearch major versions. The `main` branch i
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
 | main          | → | 7.x           |
-
-Use a release that matches the major version of Elasticsearch in your stack. Each client version is backwards compatible with all minor versions of the same major version.
 
 Check out [Elastic product end of life dates](https://www.elastic.co/support/eol) to learn which releases are still actively supported and tested.
 
