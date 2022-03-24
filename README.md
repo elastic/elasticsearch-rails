@@ -7,7 +7,7 @@
 [![JRuby](https://github.com/elastic/opensearch-rails/workflows/JRuby/badge.svg)](https://github.com/elastic/opensearch-rails/actions)
 [![Code Climate](https://codeclimate.com/github/elastic/opensearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/opensearch-rails)
 
-This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
+This repository contains various Ruby and Rails integrations for [OpenSearch](https://opensearch.org/):
 
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
 * _Repository pattern_ based persistence layer for Ruby objects
@@ -20,11 +20,11 @@ This repository contains various Ruby and Rails integrations for [Elasticsearch]
 * Templates for generating example Rails application
 
 Elasticsearch client and Ruby API is provided by the
-**[elasticsearch-ruby](https://github.com/elastic/elasticsearch-ruby)** project.
+**[opensearch-ruby](https://github.com/opensearch-project/opensearch-ruby)** project.
 
 ## Installation
 
-Install each library from [Rubygems](https://rubygems.org/gems/elasticsearch):
+Install each library from [Rubygems](https://rubygems.org/gems/opensearch):
 
     gem install opensearch-model
     gem install opensearch-rails
@@ -80,7 +80,7 @@ end
 # Index creation right at import time is not encouraged.
 # Typically, you would call create_index! asynchronously (e.g. in a cron job)
 # However, we are adding it here so that this usage example can run correctly.
-Article.__elasticsearch__.create_index!
+Article.__opensearch__.create_index!
 Article.import
 
 @articles = Article.search('foobar').records
@@ -127,7 +127,7 @@ repository.save Article.new(title: 'Test')
 
 * [[README]](https://github.com/elastic/opensearch-rails/blob/main/opensearch-model/README.md)
 * [[Documentation]](http://rubydoc.info/gems/opensearch-model/)
-* [[Test Suite]](https://github.com/elastic/opensearch-rails/tree/main/opensearch-model/spec/elasticsearch/model)
+* [[Test Suite]](https://github.com/compliance-innovations/opensearch-rails/tree/main/opensearch-model/spec/opensearch/model)
 
 ### Persistence
 

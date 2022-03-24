@@ -28,20 +28,20 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Serialization' do
     end
 
     ArticleWithCustomSerialization.delete_all
-    ArticleWithCustomSerialization.__elasticsearch__.create_index!(force: true)
+    ArticleWithCustomSerialization.__opensearch__.create_index!(force: true)
   end
 
   context 'when the model has a custom serialization defined' do
 
     before do
       ArticleWithCustomSerialization.create!(title: 'Test', status: 'green')
-      ArticleWithCustomSerialization.__elasticsearch__.refresh_index!
+      ArticleWithCustomSerialization.__opensearch__.refresh_index!
     end
 
     context 'when a document is indexed' do
 
       let(:search_result) do
-        ArticleWithCustomSerialization.__elasticsearch__.client.get(index: 'article_with_custom_serializations',
+        ArticleWithCustomSerialization.__opensearch__.client.get(index: 'article_with_custom_serializations',
                                                                     type:  '_doc',
                                                                     id:    '1')
       end
@@ -55,17 +55,17 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Serialization' do
 
       before do
         article.update_attributes(title: 'UPDATED', status: 'yellow')
-        ArticleWithCustomSerialization.__elasticsearch__.refresh_index!
+        ArticleWithCustomSerialization.__opensearch__.refresh_index!
       end
 
       let!(:article) do
         art = ArticleWithCustomSerialization.create!(title: 'Test', status: 'red')
-        ArticleWithCustomSerialization.__elasticsearch__.refresh_index!
+        ArticleWithCustomSerialization.__opensearch__.refresh_index!
         art
       end
 
       let(:search_result) do
-        ArticleWithCustomSerialization.__elasticsearch__.client.get(index: 'article_with_custom_serializations',
+        ArticleWithCustomSerialization.__opensearch__.client.get(index: 'article_with_custom_serializations',
                                                                     type:  '_doc',
                                                                     id:    article.id)
       end

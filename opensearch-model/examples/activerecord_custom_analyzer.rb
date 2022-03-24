@@ -93,28 +93,28 @@ puts '', '-'*80
 
 puts "English analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
-     Article.__elasticsearch__.client.indices
+     Article.__opensearch__.client.indices
       .analyze(index: Article.index_name, body: { field: 'title', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
     "\n"
 
 puts "Keyword analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
-     Article.__elasticsearch__.client.indices
+     Article.__opensearch__.client.indices
       .analyze(index: Article.index_name, body: { field: 'title.keyword', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
      "\n"
 
 puts "Pattern analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
-     Article.__elasticsearch__.client.indices
+     Article.__opensearch__.client.indices
       .analyze(index: Article.index_name, body: { field: 'title.pattern', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
      "\n"
 
 puts "Trigram analyzer [Foo_Bar_1_Bazooka]".ansi(:bold),
      "Tokens: " +
-     Article.__elasticsearch__.client.indices
+     Article.__opensearch__.client.indices
       .analyze(index: Article.index_name, body: { field: 'title.trigram', text: 'Foo_Bar_1_Bazooka' })['tokens']
       .map { |d| "[#{d['token']}]" }.join(' '),
      "\n"

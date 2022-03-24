@@ -70,14 +70,14 @@ namespace :elasticsearch do
 
       unless ENV['DEBUG']
         begin
-          klass.__elasticsearch__.client.transport.logger.level = Logger::WARN
+          klass.__opensearch__.client.transport.logger.level = Logger::WARN
         rescue NoMethodError; end
         begin
-          klass.__elasticsearch__.client.transport.tracer.level = Logger::WARN
+          klass.__opensearch__.client.transport.tracer.level = Logger::WARN
         rescue NoMethodError; end
       end
 
-      total_errors = klass.__elasticsearch__.import force:      ENV.fetch('FORCE', false),
+      total_errors = klass.__opensearch__.import force:      ENV.fetch('FORCE', false),
                                   batch_size: ENV.fetch('BATCH', 1000).to_i,
                                   index:      ENV.fetch('INDEX', nil),
                                   type:       ENV.fetch('TYPE',  nil),
@@ -113,7 +113,7 @@ namespace :elasticsearch do
         end
 
         # Skip if the class doesn't have Elasticsearch integration
-        next unless klass.respond_to?(:__elasticsearch__)
+        next unless klass.respond_to?(:__opensearch__)
 
         puts "[IMPORT] Processing model: #{klass}..."
 

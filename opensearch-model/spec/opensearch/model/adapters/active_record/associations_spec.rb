@@ -66,8 +66,8 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
   before do
     clear_tables(:categories, :categories_posts, :authors, :authorships, :comments, :posts)
     clear_indices(Post)
-    Post.__elasticsearch__.create_index!(force: true)
-    Comment.__elasticsearch__.create_index!(force: true)
+    Post.__opensearch__.create_index!(force: true)
+    Comment.__opensearch__.create_index!(force: true)
   end
 
   after do
@@ -81,7 +81,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
       Post.create!(title: 'Test')
       Post.create!(title: 'Testing Coding')
       Post.create!(title: 'Coding')
-      Post.__elasticsearch__.refresh_index!
+      Post.__opensearch__.refresh_index!
     end
 
     let(:search_result) do
@@ -102,7 +102,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
 
       before do
         post.categories = [category_a,  category_b]
-        Post.__elasticsearch__.refresh_index!
+        Post.__opensearch__.refresh_index!
       end
 
       let(:category_a) do
@@ -148,7 +148,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
       before do
         post.categories = [category_a,  category_b]
         post.categories = [category_b]
-        Post.__elasticsearch__.refresh_index!
+        Post.__opensearch__.refresh_index!
       end
 
       let(:category_a) do
@@ -207,7 +207,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
         post_2.authors = [author_a]
         post_3.authors = [author_c]
 
-        Post.__elasticsearch__.refresh_index!
+        Post.__opensearch__.refresh_index!
       end
 
       context 'if active record is at least 4' do
@@ -247,7 +247,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
         # Assign authors
         post_1.authors = [author_a]
         post_1.authors << author_b
-        Post.__elasticsearch__.refresh_index!
+        Post.__opensearch__.refresh_index!
       end
 
       let(:search_result) do
@@ -277,7 +277,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
         post_2.comments.create!(author: 'John', text: 'Terrible')
 
         post_1.comments.create!(author: 'John', text: 'Or rather just good...')
-        Post.__elasticsearch__.refresh_index!
+        Post.__opensearch__.refresh_index!
       end
 
       let(:search_result) do
@@ -318,7 +318,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
         category_a.update_attribute(:title, "Updated")
         category_a.posts.each { |p| p.touch }
 
-        Post.__elasticsearch__.refresh_index!
+        Post.__opensearch__.refresh_index!
       end
 
       it 'executes the callback after #touch' do
@@ -336,7 +336,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
       post_1.comments.create(text: 'First comment')
       post_2.comments.create(text: 'Second comment')
 
-      Comment.__elasticsearch__.refresh_index!
+      Comment.__opensearch__.refresh_index!
     end
 
     let(:search_result) do

@@ -22,7 +22,7 @@ module OpenSearch
     # `OpenSearch::Model`, preventing the pollution of the including class namespace.
     #
     # The only "gateway" between the model and OpenSearch::Model is the
-    # `#__elasticsearch__` class and instance method.
+    # `#__opensearch__` class and instance method.
     #
     # The including class must be compatible with
     # [ActiveModel](https://github.com/rails/rails/tree/master/activemodel).
@@ -33,7 +33,7 @@ module OpenSearch
     #       include OpenSearch::Model
     #     end
     #
-    #     Article.__elasticsearch__.respond_to?(:search)
+    #     Article.__opensearch__.respond_to?(:search)
     #     # => true
     #
     #     article = Article.first
@@ -41,12 +41,12 @@ module OpenSearch
     #     article.respond_to? :index_document
     #     # => false
     #
-    #     article.__elasticsearch__.respond_to?(:index_document)
+    #     article.__opensearch__.respond_to?(:index_document)
     #     # => true
     #
     module Proxy
 
-      # Define the `__elasticsearch__` class and instance methods in the including class
+      # Define the `__opensearch__` class and instance methods in the including class
       # and register a callback for intercepting changes in the model.
       #
       # @note The callback is triggered only when `OpenSearch::Model` is included in the
@@ -56,15 +56,15 @@ module OpenSearch
 
         base.class_eval do
 
-          # `ClassMethodsProxy` instance, accessed as `MyModel.__elasticsearch__`
-          def self.__elasticsearch__ &block
-            @__elasticsearch__ ||= ClassMethodsProxy.new(self)
-            @__elasticsearch__.instance_eval(&block) if block_given?
-            @__elasticsearch__
+          # `ClassMethodsProxy` instance, accessed as `MyModel.__opensearch__`
+          def self.__opensearch__ &block
+            @__opensearch__ ||= ClassMethodsProxy.new(self)
+            @__opensearch__.instance_eval(&block) if block_given?
+            @__opensearch__
           end
 
           # Mix the importing module into the `ClassMethodsProxy`
-          self.__elasticsearch__.class_eval do
+          self.__opensearch__.class_eval do
             include Adapter.from_class(base).importing_mixin
           end
 
@@ -81,28 +81,28 @@ module OpenSearch
             end
 
             if changes_to_save
-              attrs = obj.__elasticsearch__.instance_variable_get(:@__changed_model_attributes) || {}
+              attrs = obj.__opensearch__.instance_variable_get(:@__changed_model_attributes) || {}
               latest_changes = changes_to_save.inject({}) { |latest_changes, (k,v)| latest_changes.merge!(k => v.last) }
-              obj.__elasticsearch__.instance_variable_set(:@__changed_model_attributes, attrs.merge(latest_changes))
+              obj.__opensearch__.instance_variable_set(:@__changed_model_attributes, attrs.merge(latest_changes))
             end
           end if respond_to?(:before_save)
         end
 
-        # {InstanceMethodsProxy}, accessed as `@mymodel.__elasticsearch__`
+        # {InstanceMethodsProxy}, accessed as `@mymodel.__opensearch__`
         #
-        def __elasticsearch__ &block
-          @__elasticsearch__ ||= InstanceMethodsProxy.new(self)
-          @__elasticsearch__.instance_eval(&block) if block_given?
-          @__elasticsearch__
+        def __opensearch__ &block
+          @__opensearch__ ||= InstanceMethodsProxy.new(self)
+          @__opensearch__.instance_eval(&block) if block_given?
+          @__opensearch__
         end
       end
 
       # @overload dup
       #
-      # Returns a copy of this object. Resets the __elasticsearch__ proxy so
+      # Returns a copy of this object. Resets the __opensearch__ proxy so
       # the duplicate will build its own proxy.
       def initialize_dup(_)
-        @__elasticsearch__ = nil
+        @__opensearch__ = nil
         super
       end
 
@@ -164,7 +164,7 @@ module OpenSearch
         end
 
         def class
-          klass.__elasticsearch__
+          klass.__opensearch__
         end
 
         # Need to redefine `as_json` because we're not inheriting from `BasicObject`;

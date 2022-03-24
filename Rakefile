@@ -115,7 +115,7 @@ namespace :test do
   end
 
   desc "Run integration tests in all subprojects"
-  task integration: :setup_elasticsearch do
+  task integration: :setup_opensearch do
     # 1/ opensearch-model
     #
     puts '-'*80

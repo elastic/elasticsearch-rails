@@ -68,11 +68,11 @@ class Article < ActiveRecord::Base
   end
 end
 
-Article.__elasticsearch__.client = OpenSearch::Client.new log: true
+Article.__opensearch__.client = OpenSearch::Client.new log: true
 
 # Create index
 
-Article.__elasticsearch__.create_index! force: true
+Article.__opensearch__.create_index! force: true
 
 # Store data
 
@@ -80,7 +80,7 @@ Article.delete_all
 Article.create title: 'Foo'
 Article.create title: 'Bar'
 Article.create title: 'Foo Foo'
-Article.__elasticsearch__.refresh_index!
+Article.__opensearch__.refresh_index!
 
 # Search and suggest
 fulltext_search_response = Article.search(query: { match: { title: 'foo'} } )
@@ -102,15 +102,15 @@ puts "", "Article autocomplete for 'fo':".ansi(:bold),
      ""
 
 puts "", "Text 'Foo Bar' analyzed with the default analyzer:".ansi(:bold),
-     Article.__elasticsearch__.client.indices.analyze(
-      index: Article.__elasticsearch__.index_name,
+     Article.__opensearch__.client.indices.analyze(
+      index: Article.__opensearch__.index_name,
       field: 'title',
       text: 'Foo Bar')['tokens'].map { |t| t['token'] }.inspect.ansi(:bold, :yellow),
      ""
 
 puts "", "Text 'Foo Bar' analyzed with the autocomplete filter:".ansi(:bold),
-     Article.__elasticsearch__.client.indices.analyze(
-      index: Article.__elasticsearch__.index_name,
+     Article.__opensearch__.client.indices.analyze(
+      index: Article.__opensearch__.index_name,
       field: 'suggestable_title',
       text: 'Foo Bar')['tokens'].map { |t| t['token'] }.inspect.ansi(:bold, :yellow),
      ""

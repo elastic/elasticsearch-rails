@@ -228,7 +228,7 @@ module Searchable
         end
       end
 
-      __elasticsearch__.search(@search_definition)
+      __opensearch__.search(@search_definition)
     end
   end
 end

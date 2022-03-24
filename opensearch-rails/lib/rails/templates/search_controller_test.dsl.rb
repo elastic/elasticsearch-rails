@@ -50,8 +50,8 @@ class SearchControllerTest < ActionController::TestCase
 
     Sidekiq::Queue.new("elasticsearch").clear
 
-    Article.__elasticsearch__.import force: true
-    Article.__elasticsearch__.refresh_index!
+    Article.__opensearch__.import force: true
+    Article.__opensearch__.refresh_index!
   end
 
   test "should return search results" do

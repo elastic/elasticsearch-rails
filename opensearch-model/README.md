@@ -1,6 +1,6 @@
 # OpenSearch::Model
 
-The `opensearch-model` library builds on top of the the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
+The `opensearch-model` library builds on top of the the [`opensearch`](https://github.com/compliance-innovations/opensearch-ruby) library.
 
 It aims to simplify integration of Ruby classes ("models"), commonly found e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the [Elasticsearch](https://www.elastic.co) search and analytics engine.
 
@@ -54,7 +54,7 @@ Article.create title: 'Swift green frogs'
 
 ### Setup
 
-To add the Elasticsearch integration for this model, require `elasticsearch/model`
+To add the OpenSearch integration for this model, require `opensearch/model`
 and include the main module in your class:
 
 ```ruby
@@ -97,18 +97,18 @@ class Article
 end
 ```
 
-#### The `__elasticsearch__` Proxy
+#### The `__opensearch__` Proxy
 
 The `OpenSearch::Model` module contains a big amount of class and instance methods to provide
 all its functionality. To prevent polluting your model namespace, this functionality is primarily
-available via the `__elasticsearch__` class and instance level proxy methods;
+available via the `__opensearch__` class and instance level proxy methods;
 see the `OpenSearch::Model::Proxy` class documentation for technical information.
 
 The module will include important methods, such as `search`, into the class or module only
 when they haven't been defined already. Following two calls are thus functionally equivalent:
 
 ```ruby
-Article.__elasticsearch__.search 'fox'
+Article.__opensearch__.search 'fox'
 Article.search 'fox'
 ```
 
@@ -120,14 +120,14 @@ The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/
 connected to `localhost:9200`, by default. You can access and use it as any other `OpenSearch::Client`:
 
 ```ruby
-Article.__elasticsearch__.client.cluster.health
+Article.__opensearch__.client.cluster.health
 # => { "cluster_name"=>"elasticsearch", "status"=>"yellow", ... }
 ```
 
 To use a client with different configuration, just set up a client for the model:
 
 ```ruby
-Article.__elasticsearch__.client = OpenSearch::Client.new host: 'api.server.org'
+Article.__opensearch__.client = OpenSearch::Client.new host: 'api.server.org'
 ```
 
 Or configure the client for all models:
@@ -400,8 +400,8 @@ Article.settings.to_hash
 You can use the defined settings and mappings to create an index with desired configuration:
 
 ```ruby
-Article.__elasticsearch__.client.indices.delete index: Article.index_name rescue nil
-Article.__elasticsearch__.client.indices.create \
+Article.__opensearch__.client.indices.delete index: Article.index_name rescue nil
+Article.__opensearch__.client.indices.create \
   index: Article.index_name,
   body: { settings: Article.settings.to_hash, mappings: Article.mappings.to_hash }
 ```
@@ -409,8 +409,8 @@ Article.__elasticsearch__.client.indices.create \
 There's a shortcut available for this common operation (convenient e.g. in tests):
 
 ```ruby
-Article.__elasticsearch__.create_index! force: true
-Article.__elasticsearch__.refresh_index!
+Article.__opensearch__.create_index! force: true
+Article.__opensearch__.refresh_index!
 ```
 
 By default, index name and document type will be inferred from your class name,
@@ -429,7 +429,7 @@ Usually, we need to update the Elasticsearch index when records in the database 
 use the `index_document`, `update_document` and `delete_document` methods, respectively:
 
 ```ruby
-Article.first.__elasticsearch__.index_document
+Article.first.__opensearch__.index_document
 # => {"ok"=>true, ... "_version"=>2}
 ```
 
@@ -479,19 +479,19 @@ class Article < ActiveRecord::Base
   include OpenSearch::Model
 
   after_commit on: [:create] do
-    __elasticsearch__.index_document if self.published?
+    __opensearch__.index_document if self.published?
   end
 
   after_commit on: [:update] do
     if self.published?
-      __elasticsearch__.update_document
+      __opensearch__.update_document
     else
-      __elasticsearch__.delete_document
+      __opensearch__.delete_document
     end
   end
 
   after_commit on: [:destroy] do
-    __elasticsearch__.delete_document if self.published?
+    __opensearch__.delete_document if self.published?
   end
 end
 ```
@@ -527,7 +527,7 @@ class Indexer
     case operation.to_s
       when /index/
         record = Article.find(record_id)
-        Client.index  index: 'articles', type: 'article', id: record.id, body: record.__elasticsearch__.as_indexed_json
+        Client.index  index: 'articles', type: 'article', id: record.id, body: record.__opensearch__.as_indexed_json
       when /delete/
         begin
           Client.delete index: 'articles', type: 'article', id: record_id
@@ -563,7 +563,7 @@ By default, the model instance will be serialized to JSON using the `as_indexed_
 which is defined automatically by the `OpenSearch::Model::Serializing` module:
 
 ```ruby
-Article.first.__elasticsearch__.as_indexed_json
+Article.first.__opensearch__.as_indexed_json
 # => {"id"=>1, "title"=>"Quick brown fox"}
 ```
 

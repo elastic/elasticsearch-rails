@@ -46,11 +46,11 @@ class Article < ActiveRecord::Base
   end
 end
 
-Article.__elasticsearch__.client = OpenSearch::Client.new log: true
+Article.__opensearch__.client = OpenSearch::Client.new log: true
 
 # Create index
 
-Article.__elasticsearch__.create_index! force: true
+Article.__opensearch__.create_index! force: true
 
 # Store data
 
@@ -58,7 +58,7 @@ Article.delete_all
 Article.create title: 'Foo'
 Article.create title: 'Bar'
 Article.create title: 'Foo Foo'
-Article.__elasticsearch__.refresh_index!
+Article.__opensearch__.refresh_index!
 
 # Search and suggest
 

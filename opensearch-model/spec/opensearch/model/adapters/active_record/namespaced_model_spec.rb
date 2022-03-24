@@ -27,9 +27,9 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Namespaced Model' do
     end
 
     MyNamespace::Book.delete_all
-    MyNamespace::Book.__elasticsearch__.create_index!(force: true, include_type_name: true)
+    MyNamespace::Book.__opensearch__.create_index!(force: true, include_type_name: true)
     MyNamespace::Book.create!(title: 'Test')
-    MyNamespace::Book.__elasticsearch__.refresh_index!
+    MyNamespace::Book.__opensearch__.refresh_index!
   end
 
   after do

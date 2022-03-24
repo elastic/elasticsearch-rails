@@ -48,7 +48,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Parent-Child' do
 
       q_2.answers.create!(text: 'Amet Et', author: 'John')
 
-      Question.__elasticsearch__.refresh_index!
+      Question.__opensearch__.refresh_index!
     end
   end
 
@@ -78,7 +78,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Parent-Child' do
 
     before do
       Question.where(title: 'First Question').each(&:destroy)
-      Question.__elasticsearch__.refresh_index!
+      Question.__opensearch__.refresh_index!
     end
 
     let(:search_result) do

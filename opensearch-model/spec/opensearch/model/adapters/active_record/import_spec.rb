@@ -29,11 +29,11 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
     end
 
     ImportArticle.delete_all
-    ImportArticle.__elasticsearch__.client.cluster.health(wait_for_status: 'yellow')
+    ImportArticle.__opensearch__.client.cluster.health(wait_for_status: 'yellow')
   end
 
   before do
-    ImportArticle.__elasticsearch__.create_index!
+    ImportArticle.__opensearch__.create_index!
   end
 
   after do
@@ -46,7 +46,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: i.to_s }
         ImportArticle.import
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'imports all documents' do
@@ -64,7 +64,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
         errors  = ImportArticle.import(batch_size: 5) do |response|
           batches += 1
         end
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
         batches
       end
 
@@ -81,7 +81,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.import(scope: 'popular', force: true)
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'applies the scope' do
@@ -93,7 +93,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.import(query: -> { where('views >= 3') })
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'applies the query' do
@@ -106,10 +106,10 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         new_article
         batches = 0
-        errors  = ImportArticle.__elasticsearch__.import(batch_size: 5) do |response|
+        errors  = ImportArticle.__opensearch__.import(batch_size: 5) do |response|
           batches += 1
         end
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
         { batch_size: batches, errors: errors}
       end
 
@@ -128,7 +128,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       before do
         10.times { |i| ImportArticle.create! title: 'Test', views: "#{i}" }
         ImportArticle.import( transform: ->(a) {{ index: { data: { name: a.title, foo: 'BAR' } }}} )
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'transforms the documents' do
@@ -151,8 +151,8 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       end
 
       before do
-        ImportArticle.__elasticsearch__.import
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.import
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'uses the default scope' do
@@ -170,7 +170,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
 
       before do
         ImportArticle.import(query: -> { where('views <= 4') })
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'combines the query and the default scope' do
@@ -182,7 +182,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       before do
         ImportArticle.delete_all
         ImportArticle.import
-        ImportArticle.__elasticsearch__.refresh_index!
+        ImportArticle.__opensearch__.refresh_index!
       end
 
       it 'does not make any requests to create documents' do

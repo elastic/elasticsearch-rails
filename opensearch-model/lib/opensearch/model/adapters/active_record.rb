@@ -79,9 +79,9 @@ module OpenSearch
           #
           def self.included(base)
             base.class_eval do
-              after_commit lambda { __elasticsearch__.index_document  },  on: :create
-              after_commit lambda { __elasticsearch__.update_document },  on: :update
-              after_commit lambda { __elasticsearch__.delete_document },  on: :destroy
+              after_commit lambda { __opensearch__.index_document  },  on: :create
+              after_commit lambda { __opensearch__.update_document },  on: :update
+              after_commit lambda { __opensearch__.delete_document },  on: :destroy
             end
           end
         end
@@ -109,7 +109,7 @@ module OpenSearch
           end
 
           def __transform
-            lambda { |model|  { index: { _id: model.id, data: model.__elasticsearch__.as_indexed_json } } }
+            lambda { |model|  { index: { _id: model.id, data: model.__opensearch__.as_indexed_json } } }
           end
         end
       end

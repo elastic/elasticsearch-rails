@@ -208,7 +208,7 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
       let(:instance) do
         model.tap do |inst|
           allow(inst).to receive(:id).and_return(1)
-          allow(inst).to receive(:__elasticsearch__).and_return(double('object', id: 1, as_indexed_json: {}))
+          allow(inst).to receive(:__opensearch__).and_return(double('object', id: 1, as_indexed_json: {}))
         end
       end
 

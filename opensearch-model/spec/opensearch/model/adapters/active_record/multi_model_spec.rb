@@ -37,11 +37,11 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord MultiModel' do
     models = [ Episode, Series ]
     clear_tables(models)
     models.each do |model|
-      model.__elasticsearch__.create_index! force: true
+      model.__opensearch__.create_index! force: true
       model.create name: "The #{model.name}"
       model.create name: "A great #{model.name}"
       model.create name: "The greatest #{model.name}"
-      model.__elasticsearch__.refresh_index!
+      model.__opensearch__.refresh_index!
     end
   end
 
@@ -100,7 +100,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord MultiModel' do
 
         before do
           Series.find_by_name("The greatest Series").delete
-          Series.__elasticsearch__.refresh_index!
+          Series.__opensearch__.refresh_index!
         end
 
         it 'only returns matching records' do

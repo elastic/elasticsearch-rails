@@ -32,13 +32,13 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
       end
 
       ArticleNoType.delete_all
-      ArticleNoType.__elasticsearch__.create_index!(force: true)
+      ArticleNoType.__opensearch__.create_index!(force: true)
 
       ArticleNoType.create!(title: 'Test', body: '', clicks: 1)
       ArticleNoType.create!(title: 'Testing Coding', body: '', clicks: 2)
       ArticleNoType.create!(title: 'Coding', body: '', clicks: 3)
 
-      ArticleNoType.__elasticsearch__.refresh_index!
+      ArticleNoType.__opensearch__.refresh_index!
     end
 
     describe 'indexing a document' do
@@ -67,13 +67,13 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
       end
 
       Article.delete_all
-      Article.__elasticsearch__.create_index!(force: true, include_type_name: true)
+      Article.__opensearch__.create_index!(force: true, include_type_name: true)
 
       Article.create!(title: 'Test', body: '', clicks: 1)
       Article.create!(title: 'Testing Coding', body: '', clicks: 2)
       Article.create!(title: 'Coding', body: '', clicks: 3)
 
-      Article.__elasticsearch__.refresh_index!
+      Article.__opensearch__.refresh_index!
     end
 
     describe 'indexing a document' do
@@ -228,10 +228,10 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
 
       before do
         Article.create!(title: 'destroy', body: '', clicks: 1)
-        Article.__elasticsearch__.refresh_index!
+        Article.__opensearch__.refresh_index!
         Article.where(title: 'destroy').first.destroy
 
-        Article.__elasticsearch__.refresh_index!
+        Article.__opensearch__.refresh_index!
       end
 
       let(:search_result) do
@@ -249,11 +249,11 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
 
       before do
         article = Article.create!(title: 'update', body: '', clicks: 1)
-        Article.__elasticsearch__.refresh_index!
+        Article.__opensearch__.refresh_index!
         article.title = 'Writing'
         article.save
 
-        Article.__elasticsearch__.refresh_index!
+        Article.__opensearch__.refresh_index!
       end
 
       let(:search_result) do
@@ -270,11 +270,11 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
 
       before do
         article = Article.create!(title: 'update', body: '', clicks: 1)
-        Article.__elasticsearch__.refresh_index!
+        Article.__opensearch__.refresh_index!
         article.title = 'special'
         article.save
 
-        Article.__elasticsearch__.refresh_index!
+        Article.__opensearch__.refresh_index!
       end
 
       let(:search_result) do
@@ -300,8 +300,8 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
           article.save
         end
 
-        article.__elasticsearch__.update_document
-        Article.__elasticsearch__.refresh_index!
+        article.__opensearch__.update_document
+        Article.__opensearch__.refresh_index!
       end
 
       let(:search_result) do

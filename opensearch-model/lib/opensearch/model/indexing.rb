@@ -149,7 +149,7 @@ module OpenSearch
         #     # => {:article=>{:dynamic=>"strict", :properties=>{:foo=>{:type=>"long"}}}}
         #
         # The `mappings` and `settings` methods are accessible directly on the model class,
-        # when it doesn't already define them. Use the `__elasticsearch__` proxy otherwise.
+        # when it doesn't already define them. Use the `__opensearch__` proxy otherwise.
         #
         def mapping(options={}, &block)
           @mapping ||= Mappings.new(document_type, options)
@@ -228,15 +228,15 @@ module OpenSearch
         #
         # @example Create an index for the `Article` model
         #
-        #     Article.__elasticsearch__.create_index!
+        #     Article.__opensearch__.create_index!
         #
         # @example Forcefully create (delete first) an index for the `Article` model
         #
-        #     Article.__elasticsearch__.create_index! force: true
+        #     Article.__opensearch__.create_index! force: true
         #
         # @example Pass a specific index name
         #
-        #     Article.__elasticsearch__.create_index! index: 'my-index'
+        #     Article.__opensearch__.create_index! index: 'my-index'
         #
         def create_index!(options={})
           options = options.clone
@@ -261,11 +261,11 @@ module OpenSearch
         #
         # @example Check whether the model's index exists
         #
-        #     Article.__elasticsearch__.index_exists?
+        #     Article.__opensearch__.index_exists?
         #
         # @example Check whether a specific index exists
         #
-        #     Article.__elasticsearch__.index_exists? index: 'my-index'
+        #     Article.__opensearch__.index_exists? index: 'my-index'
         #
         def index_exists?(options={})
           target_index = options[:index] || self.index_name
@@ -277,11 +277,11 @@ module OpenSearch
         #
         # @example Delete the index for the `Article` model
         #
-        #     Article.__elasticsearch__.delete_index!
+        #     Article.__opensearch__.delete_index!
         #
         # @example Pass a specific index name
         #
-        #     Article.__elasticsearch__.delete_index! index: 'my-index'
+        #     Article.__opensearch__.delete_index! index: 'my-index'
         #
         def delete_index!(options={})
           target_index = options.delete(:index) || self.index_name
@@ -302,11 +302,11 @@ module OpenSearch
         #
         # @example Refresh the index for the `Article` model
         #
-        #     Article.__elasticsearch__.refresh_index!
+        #     Article.__opensearch__.refresh_index!
         #
         # @example Pass a specific index name
         #
-        #     Article.__elasticsearch__.refresh_index! index: 'my-index'
+        #     Article.__opensearch__.refresh_index! index: 'my-index'
         #
         # @see https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-refresh.html
         #
@@ -360,7 +360,7 @@ module OpenSearch
         #
         # @example Index a record
         #
-        #     @article.__elasticsearch__.index_document
+        #     @article.__opensearch__.index_document
         #     2013-11-20 16:25:57 +0100: PUT http://localhost:9200/articles/article/1 ...
         #
         # @return [Hash] The response from Elasticsearch
@@ -383,7 +383,7 @@ module OpenSearch
         #
         # @example Delete a record
         #
-        #     @article.__elasticsearch__.delete_document
+        #     @article.__opensearch__.delete_document
         #     2013-11-20 16:27:00 +0100: DELETE http://localhost:9200/articles/article/1
         #
         # @return [Hash] The response from Elasticsearch
@@ -414,7 +414,7 @@ module OpenSearch
         #     @article.update_attribute :title, 'Updated'
         #     # SQL (0.3ms)  UPDATE "articles" SET "title" = ?...
         #
-        #     @article.__elasticsearch__.update_document
+        #     @article.__opensearch__.update_document
         #     # 2013-11-20 17:00:05 +0100: POST http://localhost:9200/articles/article/1/_update ...
         #     # 2013-11-20 17:00:05 +0100: > {"doc":{"title":"Updated"}}
         #
@@ -453,7 +453,7 @@ module OpenSearch
         #
         #     @article = Article.first
         #     @article.title = "New title"
-        #     @article.__elasticsearch__.update_document_attributes title: "New title"
+        #     @article.__opensearch__.update_document_attributes title: "New title"
         #
         # @return [Hash] The response from Elasticsearch
         #

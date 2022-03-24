@@ -58,11 +58,11 @@ describe OpenSearch::Model::Proxy do
   end
 
   it 'sets up a proxy method on the class' do
-    expect(DummyProxyModel).to respond_to(:__elasticsearch__)
+    expect(DummyProxyModel).to respond_to(:__opensearch__)
   end
 
   it 'sets up a proxy method on instances' do
-    expect(DummyProxyModel.new).to respond_to(:__elasticsearch__)
+    expect(DummyProxyModel.new).to respond_to(:__opensearch__)
   end
 
   it 'sets up hooks for before_save callbacks' do
@@ -70,35 +70,35 @@ describe OpenSearch::Model::Proxy do
   end
 
   it 'delegates methods to the target' do
-    expect(DummyProxyModel.__elasticsearch__).to respond_to(:foo)
-    expect(DummyProxyModel.__elasticsearch__.foo).to eq('classy foo')
-    expect(DummyProxyModel.new.__elasticsearch__).to respond_to(:bar)
-    expect(DummyProxyModel.new.__elasticsearch__.bar).to eq('insta barr')
+    expect(DummyProxyModel.__opensearch__).to respond_to(:foo)
+    expect(DummyProxyModel.__opensearch__.foo).to eq('classy foo')
+    expect(DummyProxyModel.new.__opensearch__).to respond_to(:bar)
+    expect(DummyProxyModel.new.__opensearch__.bar).to eq('insta barr')
 
     expect {
-      DummyProxyModel.__elasticsearch__.xoxo
+      DummyProxyModel.__opensearch__.xoxo
     }.to raise_exception(NoMethodError)
 
     expect {
-      DummyProxyModel.new.__elasticsearch__.xoxo
+      DummyProxyModel.new.__opensearch__.xoxo
     }.to raise_exception(NoMethodError)
   end
 
   it 'returns the proxy class from an instance proxy' do
-    expect(DummyProxyModel.new.__elasticsearch__.class.class).to eq(OpenSearch::Model::Proxy::ClassMethodsProxy)
+    expect(DummyProxyModel.new.__opensearch__.class.class).to eq(OpenSearch::Model::Proxy::ClassMethodsProxy)
   end
 
   it 'returns the origin class from an instance proxy' do
-    expect(DummyProxyModel.new.__elasticsearch__.klass).to eq(DummyProxyModel)
+    expect(DummyProxyModel.new.__opensearch__.klass).to eq(DummyProxyModel)
   end
 
   it 'delegates #as_json from the proxy to the target' do
-    expect(DummyProxyModel.new.__elasticsearch__.as_json).to eq(foo: 'bar')
+    expect(DummyProxyModel.new.__opensearch__.as_json).to eq(foo: 'bar')
   end
 
   it 'includes the proxy in the inspect string' do
-    expect(DummyProxyModel.__elasticsearch__.inspect).to match(/PROXY/)
-    expect(DummyProxyModel.new.__elasticsearch__.inspect).to match(/PROXY/)
+    expect(DummyProxyModel.__opensearch__.inspect).to match(/PROXY/)
+    expect(DummyProxyModel.new.__opensearch__.inspect).to match(/PROXY/)
   end
 
   context 'when instances are cloned' do
@@ -107,7 +107,7 @@ describe OpenSearch::Model::Proxy do
     end
 
     let!(:model_target) do
-      model.__elasticsearch__.target
+      model.__opensearch__.target
     end
 
     let!(:duplicate) do
@@ -115,7 +115,7 @@ describe OpenSearch::Model::Proxy do
     end
 
     let!(:duplicate_target) do
-      duplicate.__elasticsearch__.target
+      duplicate.__opensearch__.target
     end
 
     it 'resets the proxy target' do
@@ -126,7 +126,7 @@ describe OpenSearch::Model::Proxy do
   end
 
   it 'forwards keyword arguments to target methods' do
-    expect(DummyProxyModel.new.__elasticsearch__.keyword_method(foo: 'bar')).to eq('bar')
+    expect(DummyProxyModel.new.__opensearch__.keyword_method(foo: 'bar')).to eq('bar')
   end
 
 end

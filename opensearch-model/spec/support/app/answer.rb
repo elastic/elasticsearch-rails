@@ -44,7 +44,7 @@ class Answer < ActiveRecord::Base
     json.merge(join_field: { name: JOIN_TYPE, parent: question_id })
   end
 
-  after_commit lambda { __elasticsearch__.index_document(routing: (question_id || 1))  },  on: :create
-  after_commit lambda { __elasticsearch__.update_document(routing: (question_id || 1)) },  on: :update
-  after_commit lambda {__elasticsearch__.delete_document(routing: (question_id || 1)) },  on: :destroy
+  after_commit lambda { __opensearch__.index_document(routing: (question_id || 1))  },  on: :create
+  after_commit lambda { __opensearch__.update_document(routing: (question_id || 1)) },  on: :update
+  after_commit lambda {__opensearch__.delete_document(routing: (question_id || 1)) },  on: :destroy
 end

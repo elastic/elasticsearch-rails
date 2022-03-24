@@ -157,8 +157,8 @@ say_status  "Rubygems", "Adding Elasticsearch libraries into Gemfile...\n", :yel
 puts        '-'*80, ''; sleep 0.75
 
 gem 'opensearch-ruby'
-gem 'opensearch-model', git: 'https://github.com/elasticsearch/opensearch-rails.git'
-gem 'opensearch-rails', git: 'https://github.com/elasticsearch/opensearch-rails.git'
+gem 'opensearch-model', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
+gem 'opensearch-rails', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
 
 
 git add:    "Gemfile*"
@@ -265,8 +265,8 @@ gsub_file "test/controllers/articles_controller_test.rb", %r{setup do.*?end}m, <
 setup do
     @article = articles(:one)
 
-    Article.__elasticsearch__.import force: true
-    Article.__elasticsearch__.refresh_index!
+    Article.__opensearch__.import force: true
+    Article.__opensearch__.refresh_index!
   end
 CODE
 
@@ -323,7 +323,7 @@ else
 end
 }
 
-run  "rails runner 'Article.__elasticsearch__.create_index! force: true'"
+run  "rails runner 'Article.__opensearch__.create_index! force: true'"
 rake "db:seed"
 
 git add:    "db/seeds.rb"

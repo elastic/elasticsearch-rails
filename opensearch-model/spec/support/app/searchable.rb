@@ -60,6 +60,6 @@ module Searchable
 
     # Update document in the index after touch
     #
-    after_touch() { __elasticsearch__.index_document }
+    after_touch() { __opensearch__.index_document }
   end
 end

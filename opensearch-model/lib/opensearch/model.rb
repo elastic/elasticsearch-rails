@@ -74,7 +74,7 @@ module OpenSearch
   #
   # When the `OpenSearch::Model` module is included in your class, it automatically extends it
   # with the functionality; see {OpenSearch::Model.included}. Most methods are available via
-  # the `__elasticsearch__` class and instance method proxies.
+  # the `__opensearch__` class and instance method proxies.
   #
   # It is possible to include/extend the model with the corresponding
   # modules directly, if that is desired:
@@ -89,7 +89,7 @@ module OpenSearch
 
     # Adds the `OpenSearch::Model` functionality to the including class.
     #
-    # * Creates the `__elasticsearch__` class and instance method. These methods return a proxy object with
+    # * Creates the `__opensearch__` class and instance method. These methods return a proxy object with
     #   other common methods defined on them.
     # * The module includes other modules with further functionality.
     # * Sets up delegation for common methods such as `import` and `search`.
@@ -109,10 +109,10 @@ module OpenSearch
       base.class_eval do
         include OpenSearch::Model::Proxy
 
-        # Delegate common methods to the `__elasticsearch__` ClassMethodsProxy, unless they are defined already
+        # Delegate common methods to the `__opensearch__` ClassMethodsProxy, unless they are defined already
         class << self
           METHODS.each do |method|
-            delegate method, to: :__elasticsearch__ unless self.public_instance_methods.include?(method)
+            delegate method, to: :__opensearch__ unless self.public_instance_methods.include?(method)
           end
         end
       end

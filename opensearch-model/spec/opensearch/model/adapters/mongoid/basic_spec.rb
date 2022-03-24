@@ -25,12 +25,12 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
               OpenSearch::Model::Adapter::Mongoid,
               lambda { |klass| !!defined?(::Mongoid::Document) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Mongoid::Document) }
 
-    MongoidArticle.__elasticsearch__.create_index! force: true
+    MongoidArticle.__opensearch__.create_index! force: true
 
     MongoidArticle.delete_all
 
-    MongoidArticle.__elasticsearch__.refresh_index!
-    MongoidArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
+    MongoidArticle.__opensearch__.refresh_index!
+    MongoidArticle.__opensearch__.client.cluster.health wait_for_status: 'yellow'
   end
 
   after do
@@ -44,7 +44,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
       MongoidArticle.create! title: 'Test'
       MongoidArticle.create! title: 'Testing Coding'
       MongoidArticle.create! title: 'Coding'
-      MongoidArticle.__elasticsearch__.refresh_index!
+      MongoidArticle.__opensearch__.refresh_index!
     end
 
     let(:search_result) do
@@ -133,7 +133,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
       article
       MongoidArticle.create!(title: 'Coding')
       article.destroy
-      MongoidArticle.__elasticsearch__.refresh_index!
+      MongoidArticle.__opensearch__.refresh_index!
     end
 
     it 'removes documents from the index' do
@@ -151,7 +151,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
     before do
       article.title = 'Writing'
       article.save
-      MongoidArticle.__elasticsearch__.refresh_index!
+      MongoidArticle.__opensearch__.refresh_index!
     end
 
     it 'indexes updates' do
@@ -166,7 +166,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
       MongoidArticle.create! title: 'Test'
       MongoidArticle.create! title: 'Testing Coding'
       MongoidArticle.create! title: 'Coding'
-      MongoidArticle.__elasticsearch__.refresh_index!
+      MongoidArticle.__opensearch__.refresh_index!
     end
 
     let(:search_result) do
@@ -185,7 +185,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
       MongoidArticle.create! title: 'Test'
       MongoidArticle.create! title: 'Testing Coding'
       MongoidArticle.create! title: 'Coding'
-      MongoidArticle.__elasticsearch__.refresh_index!
+      MongoidArticle.__opensearch__.refresh_index!
     end
 
     let(:search_result) do
@@ -206,8 +206,8 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
 
     before do
       97.times { |i| MongoidArticle.create! title: "Test #{i}" }
-      MongoidArticle.__elasticsearch__.create_index! force: true
-      MongoidArticle.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
+      MongoidArticle.__opensearch__.create_index! force: true
+      MongoidArticle.__opensearch__.client.cluster.health wait_for_status: 'yellow'
     end
 
     context 'when there is no default scope' do
@@ -217,7 +217,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
         errors  = MongoidArticle.import(batch_size: 10) do |response|
           batches += 1
         end
-        MongoidArticle.__elasticsearch__.refresh_index!
+        MongoidArticle.__opensearch__.refresh_index!
         batches
       end
 
@@ -240,8 +240,8 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
       end
 
       before do
-        MongoidArticle.__elasticsearch__.import
-        MongoidArticle.__elasticsearch__.refresh_index!
+        MongoidArticle.__opensearch__.import
+        MongoidArticle.__opensearch__.refresh_index!
       end
 
       it 'uses the default scope' do
@@ -260,7 +260,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
 
       before do
         MongoidArticle.import(query: -> { lte(views: 4) })
-        MongoidArticle.__elasticsearch__.refresh_index!
+        MongoidArticle.__opensearch__.refresh_index!
       end
 
       it 'combines the query and the default scope' do
@@ -273,7 +273,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
       before do
         MongoidArticle.delete_all
         MongoidArticle.import
-        MongoidArticle.__elasticsearch__.refresh_index!
+        MongoidArticle.__opensearch__.refresh_index!
       end
 
       it 'does not make any requests to create documents' do

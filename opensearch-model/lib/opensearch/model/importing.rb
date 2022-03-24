@@ -114,7 +114,7 @@ module OpenSearch
         # @example Transform records during the import with a lambda
         #
         #    transform = lambda do |a|
-        #      {index: {_id: a.id, _parent: a.author_id, data: a.__elasticsearch__.as_indexed_json}}
+        #      {index: {_id: a.id, _parent: a.author_id, data: a.__opensearch__.as_indexed_json}}
         #    end
         #
         #    Article.import transform: transform

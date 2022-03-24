@@ -30,14 +30,14 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Pagination' do
 
     Kaminari::Hooks.init if defined?(Kaminari::Hooks)
 
-    ArticleForPagination.__elasticsearch__.create_index! force: true
+    ArticleForPagination.__opensearch__.create_index! force: true
 
     68.times do |i|
       ArticleForPagination.create! title: "Test #{i}", published: (i % 2 == 0)
     end
 
     ArticleForPagination.import
-    ArticleForPagination.__elasticsearch__.refresh_index!
+    ArticleForPagination.__opensearch__.refresh_index!
   end
 
   context 'when no other page is specified' do

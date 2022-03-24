@@ -35,25 +35,25 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Multimodel', if: test_mongoid
 
   before do
     clear_tables(Episode, Image)
-    Episode.__elasticsearch__.create_index! force: true
+    Episode.__opensearch__.create_index! force: true
     Episode.create name: 'TheEpisode'
     Episode.create name: 'A great Episode'
     Episode.create name: 'The greatest Episode'
-    Episode.__elasticsearch__.refresh_index!
+    Episode.__opensearch__.refresh_index!
 
-    Image.__elasticsearch__.create_index! force: true
+    Image.__opensearch__.create_index! force: true
     Image.create! name: 'The Image'
     Image.create! name: 'A great Image'
     Image.create! name: 'The greatest Image'
-    Image.__elasticsearch__.refresh_index!
-    Image.__elasticsearch__.client.cluster.health wait_for_status: 'yellow'
+    Image.__opensearch__.refresh_index!
+    Image.__opensearch__.client.cluster.health wait_for_status: 'yellow'
   end
 
   after do
     [Episode, Image].each do |model|
-      model.__elasticsearch__.client.delete_by_query(index: model.index_name, q: '*', body: {})
+      model.__opensearch__.client.delete_by_query(index: model.index_name, q: '*', body: {})
       model.delete_all
-      model.__elasticsearch__.refresh_index!
+      model.__opensearch__.refresh_index!
     end
   end
 

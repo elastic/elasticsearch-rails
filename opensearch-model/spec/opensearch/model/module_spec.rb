@@ -56,8 +56,8 @@ describe OpenSearch::Model do
     end
 
     it 'should include and set up the proxy' do
-      expect(DummyIncludingModel).to respond_to(:__elasticsearch__)
-      expect(DummyIncludingModel.new).to respond_to(:__elasticsearch__)
+      expect(DummyIncludingModel).to respond_to(:__opensearch__)
+      expect(DummyIncludingModel.new).to respond_to(:__opensearch__)
     end
 
     it 'should delegate methods to the proxy' do

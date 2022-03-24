@@ -38,7 +38,7 @@ class Question < ActiveRecord::Base
     json.merge(JOIN_METADATA)
   end
 
-  after_commit lambda { __elasticsearch__.index_document  },  on: :create
-  after_commit lambda { __elasticsearch__.update_document },  on: :update
-  after_commit lambda { __elasticsearch__.delete_document },  on: :destroy
+  after_commit lambda { __opensearch__.index_document  },  on: :create
+  after_commit lambda { __opensearch__.update_document },  on: :update
+  after_commit lambda { __opensearch__.delete_document },  on: :destroy
 end

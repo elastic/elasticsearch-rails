@@ -35,7 +35,7 @@ module OpenSearch
         #
         # @example Return the model instance as a Hash
         #
-        #     Article.first.__elasticsearch__.as_indexed_json
+        #     Article.first.__opensearch__.as_indexed_json
         #     => {"title"=>"Foo"}
         #
         # @see OpenSearch::Model::Indexing

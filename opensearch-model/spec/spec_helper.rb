@@ -129,7 +129,7 @@ def delete_all_indices!
   client = OpenSearch::Model.client
   ActiveRecord::Base.descendants.each do |model|
     begin
-      client.indices.delete(index: model.index_name) if model.__elasticsearch__.index_exists?
+      client.indices.delete(index: model.index_name) if model.__opensearch__.index_exists?
     rescue
     end
   end and true

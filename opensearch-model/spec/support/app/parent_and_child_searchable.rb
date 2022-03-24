@@ -20,7 +20,7 @@ module ParentChildSearchable
   JOIN = 'join'.freeze
 
   def create_index!(options={})
-    client = Question.__elasticsearch__.client
+    client = Question.__opensearch__.client
     client.indices.delete index: INDEX_NAME rescue nil if options.delete(:force)
 
     settings = Question.settings.to_hash.merge Answer.settings.to_hash

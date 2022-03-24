@@ -37,8 +37,8 @@ ActiveRecord::Base.logger.instance_eval do
 end
 
 # Reduce verbosity and truncate the request body of Elasticsearch logger
-Article.__elasticsearch__.client.transport.tracer.level = Logger::INFO
-Article.__elasticsearch__.client.transport.tracer.formatter = lambda do |s, d, p, message|
+Article.__opensearch__.client.transport.tracer.level = Logger::INFO
+Article.__opensearch__.client.transport.tracer.formatter = lambda do |s, d, p, message|
   "\n\n" + (message.size > 105 ? message[0..105].concat("...}'") : message) + "\n\n"
 end
 
