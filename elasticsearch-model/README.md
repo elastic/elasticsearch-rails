@@ -117,7 +117,7 @@ See the `Elasticsearch::Model` module documentation for technical information.
 ### The Elasticsearch client
 
 The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch),
-connected to `localhost:9200`, by default. You can access and use it as any other `Elasticsearch::Client`:
+connected to `localhost:9200`, by default. You can access and use it as any other `OpenSearch::Client`:
 
 ```ruby
 Article.__elasticsearch__.client.cluster.health
@@ -127,13 +127,13 @@ Article.__elasticsearch__.client.cluster.health
 To use a client with different configuration, just set up a client for the model:
 
 ```ruby
-Article.__elasticsearch__.client = Elasticsearch::Client.new host: 'api.server.org'
+Article.__elasticsearch__.client = OpenSearch::Client.new host: 'api.server.org'
 ```
 
 Or configure the client for all models:
 
 ```ruby
-Elasticsearch::Model.client = Elasticsearch::Client.new log: true
+Elasticsearch::Model.client = OpenSearch::Client.new log: true
 ```
 
 You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
@@ -519,7 +519,7 @@ class Indexer
   sidekiq_options queue: 'elasticsearch', retry: false
 
   Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
-  Client = Elasticsearch::Client.new host: 'localhost:9200', logger: Logger
+  Client = OpenSearch::Client.new host: 'localhost:9200', logger: Logger
 
   def perform(operation, record_id)
     logger.debug [operation, "ID: #{record_id}"]
@@ -531,7 +531,7 @@ class Indexer
       when /delete/
         begin
           Client.delete index: 'articles', type: 'article', id: record_id
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        rescue OpenSearch::Transport::Transport::Errors::NotFound
           logger.debug "Article not found, ID: #{record_id}"
         end
       else raise ArgumentError, "Unknown operation '#{operation}'"

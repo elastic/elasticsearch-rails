@@ -46,7 +46,7 @@ class Article < ActiveRecord::Base
   end
 end
 
-Article.__elasticsearch__.client = Elasticsearch::Client.new log: true
+Article.__elasticsearch__.client = OpenSearch::Client.new log: true
 
 # Create index
 

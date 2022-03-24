@@ -87,7 +87,7 @@ class Elasticsearch::Persistence::ExampleApplicationTest < Test::Unit::TestCase
 
   context "Application" do
     setup do
-      app.settings.repository.client = Elasticsearch::Client.new \
+      app.settings.repository.client = OpenSearch::Client.new \
         hosts: [{ host: 'localhost', port: ENV.fetch('TEST_CLUSTER_PORT', 9250)}],
         log: true
       app.settings.repository.client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }

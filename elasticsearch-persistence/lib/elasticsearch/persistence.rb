@@ -17,7 +17,7 @@
 
 require 'hashie/mash'
 
-require 'elasticsearch'
+require 'opensearch-ruby'
 require 'elasticsearch/model'
 
 require 'elasticsearch/persistence/version'

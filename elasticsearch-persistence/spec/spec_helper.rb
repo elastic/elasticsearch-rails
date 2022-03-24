@@ -35,7 +35,7 @@ end
 # The default client to be used by the repositories.
 #
 # @since 6.0.0
-DEFAULT_CLIENT = Elasticsearch::Client.new(host: ELASTICSEARCH_URL,
+DEFAULT_CLIENT = OpenSearch::Client.new(host: ELASTICSEARCH_URL,
                                            tracer: (ENV['QUIET'] ? nil : ::Logger.new(STDERR)))
 
 class MyTestRepository

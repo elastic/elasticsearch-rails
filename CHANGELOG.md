@@ -144,7 +144,7 @@
 * Update README for Repository mixin refactor
 * Minor typo in README
 * Add #inspect method for Repository
-* Update references to Elasticsearch::Client
+* Update references to OpenSearch::Client
 
 ### Ruby on Rails
 

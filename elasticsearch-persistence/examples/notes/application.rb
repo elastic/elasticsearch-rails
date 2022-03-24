@@ -23,7 +23,7 @@ require 'multi_json'
 require 'oj'
 require 'hashie/mash'
 
-require 'elasticsearch'
+require 'opensearch-ruby'
 require 'elasticsearch/model'
 require 'elasticsearch/persistence'
 
@@ -72,7 +72,7 @@ class NoteRepository
   include Elasticsearch::Persistence::Repository
   include Elasticsearch::Persistence::Repository::DSL
 
-  client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
+  client OpenSearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
 
   index_name :notes
   document_type  :note

@@ -57,7 +57,7 @@ Article.create title: 'Foo Foo'
 
 # Index data
 #
-client = Elasticsearch::Client.new log:true
+client = OpenSearch::Client.new log:true
 
 # client.indices.delete index: 'articles' rescue nil
 # client.indices.create index: 'articles', body: { mappings: { article: { dynamic: 'strict' }, properties: {} } }
@@ -81,7 +81,7 @@ Article.__send__ :include, Elasticsearch::Model
 
 puts '', '-'*Pry::Terminal.width!
 
-Elasticsearch::Model.client = Elasticsearch::Client.new log: true
+Elasticsearch::Model.client = OpenSearch::Client.new log: true
 
 response = Article.search 'foo';
 

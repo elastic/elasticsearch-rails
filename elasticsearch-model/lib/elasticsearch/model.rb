@@ -19,7 +19,7 @@ require 'hashie/mash'
 
 require 'active_support/core_ext/module/delegation'
 
-require 'elasticsearch'
+require 'opensearch-ruby'
 
 require 'elasticsearch/model/version'
 
@@ -127,18 +127,18 @@ module Elasticsearch
       # @example Get the client
       #
       #     Elasticsearch::Model.client
-      #     => #<Elasticsearch::Client:0x007f96a7d0d000... >
+      #     => #<OpenSearch::Client:0x007f96a7d0d000... >
       #
       def client
-        @client ||= Elasticsearch::Client.new
+        @client ||= OpenSearch::Client.new
       end
 
       # Set the client for all models
       #
       # @example Configure (set) the client for all models
       #
-      #     Elasticsearch::Model.client = Elasticsearch::Client.new host: 'http://localhost:9200', tracer: true
-      #     => #<Elasticsearch::Client:0x007f96a6dd0d80... >
+      #     Elasticsearch::Model.client = OpenSearch::Client.new host: 'http://localhost:9200', tracer: true
+      #     => #<OpenSearch::Client:0x007f96a6dd0d80... >
       #
       # @note You have to set the client before you call Elasticsearch methods on the model,
       #       or set it directly on the model; see {Elasticsearch::Model::Client::ClassMethods#client}

@@ -52,7 +52,7 @@ Article.create id: '3', title: 'Foo Foo'
 
 # Index data into Elasticsearch
 #
-client = Elasticsearch::Client.new log:true
+client = OpenSearch::Client.new log:true
 
 client.indices.delete index: 'articles' rescue nil
 client.bulk index: 'articles',

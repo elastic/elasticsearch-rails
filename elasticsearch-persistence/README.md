@@ -143,7 +143,7 @@ class MyRepository
   end
 end
 
-client = Elasticsearch::Client.new(url: ENV['ELASTICSEARCH_URL'], log: true)
+client = OpenSearch::Client.new(url: ENV['ELASTICSEARCH_URL'], log: true)
 repository = MyRepository.new(client: client, index_name: :my_notes, type: :note, klass: Note)
 repository.settings number_of_shards: 1 do
   mapping do
@@ -225,7 +225,7 @@ end
 You can create an instance of this custom class and get each of the configurations.
 
 ```ruby
-client = Elasticsearch::Client.new(url: 'http://localhost:9200', log: true)
+client = OpenSearch::Client.new(url: 'http://localhost:9200', log: true)
 repository = NoteRepository.new(client: client)
 repository.index_name
 # => 'notes'
@@ -235,7 +235,7 @@ repository.index_name
 You can also override the default configuration with options passed to the initialize method:
 
 ```ruby
-client = Elasticsearch::Client.new(url: 'http://localhost:9250', log: true)
+client = OpenSearch::Client.new(url: 'http://localhost:9250', log: true)
 client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
 repository = NoteRepository.new(client: client, index_name: 'notes_development')
 
@@ -265,11 +265,11 @@ Even if you don't use the DSL mixin, you can set the instance configuration with
 The repository uses the standard Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage).
 
 ```ruby
-client = Elasticsearch::Client.new(url: 'http://search.server.org')
+client = OpenSearch::Client.new(url: 'http://search.server.org')
 repository = NoteRepository.new(client: client)
 repository.client.transport.transport.logger = Logger.new(STDERR)
 repository.client
-# => Elasticsearch::Client
+# => OpenSearch::Client
 
 ```
 
@@ -280,12 +280,12 @@ class NoteRepository
   include Elasticsearch::Persistence::Repository
   include Elasticsearch::Persistence::Repository::DSL
 
-  client Elasticsearch::Client.new url: 'http://search.server.org'
+  client OpenSearch::Client.new url: 'http://search.server.org'
 end
 
 repository = NoteRepository.new
 repository.client
-# => Elasticsearch::Client
+# => OpenSearch::Client
 
 ```
 

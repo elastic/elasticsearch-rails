@@ -17,7 +17,7 @@
 
 module Elasticsearch
   module Model
-    # Contains an `Elasticsearch::Client` instance
+    # Contains an `OpenSearch::Client` instance
     #
     module Client
       module ClassMethods
@@ -36,7 +36,7 @@ module Elasticsearch
         #
         # @example Configure the client for the `Article` model
         #
-        #     Article.client = Elasticsearch::Client.new host: 'http://api.server:8080'
+        #     Article.client = OpenSearch::Client.new host: 'http://api.server:8080'
         #     Article.search ...
         #
         def client=(client)
@@ -62,7 +62,7 @@ module Elasticsearch
         # @example Set the client for a specific record
         #
         #     @article = Article.first
-        #     @article.client = Elasticsearch::Client.new host: 'http://api.server:8080'
+        #     @article.client = OpenSearch::Client.new host: 'http://api.server:8080'
         #
         def client=(client)
           @client = client

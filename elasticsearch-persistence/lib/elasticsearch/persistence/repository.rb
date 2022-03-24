@@ -112,13 +112,13 @@ module Elasticsearch
       # @example
       #   repository.client
       #
-      # @return [ Elasticsearch::Client ] The repository's client.
+      # @return [ OpenSearch::Client ] The repository's client.
       #
       # @since 6.0.0
       def client
         @client ||= @options[:client] ||
                       __get_class_value(:client) ||
-                      Elasticsearch::Client.new
+                      OpenSearch::Client.new
       end
 
       # Get the document type used by the repository object.

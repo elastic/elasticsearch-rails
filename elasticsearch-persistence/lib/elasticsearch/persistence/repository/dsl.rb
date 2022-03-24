@@ -80,7 +80,7 @@ module Elasticsearch
           #
           # @since 6.0.0
           def client(_client = nil)
-            @client ||= (_client || Elasticsearch::Client.new)
+            @client ||= (_client || OpenSearch::Client.new)
           end
 
           def create_index!(*args)

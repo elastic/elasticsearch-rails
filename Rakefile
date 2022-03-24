@@ -16,7 +16,7 @@
 # under the License.
 
 require 'pathname'
-require 'elasticsearch'
+require 'opensearch-ruby'
 
 subprojects = ['elasticsearch-rails', 'elasticsearch-persistence']
 subprojects << 'elasticsearch-model' unless defined?(JRUBY_VERSION)
@@ -46,7 +46,7 @@ def admin_client
     else
       url = "http://#{host || 'localhost'}:#{port || 9200}"
     end
-    Elasticsearch::Client.new(host: url, transport_options: transport_options)
+    OpenSearch::Client.new(host: url, transport_options: transport_options)
   end
 end
 
@@ -153,7 +153,7 @@ end
 
 desc "Wait for elasticsearch cluster to be in green state"
 task :wait_for_green do
-  require 'elasticsearch'
+  require 'opensearch-ruby'
 
   ready = nil
   5.times do |i|
@@ -163,7 +163,7 @@ task :wait_for_green do
         ready = true
         break
       end
-    rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => ex
+    rescue OpenSearch::Transport::Transport::Errors::RequestTimeout => ex
       puts "Couldn't confirm green status.\n#{ex.inspect}."
     rescue Faraday::ConnectionFailed => ex
       puts "Couldn't connect to Elasticsearch.\n#{ex.inspect}."
