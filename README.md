@@ -146,7 +146,7 @@ repository.save Article.new(title: 'Test')
 To work on the code, clone the repository and install all dependencies first:
 
 ```
-git clone https://github.com/elastic/elasticsearch-rails.git
+git clone https://github.com/compliance-innovations/opensearch-rails.git
 cd elasticsearch-rails/
 bundle install
 rake bundle:install

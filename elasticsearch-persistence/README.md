@@ -24,11 +24,11 @@ Install the package from [Rubygems](https://rubygems.org):
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-persistence', git: 'git://github.com/elastic/elasticsearch-rails.git', branch: '6.x'
+    gem 'elasticsearch-persistence', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '6.x'
 
 or install it from a source code checkout:
 
-    git clone https://github.com/elastic/elasticsearch-rails.git
+    git clone https://github.com/compliance-innovations/opensearch-rails.git
     cd elasticsearch-rails/elasticsearch-persistence
     bundle install
     rake install

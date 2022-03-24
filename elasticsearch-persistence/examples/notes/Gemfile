@@ -26,8 +26,8 @@ gem 'hashie'
 
 gem 'patron'
 gem 'opensearch-ruby'
-gem 'elasticsearch-model',       git: 'https://github.com/elastic/elasticsearch-rails.git'
-gem 'elasticsearch-persistence', git: 'https://github.com/elastic/elasticsearch-rails.git'
+gem 'elasticsearch-model',       git: 'https://github.com/compliance-innovations/opensearch-rails.git'
+gem 'elasticsearch-persistence', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
 
 gem 'sinatra', require: false
 gem 'thin'
