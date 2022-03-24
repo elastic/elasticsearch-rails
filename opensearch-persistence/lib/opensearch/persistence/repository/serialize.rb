@@ -60,7 +60,7 @@ module OpenSearch
 
         # The key for the document type in an OpenSearch query response.
         #   Note that it will be removed eventually, as multiple types in a single
-        #   index are deprecated as of Elasticsearch 6.0.
+        #   index are deprecated.
         #
         TYPE = '_type'.freeze
 

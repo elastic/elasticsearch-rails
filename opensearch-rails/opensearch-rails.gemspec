@@ -31,9 +31,9 @@ Gem::Specification.new do |s|
   s.license       = 'Apache 2'
   s.metadata = {
     'homepage_uri' => 'https://www.elastic.co/guide/en/elasticsearch/client/ruby-api/current/ruby_on_rails.html',
-    'changelog_uri' => 'https://github.com/elastic/opensearch-rails/blob/main/CHANGELOG.md',
-    'source_code_uri' => 'https://github.com/elastic/opensearch-rails/',
-    'bug_tracker_uri' => 'https://github.com/elastic/opensearch-rails/issues'
+    'changelog_uri' => 'https://github.com/compliance-innovations/opensearch-rails/blob/main/CHANGELOG.md',
+    'source_code_uri' => 'https://github.com/compliance-innovations/opensearch-rails/',
+    'bug_tracker_uri' => 'https://github.com/compliance-innovations/opensearch-rails/issues'
   }
 
   s.files         = `git ls-files`.split($/)

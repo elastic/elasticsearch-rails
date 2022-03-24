@@ -1,20 +1,16 @@
 # OpenSearch::Persistence
 
-Persistence layer for Ruby domain objects in Elasticsearch, using the Repository pattern.
+Persistence layer for Ruby domain objects in OpenSearch, using the Repository pattern.
 
 ## Compatibility
 
 This library is compatible with Ruby 2.4 and higher.
 
-The library version numbers follow the Elasticsearch major versions. The `main` branch is compatible with the latest Elasticsearch stack stable release.
+The library version numbers follow the OpenSearch major versions. The `main` branch is compatible with the latest OpenSearch stack stable release.
 
-| Rubygem       |   | Elasticsearch |
+| Rubygem       |   | OpenSearch    |
 |:-------------:|:-:| :-----------: |
-| 0.1           | → | 1.x           |
-| 2.x           | → | 2.x           |
-| 5.x           | → | 5.x           |
-| 6.x           | → | 6.x           |
-| main          | → | 7.x           |
+| main          | → | 1.x           |
 
 ## Installation
 
@@ -41,7 +37,7 @@ The library provides the Repository pattern for adding persistence to your Ruby 
 
 The `OpenSearch::Persistence::Repository` module provides an implementation of the
 [repository pattern](http://martinfowler.com/eaaCatalog/repository.html) and allows
-you to save, delete, find and search objects stored in Elasticsearch, as well as configure
+you to save, delete, find and search objects stored in OpenSearch, as well as configure
 mappings and settings for the index. It's an unobtrusive and decoupled way of adding
 persistence to your Ruby objects.
 
@@ -110,13 +106,13 @@ repository.delete(note)
 
 The repository module provides a number of features and facilities to configure and customize the behavior:
 
-* Configuring the Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage) being used
+* Configuring the OpenSearch [client](https://github.com/opensearch-project/opensearch-ruby#sample-code) being used
 * Setting the index name, document type, and object class for deserialization
 * Composing mappings and settings for the index
 * Creating, deleting or refreshing the index
 * Finding or searching for documents
 * Providing access both to domain objects and hits for search results
-* Providing access to the Elasticsearch response for search results (aggregations, total, ...)
+* Providing access to the OpenSearch response for search results (aggregations, total, ...)
 * Defining the methods for serialization and deserialization
 
 There are two mixins you can include in your Repository class. The first `OpenSearch::Persistence::Repository`,
@@ -152,7 +148,7 @@ repository.settings number_of_shards: 1 do
 end
 ```
 
-The custom Elasticsearch client will be used now, with a custom index and type names,
+The custom OpenSearch client will be used now, with a custom index and type names,
 as well as the custom serialization and de-serialization logic.
 
 We can create the index with the desired settings and mappings:
@@ -262,7 +258,7 @@ Even if you don't use the DSL mixin, you can set the instance configuration with
 
 ##### Client
 
-The repository uses the standard Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage).
+The repository uses the standard OpenSearch [client](https://github.com/opensearch-project/opensearch-ruby#sample-code).
 
 ```ruby
 client = OpenSearch::Client.new(url: 'http://search.server.org')
@@ -291,7 +287,7 @@ repository.client
 
 ##### Naming
 
-The `index_name` method specifies the Elasticsearch index to use for storage, lookup and search. The default index name
+The `index_name` method specifies the OpenSearch index to use for storage, lookup and search. The default index name
 is 'repository'.
 
 ```ruby
@@ -317,8 +313,8 @@ repository.index_name
 
 ```
 
-The `document_type` method specifies the Elasticsearch document type to use for storage, lookup and search. The default value is
-'_doc'. Keep in mind that future versions of Elasticsearch will not allow you to set this yourself and will use the type,
+The `document_type` method specifies the OpenSearch document type to use for storage, lookup and search. The default value is
+'_doc'. Keep in mind that future versions of OpenSearch will not allow you to set this yourself and will use the type,
 '_doc'.
 
 ```ruby
@@ -374,7 +370,7 @@ repository.klass
 ##### Index Configuration
 
 The `settings` and `mappings` methods, provided by the
-[`opensearch-model`](http://rubydoc.info/gems/opensearch-model/Elasticsearch/Model/Indexing/ClassMethods)
+[`opensearch-model`](http://rubydoc.info/gems/opensearch-model/OpenSearch/Model/Indexing/ClassMethods)
 gem, allow you to configure the index properties:
 
 ```ruby
@@ -428,7 +424,7 @@ These methods can only be called on repository instances and are not implemented
 ##### Serialization
 
 The `serialize` and `deserialize` methods allow you to customize the serialization of the document when it
-is persisted to Elasticsearch, and define the initialization procedure when loading it from the storage:
+is persisted to OpenSearch, and define the initialization procedure when loading it from the storage:
 
 ```ruby
 class NoteRepository
@@ -502,7 +498,7 @@ Handle the missing objects in the application code, or call `compact` on the res
 
 ##### Search
 
-The `search` method is used to retrieve objects from the repository by a query string or definition in the Elasticsearch DSL:
+The `search` method is used to retrieve objects from the repository by a query string or definition in the OpenSearch DSL:
 
 ```ruby
 repository.search('fox or dog').to_a
@@ -563,11 +559,6 @@ and demonstrates a rich set of features:
 * How to integrate the repository with a Sinatra application
 * How to write complex search definitions, including pagination, highlighting and aggregations
 * How to use search results in the application view
-
-### The ActiveRecord Pattern
-
-The ActiveRecord pattern has been deprecated as of version 6.0.0 of this gem. Please use the
-[Repository Pattern](#the-repository-pattern) instead. For more information on migrating 5.x ActiveRecord-based applications to use the Repository Pattern, please see [this blog post](https://www.elastic.co/blog/activerecord-to-repository-changing-persistence-patterns-with-the-opensearch-rails-gem).
 
 ## License
 

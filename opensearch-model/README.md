@@ -2,21 +2,17 @@
 
 The `opensearch-model` library builds on top of the the [`opensearch`](https://github.com/compliance-innovations/opensearch-ruby) library.
 
-It aims to simplify integration of Ruby classes ("models"), commonly found e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the [Elasticsearch](https://www.elastic.co) search and analytics engine.
+It aims to simplify integration of Ruby classes ("models"), commonly found e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the [OpenSearch](https://opensearch.org/) search and analytics engine.
 
 ## Compatibility
 
 This library is compatible with Ruby 2.4 and higher.
 
-The library version numbers follow the Elasticsearch major versions. The `main` branch is compatible with the latest Elasticsearch stack stable release.
+The library version numbers follow the OpenSearch major versions. The `main` branch is compatible with the latest OpenSearch stack stable release.
 
-| Rubygem       |   | Elasticsearch |
+| Rubygem       |   | OpenSearch    |
 |:-------------:|:-:| :-----------: |
-| 0.1           | → | 1.x           |
-| 2.x           | → | 2.x           |
-| 5.x           | → | 5.x           |
-| 6.x           | → | 6.x           |
-| main          | → | 7.x           |
+| main          | → | 1.x           |
 
 ## Installation
 
@@ -65,7 +61,7 @@ class Article < ActiveRecord::Base
 end
 ```
 
-This will extend the model with functionality related to Elasticsearch.
+This will extend the model with functionality related to OpenSearch.
 
 #### Feature Extraction Pattern
 
@@ -114,9 +110,9 @@ Article.search 'fox'
 
 See the `OpenSearch::Model` module documentation for technical information.
 
-### The Elasticsearch client
+### The OpenSearch client
 
-The module will set up a [client](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch),
+The module will set up a [client](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch),
 connected to `localhost:9200`, by default. You can access and use it as any other `OpenSearch::Client`:
 
 ```ruby
@@ -139,9 +135,9 @@ OpenSearch::Model.client = OpenSearch::Client.new log: true
 You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
 
 Please refer to the
-[`elasticsearch-transport`](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-transport)
+[`opensearch-transport`](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch-transport)
 library documentation for all the configuration options, and to the
-[`elasticsearch-api`](http://rubydoc.info/gems/elasticsearch-api) library documentation
+[`opensearch-api`](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch-api) library documentation
 for information about the Ruby client API.
 
 ### Importing the data
@@ -181,7 +177,7 @@ response.results.first._source.title
 
 #### Search results
 
-The returned `response` object is a rich wrapper around the JSON returned from Elasticsearch,
+The returned `response` object is a rich wrapper around the JSON returned from OpenSearch,
 providing access to response metadata and the actual results ("hits").
 
 Each "hit" is wrapped in the `Result` class, and provides method access
@@ -213,7 +209,7 @@ response.to_a.last.title
 
 #### Search results as database records
 
-Instead of returning documents from Elasticsearch, the `records` method will return a collection
+Instead of returning documents from OpenSearch, the `records` method will return a collection
 of model instances, fetched from the primary database, ordered by score:
 
 ```ruby
@@ -247,8 +243,8 @@ response.records.order(:title).to_a
 
 The `records` method returns the real instances of your model, which is useful when you want to access your
 model methods -- at the expense of slowing down your application, of course.
-In most cases, working with `results` coming from Elasticsearch is sufficient, and much faster. See the
-[`opensearch-rails`](https://github.com/elastic/opensearch-rails/tree/main/opensearch-rails)
+In most cases, working with `results` coming from OpenSearch is sufficient, and much faster. See the
+[`opensearch-rails`](https://github.com/compliance-innovations/opensearch-rails/tree/main/opensearch-rails)
 library for more information about compatibility with the Ruby on Rails framework.
 
 When you want to access both the database `records` and search `results`, use the `each_with_hit`
@@ -285,7 +281,7 @@ NOTE: It is _not_ possible to chain other methods on top of the `records` object
 #### Pagination
 
 You can implement pagination with the `from` and `size` search parameters. However, search results can be automatically paginated with the [`kaminari`](http://rubygems.org/gems/kaminari) or [`will_paginate`](https://github.com/mislav/will_paginate) gems.
-(The pagination gems must be added before the Elasticsearch gems in your Gemfile, or loaded first in your application.)
+(The pagination gems must be added before the OpenSearch gems in your Gemfile, or loaded first in your application.)
 
 If Kaminari or WillPaginate is loaded, use the familiar paging methods:
 
@@ -311,9 +307,9 @@ Kaminari::Hooks.init if defined?(Kaminari::Hooks)
 OpenSearch::Model::Response::Response.__send__ :include, OpenSearch::Model::Response::Pagination::Kaminari
 ```
 
-#### The Elasticsearch DSL
+#### The OpenSearch DSL
 
-In most situations, you'll want to pass the search definition in the Elasticsearch [domain-specific language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
+In most situations, you'll want to pass the search definition in the OpenSearch [domain-specific language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html) to the client:
 
 ```ruby
 response = Article.search query:     { match:  { title: "Fox Dogs" } },
@@ -343,7 +339,7 @@ response.results.first.title
 # => "Quick brown fox"
 ```
 
-Also, you can use the [**`opensearch-dsl`**](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
+Also, you can use the [**`opensearch-dsl`**](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch-dsl) library, which provides a specialized Ruby API for the OpenSearch Query DSL:
 
 ```ruby
 require 'opensearch/dsl'
@@ -366,7 +362,7 @@ response.results.first.title
 For proper search engine function, it's often necessary to configure the index properly.
 The `OpenSearch::Model` integration provides class methods to set up index settings and mappings.
 
-**NOTE**: Elasticsearch will automatically create an index when a document is indexed,
+**NOTE**: OpenSearch will automatically create an index when a document is indexed,
           with default settings and mappings. Create the index in advance with the `create_index!`
           method, so your index configuration is respected.
 
@@ -425,7 +421,7 @@ end
 
 ### Updating the Documents in the Index
 
-Usually, we need to update the Elasticsearch index when records in the database are created, updated or deleted;
+Usually, we need to update the OpenSearch index when records in the database are created, updated or deleted;
 use the `index_document`, `update_document` and `delete_document` methods, respectively:
 
 ```ruby
@@ -540,7 +536,7 @@ class Indexer
 end
 ```
 
-Start the _Sidekiq_ workers with `bundle exec sidekiq --queue elasticsearch --verbose` and
+Start the _Sidekiq_ workers with `bundle exec sidekiq --queue opensearch --verbose` and
 update a model:
 
 ```ruby
@@ -733,23 +729,12 @@ Bug fixes and features must be covered by unit tests.
 
 Github's pull requests and issues are used to communicate, send bug reports and code contributions.
 
-To run all tests against a test Elasticsearch cluster, use a command like this:
+To run all tests against a test OpenSearch cluster, use a command like this:
 
 ```bash
-curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.0.RC1.tar.gz | tar xz -C tmp/
-SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/opensearch-1.0.0.RC1/bin/elasticsearch bundle exec rake test:all
+curl -# https://artifacts.opensearch.org/releases/bundle/opensearch/1.3.0/opensearch-1.3.0-linux-x64.tar.gz | tar xz -C tmp/
+SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/opensearch-1.3.0/bin/opensearch bundle exec rake test:all
 ```
-
-### Single Table Inheritance support
-
-Versions < 7.0.0 of this gem supported inheritance-- more specifically, `Single Table Inheritance`. With this feature,
-elasticsearch settings (index mappings, etc) on a parent model could be inherited by a child model leading to different
-model documents being indexed into the same Elasticsearch index. This feature depended on the ability to set a `type`
-for a document in Elasticsearch. The Elasticsearch team has deprecated support for `types`, as is described
-[here.](https://www.elastic.co/guide/en/elasticsearch/reference/current/removal-of-types.html)
-This gem will also remove support for types and `Single Table Inheritance` in version 7.0 as it enables an anti-pattern.
-Please save different model documents in separate indices. If you want to use STI, you can include an artificial
-`type` field manually in each document and use it in other operations.
 
 ## License
 
