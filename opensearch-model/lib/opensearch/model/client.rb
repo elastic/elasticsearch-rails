@@ -26,7 +26,7 @@ module OpenSearch
         # @example Get the client for `Article` and perform API request
         #
         #     Article.client.cluster.health
-        #     # => { "cluster_name" => "elasticsearch" ... }
+        #     # => { "cluster_name" => "opensearch" ... }
         #
         def client client=nil
           @client ||= OpenSearch::Model.client

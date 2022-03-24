@@ -30,7 +30,7 @@ module OpenSearch
         # @param klass [Class] The class of the model
         # @param query_or_payload [String,Hash,Object] The search request definition
         #                                              (string, JSON, Hash, or object responding to `to_hash`)
-        # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
+        # @param options [Hash] Optional parameters to be passed to the OpenSearch client
         #
         def initialize(klass, query_or_payload, options={})
           @klass   = klass
@@ -62,7 +62,7 @@ module OpenSearch
 
         # Performs the request and returns the response from client
         #
-        # @return [Hash] The response from Elasticsearch
+        # @return [Hash] The response from OpenSearch
         #
         def execute!
           klass.client.search(@definition)
@@ -76,7 +76,7 @@ module OpenSearch
         #
         # @param query_or_payload [String,Hash,Object] The search request definition
         #                                              (string, JSON, Hash, or object responding to `to_hash`)
-        # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
+        # @param options [Hash] Optional parameters to be passed to the OpenSearch client
         #
         # @return [OpenSearch::Model::Response::Response]
         #

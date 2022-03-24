@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Riak and Elasticsearch
+# Riak and OpenSearch
 # ======================
 #
 # https://github.com/basho-labs/ripple
@@ -23,7 +23,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
+Pry.config.history.file = File.expand_path('../../tmp/opensearch_development.pry', __FILE__)
 
 require 'logger'
 require 'ripple'
@@ -39,7 +39,7 @@ class Article
   property :published_at, Time,   :default => proc { Time.now }
 end
 
-# Extend the model with Elasticsearch support
+# Extend the model with OpenSearch support
 #
 Article.__send__ :include, OpenSearch::Model
 
@@ -50,7 +50,7 @@ Article.create id: '1', title: 'Foo'
 Article.create id: '2', title: 'Bar'
 Article.create id: '3', title: 'Foo Foo'
 
-# Index data into Elasticsearch
+# Index data into OpenSearch
 #
 client = OpenSearch::Client.new log:true
 

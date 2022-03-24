@@ -31,7 +31,7 @@ module OpenSearch
 
       # When included in a model, automatically injects the callback subscribers (`after_save`, etc)
       #
-      # @example Automatically update Elasticsearch index when the model changes
+      # @example Automatically update OpenSearch index when the model changes
       #
       #     class Article
       #       include OpenSearch::Model

@@ -34,11 +34,11 @@ module OpenSearch
     #
     #     Article Search (321.3ms) { index: "articles", type: "article", body: { query: ... } }
     #
-    # Also, the total duration of the request to Elasticsearch is displayed in the Rails request breakdown:
+    # Also, the total duration of the request to OpenSearch is displayed in the Rails request breakdown:
     #
-    #     Completed 200 OK in 615ms (Views: 230.9ms | ActiveRecord: 0.0ms | Elasticsearch: 321.3ms)
+    #     Completed 200 OK in 615ms (Views: 230.9ms | ActiveRecord: 0.0ms | OpenSearch: 321.3ms)
     #
-    # @note The displayed duration includes the HTTP transfer -- the time it took Elasticsearch
+    # @note The displayed duration includes the HTTP transfer -- the time it took OpenSearch
     #       to process your request is available in the `response.took` property.
     #
     # @see OpenSearch::Rails::Instrumentation::Publishers

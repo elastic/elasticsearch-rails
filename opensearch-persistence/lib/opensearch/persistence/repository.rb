@@ -25,7 +25,7 @@ module OpenSearch
   module Persistence
 
     # The base Repository mixin. This module should be included in classes that
-    # represent an Elasticsearch repository.
+    # represent an OpenSearch repository.
     #
     # @since 6.0.0
     module Repository
@@ -59,7 +59,7 @@ module OpenSearch
         #
         # @option options [ Symbol, String ] :index_name The name of the index.
         # @option options [ Symbol, String ] :document_type The type of documents persisted in this repository.
-        # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
+        # @option options [ Symbol, String ] :client The client used to handle requests to and from OpenSearch.
         # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
         #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
         # @option options [ OpenSearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
@@ -96,7 +96,7 @@ module OpenSearch
       #
       # @option options [ Symbol, String ] :index_name The name of the index.
       # @option options [ Symbol, String ] :document_type The type of documents persisted in this repository.
-      # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
+      # @option options [ Symbol, String ] :client The client used to handle requests to and from OpenSearch.
       # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
       #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
       # @option options [ OpenSearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.

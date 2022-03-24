@@ -103,7 +103,7 @@ You can generate a simple Ruby on Rails application with a single command
 Once Elasticsearch is running, you can generate the simple app with this command:
 
 ```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/opensearch-rails/main/opensearch-rails/lib/rails/templates/01-basic.rb
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/compliance-innovations/opensearch-rails/main/opensearch-rails/lib/rails/templates/01-basic.rb
 ```
 
 Example of using Elasticsearch as a repository for a Ruby domain object:

@@ -138,7 +138,7 @@ describe OpenSearch::Persistence::Repository::Response::Results do
 
   describe '#raw_response' do
 
-    it 'returns the raw response from Elasticsearch' do
+    it 'returns the raw response from OpenSearch' do
       expect(results.raw_response).to eq(response)
     end
   end

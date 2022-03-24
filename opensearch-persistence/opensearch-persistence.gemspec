@@ -25,9 +25,9 @@ Gem::Specification.new do |s|
   s.version       = OpenSearch::Persistence::VERSION
   s.authors       = ["Karel Minarik"]
   s.email         = ["karel.minarik@elasticsearch.org"]
-  s.description   = "Persistence layer for Ruby models and Elasticsearch."
-  s.summary       = "Persistence layer for Ruby models and Elasticsearch."
-  s.homepage      = "https://github.com/elasticsearch/opensearch-rails/"
+  s.description   = "Persistence layer for Ruby models and OpenSearch."
+  s.summary       = "Persistence layer for Ruby models and OpenSearch."
+  s.homepage      = "https://github.com/compliance-innovations/opensearch-rails/"
   s.license       = "Apache 2"
 
   s.files         = `git ls-files -z`.split("\x0")

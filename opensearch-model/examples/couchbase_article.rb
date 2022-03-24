@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Couchbase and Elasticsearch
+# Couchbase and OpenSearch
 # ===========================
 #
 # https://github.com/couchbase/couchbase-ruby-model
@@ -23,7 +23,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
+Pry.config.history.file = File.expand_path('../../tmp/opensearch_development.pry', __FILE__)
 
 require 'logger'
 require 'couchbase/model'
@@ -52,7 +52,7 @@ class Article < Couchbase::Model
 
 end
 
-# Extend the model with Elasticsearch support
+# Extend the model with OpenSearch support
 #
 Article.__send__ :extend, OpenSearch::Model::Client::ClassMethods
 Article.__send__ :extend, OpenSearch::Model::Searching::ClassMethods
@@ -64,7 +64,7 @@ Article.create id: '1', title: 'Foo'      rescue nil
 Article.create id: '2', title: 'Bar'      rescue nil
 Article.create id: '3', title: 'Foo Foo'  rescue nil
 
-# Index data into Elasticsearch
+# Index data into OpenSearch
 #
 client = OpenSearch::Client.new log:true
 

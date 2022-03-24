@@ -44,7 +44,7 @@ module OpenSearch
             criteria
           end
 
-          # Intercept call to sorting methods, so we can ignore the order from Elasticsearch
+          # Intercept call to sorting methods, so we can ignore the order from OpenSearch
           #
           %w| asc desc order_by |.each do |name|
             define_method name do |*args|
@@ -88,7 +88,7 @@ module OpenSearch
             scope = all
             scope = scope.send(named_scope) if named_scope
             scope = query.is_a?(Proc) ? scope.class_exec(&query) : scope.where(query) if query
-  
+
             scope.no_timeout.each_slice(batch_size) do |items|
               yield (preprocess ? self.__send__(preprocess, items) : items)
             end

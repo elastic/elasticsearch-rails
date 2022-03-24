@@ -46,7 +46,7 @@ module Searchable
       end
     end
 
-    # Customize the JSON serialization for Elasticsearch
+    # Customize the JSON serialization for OpenSearch
     #
     def as_indexed_json(options={})
       {

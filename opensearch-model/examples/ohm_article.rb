@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Ohm for Redis and Elasticsearch
+# Ohm for Redis and OpenSearch
 # ===============================
 #
 # https://github.com/soveran/ohm#example
@@ -23,7 +23,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
+Pry.config.history.file = File.expand_path('../../tmp/opensearch_development.pry', __FILE__)
 
 require 'logger'
 require 'ansi/core'
@@ -40,7 +40,7 @@ class Article < Ohm::Model
   attribute :published_at
 end
 
-# Extend the model with Elasticsearch support
+# Extend the model with OpenSearch support
 #
 Article.__send__ :include, OpenSearch::Model
 
@@ -62,7 +62,7 @@ module OpenSearch
   end
 end
 
-# Configure the Elasticsearch client to log operations
+# Configure the OpenSearch client to log operations
 #
 OpenSearch::Model.client = OpenSearch::Client.new log: true
 

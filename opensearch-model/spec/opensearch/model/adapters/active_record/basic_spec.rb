@@ -108,7 +108,7 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
           Article.search(query: { match: { title: 'test' } }, highlight: { fields: { title: {} } })
         end
 
-        it 'allows access to the Elasticsearch result' do
+        it 'allows access to the OpenSearch result' do
           expect(search_result.results.first.title).to eq('Test')
           expect(search_result.results.first.title?).to be(true)
           expect(search_result.results.first.boo?).to be(false)
@@ -177,7 +177,7 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
         Article.search('title:test')
       end
 
-      it 'returns the record with the Elasticsearch hit' do
+      it 'returns the record with the OpenSearch hit' do
         search_result.records.each_with_hit do |r, h|
           expect(h._score).not_to be_nil
           expect(h._source.title).not_to be_nil
@@ -347,12 +347,12 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
           Article.search query: { match: { title: { query: 'test' } } }
         end
 
-        it 'allows the SQL query to be ordered independent of the Elasticsearch results order', unless: active_record_at_least_4? do
+        it 'allows the SQL query to be ordered independent of the OpenSearch results order', unless: active_record_at_least_4? do
           expect(search_result.records.order('title DESC').first.title).to eq('Testing Coding')
           expect(search_result.records.order('title DESC')[0].title).to eq('Testing Coding')
         end
 
-        it 'allows the SQL query to be ordered independent of the Elasticsearch results order', if: active_record_at_least_4? do
+        it 'allows the SQL query to be ordered independent of the OpenSearch results order', if: active_record_at_least_4? do
           expect(search_result.records.order(title: :desc).first.title).to eq('Testing Coding')
           expect(search_result.records.order(title: :desc)[0].title).to eq('Testing Coding')
         end
@@ -364,7 +364,7 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
           Article.search query: {match: {title: {query: 'test'}}}
         end
 
-        it 'allows the SQL query to be ordered independent of the Elasticsearch results order', if: active_record_at_least_4? do
+        it 'allows the SQL query to be ordered independent of the OpenSearch results order', if: active_record_at_least_4? do
           expect(search_result.records.distinct.order(title: :desc).first.title).to eq('Testing Coding')
           expect(search_result.records.distinct.order(title: :desc)[0].title).to eq('Testing Coding')
         end

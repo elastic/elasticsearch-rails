@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/opensearch-rails/main/opensearch-rails/lib/rails/templates/02-pretty.rb
+# $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/compliance-innovations/opensearch-rails/main/opensearch-rails/lib/rails/templates/02-pretty.rb
 
 unless File.read('README.md').include? '## [1] Basic'
   say_status  "ERROR", "You have to run the 01-basic.rb template first.", :red
@@ -63,7 +63,7 @@ puts        '-'*80, ''; sleep 0.25
 
 # NOTE: Kaminari has to be loaded before OpenSearch::Model so the callbacks are executed
 #
-insert_into_file 'Gemfile', <<-CODE, before: /gem ["']elasticsearch["'].+$/
+insert_into_file 'Gemfile', <<-CODE, before: /gem ["']opensearch-ruby["'].+$/
 
 # NOTE: Kaminari has to be loaded before OpenSearch::Model so the callbacks are executed
 gem 'kaminari'

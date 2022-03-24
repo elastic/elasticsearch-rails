@@ -51,7 +51,7 @@ module OpenSearch
         # @param options [Hash] Options passed to the underlying `__find_in_batches`method
         # @param block  [Proc] Optional block to evaluate for each batch
         #
-        # @yield [Hash] Gives the Hash with the Elasticsearch response to the block
+        # @yield [Hash] Gives the Hash with the OpenSearch response to the block
         #
         # @return [Fixnum] default, number of errors encountered during importing
         # @return [Array<Hash>] if +return+ option is specified to be +"errors"+,
@@ -85,7 +85,7 @@ module OpenSearch
         #
         #     Article.import batch_size: 100
         #
-        # @example Process the response from Elasticsearch
+        # @example Process the response from OpenSearch
         #
         #     Article.import do |response|
         #       puts "Got " + response['items'].select { |i| i['index']['error'] }.size.to_s + " errors"

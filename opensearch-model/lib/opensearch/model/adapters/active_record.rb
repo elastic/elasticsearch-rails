@@ -39,7 +39,7 @@ module OpenSearch
             sql_records = klass.where(klass.primary_key => ids)
             sql_records = sql_records.includes(self.options[:includes]) if self.options[:includes]
 
-            # Re-order records based on the order from Elasticsearch hits
+            # Re-order records based on the order from OpenSearch hits
             # by redefining `to_a`, unless the user has called `order()`
             #
             sql_records.instance_exec(response.response['hits']['hits']) do |hits|

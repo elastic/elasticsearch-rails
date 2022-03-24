@@ -15,26 +15,26 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# A collection of Rake tasks to facilitate importing data from your models into Elasticsearch.
+# A collection of Rake tasks to facilitate importing data from your models into OpenSearch.
 #
-# Add this e.g. into the `lib/tasks/elasticsearch.rake` file in your Rails application:
+# Add this e.g. into the `lib/tasks/opensearch.rake` file in your Rails application:
 #
 #     require 'opensearch/rails/tasks/import'
 #
 # To import the records from your `Article` model, run:
 #
-#     $ bundle exec rake environment elasticsearch:import:model CLASS='MyModel'
+#     $ bundle exec rake environment opensearch:import:model CLASS='MyModel'
 #
 # Run this command to display usage instructions:
 #
-#     $ bundle exec rake -D elasticsearch
+#     $ bundle exec rake -D opensearch
 #
 STDOUT.sync = true
 STDERR.sync = true
 
 begin; require 'ansi/progressbar'; rescue LoadError; end
 
-namespace :elasticsearch do
+namespace :opensearch do
 
   task :import => 'import:model'
 
@@ -42,19 +42,19 @@ namespace :elasticsearch do
     import_model_desc = <<-DESC.gsub(/    /, '')
       Import data from your model (pass name as CLASS environment variable).
 
-        $ rake environment elasticsearch:import:model CLASS='MyModel'
+        $ rake environment opensearch:import:model CLASS='MyModel'
 
       Force rebuilding the index (delete and create):
-        $ rake environment elasticsearch:import:model CLASS='Article' FORCE=y
+        $ rake environment opensearch:import:model CLASS='Article' FORCE=y
 
       Customize the batch size:
-        $ rake environment elasticsearch:import:model CLASS='Article' BATCH=100
+        $ rake environment opensearch:import:model CLASS='Article' BATCH=100
 
       Set target index name:
-        $ rake environment elasticsearch:import:model CLASS='Article' INDEX='articles-new'
+        $ rake environment opensearch:import:model CLASS='Article' INDEX='articles-new'
 
       Pass an ActiveRecord scope to limit the imported records:
-        $ rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
+        $ rake environment opensearch:import:model CLASS='Article' SCOPE='published'
     DESC
     desc import_model_desc
     task :model do
@@ -95,7 +95,7 @@ namespace :elasticsearch do
     desc <<-DESC.gsub(/    /, '')
       Import all indices from `app/models` (or use DIR environment variable).
 
-        $ rake environment elasticsearch:import:all DIR=app/models
+        $ rake environment opensearch:import:all DIR=app/models
     DESC
     task :all do
       dir    = ENV['DIR'].to_s != '' ? ENV['DIR'] : Rails.root.join("app/models")
@@ -112,14 +112,14 @@ namespace :elasticsearch do
           require(path) ? retry : raise(RuntimeError, "Cannot load class '#{klass}'")
         end
 
-        # Skip if the class doesn't have Elasticsearch integration
+        # Skip if the class doesn't have OpenSearch integration
         next unless klass.respond_to?(:__opensearch__)
 
         puts "[IMPORT] Processing model: #{klass}..."
 
         ENV['CLASS'] = klass.to_s
-        Rake::Task["elasticsearch:import:model"].invoke
-        Rake::Task["elasticsearch:import:model"].reenable
+        Rake::Task["opensearch:import:model"].invoke
+        Rake::Task["opensearch:import:model"].reenable
         puts
       end
     end

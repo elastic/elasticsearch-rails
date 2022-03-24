@@ -24,7 +24,7 @@ module OpenSearch
       #
       module Find
 
-        # Retrieve a single object or multiple objects from Elasticsearch by ID or IDs
+        # Retrieve a single object or multiple objects from OpenSearch by ID or IDs
         #
         # @example Retrieve a single object by ID
         #
@@ -71,12 +71,12 @@ module OpenSearch
         private
 
         # The key for accessing the document found and returned from an
-        #   Elasticsearch _mget query.
+        #   OpenSearch _mget query.
         #
         DOCS = 'docs'.freeze
 
         # The key for the boolean value indicating whether a particular id
-        #   has been successfully found in an Elasticsearch _mget query.
+        #   has been successfully found in an OpenSearch _mget query.
         #
         FOUND = 'found'.freeze
 

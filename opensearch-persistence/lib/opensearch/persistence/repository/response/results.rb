@@ -20,7 +20,7 @@ module OpenSearch
     module Repository
       module Response # :nodoc:
 
-        # Encapsulates the domain objects and documents returned from Elasticsearch when searching
+        # Encapsulates the domain objects and documents returned from OpenSearch when searching
         #
         # Implements `Enumerable` and forwards its methods to the {#results} object.
         #
@@ -30,24 +30,24 @@ module OpenSearch
           attr_reader :repository
           attr_reader :raw_response
 
-          # The key for accessing the results in an Elasticsearch query response.
+          # The key for accessing the results in an OpenSearch query response.
           #
           HITS = 'hits'.freeze
 
-          # The key for accessing the total number of hits in an Elasticsearch query response.
+          # The key for accessing the total number of hits in an OpenSearch query response.
           #
           TOTAL = 'total'.freeze
 
-          # The key for accessing the value field in an Elasticsearch query response when 'total' is an object.
+          # The key for accessing the value field in an OpenSearch query response when 'total' is an object.
           #
           VALUE = 'value'.freeze
 
-          # The key for accessing the maximum score in an Elasticsearch query response.
+          # The key for accessing the maximum score in an OpenSearch query response.
           #
           MAX_SCORE = 'max_score'.freeze
 
           # @param repository [OpenSearch::Persistence::Repository::Class] The repository instance
-          # @param response   [Hash]  The full response returned from the Elasticsearch client
+          # @param response   [Hash]  The full response returned from the OpenSearch client
           # @param options    [Hash]  Optional parameters
           #
           def initialize(repository, response, options={})
@@ -107,7 +107,7 @@ module OpenSearch
             end
           end
 
-          # Access the response returned from Elasticsearch by the client
+          # Access the response returned from OpenSearch by the client
           #
           # @example Access the aggregations in the response
           #

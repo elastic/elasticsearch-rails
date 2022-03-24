@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-#     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/opensearch-rails/main/opensearch-rails/lib/rails/templates/03-expert.rb
+#     $ rails new searchapp --skip --skip-bundle --template https://raw.github.com/compliance-innovations/opensearch-rails/main/opensearch-rails/lib/rails/templates/03-expert.rb
 
 unless File.read('README.md').include? '## [2] Pretty'
   say_status  "ERROR", "You have to run the 01-basic.rb and 02-pretty.rb templates first.", :red
@@ -46,13 +46,13 @@ append_to_file 'README.md', <<-README
 The `expert` template changes to a complex database schema with model relationships: article belongs
 to a category, has many authors and comments.
 
-* The Elasticsearch integration is refactored into the `Searchable` concern
+* The OpenSearch integration is refactored into the `Searchable` concern
 * A complex mapping for the index is defined
 * A custom serialization is defined in `Article#as_indexed_json`
 * The `search` method is amended with facets and suggestions
 * A [Sidekiq](http://sidekiq.org) worker for handling index updates in background is added
 * A custom `SearchController` with associated view is added
-* A Rails initializer is added to customize the Elasticsearch client configuration
+* A Rails initializer is added to customize the OpenSearch client configuration
 * Seed script and example data from New York Times is added
 
 README
@@ -196,7 +196,7 @@ insert_into_file "app/models/article.rb", after: "ActiveRecord::Base" do
 end
 
 git add:    "app/models/ test/models"
-git commit: "-m 'Refactored the Elasticsearch integration into a concern\n\nSee:\n\n* http://37signals.com/svn/posts/3372-put-chubby-models-on-a-diet-with-concerns\n* http://joshsymonds.com/blog/2012/10/25/rails-concerns-v-searchable-with-elasticsearch/'"
+git commit: "-m 'Refactored the OpenSearch integration into a concern\n\nSee:\n\n* http://37signals.com/svn/posts/3372-put-chubby-models-on-a-diet-with-concerns\n* http://joshsymonds.com/blog/2012/10/25/rails-concerns-v-searchable-with-elasticsearch/'"
 
 # ----- Add Sidekiq indexer -----------------------------------------------------------------------
 
@@ -216,7 +216,7 @@ insert_into_file "test/test_helper.rb",
                  before: "class ActiveSupport::TestCase\n"
 
 git add:    "Gemfile* app/workers/ test/test_helper.rb"
-git commit: "-m 'Added a Sidekiq indexer\n\nRun:\n\n    $ bundle exec sidekiq --queue elasticsearch --verbose\n\nSee http://sidekiq.org'"
+git commit: "-m 'Added a Sidekiq indexer\n\nRun:\n\n    $ bundle exec sidekiq --queue opensearch --verbose\n\nSee http://sidekiq.org'"
 
 # ----- Add SearchController -----------------------------------------------------------------------
 
@@ -274,11 +274,11 @@ git commit: "-a -m 'Updated application template'"
 # ----- Add initializer ---------------------------------------------------------------------------
 
 puts
-say_status  "Application", "Adding Elasticsearch configuration in an initializer...\n", :yellow
+say_status  "Application", "Adding OpenSearch configuration in an initializer...\n", :yellow
 puts        '-'*80, ''; sleep 0.5
 
-create_file 'config/initializers/elasticsearch.rb', <<-CODE
-# Connect to specific Elasticsearch cluster
+create_file 'config/initializers/opensearch.rb', <<-CODE
+# Connect to specific OpenSearch cluster
 OPENSEARCH_URL = ENV['OPENSEARCH_URL'] || 'http://localhost:9200'
 
 OpenSearch::Model.client = OpenSearch::Client.new host: OPENSEARCH_URL
@@ -286,32 +286,32 @@ OpenSearch::Model.client = OpenSearch::Client.new host: OPENSEARCH_URL
 # Print Curl-formatted traces in development into a file
 #
 if Rails.env.development?
-  tracer = ActiveSupport::Logger.new('log/elasticsearch.log')
+  tracer = ActiveSupport::Logger.new('log/opensearch.log')
   tracer.level =  Logger::DEBUG
   OpenSearch::Model.client.transport.tracer = tracer
 end
 CODE
 
 git add:    "config/initializers"
-git commit: "-m 'Added Rails initializer with Elasticsearch configuration'"
+git commit: "-m 'Added Rails initializer with OpenSearch configuration'"
 
 # ----- Add Rake tasks ----------------------------------------------------------------------------
 
 puts
-say_status  "Application", "Adding Elasticsearch Rake tasks...\n", :yellow
+say_status  "Application", "Adding OpenSearch Rake tasks...\n", :yellow
 puts        '-'*80, ''; sleep 0.5
 
-create_file 'lib/tasks/elasticsearch.rake', <<-CODE
+create_file 'lib/tasks/opensearch.rake', <<-CODE
 require 'opensearch/rails/tasks/import'
 CODE
 
 git add:    "lib/tasks"
-git commit: "-m 'Added Rake tasks for Elasticsearch'"
+git commit: "-m 'Added Rake tasks for OpenSearch'"
 
 # ----- Insert and index data ---------------------------------------------------------------------
 
 puts
-say_status  "Database", "Re-creating the database with data and importing into Elasticsearch...", :yellow
+say_status  "Database", "Re-creating the database with data and importing into OpenSearch...", :yellow
 puts        '-'*80, ''; sleep 0.25
 
 # copy_file File.expand_path('../articles.yml.gz', __FILE__), 'db/articles.yml.gz'
@@ -322,7 +322,7 @@ remove_file 'db/seeds.rb'
 get 'https://raw.githubusercontent.com/elastic/opensearch-rails/main/opensearch-rails/lib/rails/templates/seeds.rb', 'db/seeds.rb'
 
 rake "db:reset"
-rake "environment elasticsearch:import:model CLASS='Article' BATCH=100 FORCE=y"
+rake "environment opensearch:import:model CLASS='Article' BATCH=100 FORCE=y"
 
 git add:    "db/seeds.rb db/articles.yml.gz"
 git commit: "-m 'Added a seed script and source data'"

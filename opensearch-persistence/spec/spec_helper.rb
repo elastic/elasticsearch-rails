@@ -26,7 +26,7 @@ RSpec.configure do |config|
   config.formatter = 'documentation'
   config.color = true
 
-  config.before(:suite) { puts "Elasticsearch Version: #{DEFAULT_CLIENT.info['version']}" }
+  config.before(:suite) { puts "OpenSearch Version: #{DEFAULT_CLIENT.info['version']}" }
   config.after(:suite) do
     DEFAULT_CLIENT.indices.delete(index: '_all')
   end
@@ -49,9 +49,9 @@ end
 # @since 6.0.0
 DEFAULT_REPOSITORY = MyTestRepository.new(index_name: 'my_test_repository', document_type: 'test')
 
-# Get the Elasticsearch server version.
+# Get the OpenSearch server version.
 #
-# @return [ String ] The version of Elasticsearch.
+# @return [ String ] The version of OpenSearch.
 #
 # @since 7.0.0
 def server_version(client = nil)

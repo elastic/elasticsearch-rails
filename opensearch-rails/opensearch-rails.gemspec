@@ -25,9 +25,9 @@ Gem::Specification.new do |s|
   s.version       = OpenSearch::Rails::VERSION
   s.authors       = ['Karel Minarik']
   s.email         = ['karel.minarik@elasticsearch.org']
-  s.description   = 'Ruby on Rails integrations for Elasticsearch.'
-  s.summary       = 'Ruby on Rails integrations for Elasticsearch.'
-  s.homepage      = 'https://github.com/elasticsearch/opensearch-rails/'
+  s.description   = 'Ruby on Rails integrations for OpenSearch.'
+  s.summary       = 'Ruby on Rails integrations for OpenSearch.'
+  s.homepage      = 'https://github.com/compliance-innovations/opensearch-rails/'
   s.license       = 'Apache 2'
   s.metadata = {
     'homepage_uri' => 'https://www.elastic.co/guide/en/elasticsearch/client/ruby-api/current/ruby_on_rails.html',

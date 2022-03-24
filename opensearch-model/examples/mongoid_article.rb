@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Mongoid and Elasticsearch
+# Mongoid and OpenSearch
 # =========================
 #
 # http://mongoid.org/en/mongoid/index.html
@@ -23,7 +23,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
+Pry.config.history.file = File.expand_path('../../tmp/opensearch_development.pry', __FILE__)
 
 require 'benchmark'
 require 'logger'
@@ -52,7 +52,7 @@ class Article
   end
 end
 
-# Extend the model with Elasticsearch support
+# Extend the model with OpenSearch support
 #
 Article.__send__ :include, OpenSearch::Model
 # Article.__send__ :include, OpenSearch::Model::Callbacks

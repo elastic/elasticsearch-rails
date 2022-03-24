@@ -23,7 +23,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
       create_table :import_articles do |t|
         t.string   :title
         t.integer  :views
-        t.string   :numeric # For the sake of invalid data sent to Elasticsearch
+        t.string   :numeric # For the sake of invalid data sent to OpenSearch
         t.datetime :created_at, :default => 'NOW()'
       end
     end

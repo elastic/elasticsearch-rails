@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# ActiveRecord associations and Elasticsearch
+# ActiveRecord associations and OpenSearch
 # ===========================================
 #
 # https://github.com/rails/rails/tree/master/activerecord
@@ -109,12 +109,12 @@ module Searchable
         indexes :department
       end
       indexes :comments, type: :object do
-        indexes :text 
+        indexes :text
       end
     end
   end
-    
-    # Customize the JSON serialization for Elasticsearch
+
+    # Customize the JSON serialization for OpenSearch
     def as_indexed_json(options={})
       self.as_json(
         include: { categories: { only: :title},
@@ -221,7 +221,7 @@ puts "",
      ""
 
 puts "",
-     "Access the Elasticsearch documents with the `#results` method (without touching the database):".ansi(:bold),
+     "Access the OpenSearch documents with the `#results` method (without touching the database):".ansi(:bold),
      response.results.map { |r| "* #{r.title} | Authors: #{r.authors.map(&:full_name) } | Comment count: #{r.comments.size}" }.join("\n"),
      ""
 
@@ -230,12 +230,12 @@ puts "",
      JSON.pretty_generate(response.results.first._source.to_hash),
      ""
 
-# Retrieve only selected fields from Elasticsearch
+# Retrieve only selected fields from OpenSearch
 #
 response = Article.search query: { match: { title: 'first' } }, _source: ['title', 'authors.full_name']
 
 puts "",
-     "Retrieve only selected fields from Elasticsearch:".ansi(:bold),
+     "Retrieve only selected fields from OpenSearch:".ansi(:bold),
      JSON.pretty_generate(response.results.first._source.to_hash),
      ""
 

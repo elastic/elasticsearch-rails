@@ -79,7 +79,7 @@ describe OpenSearch::Model::Response::Records do
 
   describe '#each_with_hit' do
 
-    it 'returns each record with its Elasticsearch hit' do
+    it 'returns each record with its OpenSearch hit' do
       records.each_with_hit do |record, hit|
         expect(record).to eq('FOO')
         expect(hit.foo).to eq('bar')
@@ -93,7 +93,7 @@ describe OpenSearch::Model::Response::Records do
       records.map_with_hit { |record, hit| "#{record}---#{hit.foo}" }
     end
 
-    it 'returns each record with its Elasticsearch hit' do
+    it 'returns each record with its OpenSearch hit' do
       expect(value).to eq(['FOO---bar'])
     end
   end

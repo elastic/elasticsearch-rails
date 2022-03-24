@@ -31,22 +31,22 @@ README
 git add:    "README.md"
 git commit: "-m '[05] Updated the application README'"
 
-# ----- Setup the Searchable module to load settings from config/elasticsearch/articles_settings.json
+# ----- Setup the Searchable module to load settings from config/opensearch/articles_settings.json
 
 gsub_file "app/models/concerns/searchable.rb",
     /index: { number_of_shards: 1, number_of_replicas: 0 }/,
-    "File.open('config/elasticsearch/articles_settings.json')"
+    "File.open('config/opensearch/articles_settings.json')"
 
 git add:    "app/models/concerns/searchable.rb"
 git commit: "-m 'Setup the Searchable module to load settings from file'"
 
 # ----- Copy the articles_settings.json file -------------------------------------------------------
 
-# copy_file File.expand_path('../articles_settings.json', __FILE__), 'config/elasticsearch/articles_settings.json'
+# copy_file File.expand_path('../articles_settings.json', __FILE__), 'config/opensearch/articles_settings.json'
 get 'https://raw.githubusercontent.com/elastic/opensearch-rails/main/opensearch-rails/lib/rails/templates/articles_settings.json',
-    'config/elasticsearch/articles_settings.json', force: true
+    'config/opensearch/articles_settings.json', force: true
 
-git add:    "config/elasticsearch/articles_settings.json"
+git add:    "config/opensearch/articles_settings.json"
 git commit: "-m 'Create the articles settings file'"
 
 # ----- Run bundle install ------------------------------------------------------------------------
@@ -55,7 +55,7 @@ run "bundle install"
 
 # ----- Recreate the index ------------------------------------------------------------------------
 
-rake "environment elasticsearch:import:model CLASS='Article' BATCH=100 FORCE=y"
+rake "environment opensearch:import:model CLASS='Article' BATCH=100 FORCE=y"
 
 # ----- Print Git log -----------------------------------------------------------------------------
 

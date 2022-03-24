@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# ActiveRecord and Elasticsearch
+# ActiveRecord and OpenSearch
 # ==============================
 #
 # https://github.com/rails/rails/tree/master/activerecord
@@ -23,7 +23,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
+Pry.config.history.file = File.expand_path('../../tmp/opensearch_development.pry', __FILE__)
 
 require 'logger'
 require 'ansi/core'
@@ -68,7 +68,7 @@ client.bulk index: 'articles',
             body:  Article.all.as_json.map { |a| { index: { _id: a.delete('id'), data: a } } },
             refresh: true
 
-# Extend the model with Elasticsearch support
+# Extend the model with OpenSearch support
 #
 Article.__send__ :include, OpenSearch::Model
 # Article.__send__ :include, OpenSearch::Model::Callbacks

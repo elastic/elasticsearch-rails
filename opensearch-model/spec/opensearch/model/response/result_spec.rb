@@ -78,7 +78,7 @@ describe OpenSearch::Model::Response::Result do
       expect(result.respond_to? :bar).to be true
     end
 
-    context 'when methods map to keys in subdocuments of the response from Elasticsearch' do
+    context 'when methods map to keys in subdocuments of the response from OpenSearch' do
 
       it 'provides access to top level fields via a method' do
         expect(result.foo).to eq('bar')
@@ -118,7 +118,7 @@ describe OpenSearch::Model::Response::Result do
       end
     end
 
-    context 'when methods do not map to keys in subdocuments of the response from Elasticsearch' do
+    context 'when methods do not map to keys in subdocuments of the response from OpenSearch' do
 
       it 'raises a NoMethodError' do
         expect { result.does_not_exist }.to raise_exception(NoMethodError)

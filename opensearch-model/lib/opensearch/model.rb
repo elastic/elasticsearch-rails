@@ -63,10 +63,10 @@ end
 
 module OpenSearch
 
-  # Elasticsearch integration for Ruby models
+  # OpenSearch integration for Ruby models
   # =========================================
   #
-  # `OpenSearch::Model` contains modules for integrating the Elasticsearch search and analytical engine
+  # `OpenSearch::Model` contains modules for integrating the OpenSearch search and analytical engine
   # with ActiveModel-based classes, or models, for the Ruby programming language.
   #
   # It facilitates importing your data into an index, automatically updating it when a record changes,
@@ -140,7 +140,7 @@ module OpenSearch
       #     OpenSearch::Model.client = OpenSearch::Client.new host: 'http://localhost:9200', tracer: true
       #     => #<OpenSearch::Client:0x007f96a6dd0d80... >
       #
-      # @note You have to set the client before you call Elasticsearch methods on the model,
+      # @note You have to set the client before you call OpenSearch methods on the model,
       #       or set it directly on the model; see {OpenSearch::Model::Client::ClassMethods#client}
       #
       def client=(client)
@@ -154,7 +154,7 @@ module OpenSearch
       # @param query_or_payload [String,Hash,Object] The search request definition
       #                                              (string, JSON, Hash, or object responding to `to_hash`)
       # @param models [Array] The Array of Model objects to search
-      # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
+      # @param options [Hash] Optional parameters to be passed to the OpenSearch client
       #
       # @return [OpenSearch::Model::Response::Response]
       #

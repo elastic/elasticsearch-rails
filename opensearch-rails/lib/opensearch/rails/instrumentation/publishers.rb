@@ -39,7 +39,7 @@ module OpenSearch
           # Wrap `Search#execute!` and perform instrumentation
           #
           def execute_with_instrumentation!
-            ActiveSupport::Notifications.instrument "search.elasticsearch",
+            ActiveSupport::Notifications.instrument "search.opensearch",
               name:   'Search',
               klass:  (self.klass.is_a?(OpenSearch::Model::Proxy::ClassMethodsProxy) ? self.klass.target.to_s : self.klass.to_s),
               search: self.definition do

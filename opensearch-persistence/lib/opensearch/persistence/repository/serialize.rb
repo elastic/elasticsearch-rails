@@ -19,13 +19,13 @@ module OpenSearch
   module Persistence
     module Repository
 
-      # Provide serialization and deserialization between Ruby objects and Elasticsearch documents.
+      # Provide serialization and deserialization between Ruby objects and OpenSearch documents.
       #
       # Override these methods in your repository class to customize the logic.
       #
       module Serialize
 
-        # Serialize the object for storing it in Elasticsearch.
+        # Serialize the object for storing it in OpenSearch.
         #
         # In the default implementation, call the `to_hash` method on the passed object.
         #
@@ -37,7 +37,7 @@ module OpenSearch
           document.to_hash
         end
 
-        # Deserialize the document retrieved from Elasticsearch into a Ruby object.
+        # Deserialize the document retrieved from OpenSearch into a Ruby object.
         # If no klass is set for the Repository then the raw document '_source' field will be returned.
         #
         # def deserialize(document)
@@ -54,11 +54,11 @@ module OpenSearch
 
         private
 
-        # The key for document fields in an Elasticsearch query response.
+        # The key for document fields in an OpenSearch query response.
         #
         SOURCE = '_source'.freeze
 
-        # The key for the document type in an Elasticsearch query response.
+        # The key for the document type in an OpenSearch query response.
         #   Note that it will be removed eventually, as multiple types in a single
         #   index are deprecated as of Elasticsearch 6.0.
         #

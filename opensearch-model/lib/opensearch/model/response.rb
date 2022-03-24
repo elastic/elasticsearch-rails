@@ -18,11 +18,11 @@
 module OpenSearch
   module Model
 
-    # Contains modules and classes for wrapping the response from Elasticsearch
+    # Contains modules and classes for wrapping the response from OpenSearch
     #
     module Response
 
-      # Encapsulate the response returned from the Elasticsearch client
+      # Encapsulate the response returned from the OpenSearch client
       #
       # Implements Enumerable and forwards its methods to the {#results} object.
       #
@@ -38,7 +38,7 @@ module OpenSearch
           @search    = search
         end
 
-        # Returns the Elasticsearch response
+        # Returns the OpenSearch response
         #
         # @return [Hash]
         #
@@ -46,7 +46,7 @@ module OpenSearch
           @response ||= HashWrapper.new(search.execute!)
         end
 
-        # Returns the collection of "hits" from Elasticsearch
+        # Returns the collection of "hits" from OpenSearch
         #
         # @return [Results]
         #

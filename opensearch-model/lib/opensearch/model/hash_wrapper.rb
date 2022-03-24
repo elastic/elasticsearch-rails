@@ -19,7 +19,7 @@ module OpenSearch
   module Model
 
     # Subclass of `Hashie::Mash` to wrap Hash-like structures
-    # (responses from Elasticsearch, search definitions, etc)
+    # (responses from OpenSearch, search definitions, etc)
     #
     # The primary goal of the subclass is to disable the
     # warning being printed by Hashie for re-defined

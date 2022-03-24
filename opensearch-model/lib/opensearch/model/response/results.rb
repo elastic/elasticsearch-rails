@@ -19,7 +19,7 @@ module OpenSearch
   module Model
     module Response
 
-      # Encapsulates the collection of documents returned from Elasticsearch
+      # Encapsulates the collection of documents returned from OpenSearch
       #
       # Implements Enumerable and forwards its methods to the {#results} object.
       #

@@ -386,7 +386,7 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
     end
   end
 
-  context 'when Elasticsearch version is < 7.0' do
+  context 'when OpenSearch version is < 7.0' do
 
     let(:response_document) do
       { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'},
@@ -428,7 +428,7 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
     end
   end
 
-  context 'when Elasticsearch version is >= 7.0' do
+  context 'when OpenSearch version is >= 7.0' do
 
     let(:response_document) do
       { 'took' => '5', 'timed_out' => false, '_shards' => {'one' => 'OK'},

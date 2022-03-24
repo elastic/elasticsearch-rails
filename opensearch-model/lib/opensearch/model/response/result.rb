@@ -19,7 +19,7 @@ module OpenSearch
   module Model
     module Response
 
-      # Encapsulates the "hit" returned from the Elasticsearch client
+      # Encapsulates the "hit" returned from the OpenSearch client
       #
       # Wraps the raw Hash with in a `Hashie::Mash` instance, providing
       # access to the Hash properties by calling Ruby methods.

@@ -48,7 +48,7 @@ class SearchControllerTest < ActionController::TestCase
 
     Article.find_by_title('Article Three').comments.create body: 'One'
 
-    Sidekiq::Queue.new("elasticsearch").clear
+    Sidekiq::Queue.new("opensearch").clear
 
     Article.__opensearch__.import force: true
     Article.__opensearch__.refresh_index!

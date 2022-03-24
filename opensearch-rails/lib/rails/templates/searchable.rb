@@ -70,7 +70,7 @@ module Searchable
     after_commit lambda { Indexer.perform_async(:delete, self.class.to_s, self.id) }, on: :destroy
     after_touch  lambda { Indexer.perform_async(:update, self.class.to_s, self.id) }
 
-    # Customize the JSON serialization for Elasticsearch
+    # Customize the JSON serialization for OpenSearch
     #
     def as_indexed_json(options={})
       hash = self.as_json(

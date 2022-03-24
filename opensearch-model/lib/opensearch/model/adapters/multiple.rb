@@ -30,7 +30,7 @@ module OpenSearch
         module Records
           # Returns a collection of model instances, possibly of different classes (ActiveRecord, Mongoid, ...)
           #
-          # @note The order of results in the Elasticsearch response is preserved
+          # @note The order of results in the OpenSearch response is preserved
           #
           def records
             records_by_type = __records_by_type
@@ -99,7 +99,7 @@ module OpenSearch
             ids_by_type
           end
 
-          # Returns the class of the model corresponding to a specific `hit` in Elasticsearch results
+          # Returns the class of the model corresponding to a specific `hit` in OpenSearch results
           #
           # @see OpenSearch::Model::Registry
           #

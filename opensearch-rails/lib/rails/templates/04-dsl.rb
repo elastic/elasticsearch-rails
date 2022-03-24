@@ -27,7 +27,7 @@ append_to_file 'README.md', <<-README
 ## [4] DSL
 
 The `dsl` template refactors the search definition in SearchController#index
-to use the [`elasticsearch-dsl`](https://github.com/elastic/elasticsearch-ruby/tree/dsl/elasticsearch-dsl)
+to use the [`opensearch-dsl`](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch-dsl)
 Rubygem for better expresivity and readability of the code.
 
 README
@@ -44,10 +44,10 @@ puts
 say_status  "Rubygems", "Adding Rubygems into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-gem "elasticsearch-dsl", git: "git://github.com/elastic/elasticsearch-ruby.git"
+gem "opensearch-dsl", git: "git://github.com/opensearch-project/opensearch-ruby.git"
 
 git add:    "Gemfile*"
-git commit: "-m 'Added the `elasticsearch-dsl` gem'"
+git commit: "-m 'Added the `opensearch-dsl` gem'"
 
 # ----- Run bundle install ------------------------------------------------------------------------
 

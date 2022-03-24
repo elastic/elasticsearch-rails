@@ -20,7 +20,7 @@ require 'yaml'
 
 Zlib::GzipReader.open(File.expand_path('../articles.yml.gz', __FILE__)) do |gzip|
   puts "Reading articles from gzipped YAML..."
-  @documents = YAML.respond_to?(:load_documents) ? YAML.load_documents(gzip.read) : 
+  @documents = YAML.respond_to?(:load_documents) ? YAML.load_documents(gzip.read) :
     YAML.load_stream(gzip.read)
 end
 
@@ -36,7 +36,7 @@ ActiveRecord::Base.logger.instance_eval do
   end
 end
 
-# Reduce verbosity and truncate the request body of Elasticsearch logger
+# Reduce verbosity and truncate the request body of OpenSearch logger
 Article.__opensearch__.client.transport.tracer.level = Logger::INFO
 Article.__opensearch__.client.transport.tracer.formatter = lambda do |s, d, p, message|
   "\n\n" + (message.size > 105 ? message[0..105].concat("...}'") : message) + "\n\n"
@@ -69,7 +69,7 @@ end
   article.save!
 end
 
-# Remove any jobs from the "elasticsearch" Sidekiq queue
+# Remove any jobs from the "opensearch" Sidekiq queue
 #
 require 'sidekiq/api'
-Sidekiq::Queue.new("elasticsearch").clear
+Sidekiq::Queue.new("opensearch").clear

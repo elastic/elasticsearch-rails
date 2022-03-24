@@ -1,4 +1,4 @@
-The process for contributing to any of the [Elasticsearch](https://github.com/elasticsearch) repositories is similar:
+The process for contributing to any of the [Elasticsearch](https://github.com/compliance-innovations) repositories is similar:
 
 1. It is best to do your work in a separate Git branch. This makes it easier to synchronise your changes with [`rebase`](http://mislav.uniqpath.com/2013/02/merge-vs-rebase/).
 

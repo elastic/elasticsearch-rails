@@ -24,7 +24,7 @@ module OpenSearch
         attr_reader :klass, :response, :raw_response
 
         # @param klass    [Class] The name of the model class
-        # @param response [Hash]  The full response returned from Elasticsearch client
+        # @param response [Hash]  The full response returned from OpenSearch client
         # @param options  [Hash]  Optional parameters
         #
         def initialize(klass, response, options={})

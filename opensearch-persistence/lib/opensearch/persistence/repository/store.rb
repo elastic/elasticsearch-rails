@@ -19,20 +19,20 @@ module OpenSearch
   module Persistence
     module Repository
 
-      # Save and delete documents in Elasticsearch
+      # Save and delete documents in OpenSearch
       #
       module Store
 
-        # Store the serialized object in Elasticsearch
+        # Store the serialized object in OpenSearch
         #
         # @example
         #     repository.save(myobject)
         #     => {"_index"=>"...", "_type"=>"...", "_id"=>"...", "_version"=>1, "created"=>true}
         #
-        # @param [ Object ] document The document to save into Elasticsearch.
+        # @param [ Object ] document The document to save into OpenSearch.
         # @param [ Hash ] options The save request options.
         #
-        # @return [ Hash ] The response from Elasticsearch
+        # @return [ Hash ] The response from OpenSearch
         #
         def save(document, options={})
           serialized = serialize(document)
@@ -44,7 +44,7 @@ module OpenSearch
           client.index(request.merge(options))
         end
 
-        # Update the serialized object in Elasticsearch with partial data or script
+        # Update the serialized object in OpenSearch with partial data or script
         #
         # @example Update the document with partial data
         #
@@ -59,7 +59,7 @@ module OpenSearch
         # @param [ Object ] document_or_id The document to update or the id of the document to update.
         # @param [ Hash ] options The update request options.
         #
-        # @return [ Hash ] The response from Elasticsearch
+        # @return [ Hash ] The response from OpenSearch
         #
         def update(document_or_id, options = {})
           if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)
@@ -79,7 +79,7 @@ module OpenSearch
           client.update(index: index_name, id: id, type: type, body: body)
         end
 
-        # Remove the serialized object or document with specified ID from Elasticsearch
+        # Remove the serialized object or document with specified ID from OpenSearch
         #
         # @example Remove the document with ID 1
         #
@@ -89,7 +89,7 @@ module OpenSearch
         # @param [ Object ] document_or_id The document to delete or the id of the document to delete.
         # @param [ Hash ] options The delete request options.
         #
-        # @return [ Hash ] The response from Elasticsearch
+        # @return [ Hash ] The response from OpenSearch
         #
         def delete(document_or_id, options = {})
           if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)

@@ -19,11 +19,11 @@ module OpenSearch
   module Persistence
     module Repository
 
-      # Returns a collection of domain objects by an Elasticsearch query
+      # Returns a collection of domain objects by an OpenSearch query
       #
       module Search
 
-        # Returns a collection of domain objects by an Elasticsearch query
+        # Returns a collection of domain objects by an OpenSearch query
         #
         # Pass the query either as a string or a Hash-like object
         #
@@ -31,7 +31,7 @@ module OpenSearch
         #
         #     repository.search('fox or dog')
         #
-        # @example Return objects matching a query in the Elasticsearch DSL
+        # @example Return objects matching a query in the OpenSearch DSL
         #
         #    repository.search(query: { match: { title: 'fox dog' } })
         #
@@ -86,7 +86,7 @@ module OpenSearch
         #     repository.count('fox or dog')
         #     # => 1
         #
-        # @example Return the count of domain object matching a query in the Elasticsearch DSL
+        # @example Return the count of domain object matching a query in the OpenSearch DSL
         #
         #    repository.count(query: { match: { title: 'fox dog' } })
         #    # => 1
@@ -115,7 +115,7 @@ module OpenSearch
 
         private
 
-        # The key for accessing the count in a Elasticsearch query response.
+        # The key for accessing the count in a OpenSearch query response.
         #
         COUNT = 'count'.freeze
       end

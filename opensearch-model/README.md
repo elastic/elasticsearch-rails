@@ -121,7 +121,7 @@ connected to `localhost:9200`, by default. You can access and use it as any othe
 
 ```ruby
 Article.__opensearch__.client.cluster.health
-# => { "cluster_name"=>"elasticsearch", "status"=>"yellow", ... }
+# => { "cluster_name"=>"opensearch", "status"=>"yellow", ... }
 ```
 
 To use a client with different configuration, just set up a client for the model:
@@ -343,7 +343,7 @@ response.results.first.title
 # => "Quick brown fox"
 ```
 
-Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
+Also, you can use the [**`opensearch-dsl`**](https://github.com/opensearch-project/opensearch-ruby/tree/main/opensearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
 
 ```ruby
 require 'opensearch/dsl'
@@ -516,7 +516,7 @@ An example implementation of the `Indexer` worker class could look like this:
 ```ruby
 class Indexer
   include Sidekiq::Worker
-  sidekiq_options queue: 'elasticsearch', retry: false
+  sidekiq_options queue: 'opensearch', retry: false
 
   Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
   Client = OpenSearch::Client.new host: 'localhost:9200', logger: Logger
@@ -737,7 +737,7 @@ To run all tests against a test Elasticsearch cluster, use a command like this:
 
 ```bash
 curl -# https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.0.0.RC1.tar.gz | tar xz -C tmp/
-SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/elasticsearch-1.0.0.RC1/bin/elasticsearch bundle exec rake test:all
+SERVER=start TEST_CLUSTER_COMMAND=$PWD/tmp/opensearch-1.0.0.RC1/bin/elasticsearch bundle exec rake test:all
 ```
 
 ### Single Table Inheritance support

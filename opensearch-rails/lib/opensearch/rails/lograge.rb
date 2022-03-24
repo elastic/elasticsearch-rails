@@ -20,20 +20,20 @@ module OpenSearch
     module Lograge
 
       # Rails initializer class to require OpenSearch::Rails::Instrumentation files,
-      # set up OpenSearch::Model and add Lograge configuration to display Elasticsearch-related duration
+      # set up OpenSearch::Model and add Lograge configuration to display OpenSearch-related duration
       #
       # Require the component in your `application.rb` file and enable Lograge:
       #
       #     require 'opensearch/rails/lograge'
       #
-      # You should see the full duration of the request to Elasticsearch as part of each log event:
+      # You should see the full duration of the request to OpenSearch as part of each log event:
       #
       #     method=GET path=/search ... status=200 duration=380.89 view=99.64 db=0.00 es=279.37
       #
       # @see https://github.com/roidrage/lograge
       #
       class Railtie < ::Rails::Railtie
-        initializer "elasticsearch.lograge" do |app|
+        initializer "opensearch.lograge" do |app|
           require 'opensearch/rails/instrumentation/publishers'
           require 'opensearch/rails/instrumentation/log_subscriber'
           require 'opensearch/rails/instrumentation/controller_runtime'
@@ -47,7 +47,7 @@ module OpenSearch
           end
 
           config.lograge.custom_options = lambda do |event|
-            { es: event.payload[:elasticsearch_runtime].to_f.round(2) }
+            { es: event.payload[:opensearch_runtime].to_f.round(2) }
           end
         end
       end

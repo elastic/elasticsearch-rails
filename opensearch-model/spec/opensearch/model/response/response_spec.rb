@@ -48,7 +48,7 @@ describe OpenSearch::Model::Response::Response do
     OpenSearch::Model::Response::Response.new(OriginClass, search)
   end
 
-  it 'performs the Elasticsearch request lazily' do
+  it 'performs the OpenSearch request lazily' do
     expect(search).not_to receive(:execute!)
     response
   end

@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# Custom Analyzer for ActiveRecord integration with Elasticsearch
+# Custom Analyzer for ActiveRecord integration with OpenSearch
 # ===============================================================
 
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)

@@ -45,7 +45,7 @@ describe 'ActiveSupport::Instrumentation integration' do
 
   it 'customizes the Lograge configuration' do
     expect(OpenSearch::Rails::Lograge::Railtie.initializers
-               .select { |i| i.name == 'elasticsearch.lograge' }
+               .select { |i| i.name == 'opensearch.lograge' }
                .first).not_to be_nil
   end
 end

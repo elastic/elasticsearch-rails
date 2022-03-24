@@ -179,13 +179,13 @@ module OpenSearch
         #
         # @example Define index settings from YAML file
         #
-        #     # config/elasticsearch/articles.yml:
+        #     # config/opensearch/articles.yml:
         #     #
         #     # index:
         #     #   number_of_shards: 1
         #     #
         #
-        #     Article.settings File.open("config/elasticsearch/articles.yml")
+        #     Article.settings File.open("config/opensearch/articles.yml")
         #
         #     Article.settings.to_hash
         #
@@ -194,12 +194,12 @@ module OpenSearch
         #
         # @example Define index settings from JSON file
         #
-        #     # config/elasticsearch/articles.json:
+        #     # config/opensearch/articles.json:
         #     #
         #     # { "index": { "number_of_shards": 1 } }
         #     #
         #
-        #     Article.settings File.open("config/elasticsearch/articles.json")
+        #     Article.settings File.open("config/opensearch/articles.json")
         #
         #     Article.settings.to_hash
         #
@@ -354,7 +354,7 @@ module OpenSearch
         end
 
         # Serializes the model instance into JSON (by calling `as_indexed_json`),
-        # and saves the document into the Elasticsearch index.
+        # and saves the document into the OpenSearch index.
         #
         # @param options [Hash] Optional arguments for passing to the client
         #
@@ -363,7 +363,7 @@ module OpenSearch
         #     @article.__opensearch__.index_document
         #     2013-11-20 16:25:57 +0100: PUT http://localhost:9200/articles/article/1 ...
         #
-        # @return [Hash] The response from Elasticsearch
+        # @return [Hash] The response from OpenSearch
         #
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:index
         #
@@ -386,7 +386,7 @@ module OpenSearch
         #     @article.__opensearch__.delete_document
         #     2013-11-20 16:27:00 +0100: DELETE http://localhost:9200/articles/article/1
         #
-        # @return [Hash] The response from Elasticsearch
+        # @return [Hash] The response from OpenSearch
         #
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:delete
         #
@@ -418,7 +418,7 @@ module OpenSearch
         #     # 2013-11-20 17:00:05 +0100: POST http://localhost:9200/articles/article/1/_update ...
         #     # 2013-11-20 17:00:05 +0100: > {"doc":{"title":"Updated"}}
         #
-        # @return [Hash] The response from Elasticsearch
+        # @return [Hash] The response from OpenSearch
         #
         # @see http://rubydoc.info/gems/elasticsearch-api/Elasticsearch/API/Actions:update
         #
@@ -455,7 +455,7 @@ module OpenSearch
         #     @article.title = "New title"
         #     @article.__opensearch__.update_document_attributes title: "New title"
         #
-        # @return [Hash] The response from Elasticsearch
+        # @return [Hash] The response from OpenSearch
         #
         def update_document_attributes(attributes, options={})
           request = { index: index_name,

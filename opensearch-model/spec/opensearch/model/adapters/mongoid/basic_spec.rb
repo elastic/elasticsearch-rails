@@ -62,7 +62,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
         expect(search_result.results.first).to be_a(OpenSearch::Model::Response::Result)
       end
 
-      it 'retrieves the document from Elasticsearch' do
+      it 'retrieves the document from OpenSearch' do
         expect(search_result.results.first.title).to eq('Test')
       end
 
@@ -77,7 +77,7 @@ describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
         expect(search_result.records.first).to be_a(MongoidArticle)
       end
 
-      it 'retrieves the document from Elasticsearch' do
+      it 'retrieves the document from OpenSearch' do
         expect(search_result.records.first.title).to eq('Test')
       end
 

@@ -20,12 +20,12 @@ module OpenSearch
     module Instrumentation
 
       # Rails initializer class to require OpenSearch::Rails::Instrumentation files,
-      # set up OpenSearch::Model and hook into ActionController to display Elasticsearch-related duration
+      # set up OpenSearch::Model and hook into ActionController to display OpenSearch-related duration
       #
       # @see http://edgeguides.rubyonrails.org/active_support_instrumentation.html
       #
       class Railtie < ::Rails::Railtie
-        initializer "elasticsearch.instrumentation" do |app|
+        initializer "opensearch.instrumentation" do |app|
           require 'opensearch/rails/instrumentation/log_subscriber'
           require 'opensearch/rails/instrumentation/controller_runtime'
 

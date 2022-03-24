@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-# DataMapper and Elasticsearch
+# DataMapper and OpenSearch
 # ============================
 #
 # https://github.com/datamapper/dm-core
@@ -25,7 +25,7 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 
 require 'pry'
-Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.pry', __FILE__)
+Pry.config.history.file = File.expand_path('../../tmp/opensearch_development.pry', __FILE__)
 
 require 'logger'
 require 'ansi/core'
@@ -55,7 +55,7 @@ Article.create title: 'Foo'
 Article.create title: 'Bar'
 Article.create title: 'Foo Foo'
 
-# Extend the model with Elasticsearch support
+# Extend the model with OpenSearch support
 #
 Article.__send__ :include, OpenSearch::Model
 

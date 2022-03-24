@@ -26,9 +26,9 @@ Gem::Specification.new do |s|
   s.version       = OpenSearch::Model::VERSION
   s.authors       = ['Karel Minarik']
   s.email         = ['karel.minarik@elasticsearch.org']
-  s.description   = 'ActiveModel/Record integrations for Elasticsearch.'
-  s.summary       = 'ActiveModel/Record integrations for Elasticsearch.'
-  s.homepage      = 'https://github.com/elasticsearch/opensearch-rails/'
+  s.description   = 'ActiveModel/Record integrations for OpenSearch.'
+  s.summary       = 'ActiveModel/Record integrations for OpenSearch.'
+  s.homepage      = 'https://github.com/compliance-innovations/opensearch-rails/'
   s.license       = 'Apache 2'
 
   s.files         = `git ls-files`.split($/)

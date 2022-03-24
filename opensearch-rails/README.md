@@ -51,7 +51,7 @@ require 'opensearch/rails/tasks/import'
 To import the records from your `Article` model, run:
 
 ```bash
-$ bundle exec rake environment elasticsearch:import:model CLASS='Article'
+$ bundle exec rake environment opensearch:import:model CLASS='Article'
 ```
 
 To limit the imported records to a certain
@@ -59,7 +59,7 @@ ActiveRecord [scope](http://guides.rubyonrails.org/active_record_querying.html#s
 pass it to the task:
 
 ```bash
-$ bundle exec rake environment elasticsearch:import:model CLASS='Article' SCOPE='published'
+$ bundle exec rake environment opensearch:import:model CLASS='Article' SCOPE='published'
 ```
 
 Run this command to display usage instructions:

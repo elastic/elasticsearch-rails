@@ -20,7 +20,7 @@
 * Fixed incorrect regex for adding Rails instrumentation into the application.rb in the `02-pretty.rb` template
 * Fixed other small errors in the `02-pretty.rb` template
 * Improved and added tests for the generated application from the `02-pretty.rb` template
-* Added the `04-dsl.rb` template which uses the `elasticsearch-dsl` gem to build the search definition
+* Added the `04-dsl.rb` template which uses the `opensearch-dsl` gem to build the search definition
 
 ## 0.1.6
 

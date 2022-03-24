@@ -19,17 +19,17 @@ module OpenSearch
   module Rails
     module Instrumentation
 
-      # A log subscriber to attach to Elasticsearch related events
+      # A log subscriber to attach to OpenSearch related events
       #
       # @see https://github.com/rails/rails/blob/master/activerecord/lib/active_record/log_subscriber.rb
       #
       class LogSubscriber < ActiveSupport::LogSubscriber
         def self.runtime=(value)
-          Thread.current["elasticsearch_runtime"] = value
+          Thread.current["opensearch_runtime"] = value
         end
 
         def self.runtime
-          Thread.current["elasticsearch_runtime"] ||= 0
+          Thread.current["opensearch_runtime"] ||= 0
         end
 
         def self.reset_runtime
@@ -37,7 +37,7 @@ module OpenSearch
           rt
         end
 
-        # Intercept `search.elasticsearch` events, and display them in the Rails log
+        # Intercept `search.opensearch` events, and display them in the Rails log
         #
         def search(event)
           self.class.runtime += event.duration
@@ -55,4 +55,4 @@ module OpenSearch
   end
 end
 
-OpenSearch::Rails::Instrumentation::LogSubscriber.attach_to :elasticsearch
+OpenSearch::Rails::Instrumentation::LogSubscriber.attach_to :opensearch

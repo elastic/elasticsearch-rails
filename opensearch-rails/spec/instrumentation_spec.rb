@@ -63,7 +63,7 @@ describe 'ActiveSupport::Instrumentation integration' do
   context 'Model#search' do
 
     before do
-      expect(ActiveSupport::Notifications).to receive(:instrument).with('search.elasticsearch',
+      expect(ActiveSupport::Notifications).to receive(:instrument).with('search.opensearch',
                                                                         { klass: 'DummyInstrumentationModel',
                                                                           name: 'Search',
                                                                           search: { body: query,

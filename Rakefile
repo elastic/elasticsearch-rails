@@ -28,7 +28,7 @@ def admin_client
     transport_options = {}
     test_suite = ENV['TEST_SUITE'].freeze
 
-    if hosts = ENV['TEST_ES_SERVER'] || ENV['ELASTICSEARCH_HOSTS']
+    if hosts = ENV['TEST_ES_SERVER'] || ENV['OPENSEARCH_HOSTS']
       split_hosts = hosts.split(',').map do |host|
         /(http\:\/\/)?(\S+)/.match(host)[2]
       end
@@ -151,7 +151,7 @@ namespace :test do
   end
 end
 
-desc "Wait for elasticsearch cluster to be in green state"
+desc "Wait for opensearch cluster to be in green state"
 task :wait_for_green do
   require 'opensearch-ruby'
 
@@ -166,12 +166,12 @@ task :wait_for_green do
     rescue OpenSearch::Transport::Transport::Errors::RequestTimeout => ex
       puts "Couldn't confirm green status.\n#{ex.inspect}."
     rescue Faraday::ConnectionFailed => ex
-      puts "Couldn't connect to Elasticsearch.\n#{ex.inspect}."
+      puts "Couldn't connect to OpenSearch.\n#{ex.inspect}."
       sleep(30)
     end
   end
   unless ready
-    puts "Couldn't connect to Elasticsearch, aborting program."
+    puts "Couldn't connect to OpenSearch, aborting program."
     exit(1)
   end
 end
@@ -232,7 +232,7 @@ task :update_version, :old, :new do |_, args|
 
   puts "\n\n", "= CHANGELOG ".ansi(:faint) + ('='*88).ansi(:faint), "\n"
 
-  log = `git --no-pager log --reverse --no-color --pretty='* %s' HEAD --not v#{args[:old]} elasticsearch-*`.split("\n")
+  log = `git --no-pager log --reverse --no-color --pretty='* %s' HEAD --not v#{args[:old]} opensearch-*`.split("\n")
 
   puts log.join("\n")
 
@@ -288,7 +288,7 @@ task :update_version, :old, :new do |_, args|
 
   puts "\n\n", "= DIFF ".ansi(:faint) + ('='*93).ansi(:faint)
 
-  diff = `git --no-pager diff --patch --word-diff=color --minimal elasticsearch-*`.split("\n")
+  diff = `git --no-pager diff --patch --word-diff=color --minimal opensearch-*`.split("\n")
 
   puts diff
           .reject { |l| l =~ /^\e\[1mdiff \-\-git/ }
@@ -300,7 +300,7 @@ task :update_version, :old, :new do |_, args|
 
   puts "\n\n", "= COMMIT ".ansi(:faint) + ('='*91).ansi(:faint), "\n"
 
-  puts  'git add CHANGELOG.md elasticsearch-*',
+  puts  'git add CHANGELOG.md opensearch-*',
         "git commit --verbose --message='Release #{args[:new]}' --edit",
         'rake release'
         "\n"

@@ -19,11 +19,11 @@
 #
 # Run me with:
 #
-#     $ bundle exec sidekiq --queue elasticsearch --verbose
+#     $ bundle exec sidekiq --queue opensearch --verbose
 #
 class Indexer
   include Sidekiq::Worker
-  sidekiq_options queue: 'elasticsearch', retry: false, backtrace: true
+  sidekiq_options queue: 'opensearch', retry: false, backtrace: true
 
   Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
   Client = OpenSearch::Client.new host: (ENV['OPENSEARCH_URL'] || 'http://localhost:9200'), logger: Logger
