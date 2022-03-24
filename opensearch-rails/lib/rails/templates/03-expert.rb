@@ -302,7 +302,7 @@ say_status  "Application", "Adding Elasticsearch Rake tasks...\n", :yellow
 puts        '-'*80, ''; sleep 0.5
 
 create_file 'lib/tasks/elasticsearch.rake', <<-CODE
-require 'elasticsearch/rails/tasks/import'
+require 'opensearch/rails/tasks/import'
 CODE
 
 git add:    "lib/tasks"

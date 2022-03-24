@@ -21,38 +21,38 @@ require 'active_support/core_ext/module/delegation'
 
 require 'opensearch-ruby'
 
-require 'elasticsearch/model/version'
+require 'opensearch/model/version'
 
-require 'elasticsearch/model/hash_wrapper'
-require 'elasticsearch/model/client'
+require 'opensearch/model/hash_wrapper'
+require 'opensearch/model/client'
 
-require 'elasticsearch/model/multimodel'
+require 'opensearch/model/multimodel'
 
-require 'elasticsearch/model/adapter'
-require 'elasticsearch/model/adapters/default'
-require 'elasticsearch/model/adapters/active_record'
-require 'elasticsearch/model/adapters/mongoid'
-require 'elasticsearch/model/adapters/multiple'
+require 'opensearch/model/adapter'
+require 'opensearch/model/adapters/default'
+require 'opensearch/model/adapters/active_record'
+require 'opensearch/model/adapters/mongoid'
+require 'opensearch/model/adapters/multiple'
 
-require 'elasticsearch/model/importing'
-require 'elasticsearch/model/indexing'
-require 'elasticsearch/model/naming'
-require 'elasticsearch/model/serializing'
-require 'elasticsearch/model/searching'
-require 'elasticsearch/model/callbacks'
+require 'opensearch/model/importing'
+require 'opensearch/model/indexing'
+require 'opensearch/model/naming'
+require 'opensearch/model/serializing'
+require 'opensearch/model/searching'
+require 'opensearch/model/callbacks'
 
-require 'elasticsearch/model/proxy'
+require 'opensearch/model/proxy'
 
-require 'elasticsearch/model/response'
-require 'elasticsearch/model/response/base'
-require 'elasticsearch/model/response/result'
-require 'elasticsearch/model/response/results'
-require 'elasticsearch/model/response/records'
-require 'elasticsearch/model/response/pagination'
-require 'elasticsearch/model/response/aggregations'
-require 'elasticsearch/model/response/suggestions'
+require 'opensearch/model/response'
+require 'opensearch/model/response/base'
+require 'opensearch/model/response/result'
+require 'opensearch/model/response/results'
+require 'opensearch/model/response/records'
+require 'opensearch/model/response/pagination'
+require 'opensearch/model/response/aggregations'
+require 'opensearch/model/response/suggestions'
 
-require 'elasticsearch/model/ext/active_record'
+require 'opensearch/model/ext/active_record'
 
 case
 when defined?(::Kaminari)

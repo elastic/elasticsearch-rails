@@ -15,5 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require 'elasticsearch/model/response/pagination/kaminari'
-require 'elasticsearch/model/response/pagination/will_paginate'
+require 'hashie/mash'
+
+require 'opensearch-ruby'
+require 'opensearch/model'
+
+require 'opensearch/persistence/version'
+require 'opensearch/persistence/repository'
+require 'opensearch/persistence/repository/response/results'

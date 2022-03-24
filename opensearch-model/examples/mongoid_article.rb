@@ -30,8 +30,8 @@ require 'logger'
 require 'ansi/core'
 require 'mongoid'
 
-require 'elasticsearch/model'
-require 'elasticsearch/model/callbacks'
+require 'opensearch/model'
+require 'opensearch/model/callbacks'
 
 Mongoid.logger.level = Logger::DEBUG
 Moped.logger.level = Logger::DEBUG

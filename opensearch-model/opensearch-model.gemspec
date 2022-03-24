@@ -19,7 +19,7 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'elasticsearch/model/version'
+require 'opensearch/model/version'
 
 Gem::Specification.new do |s|
   s.name          = 'opensearch-model'

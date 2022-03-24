@@ -64,7 +64,7 @@ end
 Let's create a default, "dumb" repository, as a first step:
 
 ```ruby
-require 'elasticsearch/persistence'
+require 'opensearch/persistence'
 class MyRepository; include Elasticsearch::Persistence::Repository; end
 repository = MyRepository.new
 ```

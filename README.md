@@ -70,7 +70,7 @@ This project is split into three separate gems:
 Example of a basic integration into an ActiveRecord-based model:
 
 ```ruby
-require 'elasticsearch/model'
+require 'opensearch/model'
 
 class Article < ActiveRecord::Base
   include Elasticsearch::Model
@@ -113,7 +113,7 @@ class Article
   attr_accessor :title
 end
 
-require 'elasticsearch/persistence'
+require 'opensearch/persistence'
 repository = Elasticsearch::Persistence::Repository.new
 
 repository.save Article.new(title: 'Test')

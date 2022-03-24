@@ -19,7 +19,7 @@
 #
 # Add this e.g. into the `lib/tasks/elasticsearch.rake` file in your Rails application:
 #
-#     require 'elasticsearch/rails/tasks/import'
+#     require 'opensearch/rails/tasks/import'
 #
 # To import the records from your `Article` model, run:
 #

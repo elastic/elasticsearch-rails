@@ -15,11 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require 'elasticsearch/persistence/repository/dsl'
-require 'elasticsearch/persistence/repository/find'
-require 'elasticsearch/persistence/repository/store'
-require 'elasticsearch/persistence/repository/serialize'
-require 'elasticsearch/persistence/repository/search'
+require 'opensearch/persistence/repository/dsl'
+require 'opensearch/persistence/repository/find'
+require 'opensearch/persistence/repository/store'
+require 'opensearch/persistence/repository/serialize'
+require 'opensearch/persistence/repository/search'
 
 module Elasticsearch
   module Persistence

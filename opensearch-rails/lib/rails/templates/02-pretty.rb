@@ -49,7 +49,7 @@ say_status  "Rubygems", "Adding Rails logger integration...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
 insert_into_file 'config/application.rb',
-                 "\n\nrequire 'elasticsearch/rails/instrumentation'",
+                 "\n\nrequire 'opensearch/rails/instrumentation'",
                  after: /Bundler\.require.+$/
 
 git add:    "config/application.rb"

@@ -28,7 +28,7 @@ Pry.config.history.file = File.expand_path('../../tmp/elasticsearch_development.
 require 'logger'
 require 'couchbase/model'
 
-require 'elasticsearch/model'
+require 'opensearch/model'
 
 # Documents are stored as JSON objects in Riak but have rich
 # semantics, including validations and associations.

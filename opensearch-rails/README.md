@@ -45,7 +45,7 @@ To facilitate importing data from your models into Elasticsearch, require the ta
 eg. in the `lib/tasks/elasticsearch.rake` file:
 
 ```ruby
-require 'elasticsearch/rails/tasks/import'
+require 'opensearch/rails/tasks/import'
 ```
 
 To import the records from your `Article` model, run:
@@ -74,7 +74,7 @@ To display information about the search request (duration, search definition) du
 and to include the information in the Rails log file, require the component in your `application.rb` file:
 
 ```ruby
-require 'elasticsearch/rails/instrumentation'
+require 'opensearch/rails/instrumentation'
 ```
 
 You should see an output like this in your application log in development environment:
@@ -89,7 +89,7 @@ There's a special component for the [Lograge](https://github.com/roidrage/lograg
 Require the component in your `application.rb` file (and set `config.lograge.enabled`):
 
 ```ruby
-require 'elasticsearch/rails/lograge'
+require 'opensearch/rails/lograge'
 ```
 
 You should see the duration of the request to Elasticsearch as part of each log event:

@@ -24,7 +24,7 @@ module Elasticsearch
       #
       # Require the component in your `application.rb` file and enable Lograge:
       #
-      #     require 'elasticsearch/rails/lograge'
+      #     require 'opensearch/rails/lograge'
       #
       # You should see the full duration of the request to Elasticsearch as part of each log event:
       #
@@ -34,9 +34,9 @@ module Elasticsearch
       #
       class Railtie < ::Rails::Railtie
         initializer "elasticsearch.lograge" do |app|
-          require 'elasticsearch/rails/instrumentation/publishers'
-          require 'elasticsearch/rails/instrumentation/log_subscriber'
-          require 'elasticsearch/rails/instrumentation/controller_runtime'
+          require 'opensearch/rails/instrumentation/publishers'
+          require 'opensearch/rails/instrumentation/log_subscriber'
+          require 'opensearch/rails/instrumentation/controller_runtime'
 
           Elasticsearch::Model::Searching::SearchRequest.class_eval do
             include Elasticsearch::Rails::Instrumentation::Publishers::SearchRequest

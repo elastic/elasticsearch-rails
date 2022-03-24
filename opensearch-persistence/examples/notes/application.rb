@@ -24,8 +24,8 @@ require 'oj'
 require 'hashie/mash'
 
 require 'opensearch-ruby'
-require 'elasticsearch/model'
-require 'elasticsearch/persistence'
+require 'opensearch/model'
+require 'opensearch/persistence'
 
 class Note
   attr_reader :attributes

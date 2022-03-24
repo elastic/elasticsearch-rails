@@ -35,7 +35,7 @@
 require 'spec_helper'
 require 'action_pack'
 require 'lograge'
-require 'elasticsearch/rails/lograge'
+require 'opensearch/rails/lograge'
 
 describe 'ActiveSupport::Instrumentation integration' do
 

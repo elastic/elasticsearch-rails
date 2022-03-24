@@ -20,7 +20,7 @@ require 'kaminari'
 require 'kaminari/version'
 require 'will_paginate'
 require 'will_paginate/collection'
-require 'elasticsearch/model'
+require 'opensearch/model'
 require 'hashie/version'
 require 'active_model'
 begin

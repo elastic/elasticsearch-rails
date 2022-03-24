@@ -18,7 +18,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'elasticsearch/rails/version'
+require 'opensearch/rails/version'
 
 Gem::Specification.new do |s|
   s.name          = 'opensearch-rails'

@@ -15,8 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require 'elasticsearch/rails/instrumentation/railtie'
-require 'elasticsearch/rails/instrumentation/publishers'
+require 'opensearch/rails/instrumentation/railtie'
+require 'opensearch/rails/instrumentation/publishers'
 
 module Elasticsearch
   module Rails
@@ -28,7 +28,7 @@ module Elasticsearch
     #
     # Require the component in your `application.rb` file:
     #
-    #     require 'elasticsearch/rails/instrumentation'
+    #     require 'opensearch/rails/instrumentation'
     #
     # You should see an output like this in your application log in development environment:
     #

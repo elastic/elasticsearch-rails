@@ -30,7 +30,7 @@ require 'ansi/core'
 require 'active_model'
 require 'ohm'
 
-require 'elasticsearch/model'
+require 'opensearch/model'
 
 class Article < Ohm::Model
   # Include JSON serialization from ActiveModel

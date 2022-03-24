@@ -58,7 +58,7 @@ To add the Elasticsearch integration for this model, require `elasticsearch/mode
 and include the main module in your class:
 
 ```ruby
-require 'elasticsearch/model'
+require 'opensearch/model'
 
 class Article < ActiveRecord::Base
   include Elasticsearch::Model
@@ -346,7 +346,7 @@ response.results.first.title
 Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
 
 ```ruby
-require 'elasticsearch/dsl'
+require 'opensearch/dsl'
 
 query = Elasticsearch::DSL::Search.search do
   query do

@@ -16,7 +16,7 @@
 # under the License.
 
 require 'pry-nav'
-require 'elasticsearch/persistence'
+require 'opensearch/persistence'
 
 unless defined?(ELASTICSEARCH_URL)
   ELASTICSEARCH_URL = ENV['ELASTICSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"

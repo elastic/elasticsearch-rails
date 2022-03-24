@@ -26,8 +26,8 @@ module Elasticsearch
       #
       class Railtie < ::Rails::Railtie
         initializer "elasticsearch.instrumentation" do |app|
-          require 'elasticsearch/rails/instrumentation/log_subscriber'
-          require 'elasticsearch/rails/instrumentation/controller_runtime'
+          require 'opensearch/rails/instrumentation/log_subscriber'
+          require 'opensearch/rails/instrumentation/controller_runtime'
 
           Elasticsearch::Model::Searching::SearchRequest.class_eval do
             include Elasticsearch::Rails::Instrumentation::Publishers::SearchRequest

@@ -25,8 +25,8 @@ require 'mocha/setup'
 require 'rack/test'
 require 'turn'
 
-require 'elasticsearch/extensions/test/cluster'
-require 'elasticsearch/extensions/test/startup_shutdown'
+require 'opensearch/extensions/test/cluster'
+require 'opensearch/extensions/test/startup_shutdown'
 
 require_relative 'application'
 

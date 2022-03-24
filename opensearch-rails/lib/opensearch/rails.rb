@@ -15,11 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require 'hashie/mash'
+require "opensearch/rails/version"
 
-require 'opensearch-ruby'
-require 'elasticsearch/model'
-
-require 'elasticsearch/persistence/version'
-require 'elasticsearch/persistence/repository'
-require 'elasticsearch/persistence/repository/response/results'
+module Elasticsearch
+  module Rails
+    # Your code goes here...
+  end
+end

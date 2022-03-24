@@ -35,7 +35,7 @@ require 'dm-active_model'
 
 require 'active_support/all'
 
-require 'elasticsearch/model'
+require 'opensearch/model'
 
 DataMapper::Logger.new(STDOUT, :debug)
 DataMapper.setup(:default, 'sqlite::memory:')

@@ -18,7 +18,7 @@
 require 'ansi'
 require 'sqlite3'
 require 'active_record'
-require 'elasticsearch/model'
+require 'opensearch/model'
 
 ActiveRecord::Base.logger = ActiveSupport::Logger.new(STDOUT)
 ActiveRecord::Base.establish_connection( adapter: 'sqlite3', database: ":memory:" )

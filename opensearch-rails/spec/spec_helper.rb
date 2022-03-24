@@ -17,10 +17,10 @@
 
 require 'pry-nav'
 require 'active_record'
-require 'elasticsearch/model'
-require 'elasticsearch/rails'
+require 'opensearch/model'
+require 'opensearch/rails'
 require 'rails/railtie'
-require 'elasticsearch/rails/instrumentation'
+require 'opensearch/rails/instrumentation'
 
 
 unless defined?(ELASTICSEARCH_URL)

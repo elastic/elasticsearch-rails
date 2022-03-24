@@ -15,10 +15,5 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require "elasticsearch/rails/version"
-
-module Elasticsearch
-  module Rails
-    # Your code goes here...
-  end
-end
+require 'opensearch/model/response/pagination/kaminari'
+require 'opensearch/model/response/pagination/will_paginate'
