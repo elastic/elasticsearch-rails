@@ -24,8 +24,8 @@ require 'opensearch/model/version'
 Gem::Specification.new do |s|
   s.name          = 'opensearch-model'
   s.version       = OpenSearch::Model::VERSION
-  s.authors       = ['Karel Minarik']
-  s.email         = ['karel.minarik@elasticsearch.org']
+  s.authors       = ['Compliance Innovations B.V.']
+  s.email         = ['developers@compliance-innovations.com']
   s.description   = 'ActiveModel/Record integrations for OpenSearch.'
   s.summary       = 'ActiveModel/Record integrations for OpenSearch.'
   s.homepage      = 'https://github.com/compliance-innovations/opensearch-rails/'

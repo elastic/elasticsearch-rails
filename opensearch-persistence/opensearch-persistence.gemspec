@@ -23,8 +23,8 @@ require 'opensearch/persistence/version'
 Gem::Specification.new do |s|
   s.name          = "opensearch-persistence"
   s.version       = OpenSearch::Persistence::VERSION
-  s.authors       = ["Karel Minarik"]
-  s.email         = ["karel.minarik@elasticsearch.org"]
+  s.authors       = ["Compliance Innovations B.V."]
+  s.email         = ["developers@compliance-innovations.com"]
   s.description   = "Persistence layer for Ruby models and OpenSearch."
   s.summary       = "Persistence layer for Ruby models and OpenSearch."
   s.homepage      = "https://github.com/compliance-innovations/opensearch-rails/"
