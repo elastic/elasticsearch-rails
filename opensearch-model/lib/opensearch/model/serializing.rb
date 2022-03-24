@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Contains functionality for serializing model instances for the client
@@ -38,7 +38,7 @@ module Elasticsearch
         #     Article.first.__elasticsearch__.as_indexed_json
         #     => {"title"=>"Foo"}
         #
-        # @see Elasticsearch::Model::Indexing
+        # @see OpenSearch::Model::Indexing
         #
         def as_indexed_json(options={})
           # TODO: Play with the `MyModel.indexes` method -- reject non-mapped attributes, `:as` options, etc

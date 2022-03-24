@@ -17,8 +17,8 @@
 
 class Image
   include Mongoid::Document
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   field :name, type: String
   attr_accessible :name if respond_to? :attr_accessible

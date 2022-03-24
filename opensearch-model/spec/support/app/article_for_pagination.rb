@@ -16,7 +16,7 @@
 # under the License.
 
 class ::ArticleForPagination < ActiveRecord::Base
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   scope :published, -> { where(published: true) }
 

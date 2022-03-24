@@ -42,11 +42,11 @@ end
 
 # Extend the model with Elasticsearch support
 #
-Article.__send__ :include, Elasticsearch::Model
+Article.__send__ :include, OpenSearch::Model
 
 # Register a custom adapter
 #
-module Elasticsearch
+module OpenSearch
   module Model
     module Adapter
       module Ohm
@@ -64,7 +64,7 @@ end
 
 # Configure the Elasticsearch client to log operations
 #
-Elasticsearch::Model.client = OpenSearch::Client.new log: true
+OpenSearch::Model.client = OpenSearch::Client.new log: true
 
 puts '', '-'*Pry::Terminal.width!
 

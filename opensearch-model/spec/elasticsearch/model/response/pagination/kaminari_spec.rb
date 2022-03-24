@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Response::Response Kaminari' do
+describe 'OpenSearch::Model::Response::Response Kaminari' do
 
   before(:all) do
     class ModelClass
@@ -32,12 +32,12 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(model, '*')
+    OpenSearch::Model::Searching::SearchRequest.new(model, '*')
   end
 
   let(:response) do
     allow(model).to receive(:client).and_return(client)
-    Elasticsearch::Model::Response::Response.new(model, search, response_document).tap do |resp|
+    OpenSearch::Model::Response::Response.new(model, search, response_document).tap do |resp|
       allow(resp).to receive(:client).and_return(client)
     end
   end
@@ -152,7 +152,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
       context 'when there is a limit in the search definition' do
 
         let(:search) do
-          Elasticsearch::Model::Searching::SearchRequest.new(model, '*', size: 10)
+          OpenSearch::Model::Searching::SearchRequest.new(model, '*', size: 10)
         end
 
         it 'gets the limit from the search definition' do
@@ -163,7 +163,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
       context 'when there is a limit in the search body' do
 
         let(:search) do
-          Elasticsearch::Model::Searching::SearchRequest.new(model, { query: { match_all: {} }, size: 999 })
+          OpenSearch::Model::Searching::SearchRequest.new(model, { query: { match_all: {} }, size: 999 })
         end
 
         it 'does not use the limit' do
@@ -184,7 +184,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
       context 'when there is an offset in the search definition' do
 
         let(:search) do
-          Elasticsearch::Model::Searching::SearchRequest.new(model, '*', from: 50)
+          OpenSearch::Model::Searching::SearchRequest.new(model, '*', from: 50)
         end
 
         it 'gets the limit from the search definition' do
@@ -195,7 +195,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
       context 'when there is an offset in the search body' do
 
         let(:search) do
-          Elasticsearch::Model::Searching::SearchRequest.new(model, { query: { match_all: {} }, from: 333 })
+          OpenSearch::Model::Searching::SearchRequest.new(model, { query: { match_all: {} }, from: 333 })
         end
 
         it 'does not use the offset' do
@@ -413,7 +413,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
     context 'when the model is a multimodel' do
 
       let(:model) do
-        Elasticsearch::Model::Multimodel.new(ModelClass)
+        OpenSearch::Model::Multimodel.new(ModelClass)
       end
 
       let(:type_field) do
@@ -455,7 +455,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
     context 'when the model is a multimodel' do
 
       let(:model) do
-        Elasticsearch::Model::Multimodel.new(ModelClass)
+        OpenSearch::Model::Multimodel.new(ModelClass)
       end
 
       let(:type_field) do

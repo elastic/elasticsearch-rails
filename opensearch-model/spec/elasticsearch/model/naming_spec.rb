@@ -23,16 +23,16 @@ describe 'naming' do
     class ::DummyNamingModel
       extend ActiveModel::Naming
 
-      extend  Elasticsearch::Model::Naming::ClassMethods
-      include Elasticsearch::Model::Naming::InstanceMethods
+      extend  OpenSearch::Model::Naming::ClassMethods
+      include OpenSearch::Model::Naming::InstanceMethods
     end
 
     module ::MyNamespace
       class DummyNamingModelInNamespace
         extend ActiveModel::Naming
 
-        extend  Elasticsearch::Model::Naming::ClassMethods
-        include Elasticsearch::Model::Naming::InstanceMethods
+        extend  OpenSearch::Model::Naming::ClassMethods
+        include OpenSearch::Model::Naming::InstanceMethods
       end
     end
   end

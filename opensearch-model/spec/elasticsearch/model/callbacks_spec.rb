@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Callbacks do
+describe OpenSearch::Model::Callbacks do
 
   before(:all) do
     class ::DummyCallbacksModel
@@ -40,11 +40,11 @@ describe Elasticsearch::Model::Callbacks do
   context 'when a model includes the Callbacks module' do
 
     before do
-      Elasticsearch::Model::Callbacks.included(DummyCallbacksModel)
+      OpenSearch::Model::Callbacks.included(DummyCallbacksModel)
     end
 
     it 'includes the callbacks mixin from the model adapter' do
-      expect(DummyCallbacksModel.ancestors).to include(Elasticsearch::Model::Adapter::Default::Callbacks)
+      expect(DummyCallbacksModel.ancestors).to include(OpenSearch::Model::Adapter::Default::Callbacks)
     end
   end
 end

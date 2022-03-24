@@ -17,23 +17,23 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model do
+describe OpenSearch::Model do
 
   describe '#client' do
 
     it 'should have a default' do
-      expect(Elasticsearch::Model.client).to be_a(OpenSearch::Client)
+      expect(OpenSearch::Model.client).to be_a(OpenSearch::Client)
     end
   end
 
   describe '#client=' do
 
     before do
-      Elasticsearch::Model.client = 'Foobar'
+      OpenSearch::Model.client = 'Foobar'
     end
 
     it 'should allow the client to be set' do
-      expect(Elasticsearch::Model.client).to eq('Foobar')
+      expect(OpenSearch::Model.client).to eq('Foobar')
     end
   end
 
@@ -47,8 +47,8 @@ describe Elasticsearch::Model do
         end
       end
 
-      DummyIncludingModel.__send__ :include, Elasticsearch::Model
-      DummyIncludingModelWithSearchMethodDefined.__send__ :include, Elasticsearch::Model
+      DummyIncludingModel.__send__ :include, OpenSearch::Model
+      DummyIncludingModelWithSearchMethodDefined.__send__ :include, OpenSearch::Model
     end
 
     after(:all) do
@@ -77,17 +77,17 @@ describe Elasticsearch::Model do
   describe '#settings' do
 
     it 'allows access to the settings' do
-      expect(Elasticsearch::Model.settings).to eq({})
+      expect(OpenSearch::Model.settings).to eq({})
     end
 
     context 'when settings are changed' do
 
       before do
-        Elasticsearch::Model.settings[:foo] = 'bar'
+        OpenSearch::Model.settings[:foo] = 'bar'
       end
 
       it 'persists the changes' do
-        expect(Elasticsearch::Model.settings[:foo]).to eq('bar')
+        expect(OpenSearch::Model.settings[:foo]).to eq('bar')
       end
     end
   end

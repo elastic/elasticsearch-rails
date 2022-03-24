@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Subclass of `Hashie::Mash` to wrap Hash-like structures

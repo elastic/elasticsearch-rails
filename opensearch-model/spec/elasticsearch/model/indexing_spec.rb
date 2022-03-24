@@ -17,13 +17,13 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Indexing do
+describe OpenSearch::Model::Indexing do
 
   before(:all) do
     class ::DummyIndexingModel
       extend ActiveModel::Naming
-      extend Elasticsearch::Model::Naming::ClassMethods
-      extend Elasticsearch::Model::Indexing::ClassMethods
+      extend OpenSearch::Model::Naming::ClassMethods
+      extend OpenSearch::Model::Indexing::ClassMethods
 
       def self.foo
         'bar'
@@ -40,18 +40,18 @@ describe Elasticsearch::Model::Indexing do
   describe 'the Settings class' do
 
     it 'should be convertible to a hash' do
-      expect(Elasticsearch::Model::Indexing::Settings.new(foo: 'bar').to_hash).to eq(foo: 'bar')
+      expect(OpenSearch::Model::Indexing::Settings.new(foo: 'bar').to_hash).to eq(foo: 'bar')
     end
 
     it 'should be convertible to json' do
-      expect(Elasticsearch::Model::Indexing::Settings.new(foo: 'bar').as_json).to eq(foo: 'bar')
+      expect(OpenSearch::Model::Indexing::Settings.new(foo: 'bar').as_json).to eq(foo: 'bar')
     end
   end
 
   describe '#settings' do
 
     it 'returns an instance of the Settings class' do
-      expect(DummyIndexingModel.settings).to be_a(Elasticsearch::Model::Indexing::Settings)
+      expect(DummyIndexingModel.settings).to be_a(OpenSearch::Model::Indexing::Settings)
     end
 
     context 'when the settings are updated' do
@@ -98,25 +98,25 @@ describe Elasticsearch::Model::Indexing do
     end
 
     it 'returns an instance of the Mappings class' do
-      expect(DummyIndexingModel.mappings).to be_a(Elasticsearch::Model::Indexing::Mappings)
+      expect(DummyIndexingModel.mappings).to be_a(OpenSearch::Model::Indexing::Mappings)
     end
 
     it 'does not raise an exception when there is no type passed to the #initialize method' do
-      expect(Elasticsearch::Model::Indexing::Mappings.new)
+      expect(OpenSearch::Model::Indexing::Mappings.new)
     end
 
     it 'should be convertible to a hash' do
-      expect(Elasticsearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).to_hash).to eq(expected_mapping_hash)
+      expect(OpenSearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).to_hash).to eq(expected_mapping_hash)
     end
 
     it 'should be convertible to json' do
-      expect(Elasticsearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).as_json).to eq(expected_mapping_hash)
+      expect(OpenSearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).as_json).to eq(expected_mapping_hash)
     end
 
     context 'when a type is specified' do
 
       let(:mappings) do
-        Elasticsearch::Model::Indexing::Mappings.new(:mytype)
+        OpenSearch::Model::Indexing::Mappings.new(:mytype)
       end
 
       before do
@@ -135,7 +135,7 @@ describe Elasticsearch::Model::Indexing do
       context 'when the \'include_type_name\' option is specified' do
 
         let(:mappings) do
-          Elasticsearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
+          OpenSearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
         end
 
         before do
@@ -155,7 +155,7 @@ describe Elasticsearch::Model::Indexing do
     context 'when a type is not specified' do
 
       let(:mappings) do
-        Elasticsearch::Model::Indexing::Mappings.new
+        OpenSearch::Model::Indexing::Mappings.new
       end
 
       before do
@@ -175,7 +175,7 @@ describe Elasticsearch::Model::Indexing do
     context 'when specific mappings are defined' do
 
       let(:mappings) do
-        Elasticsearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
+        OpenSearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
       end
 
       before do
@@ -302,8 +302,8 @@ describe Elasticsearch::Model::Indexing do
 
     before(:all) do
       class ::DummyIndexingModelWithCallbacks
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+        extend  OpenSearch::Model::Indexing::ClassMethods
+        include OpenSearch::Model::Indexing::InstanceMethods
 
         def self.before_save(&block)
           (@callbacks ||= {})[block.hash] = block
@@ -315,8 +315,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       class ::DummyIndexingModelWithNoChanges
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+        extend  OpenSearch::Model::Indexing::ClassMethods
+        include OpenSearch::Model::Indexing::InstanceMethods
 
         def self.before_save(&block)
           (@callbacks ||= {})[block.hash] = block
@@ -328,8 +328,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       class ::DummyIndexingModelWithCallbacksAndCustomAsIndexedJson
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+        extend  OpenSearch::Model::Indexing::ClassMethods
+        include OpenSearch::Model::Indexing::InstanceMethods
 
         def self.before_save(&block)
           (@callbacks ||= {})[block.hash] = block
@@ -345,8 +345,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       class ::DummyIndexingModelWithOldDirty
-        extend  Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
+        extend  OpenSearch::Model::Indexing::ClassMethods
+        include OpenSearch::Model::Indexing::InstanceMethods
 
         def self.before_save(&block)
           (@callbacks ||= {})[block.hash] = block
@@ -370,7 +370,7 @@ describe Elasticsearch::Model::Indexing do
       context 'when the model uses the old ActiveModel::Dirty' do
 
         before do
-          DummyIndexingModelWithOldDirty.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+          DummyIndexingModelWithOldDirty.__send__ :include, OpenSearch::Model::Indexing::InstanceMethods
         end
 
         it 'registers callbacks' do
@@ -392,7 +392,7 @@ describe Elasticsearch::Model::Indexing do
       context 'when the model users the current ActiveModel::Dirty' do
 
         before do
-          DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
+          DummyIndexingModelWithCallbacks.__send__ :include, OpenSearch::Model::Indexing::InstanceMethods
         end
 
         it 'registers callbacks' do
@@ -666,8 +666,8 @@ describe Elasticsearch::Model::Indexing do
     before(:all) do
       class ::DummyIndexingModelForRecreate
         extend ActiveModel::Naming
-        extend Elasticsearch::Model::Naming::ClassMethods
-        extend Elasticsearch::Model::Indexing::ClassMethods
+        extend OpenSearch::Model::Naming::ClassMethods
+        extend OpenSearch::Model::Indexing::ClassMethods
       end
     end
 
@@ -771,8 +771,8 @@ describe Elasticsearch::Model::Indexing do
     before(:all) do
       class ::DummyIndexingModelForCreate
         extend ActiveModel::Naming
-        extend Elasticsearch::Model::Naming::ClassMethods
-        extend Elasticsearch::Model::Indexing::ClassMethods
+        extend OpenSearch::Model::Naming::ClassMethods
+        extend OpenSearch::Model::Indexing::ClassMethods
 
         index_name 'foo'
 
@@ -896,8 +896,8 @@ describe Elasticsearch::Model::Indexing do
     before(:all) do
       class ::DummyIndexingModelForRefresh
         extend ActiveModel::Naming
-        extend Elasticsearch::Model::Naming::ClassMethods
-        extend Elasticsearch::Model::Indexing::ClassMethods
+        extend OpenSearch::Model::Naming::ClassMethods
+        extend OpenSearch::Model::Indexing::ClassMethods
 
         index_name 'foo'
 

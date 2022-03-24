@@ -54,9 +54,9 @@ end
 
 # Extend the model with Elasticsearch support
 #
-Article.__send__ :extend, Elasticsearch::Model::Client::ClassMethods
-Article.__send__ :extend, Elasticsearch::Model::Searching::ClassMethods
-Article.__send__ :extend, Elasticsearch::Model::Naming::ClassMethods
+Article.__send__ :extend, OpenSearch::Model::Client::ClassMethods
+Article.__send__ :extend, OpenSearch::Model::Searching::ClassMethods
+Article.__send__ :extend, OpenSearch::Model::Naming::ClassMethods
 
 # Create documents in Riak
 #

@@ -17,14 +17,14 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Adapter::ActiveRecord do
+describe OpenSearch::Model::Adapter::ActiveRecord do
 
   before(:all) do
     class DummyClassForActiveRecord; end
   end
 
   after(:all) do
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyClassForActiveRecord)
+    OpenSearch::Model::Adapter::Adapter.adapters.delete(DummyClassForActiveRecord)
     remove_classes(DummyClassForActiveRecord)
   end
 
@@ -65,19 +65,19 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
   describe 'adapter registration' do
 
     before(:all) do
-      DummyClassForActiveRecord.__send__ :include, Elasticsearch::Model::Adapter::ActiveRecord::Records
+      DummyClassForActiveRecord.__send__ :include, OpenSearch::Model::Adapter::ActiveRecord::Records
     end
 
     it 'can register an adapater' do
-      expect(Elasticsearch::Model::Adapter.adapters[Elasticsearch::Model::Adapter::ActiveRecord]).not_to be_nil
-      expect(Elasticsearch::Model::Adapter.adapters[Elasticsearch::Model::Adapter::ActiveRecord].call(DummyClassForActiveRecord)).to be(false)
+      expect(OpenSearch::Model::Adapter.adapters[OpenSearch::Model::Adapter::ActiveRecord]).not_to be_nil
+      expect(OpenSearch::Model::Adapter.adapters[OpenSearch::Model::Adapter::ActiveRecord].call(DummyClassForActiveRecord)).to be(false)
     end
   end
 
   describe '#records' do
 
     before(:all) do
-      DummyClassForActiveRecord.__send__ :include, Elasticsearch::Model::Adapter::ActiveRecord::Records
+      DummyClassForActiveRecord.__send__ :include, OpenSearch::Model::Adapter::ActiveRecord::Records
     end
 
     let(:instance) do
@@ -115,14 +115,14 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     it 'should register the model class for callbacks' do
-      Elasticsearch::Model::Adapter::ActiveRecord::Callbacks.included(DummyClassForActiveRecord)
+      OpenSearch::Model::Adapter::ActiveRecord::Callbacks.included(DummyClassForActiveRecord)
     end
   end
 
   describe 'importing' do
 
     before do
-      DummyClassForActiveRecord.__send__ :extend, Elasticsearch::Model::Adapter::ActiveRecord::Importing
+      DummyClassForActiveRecord.__send__ :extend, OpenSearch::Model::Adapter::ActiveRecord::Importing
     end
 
     context 'when an invalid scope is specified' do

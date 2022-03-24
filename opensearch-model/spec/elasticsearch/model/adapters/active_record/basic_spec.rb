@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Adapter::ActiveRecord do
+describe OpenSearch::Model::Adapter::ActiveRecord do
 
   context 'when a document_type is not defined for the Model' do
 
@@ -95,7 +95,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
       end
 
       it 'returns an instance of Response::Result' do
-        expect(search_result.results.first).to be_a(Elasticsearch::Model::Response::Result)
+        expect(search_result.results.first).to be_a(OpenSearch::Model::Response::Result)
       end
 
       it 'prooperly loads the document' do

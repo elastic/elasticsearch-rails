@@ -17,7 +17,7 @@
 
 require 'active_support/core_ext/module/attr_internal'
 
-module Elasticsearch
+module OpenSearch
   module Rails
     module Instrumentation
 
@@ -33,16 +33,16 @@ module Elasticsearch
         attr_internal :elasticsearch_runtime
 
         def cleanup_view_runtime
-          elasticsearch_rt_before_render = Elasticsearch::Rails::Instrumentation::LogSubscriber.reset_runtime
+          elasticsearch_rt_before_render = OpenSearch::Rails::Instrumentation::LogSubscriber.reset_runtime
           runtime = super
-          elasticsearch_rt_after_render = Elasticsearch::Rails::Instrumentation::LogSubscriber.reset_runtime
+          elasticsearch_rt_after_render = OpenSearch::Rails::Instrumentation::LogSubscriber.reset_runtime
           self.elasticsearch_runtime = elasticsearch_rt_before_render + elasticsearch_rt_after_render
           runtime - elasticsearch_rt_after_render
         end
 
         def append_info_to_payload(payload)
           super
-          payload[:elasticsearch_runtime] = (elasticsearch_runtime || 0) + Elasticsearch::Rails::Instrumentation::LogSubscriber.reset_runtime
+          payload[:elasticsearch_runtime] = (elasticsearch_runtime || 0) + OpenSearch::Rails::Instrumentation::LogSubscriber.reset_runtime
         end
 
         module ClassMethods

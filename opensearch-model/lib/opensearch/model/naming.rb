@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Provides methods for getting and setting index name and document type for the model

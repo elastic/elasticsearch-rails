@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Results do
+describe OpenSearch::Model::Response::Results do
 
   before(:all) do
     class OriginClass
@@ -35,13 +35,13 @@ describe Elasticsearch::Model::Response::Results do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
+    OpenSearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
       allow(request).to receive(:execute!).and_return(response_document)
     end
   end
 
   let(:response) do
-    Elasticsearch::Model::Response::Response.new(OriginClass, search)
+    OpenSearch::Model::Response::Response.new(OriginClass, search)
   end
 
   let(:results) do

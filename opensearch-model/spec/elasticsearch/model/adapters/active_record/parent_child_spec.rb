@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord Parent-Child' do
+describe 'OpenSearch::Model::Adapter::ActiveRecord Parent-Child' do
 
   before(:all) do
     ActiveRecord::Schema.define(version: 1) do

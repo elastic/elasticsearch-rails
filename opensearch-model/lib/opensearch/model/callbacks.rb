@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Allows to automatically update index based on model changes,
@@ -34,8 +34,8 @@ module Elasticsearch
       # @example Automatically update Elasticsearch index when the model changes
       #
       #     class Article
-      #       include Elasticsearch::Model
-      #       include Elasticsearch::Model::Callbacks
+      #       include OpenSearch::Model
+      #       include OpenSearch::Model::Callbacks
       #     end
       #
       #     Article.first.update_attribute :title, 'Updated'

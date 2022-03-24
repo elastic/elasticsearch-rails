@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Persistence
     module Repository
 
@@ -25,12 +25,12 @@ module Elasticsearch
       module DSL
 
         def self.included(base)
-          base.send(:extend, Elasticsearch::Model::Indexing::ClassMethods)
+          base.send(:extend, OpenSearch::Model::Indexing::ClassMethods)
           base.send(:extend, ClassMethods)
         end
 
         # These methods are necessary to define at the class-level so that the methods available
-        # via Elasticsearch::Model::Indexing::ClassMethods have the references they depend on.
+        # via OpenSearch::Model::Indexing::ClassMethods have the references they depend on.
         #
         # @since 6.0.0
         module ClassMethods

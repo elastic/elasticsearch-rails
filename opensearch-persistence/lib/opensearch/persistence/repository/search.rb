@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Persistence
     module Repository
 
@@ -57,7 +57,7 @@ module Elasticsearch
         # @param [ Hash, String ] query_or_definition The query or search definition.
         # @param [ Hash ] options The search options.
         #
-        # @return [Elasticsearch::Persistence::Repository::Response::Results]
+        # @return [OpenSearch::Persistence::Repository::Response::Results]
         #
         def search(query_or_definition, options={})
           request = { index: index_name,

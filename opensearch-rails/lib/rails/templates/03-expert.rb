@@ -281,14 +281,14 @@ create_file 'config/initializers/elasticsearch.rb', <<-CODE
 # Connect to specific Elasticsearch cluster
 ELASTICSEARCH_URL = ENV['ELASTICSEARCH_URL'] || 'http://localhost:9200'
 
-Elasticsearch::Model.client = OpenSearch::Client.new host: ELASTICSEARCH_URL
+OpenSearch::Model.client = OpenSearch::Client.new host: ELASTICSEARCH_URL
 
 # Print Curl-formatted traces in development into a file
 #
 if Rails.env.development?
   tracer = ActiveSupport::Logger.new('log/elasticsearch.log')
   tracer.level =  Logger::DEBUG
-  Elasticsearch::Model.client.transport.tracer = tracer
+  OpenSearch::Model.client.transport.tracer = tracer
 end
 CODE
 

@@ -21,7 +21,7 @@ require 'opensearch/persistence/repository/store'
 require 'opensearch/persistence/repository/serialize'
 require 'opensearch/persistence/repository/search'
 
-module Elasticsearch
+module OpenSearch
   module Persistence
 
     # The base Repository mixin. This module should be included in classes that
@@ -33,7 +33,7 @@ module Elasticsearch
       include Serialize
       include Find
       include Search
-      include Elasticsearch::Model::Indexing::ClassMethods
+      include OpenSearch::Model::Indexing::ClassMethods
 
       def self.included(base)
         base.send(:extend, ClassMethods)
@@ -62,8 +62,8 @@ module Elasticsearch
         # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
         # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
         #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
-        # @option options [ Elasticsearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
-        # @option options [ Elasticsearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
+        # @option options [ OpenSearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
+        # @option options [ OpenSearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
         #
         # @since 6.0.0
         def create(options = {}, &block)
@@ -99,8 +99,8 @@ module Elasticsearch
       # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
       # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
       #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
-      # @option options [ Elasticsearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
-      # @option options [ Elasticsearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
+      # @option options [ OpenSearch::Model::Indexing::Mappings, Hash ] :mapping The mapping for this index.
+      # @option options [ OpenSearch::Model::Indexing::Settings, Hash ] :settings The settings for this index.
       #
       # @since 6.0.0
       def initialize(options = {})
@@ -174,7 +174,7 @@ module Elasticsearch
       # @note If mappings were set when the repository was created, a block passed to this
       #   method will not be evaluated.
       #
-      # @return [ Elasticsearch::Model::Indexing::Mappings ] The index mappings.
+      # @return [ OpenSearch::Model::Indexing::Mappings ] The index mappings.
       #
       # @since 6.0.0
       def mapping(*args)
@@ -201,7 +201,7 @@ module Elasticsearch
       #     end
       #   end
       #
-      # @return [ Elasticsearch::Model::Indexing::Settings ] The index settings.
+      # @return [ OpenSearch::Model::Indexing::Settings ] The index settings.
       #
       # @since 6.0.0
       def settings(*args)

@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
+describe 'OpenSearch::Model::Adapter::ActiveRecord Importing' do
   before(:all) do
     ActiveRecord::Schema.define(:version => 1) do
       create_table :import_articles do |t|

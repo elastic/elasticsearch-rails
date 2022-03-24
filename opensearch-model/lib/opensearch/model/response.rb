@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Contains modules and classes for wrapping the response from Elasticsearch

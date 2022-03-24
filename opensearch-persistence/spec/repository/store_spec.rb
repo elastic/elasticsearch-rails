@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Persistence::Repository::Store do
+describe OpenSearch::Persistence::Repository::Store do
 
   let(:repository) do
     DEFAULT_REPOSITORY
@@ -45,7 +45,7 @@ describe Elasticsearch::Persistence::Repository::Store do
 
       before do
         class OtherNoteRepository
-          include Elasticsearch::Persistence::Repository
+          include OpenSearch::Persistence::Repository
           def serialize(document)
             { b: 1 }
           end
@@ -80,7 +80,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       it 'saves the document using the options' do
         expect {
           repository.find(response['_id'])
-        }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
+        }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
         expect(repository.find(response['_id'], type: 'other_note')).to eq('a' => 1)
       end
     end
@@ -310,7 +310,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         it 'deletes the document using the id' do
           expect {
             repository.find(id)
-          }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
+          }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
         end
       end
 
@@ -323,7 +323,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         it 'deletes the document using the document' do
           expect {
             repository.find(id)
-          }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
+          }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
         end
       end
     end

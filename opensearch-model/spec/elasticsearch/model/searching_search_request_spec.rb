@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Serializing do
+describe OpenSearch::Model::Serializing do
 
   before(:all) do
     class ::DummySearchingModel
-      extend Elasticsearch::Model::Searching::ClassMethods
+      extend OpenSearch::Model::Searching::ClassMethods
       def self.index_name;    'foo'; end
       def self.document_type; 'bar'; end
     end
@@ -48,7 +48,7 @@ describe Elasticsearch::Model::Serializing do
       end
 
       let(:search) do
-        Elasticsearch::Model::Searching::SearchRequest.new(DummySearchingModel, 'foo')
+        OpenSearch::Model::Searching::SearchRequest.new(DummySearchingModel, 'foo')
       end
 
       it 'passes the query to the client' do
@@ -63,7 +63,7 @@ describe Elasticsearch::Model::Serializing do
       end
 
       let(:search) do
-        Elasticsearch::Model::Searching::SearchRequest.new(DummySearchingModel, foo: 'bar')
+        OpenSearch::Model::Searching::SearchRequest.new(DummySearchingModel, foo: 'bar')
       end
 
       it 'passes the hash to the client' do
@@ -78,7 +78,7 @@ describe Elasticsearch::Model::Serializing do
       end
 
       let(:search) do
-        Elasticsearch::Model::Searching::SearchRequest.new(DummySearchingModel, '{"foo":"bar"}')
+        OpenSearch::Model::Searching::SearchRequest.new(DummySearchingModel, '{"foo":"bar"}')
       end
 
       it 'passes the json string to the client' do
@@ -103,7 +103,7 @@ describe Elasticsearch::Model::Serializing do
       end
 
       let(:search) do
-        Elasticsearch::Model::Searching::SearchRequest.new(DummySearchingModel, MySpecialQueryBuilder.new)
+        OpenSearch::Model::Searching::SearchRequest.new(DummySearchingModel, MySpecialQueryBuilder.new)
       end
 
       it 'passes the query builder to the client and calls #to_hash on it' do
@@ -118,7 +118,7 @@ describe Elasticsearch::Model::Serializing do
       end
 
       let(:search) do
-        Elasticsearch::Model::Searching::SearchRequest.new(DummySearchingModel, 'foo', size: 15)
+        OpenSearch::Model::Searching::SearchRequest.new(DummySearchingModel, 'foo', size: 15)
       end
 
       it 'passes the extra options to the client as part of the request' do

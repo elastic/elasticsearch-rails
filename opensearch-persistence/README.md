@@ -1,4 +1,4 @@
-# Elasticsearch::Persistence
+# OpenSearch::Persistence
 
 Persistence layer for Ruby domain objects in Elasticsearch, using the Repository pattern.
 
@@ -39,7 +39,7 @@ The library provides the Repository pattern for adding persistence to your Ruby 
 
 ### The Repository Pattern
 
-The `Elasticsearch::Persistence::Repository` module provides an implementation of the
+The `OpenSearch::Persistence::Repository` module provides an implementation of the
 [repository pattern](http://martinfowler.com/eaaCatalog/repository.html) and allows
 you to save, delete, find and search objects stored in Elasticsearch, as well as configure
 mappings and settings for the index. It's an unobtrusive and decoupled way of adding
@@ -65,7 +65,7 @@ Let's create a default, "dumb" repository, as a first step:
 
 ```ruby
 require 'opensearch/persistence'
-class MyRepository; include Elasticsearch::Persistence::Repository; end
+class MyRepository; include OpenSearch::Persistence::Repository; end
 repository = MyRepository.new
 ```
 
@@ -119,17 +119,17 @@ The repository module provides a number of features and facilities to configure 
 * Providing access to the Elasticsearch response for search results (aggregations, total, ...)
 * Defining the methods for serialization and deserialization
 
-There are two mixins you can include in your Repository class. The first `Elasticsearch::Persistence::Repository`,
-provides the basic methods and settings you'll need. The second, `Elasticsearch::Persistence::Repository::DSL` adds
+There are two mixins you can include in your Repository class. The first `OpenSearch::Persistence::Repository`,
+provides the basic methods and settings you'll need. The second, `OpenSearch::Persistence::Repository::DSL` adds
 some additional class methods that allow you to set options that instances of the class will share.
 
 #### Basic Repository mixin
 
-For simple cases, you can just include the Elasticsearch::Persistence::Repository mixin to your class:
+For simple cases, you can just include the OpenSearch::Persistence::Repository mixin to your class:
 
 ```ruby
 class MyRepository
-  include Elasticsearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository
 
   # Customize the serialization logic
   def serialize(document)
@@ -189,8 +189,8 @@ most sense when the instances of the repository will use that same configuration
 require 'base64'
 
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   index_name 'notes'
   document_type 'note'
@@ -255,7 +255,7 @@ puts repository.find(1).attributes['image']
 #### Functionality Provided by the Repository mixin
 
 Each of the following configurations can be set for a repository instance.
-If you have included the `Elasticsearch::Persistence::Repository::DSL` mixin, then you can use the class-level DSL
+If you have included the `OpenSearch::Persistence::Repository::DSL` mixin, then you can use the class-level DSL
 methods to set each value. You can still override the configuration for any instance by passing options to the
 `#initialize` method.
 Even if you don't use the DSL mixin, you can set the instance configuration with options passed the `#initialize` method.
@@ -277,8 +277,8 @@ or with the DSL mixin:
 
 ```ruby
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   client OpenSearch::Client.new url: 'http://search.server.org'
 end
@@ -305,8 +305,8 @@ or with the DSL mixin:
 
 ```ruby
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   index_name 'notes_development'
 end
@@ -332,8 +332,8 @@ or with the DSL mixin:
 
 ```ruby
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   document_type 'note'
 end
@@ -359,8 +359,8 @@ or with the DSL mixin:
 
 ```ruby
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   klass Note
 end
@@ -391,8 +391,8 @@ or with the DSL mixin:
 
 ```ruby
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   mappings { indexes :title, analyzer: 'snowball' }
   settings number_of_shards: 1
@@ -432,7 +432,7 @@ is persisted to Elasticsearch, and define the initialization procedure when load
 
 ```ruby
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository
 
   def serialize(document)
     Hash[document.to_hash.map() { |k,v|  v.upcase! if k == :title; [k,v] }]
@@ -515,7 +515,7 @@ repository.search(query: { match: { title: 'fox dog' } }).to_a
 # => [<MyNote ... FOX ...>, <MyNote ... DOG ...>]
 ```
 
-The returned object is an instance of the `Elasticsearch::Persistence::Repository::Response::Results` class,
+The returned object is an instance of the `OpenSearch::Persistence::Repository::Response::Results` class,
 which provides access to the results, the full returned response and hits.
 
 ```ruby

@@ -18,7 +18,7 @@
 require 'opensearch/rails/instrumentation/railtie'
 require 'opensearch/rails/instrumentation/publishers'
 
-module Elasticsearch
+module OpenSearch
   module Rails
 
     # This module adds support for displaying statistics about search duration in the Rails application log
@@ -41,8 +41,8 @@ module Elasticsearch
     # @note The displayed duration includes the HTTP transfer -- the time it took Elasticsearch
     #       to process your request is available in the `response.took` property.
     #
-    # @see Elasticsearch::Rails::Instrumentation::Publishers
-    # @see Elasticsearch::Rails::Instrumentation::Railtie
+    # @see OpenSearch::Rails::Instrumentation::Publishers
+    # @see OpenSearch::Rails::Instrumentation::Railtie
     #
     # @see http://api.rubyonrails.org/classes/ActiveSupport/Notifications.html
     #

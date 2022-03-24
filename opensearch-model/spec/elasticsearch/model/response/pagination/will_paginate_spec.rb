@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Response::Response WillPaginate' do
+describe 'OpenSearch::Model::Response::Response WillPaginate' do
 
   before(:all) do
     class ModelClass
@@ -30,8 +30,8 @@ describe 'Elasticsearch::Model::Response::Response WillPaginate' do
     end
 
     # Subclass Response so we can include WillPaginate module without conflicts with Kaminari.
-    class WillPaginateResponse < Elasticsearch::Model::Response::Response
-      include Elasticsearch::Model::Response::Pagination::WillPaginate
+    class WillPaginateResponse < OpenSearch::Model::Response::Response
+      include OpenSearch::Model::Response::Pagination::WillPaginate
     end
   end
 
@@ -45,7 +45,7 @@ describe 'Elasticsearch::Model::Response::Response WillPaginate' do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(model, '*')
+    OpenSearch::Model::Searching::SearchRequest.new(model, '*')
   end
 
   let(:response) do
@@ -267,7 +267,7 @@ describe 'Elasticsearch::Model::Response::Response WillPaginate' do
   context 'when the model is a multimodel' do
 
     let(:model) do
-      Elasticsearch::Model::Multimodel.new(ModelClass)
+      OpenSearch::Model::Multimodel.new(ModelClass)
     end
 
     let(:default_per_page) do

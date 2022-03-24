@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Persistence::Repository::Find do
+describe OpenSearch::Persistence::Repository::Find do
 
   after do
     begin; repository.delete_index!; rescue; end
@@ -127,7 +127,7 @@ describe Elasticsearch::Persistence::Repository::Find do
         it 'raises a DocumentNotFound exception' do
           expect {
             repository.find(1)
-          }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
+          }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
         end
       end
     end
@@ -143,7 +143,7 @@ describe Elasticsearch::Persistence::Repository::Find do
         it 'applies the options' do
           expect {
             repository.find(id, type: 'none')
-          }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
+          }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
         end
       end
 

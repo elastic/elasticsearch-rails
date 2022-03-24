@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Adapter::Mongoid do
+describe OpenSearch::Model::Adapter::Mongoid do
 
   before(:all) do
     class DummyClassForMongoid; end
@@ -25,7 +25,7 @@ describe Elasticsearch::Model::Adapter::Mongoid do
   end
 
   after(:all) do
-    Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyClassForMongoid)
+    OpenSearch::Model::Adapter::Adapter.adapters.delete(DummyClassForMongoid)
     remove_classes(DummyClassForMongoid)
   end
 
@@ -64,19 +64,19 @@ describe Elasticsearch::Model::Adapter::Mongoid do
   describe 'adapter registration' do
 
     it 'registers an adapater' do
-      expect(Elasticsearch::Model::Adapter.adapters[Elasticsearch::Model::Adapter::Mongoid]).not_to be_nil
-      expect(Elasticsearch::Model::Adapter.adapters[Elasticsearch::Model::Adapter::Mongoid].call(DummyClassForMongoid)).to be(false)
+      expect(OpenSearch::Model::Adapter.adapters[OpenSearch::Model::Adapter::Mongoid]).not_to be_nil
+      expect(OpenSearch::Model::Adapter.adapters[OpenSearch::Model::Adapter::Mongoid].call(DummyClassForMongoid)).to be(false)
     end
 
     it 'registers the records module' do
-      expect(Elasticsearch::Model::Adapter::Mongoid::Records).to be_a(Module)
+      expect(OpenSearch::Model::Adapter::Mongoid::Records).to be_a(Module)
     end
   end
 
   describe '#records' do
 
     before(:all) do
-      DummyClassForMongoid.__send__ :include, Elasticsearch::Model::Adapter::Mongoid::Records
+      DummyClassForMongoid.__send__ :include, OpenSearch::Model::Adapter::Mongoid::Records
     end
 
     let(:instance) do
@@ -130,7 +130,7 @@ describe Elasticsearch::Model::Adapter::Mongoid do
       end
 
       it 'should register the model class for callbacks' do
-        Elasticsearch::Model::Adapter::Mongoid::Callbacks.included(DummyClassForMongoid)
+        OpenSearch::Model::Adapter::Mongoid::Callbacks.included(DummyClassForMongoid)
       end
     end
   end
@@ -138,7 +138,7 @@ describe Elasticsearch::Model::Adapter::Mongoid do
   describe 'importing' do
 
     before(:all) do
-      DummyClassForMongoid.__send__ :extend, Elasticsearch::Model::Adapter::Mongoid::Importing
+      DummyClassForMongoid.__send__ :extend, OpenSearch::Model::Adapter::Mongoid::Importing
     end
 
     let(:relation) do

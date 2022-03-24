@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Persistence::Repository::Serialize do
+describe OpenSearch::Persistence::Repository::Serialize do
 
   let(:repository) do
     DEFAULT_REPOSITORY

@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Persistence::Repository::Response::Results do
+describe OpenSearch::Persistence::Repository::Response::Results do
 
   before(:all) do
     class MyRepository
-      include Elasticsearch::Persistence::Repository
+      include OpenSearch::Persistence::Repository
 
       def deserialize(document)
         'Object'
@@ -87,7 +87,7 @@ describe Elasticsearch::Persistence::Repository::Response::Results do
     context 'when the response method is not called' do
 
       it 'does not create an instance of HashWrapper' do
-        expect(Elasticsearch::Model::HashWrapper).not_to receive(:new)
+        expect(OpenSearch::Model::HashWrapper).not_to receive(:new)
         results
       end
     end
@@ -95,7 +95,7 @@ describe Elasticsearch::Persistence::Repository::Response::Results do
     context 'when the response method is called' do
 
       it 'does create an instance of HashWrapper' do
-        expect(Elasticsearch::Model::HashWrapper).to receive(:new)
+        expect(OpenSearch::Model::HashWrapper).to receive(:new)
         results.response
       end
     end

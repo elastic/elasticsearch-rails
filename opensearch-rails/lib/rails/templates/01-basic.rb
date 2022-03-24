@@ -206,8 +206,8 @@ puts        '-'*80, ''; sleep 0.25
 run "rm -f app/models/article.rb"
 file 'app/models/article.rb', <<-CODE
 class Article < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
   #{'attr_accessible :title, :content, :published_on' if Rails::VERSION::STRING < '4'}
 end
 CODE

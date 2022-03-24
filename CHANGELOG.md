@@ -55,7 +55,7 @@
 * Add newlines at the end of files that are missing it
 * Port adapter tests to rspec (#834)
 * Ensure that specified ActiveRecord order is not overwritten by Elasticsearch search results order (#835)
-* Port remainder of Elasticsearch::Model unit tests to rspec (#836)
+* Port remainder of OpenSearch::Model unit tests to rspec (#836)
 * Port all integration tests to rspec (#837)
 * Avoid executing search twice; Reuse response in Response#raw_response (#850)
 * Update example to account for deprecation of _suggest endpoint in favor of _search
@@ -136,7 +136,7 @@
 * Undo last commit; depend on version 5 of elasticsearch gems
 * Reduce repeated string instantiation (#813)
 * Make default doc type '_doc' in preparation for deprecation of mapping types (#816)
-* Remove Elasticsearch::Persistence::Model (ActiveRecord persistence pattern) (#812)
+* Remove OpenSearch::Persistence::Model (ActiveRecord persistence pattern) (#812)
 * Deprecate _all field in ES 6.x (#820)
 * Remove development dependency on virtus, include explicitly in Gemfile for integration test
 * Refactor Repository as mixin (#824)
@@ -166,8 +166,8 @@
 * Fixed a problem where `Hashie::Mash#min` and `#max` returned unexpected values
 * Added information about `elasticsearch-dsl` to the README
 * Added support for inherited index names and doc types
-* Added a `Elasticsearch::Model.settings` method
-* Changed the naming inheritance logic to use `Elasticsearch::Model.settings`
+* Added a `OpenSearch::Model.settings` method
+* Changed the naming inheritance logic to use `OpenSearch::Model.settings`
 * Added information about the `settings` method and the `inheritance_enabled` setting into the README
 * Disable "verbose" and "warnings" in integration tests
 * Added code for establishing ActiveRecord connections to test classes

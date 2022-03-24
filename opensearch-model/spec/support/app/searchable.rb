@@ -19,8 +19,8 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
-    include Elasticsearch::Model
-    include Elasticsearch::Model::Callbacks
+    include OpenSearch::Model
+    include OpenSearch::Model::Callbacks
 
     # Set up the mapping
     #

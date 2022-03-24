@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
+describe 'OpenSearch::Model::Adapter::ActiveRecord Associations' do
 
   before(:all) do
     ActiveRecord::Schema.define(version: 1) do
@@ -59,8 +59,8 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
       end
     end
 
-    Comment.__send__ :include, Elasticsearch::Model
-    Comment.__send__ :include, Elasticsearch::Model::Callbacks
+    Comment.__send__ :include, OpenSearch::Model
+    Comment.__send__ :include, OpenSearch::Model::Callbacks
   end
 
   before do

@@ -17,12 +17,12 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Adapter::Mongoid, if: test_mongoid? do
+describe OpenSearch::Model::Adapter::Mongoid, if: test_mongoid? do
 
   before(:all) do
     connect_mongoid('mongoid_test')
-    Elasticsearch::Model::Adapter.register \
-              Elasticsearch::Model::Adapter::Mongoid,
+    OpenSearch::Model::Adapter.register \
+              OpenSearch::Model::Adapter::Mongoid,
               lambda { |klass| !!defined?(::Mongoid::Document) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Mongoid::Document) }
 
     MongoidArticle.__elasticsearch__.create_index! force: true
@@ -58,8 +58,8 @@ describe Elasticsearch::Model::Adapter::Mongoid, if: test_mongoid? do
 
     describe '#results' do
 
-      it 'returns a Elasticsearch::Model::Response::Result' do
-        expect(search_result.results.first).to be_a(Elasticsearch::Model::Response::Result)
+      it 'returns a OpenSearch::Model::Response::Result' do
+        expect(search_result.results.first).to be_a(OpenSearch::Model::Response::Result)
       end
 
       it 'retrieves the document from Elasticsearch' do

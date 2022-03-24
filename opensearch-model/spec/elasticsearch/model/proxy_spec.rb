@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Proxy do
+describe OpenSearch::Model::Proxy do
 
   before(:all) do
     class ::DummyProxyModel
-      include Elasticsearch::Model::Proxy
+      include OpenSearch::Model::Proxy
 
       def self.foo
         'classy foo'
@@ -50,7 +50,7 @@ describe Elasticsearch::Model::Proxy do
       end
     end
 
-    DummyProxyModelWithCallbacks.__send__ :include, Elasticsearch::Model::Proxy
+    DummyProxyModelWithCallbacks.__send__ :include, OpenSearch::Model::Proxy
   end
 
   after(:all) do
@@ -85,7 +85,7 @@ describe Elasticsearch::Model::Proxy do
   end
 
   it 'returns the proxy class from an instance proxy' do
-    expect(DummyProxyModel.new.__elasticsearch__.class.class).to eq(Elasticsearch::Model::Proxy::ClassMethodsProxy)
+    expect(DummyProxyModel.new.__elasticsearch__.class.class).to eq(OpenSearch::Model::Proxy::ClassMethodsProxy)
   end
 
   it 'returns the origin class from an instance proxy' do

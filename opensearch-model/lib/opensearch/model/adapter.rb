@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Contains an adapter which provides OxM-specific implementations for common behaviour:
@@ -24,9 +24,9 @@ module Elasticsearch
     # * {Adapter::Adapter#callbacks_mixin Model callbacks for automatic index updates}
     # * {Adapter::Adapter#importing_mixin Efficient bulk loading from the database}
     #
-    # @see Elasticsearch::Model::Adapter::Default
-    # @see Elasticsearch::Model::Adapter::ActiveRecord
-    # @see Elasticsearch::Model::Adapter::Mongoid
+    # @see OpenSearch::Model::Adapter::Default
+    # @see OpenSearch::Model::Adapter::ActiveRecord
+    # @see OpenSearch::Model::Adapter::Mongoid
     #
     module Adapter
 
@@ -36,9 +36,9 @@ module Elasticsearch
       #
       #     class Article < ActiveRecord::Base; end
       #
-      #     myadapter = Elasticsearch::Model::Adapter.from_class(Article)
+      #     myadapter = OpenSearch::Model::Adapter.from_class(Article)
       #     myadapter.adapter
-      #     # => Elasticsearch::Model::Adapter::ActiveRecord
+      #     # => OpenSearch::Model::Adapter::ActiveRecord
       #
       # @see Adapter.adapters The list of included adapters
       # @see Adapter.register Register a custom adapter
@@ -49,7 +49,7 @@ module Elasticsearch
 
       # Returns registered adapters
       #
-      # @see ::Elasticsearch::Model::Adapter::Adapter.adapters
+      # @see ::OpenSearch::Model::Adapter::Adapter.adapters
       #
       def adapters
         Adapter.adapters
@@ -57,7 +57,7 @@ module Elasticsearch
 
       # Registers an adapter
       #
-      # @see ::Elasticsearch::Model::Adapter::Adapter.register
+      # @see ::OpenSearch::Model::Adapter::Adapter.register
       #
       def register(name, condition)
         Adapter.register(name, condition)
@@ -94,7 +94,7 @@ module Elasticsearch
         #
         #     # Register the adapter
         #     #
-        #     Elasticsearch::Model::Adapter.register(
+        #     OpenSearch::Model::Adapter.register(
         #       DataMapperAdapter,
         #       lambda { |klass|
         #         defined?(::DataMapper::Resource) and klass.ancestors.include?(::DataMapper::Resource)
@@ -109,10 +109,10 @@ module Elasticsearch
         #
         # @example Return the currently registered adapters
         #
-        #     Elasticsearch::Model::Adapter.adapters
+        #     OpenSearch::Model::Adapter.adapters
         #     # => {
-        #     #  Elasticsearch::Model::Adapter::ActiveRecord => #<Proc:0x007...(lambda)>,
-        #     #  Elasticsearch::Model::Adapter::Mongoid => #<Proc:0x007... (lambda)>,
+        #     #  OpenSearch::Model::Adapter::ActiveRecord => #<Proc:0x007...(lambda)>,
+        #     #  OpenSearch::Model::Adapter::Mongoid => #<Proc:0x007... (lambda)>,
         #     # }
         #
         # @return [Hash] The collection of adapters
@@ -152,7 +152,7 @@ module Elasticsearch
         def adapter
           @adapter ||= begin
             self.class.adapters.find( lambda {[]} ) { |name, condition| condition.call(klass) }.first \
-            || Elasticsearch::Model::Adapter::Default
+            || OpenSearch::Model::Adapter::Default
           end
         end
 

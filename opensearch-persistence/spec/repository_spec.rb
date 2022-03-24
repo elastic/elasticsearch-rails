@@ -17,13 +17,13 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Persistence::Repository do
+describe OpenSearch::Persistence::Repository do
 
   describe '#create' do
 
     before(:all) do
       class RepositoryWithoutDSL
-        include Elasticsearch::Persistence::Repository
+        include OpenSearch::Persistence::Repository
       end
     end
 
@@ -83,7 +83,7 @@ describe Elasticsearch::Persistence::Repository do
 
     before(:all) do
       class RepositoryWithoutDSL
-        include Elasticsearch::Persistence::Repository
+        include OpenSearch::Persistence::Repository
       end
     end
 
@@ -149,8 +149,8 @@ describe Elasticsearch::Persistence::Repository do
 
     before(:all) do
       class RepositoryWithDSL
-        include Elasticsearch::Persistence::Repository
-        include Elasticsearch::Persistence::Repository::DSL
+        include OpenSearch::Persistence::Repository
+        include OpenSearch::Persistence::Repository::DSL
 
         document_type 'note'
         index_name 'notes_repo'
@@ -446,7 +446,7 @@ describe Elasticsearch::Persistence::Repository do
 
     before(:all) do
       class RepositoryWithoutDSL
-        include Elasticsearch::Persistence::Repository
+        include OpenSearch::Persistence::Repository
       end
     end
 

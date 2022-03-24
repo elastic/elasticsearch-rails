@@ -15,22 +15,22 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # This module provides a proxy interfacing between the including class and
-    # `Elasticsearch::Model`, preventing the pollution of the including class namespace.
+    # `OpenSearch::Model`, preventing the pollution of the including class namespace.
     #
-    # The only "gateway" between the model and Elasticsearch::Model is the
+    # The only "gateway" between the model and OpenSearch::Model is the
     # `#__elasticsearch__` class and instance method.
     #
     # The including class must be compatible with
     # [ActiveModel](https://github.com/rails/rails/tree/master/activemodel).
     #
-    # @example Include the `Elasticsearch::Model` module into an `Article` model
+    # @example Include the `OpenSearch::Model` module into an `Article` model
     #
     #     class Article < ActiveRecord::Base
-    #       include Elasticsearch::Model
+    #       include OpenSearch::Model
     #     end
     #
     #     Article.__elasticsearch__.respond_to?(:search)
@@ -49,7 +49,7 @@ module Elasticsearch
       # Define the `__elasticsearch__` class and instance methods in the including class
       # and register a callback for intercepting changes in the model.
       #
-      # @note The callback is triggered only when `Elasticsearch::Model` is included in the
+      # @note The callback is triggered only when `OpenSearch::Model` is included in the
       #       module and the functionality is accessible via the proxy.
       #
       def self.included(base)
@@ -69,7 +69,7 @@ module Elasticsearch
           end
 
           # Register a callback for storing changed attributes for models which implement
-          # `before_save` method and return changed attributes (ie. when `Elasticsearch::Model` is included)
+          # `before_save` method and return changed attributes (ie. when `OpenSearch::Model` is included)
           #
           # @see http://api.rubyonrails.org/classes/ActiveModel/Dirty.html
           #
@@ -135,29 +135,29 @@ module Elasticsearch
         end
       end
 
-      # A proxy interfacing between Elasticsearch::Model class methods and model class methods
+      # A proxy interfacing between OpenSearch::Model class methods and model class methods
       #
       # TODO: Inherit from BasicObject and make Pry's `ls` command behave?
       #
       class ClassMethodsProxy
         include Base
-        include Elasticsearch::Model::Client::ClassMethods
-        include Elasticsearch::Model::Naming::ClassMethods
-        include Elasticsearch::Model::Indexing::ClassMethods
-        include Elasticsearch::Model::Searching::ClassMethods
-        include Elasticsearch::Model::Importing::ClassMethods
+        include OpenSearch::Model::Client::ClassMethods
+        include OpenSearch::Model::Naming::ClassMethods
+        include OpenSearch::Model::Indexing::ClassMethods
+        include OpenSearch::Model::Searching::ClassMethods
+        include OpenSearch::Model::Importing::ClassMethods
       end
 
-      # A proxy interfacing between Elasticsearch::Model instance methods and model instance methods
+      # A proxy interfacing between OpenSearch::Model instance methods and model instance methods
       #
       # TODO: Inherit from BasicObject and make Pry's `ls` command behave?
       #
       class InstanceMethodsProxy
         include Base
-        include Elasticsearch::Model::Client::InstanceMethods
-        include Elasticsearch::Model::Naming::InstanceMethods
-        include Elasticsearch::Model::Indexing::InstanceMethods
-        include Elasticsearch::Model::Serializing::InstanceMethods
+        include OpenSearch::Model::Client::InstanceMethods
+        include OpenSearch::Model::Naming::InstanceMethods
+        include OpenSearch::Model::Indexing::InstanceMethods
+        include OpenSearch::Model::Serializing::InstanceMethods
 
         def klass
           target.class

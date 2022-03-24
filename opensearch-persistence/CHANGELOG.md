@@ -32,7 +32,7 @@
 
 ## 0.1.4
 
-* Added the Elasticsearch::Persistence::Model feature
+* Added the OpenSearch::Persistence::Model feature
 
 ## 0.1.3
 

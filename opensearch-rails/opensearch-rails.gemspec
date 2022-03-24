@@ -22,7 +22,7 @@ require 'opensearch/rails/version'
 
 Gem::Specification.new do |s|
   s.name          = 'opensearch-rails'
-  s.version       = Elasticsearch::Rails::VERSION
+  s.version       = OpenSearch::Rails::VERSION
   s.authors       = ['Karel Minarik']
   s.email         = ['karel.minarik@elasticsearch.org']
   s.description   = 'Ruby on Rails integrations for Elasticsearch.'

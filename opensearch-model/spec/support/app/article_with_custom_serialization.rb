@@ -16,8 +16,8 @@
 # under the License.
 
 class ::ArticleWithCustomSerialization < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   mapping do
     indexes :title

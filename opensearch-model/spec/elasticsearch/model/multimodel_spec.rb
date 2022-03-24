@@ -17,10 +17,10 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Multimodel do
+describe OpenSearch::Model::Multimodel do
 
   let(:multimodel) do
-    Elasticsearch::Model::Multimodel.new(model_1, model_2)
+    OpenSearch::Model::Multimodel.new(model_1, model_2)
   end
 
   let(:model_1) do
@@ -40,7 +40,7 @@ describe Elasticsearch::Model::Multimodel do
   end
 
   it 'has a client' do
-    expect(multimodel.client).to eq(Elasticsearch::Model.client)
+    expect(multimodel.client).to eq(OpenSearch::Model.client)
   end
 
   describe 'the model registry' do
@@ -48,11 +48,11 @@ describe Elasticsearch::Model::Multimodel do
     before(:all) do
 
       class JustAModel
-        include Elasticsearch::Model
+        include OpenSearch::Model
       end
 
       class JustAnotherModel
-        include Elasticsearch::Model
+        include OpenSearch::Model
       end
     end
 
@@ -61,7 +61,7 @@ describe Elasticsearch::Model::Multimodel do
     end
 
     let(:multimodel) do
-      Elasticsearch::Model::Multimodel.new
+      OpenSearch::Model::Multimodel.new
     end
 
     it 'includes model in the registry' do

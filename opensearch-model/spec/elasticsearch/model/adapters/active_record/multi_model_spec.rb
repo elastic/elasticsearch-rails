@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord MultiModel' do
+describe 'OpenSearch::Model::Adapter::ActiveRecord MultiModel' do
 
   before(:all) do
     ActiveRecord::Schema.define do
@@ -53,7 +53,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord MultiModel' do
   context 'when the search is across multimodels' do
 
     let(:search_result) do
-      Elasticsearch::Model.search(%q<"The greatest Episode"^2 OR "The greatest Series">, [Series, Episode])
+      OpenSearch::Model.search(%q<"The greatest Episode"^2 OR "The greatest Series">, [Series, Episode])
     end
 
     it 'executes the search across models' do
@@ -63,9 +63,9 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord MultiModel' do
 
     describe '#results' do
 
-      it 'returns an instance of Elasticsearch::Model::Response::Result' do
-        expect(search_result.results[0]).to be_a(Elasticsearch::Model::Response::Result)
-        expect(search_result.results[1]).to be_a(Elasticsearch::Model::Response::Result)
+      it 'returns an instance of OpenSearch::Model::Response::Result' do
+        expect(search_result.results[0]).to be_a(OpenSearch::Model::Response::Result)
+        expect(search_result.results[1]).to be_a(OpenSearch::Model::Response::Result)
       end
 
       it 'returns the correct model instance' do
@@ -86,7 +86,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord MultiModel' do
 
     describe '#records' do
 
-      it 'returns an instance of Elasticsearch::Model::Response::Result' do
+      it 'returns an instance of OpenSearch::Model::Response::Result' do
         expect(search_result.records[0]).to be_a(Episode)
         expect(search_result.records[1]).to be_a(Series)
       end
@@ -114,7 +114,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord MultiModel' do
     describe 'pagination' do
 
       let(:search_result) do
-        Elasticsearch::Model.search('series OR episode', [Series, Episode])
+        OpenSearch::Model.search('series OR episode', [Series, Episode])
       end
 
       it 'properly paginates the results' do

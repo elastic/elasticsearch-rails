@@ -1,7 +1,7 @@
 Demo Aplication for the Repository Pattern
 ==========================================
 
-This directory contains a simple demo application for the repository pattern of the `Elasticsearch::Persistence`
+This directory contains a simple demo application for the repository pattern of the `OpenSearch::Persistence`
 module in the [Sinatra](http://www.sinatrarb.com) framework.
 
 To run the application, first install the required gems and start the application:

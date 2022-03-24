@@ -16,7 +16,7 @@
 # under the License.
 
 class ImportArticle < ActiveRecord::Base
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   scope :popular, -> { where('views >= 5') }
 

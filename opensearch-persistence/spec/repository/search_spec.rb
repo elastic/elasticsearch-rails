@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Persistence::Repository::Search do
+describe OpenSearch::Persistence::Repository::Search do
 
   after do
     begin; repository.delete_index!; rescue; end

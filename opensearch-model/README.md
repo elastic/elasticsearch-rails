@@ -1,4 +1,4 @@
-# Elasticsearch::Model
+# OpenSearch::Model
 
 The `opensearch-model` library builds on top of the the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
 
@@ -61,7 +61,7 @@ and include the main module in your class:
 require 'opensearch/model'
 
 class Article < ActiveRecord::Base
-  include Elasticsearch::Model
+  include OpenSearch::Model
 end
 ```
 
@@ -69,7 +69,7 @@ This will extend the model with functionality related to Elasticsearch.
 
 #### Feature Extraction Pattern
 
-Instead of including the `Elasticsearch::Model` module directly in your model, you can include it in a "concern" or "trait" module, which is quite common pattern in Rails applications, using e.g.  `ActiveSupport::Concern` as the instrumentation:
+Instead of including the `OpenSearch::Model` module directly in your model, you can include it in a "concern" or "trait" module, which is quite common pattern in Rails applications, using e.g.  `ActiveSupport::Concern` as the instrumentation:
 
 ```ruby
 # In: app/models/concerns/searchable.rb
@@ -78,7 +78,7 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
-    include Elasticsearch::Model
+    include OpenSearch::Model
 
     mapping do
       # ...
@@ -99,10 +99,10 @@ end
 
 #### The `__elasticsearch__` Proxy
 
-The `Elasticsearch::Model` module contains a big amount of class and instance methods to provide
+The `OpenSearch::Model` module contains a big amount of class and instance methods to provide
 all its functionality. To prevent polluting your model namespace, this functionality is primarily
 available via the `__elasticsearch__` class and instance level proxy methods;
-see the `Elasticsearch::Model::Proxy` class documentation for technical information.
+see the `OpenSearch::Model::Proxy` class documentation for technical information.
 
 The module will include important methods, such as `search`, into the class or module only
 when they haven't been defined already. Following two calls are thus functionally equivalent:
@@ -112,7 +112,7 @@ Article.__elasticsearch__.search 'fox'
 Article.search 'fox'
 ```
 
-See the `Elasticsearch::Model` module documentation for technical information.
+See the `OpenSearch::Model` module documentation for technical information.
 
 ### The Elasticsearch client
 
@@ -133,7 +133,7 @@ Article.__elasticsearch__.client = OpenSearch::Client.new host: 'api.server.org'
 Or configure the client for all models:
 
 ```ruby
-Elasticsearch::Model.client = OpenSearch::Client.new log: true
+OpenSearch::Model.client = OpenSearch::Client.new log: true
 ```
 
 You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
@@ -194,7 +194,7 @@ response.results.map { |r| r._source.title }
 # => ["Quick brown fox", "Fast black dogs"]
 
 response.results.select { |r| r.title =~ /^Q/ }
-# => [#<Elasticsearch::Model::Response::Result:0x007 ... "_source"=>{"title"=>"Quick brown fox"}}>]
+# => [#<OpenSearch::Model::Response::Result:0x007 ... "_source"=>{"title"=>"Quick brown fox"}}>]
 ```
 
 In fact, the `response` object will delegate `Enumerable` methods to `results`:
@@ -265,19 +265,19 @@ response.records.each_with_hit { |record, hit| puts "* #{record.title}: #{hit._s
 It is possible to search across multiple models with the module method:
 
 ```ruby
-Elasticsearch::Model.search('fox', [Article, Comment]).results.to_a.map(&:to_hash)
+OpenSearch::Model.search('fox', [Article, Comment]).results.to_a.map(&:to_hash)
 # => [
 #      {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_score"=>0.35136628, "_source"=>...},
 #      {"_index"=>"comments", "_type"=>"comment", "_id"=>"1", "_score"=>0.35136628, "_source"=>...}
 #    ]
 
-Elasticsearch::Model.search('fox', [Article, Comment]).records.to_a
+OpenSearch::Model.search('fox', [Article, Comment]).records.to_a
 # Article Load (0.3ms)  SELECT "articles".* FROM "articles" WHERE "articles"."id" IN (1)
 # Comment Load (0.2ms)  SELECT "comments".* FROM "comments" WHERE "comments"."id" IN (1,5)
 # => [#<Article id: 1, title: "Quick brown fox">, #<Comment id: 1, body: "Fox News">,  ...]
 ```
 
-By default, all models which include the `Elasticsearch::Model` module are searched.
+By default, all models which include the `OpenSearch::Model` module are searched.
 
 NOTE: It is _not_ possible to chain other methods on top of the `records` object, since it
       is a heterogenous collection, with models potentially backed by different databases.
@@ -308,7 +308,7 @@ To initialize and include the Kaminari pagination support manually:
 
 ```ruby
 Kaminari::Hooks.init if defined?(Kaminari::Hooks)
-Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
+OpenSearch::Model::Response::Response.__send__ :include, OpenSearch::Model::Response::Pagination::Kaminari
 ```
 
 #### The Elasticsearch DSL
@@ -348,7 +348,7 @@ Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elast
 ```ruby
 require 'opensearch/dsl'
 
-query = Elasticsearch::DSL::Search.search do
+query = OpenSearch::DSL::Search.search do
   query do
     match :title do
       query 'fox dogs'
@@ -364,7 +364,7 @@ response.results.first.title
 ### Index Configuration
 
 For proper search engine function, it's often necessary to configure the index properly.
-The `Elasticsearch::Model` integration provides class methods to set up index settings and mappings.
+The `OpenSearch::Model` integration provides class methods to set up index settings and mappings.
 
 **NOTE**: Elasticsearch will automatically create an index when a document is indexed,
           with default settings and mappings. Create the index in advance with the `create_index!`
@@ -436,12 +436,12 @@ Article.first.__elasticsearch__.index_document
 #### Automatic Callbacks
 
 You can automatically update the index whenever the record changes, by including
-the `Elasticsearch::Model::Callbacks` module in your model:
+the `OpenSearch::Model::Callbacks` module in your model:
 
 ```ruby
 class Article
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 end
 
 Article.first.update_attribute :title, 'Updated!'
@@ -454,7 +454,7 @@ The automatic callback on record update keeps track of changes in your model
 (via [`ActiveModel::Dirty`](http://api.rubyonrails.org/classes/ActiveModel/Dirty.html)-compliant implementation),
 and performs a _partial update_ when this support is available.
 
-The automatic callbacks are implemented in database adapters coming with `Elasticsearch::Model`. You can easily
+The automatic callbacks are implemented in database adapters coming with `OpenSearch::Model`. You can easily
 implement your own adapter: please see the relevant chapter below.
 
 #### Custom Callbacks
@@ -464,7 +464,7 @@ by hooking into `after_create`, `after_save`, `after_update` or `after_destroy` 
 
 ```ruby
 class Article
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   after_save    { logger.debug ["Updating document... ", index_document ].join }
   after_destroy { logger.debug ["Deleting document... ", delete_document].join }
@@ -476,7 +476,7 @@ your data against inconsistencies caused by transaction rollbacks:
 
 ```ruby
 class Article < ActiveRecord::Base
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   after_commit on: [:create] do
     __elasticsearch__.index_document if self.published?
@@ -504,7 +504,7 @@ with a tool like [_Resque_](https://github.com/resque/resque) or [_Sidekiq_](htt
 
 ```ruby
 class Article
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   after_save    { Indexer.perform_async(:index,  self.id) }
   after_destroy { Indexer.perform_async(:delete, self.id) }
@@ -560,7 +560,7 @@ Indexer JID-eb7e2daf389a1e5e83697128 INFO: done: 0.006 sec
 ### Model Serialization
 
 By default, the model instance will be serialized to JSON using the `as_indexed_json` method,
-which is defined automatically by the `Elasticsearch::Model::Serializing` module:
+which is defined automatically by the `OpenSearch::Model::Serializing` module:
 
 ```ruby
 Article.first.__elasticsearch__.as_indexed_json
@@ -572,7 +572,7 @@ for instance with the [`as_json`](http://api.rubyonrails.org/classes/ActiveModel
 
 ```ruby
 class Article
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   def as_indexed_json(options={})
     as_json(only: 'title')
@@ -619,7 +619,7 @@ _ActiveRecord_ callbacks -- please see the full example in `examples/activerecor
 
 ### Other ActiveModel Frameworks
 
-The `Elasticsearch::Model` module is fully compatible with any ActiveModel-compatible model, such as _Mongoid_:
+The `OpenSearch::Model` module is fully compatible with any ActiveModel-compatible model, such as _Mongoid_:
 
 ```ruby
 require 'mongoid'
@@ -634,7 +634,7 @@ class Article
 
   attr_accessible :id, :title, :published_at
 
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   def as_indexed_json(options={})
     as_json(except: [:id, :_id])
@@ -655,7 +655,7 @@ Full examples for CouchBase, DataMapper, Mongoid, Ohm and Riak models can be fou
 ### Adapters
 
 To support various "OxM" (object-relational- or object-document-mapper) implementations and frameworks,
-the `Elasticsearch::Model` integration supports an "adapter" concept.
+the `OpenSearch::Model` integration supports an "adapter" concept.
 
 An adapter provides implementations for common behaviour, such as fetching records from the database,
 hooking into model callbacks for automatic index updates, or efficient bulk loading from the database.
@@ -680,20 +680,20 @@ end
 
 # Register the adapter
 #
-Elasticsearch::Model::Adapter.register(
+OpenSearch::Model::Adapter.register(
   DataMapperAdapter,
   lambda { |klass| defined?(::DataMapper::Resource) and klass.ancestors.include?(::DataMapper::Resource) }
 )
 ```
 
-Require the adapter and include `Elasticsearch::Model` in the class:
+Require the adapter and include `OpenSearch::Model` in the class:
 
 ```ruby
 require 'datamapper_adapter'
 
 class Article
   include DataMapper::Resource
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   property :id,    Serial
   property :title, String
@@ -714,7 +714,7 @@ response.records.records.class
 # => DataMapper::Collection
 ```
 
-More examples can be found in the `examples` folder. Please see the `Elasticsearch::Model::Adapter`
+More examples can be found in the `examples` folder. Please see the `OpenSearch::Model::Adapter`
 module and its submodules for technical information.
 
 ### Settings

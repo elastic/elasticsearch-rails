@@ -17,7 +17,7 @@
 
 require "opensearch/rails/version"
 
-module Elasticsearch
+module OpenSearch
   module Rails
     # Your code goes here...
   end

@@ -3,7 +3,7 @@
 * Added a `suggest` method to wrap the suggestions in response
 * Added the `:includes` option to Adapter::ActiveRecord::Records for eagerly loading associated models
 * Delegated `max_pages` method properly for Kaminari's `next_page`
-* Fixed `#dup` behaviour for Elasticsearch::Model
+* Fixed `#dup` behaviour for OpenSearch::Model
 * Fixed typos in the README and examples
 
 ## 0.1.8
@@ -61,7 +61,7 @@
 * Properly delegate existence methods like `result.foo?` to `result._source.foo`
 * Exception is raised when `type` is not passed to Mappings#new
 * Allow passing an ActiveRecord scope to the `import` method
-* Added, that `each_with_hit` and `map_with_hit` in `Elasticsearch::Model::Response::Records` call `to_a`
+* Added, that `each_with_hit` and `map_with_hit` in `OpenSearch::Model::Response::Records` call `to_a`
 * Added support for [`will_paginate`](https://github.com/mislav/will_paginate) pagination library
 * Added the ability to transform models during indexing
 * Added explicit `type` and `id` methods to Response::Result, aliasing `_type` and `_id`

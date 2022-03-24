@@ -16,7 +16,7 @@
 # under the License.
 
 class Answer < ActiveRecord::Base
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   belongs_to :question
 

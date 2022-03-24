@@ -1,4 +1,4 @@
-# Elasticsearch::Rails
+# OpenSearch::Rails
 
 The `opensearch-rails` library is a companion for the
 the [`opensearch-model`](https://github.com/elastic/opensearch-rails/tree/main/opensearch-model)

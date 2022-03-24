@@ -17,8 +17,8 @@
 
 module MyNamespace
   class Book < ActiveRecord::Base
-    include Elasticsearch::Model
-    include Elasticsearch::Model::Callbacks
+    include OpenSearch::Model
+    include OpenSearch::Model::Callbacks
 
     document_type 'book'
 

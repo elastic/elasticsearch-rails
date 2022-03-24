@@ -35,9 +35,9 @@ RSpec.configure do |config|
     require 'ansi'
     tracer = ::Logger.new(STDERR)
     tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
-    Elasticsearch::Model.client = OpenSearch::Client.new host: ELASTICSEARCH_URL,
+    OpenSearch::Model.client = OpenSearch::Client.new host: ELASTICSEARCH_URL,
                                                             tracer: (ENV['QUIET'] ? nil : tracer)
-    puts "Elasticsearch Version: #{Elasticsearch::Model.client.info['version']}"
+    puts "Elasticsearch Version: #{OpenSearch::Model.client.info['version']}"
 
     unless ActiveRecord::Base.connected?
       ActiveRecord::Base.establish_connection( :adapter => 'sqlite3', :database => ":memory:" )

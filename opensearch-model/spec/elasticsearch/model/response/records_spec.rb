@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Records do
+describe OpenSearch::Model::Response::Records do
 
   before(:all) do
     class DummyCollection
@@ -48,17 +48,17 @@ describe Elasticsearch::Model::Response::Records do
   end
 
   let(:results) do
-    Elasticsearch::Model::Response::Results.new(DummyModel, response_document)
+    OpenSearch::Model::Response::Results.new(DummyModel, response_document)
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(DummyModel, '*').tap do |request|
+    OpenSearch::Model::Searching::SearchRequest.new(DummyModel, '*').tap do |request|
       allow(request).to receive(:execute!).and_return(response_document)
     end
   end
 
   let(:response) do
-    Elasticsearch::Model::Response::Response.new(DummyModel, search)
+    OpenSearch::Model::Response::Response.new(DummyModel, search)
   end
 
   let(:records) do
@@ -120,11 +120,11 @@ describe Elasticsearch::Model::Response::Records do
         end; module_function :records_mixin
       end
 
-      allow(Elasticsearch::Model::Adapter).to receive(:from_class).and_return(DummyAdapter)
+      allow(OpenSearch::Model::Adapter).to receive(:from_class).and_return(DummyAdapter)
     end
 
     after do
-      Elasticsearch::Model::Adapter::Adapter.adapters.delete(DummyAdapter)
+      OpenSearch::Model::Adapter::Adapter.adapters.delete(DummyAdapter)
       Object.send(:remove_const, :DummyAdapter) if defined?(DummyAdapter)
     end
 

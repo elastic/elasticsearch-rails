@@ -69,8 +69,8 @@ class Note
 end
 
 class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
 
   client OpenSearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
 

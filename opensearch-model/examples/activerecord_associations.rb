@@ -80,8 +80,8 @@ end
 
 # ----- Elasticsearch client setup ----------------------------------------------------------------
 
-Elasticsearch::Model.client = OpenSearch::Client.new log: true
-Elasticsearch::Model.client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
+OpenSearch::Model.client = OpenSearch::Client.new log: true
+OpenSearch::Model.client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m#{m}\n\e[0m" }
 
 # ----- Search integration ------------------------------------------------------------------------
 
@@ -89,8 +89,8 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
-    include Elasticsearch::Model
-    include Elasticsearch::Model::Callbacks
+    include OpenSearch::Model
+    include OpenSearch::Model::Callbacks
 
     include Indexing
     after_touch() { __elasticsearch__.index_document }
@@ -128,8 +128,8 @@ end
 # ----- Model definitions -------------------------------------------------------------------------
 
 class Category < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   has_and_belongs_to_many :articles
 end
@@ -160,8 +160,8 @@ class Article < ActiveRecord::Base
 end
 
 class Comment < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   belongs_to :article, touch: true
 end
@@ -193,7 +193,7 @@ article.authors << author
 article.comments.create text: 'First comment for article One'
 article.comments.create text: 'Second comment for article One'
 
-Elasticsearch::Model.client.indices.refresh index: Elasticsearch::Model::Registry.all.map(&:index_name)
+OpenSearch::Model.client.indices.refresh index: OpenSearch::Model::Registry.all.map(&:index_name)
 
 # Search for a term and return records
 #
@@ -204,7 +204,7 @@ puts "",
 
 puts "",
      "All Models containing 'one':".ansi(:bold),
-     Elasticsearch::Model.search('one').records.to_a.map(&:inspect),
+     OpenSearch::Model.search('one').records.to_a.map(&:inspect),
      ""
 
 # Difference between `records` and `results`

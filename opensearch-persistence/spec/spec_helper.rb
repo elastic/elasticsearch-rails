@@ -39,8 +39,8 @@ DEFAULT_CLIENT = OpenSearch::Client.new(host: ELASTICSEARCH_URL,
                                            tracer: (ENV['QUIET'] ? nil : ::Logger.new(STDERR)))
 
 class MyTestRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
+  include OpenSearch::Persistence::Repository
+  include OpenSearch::Persistence::Repository::DSL
   client DEFAULT_CLIENT
 end
 

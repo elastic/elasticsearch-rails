@@ -16,8 +16,8 @@
 # under the License.
 
 class ::ArticleWithDynamicIndexName < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   def self.counter=(value)
     @counter = 0

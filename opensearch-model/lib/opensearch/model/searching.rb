@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Contains functionality related to searching.
@@ -78,7 +78,7 @@ module Elasticsearch
         #                                              (string, JSON, Hash, or object responding to `to_hash`)
         # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
         #
-        # @return [Elasticsearch::Model::Response::Response]
+        # @return [OpenSearch::Model::Response::Response]
         #
         # @example Simple search in `Article`
         #

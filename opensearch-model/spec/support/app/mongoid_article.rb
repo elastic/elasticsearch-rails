@@ -17,8 +17,8 @@
 
 class ::MongoidArticle
   include Mongoid::Document
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   field :id, type: String
   field :title, type: String

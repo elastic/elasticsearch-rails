@@ -57,7 +57,7 @@ Article.create title: 'Foo Foo'
 
 # Extend the model with Elasticsearch support
 #
-Article.__send__ :include, Elasticsearch::Model
+Article.__send__ :include, OpenSearch::Model
 
 # The DataMapper adapter
 #
@@ -86,7 +86,7 @@ end
 
 # Register the adapter
 #
-Elasticsearch::Model::Adapter.register(
+OpenSearch::Model::Adapter.register(
   DataMapperAdapter,
   lambda { |klass| defined?(::DataMapper::Resource) and klass.ancestors.include?(::DataMapper::Resource) }
 )

@@ -16,7 +16,7 @@
 # under the License.
 
 class Question < ActiveRecord::Base
-  include Elasticsearch::Model
+  include OpenSearch::Model
 
   has_many :answers, dependent: :destroy
 

@@ -17,7 +17,7 @@
 
 ENV['RACK_ENV'] = 'test'
 
-at_exit { Elasticsearch::Test::IntegrationTestCase.__run_at_exit_hooks } if ENV['SERVER']
+at_exit { OpenSearch::Test::IntegrationTestCase.__run_at_exit_hooks } if ENV['SERVER']
 
 require 'test/unit'
 require 'shoulda-context'
@@ -32,7 +32,7 @@ require_relative 'application'
 
 NoteRepository.index_name = 'notes_test'
 
-class Elasticsearch::Persistence::ExampleApplicationTest < Test::Unit::TestCase
+class OpenSearch::Persistence::ExampleApplicationTest < Test::Unit::TestCase
   include Rack::Test::Methods
   alias :response :last_response
 

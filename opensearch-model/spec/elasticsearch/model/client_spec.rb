@@ -17,12 +17,12 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Client do
+describe OpenSearch::Model::Client do
 
   before(:all) do
     class ::DummyClientModel
-      extend  Elasticsearch::Model::Client::ClassMethods
-      include Elasticsearch::Model::Client::InstanceMethods
+      extend  OpenSearch::Model::Client::ClassMethods
+      include OpenSearch::Model::Client::InstanceMethods
     end
   end
 

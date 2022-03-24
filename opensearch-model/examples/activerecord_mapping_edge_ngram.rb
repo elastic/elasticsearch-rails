@@ -32,8 +32,8 @@ ActiveRecord::Schema.define(version: 1) do
 end
 
 class Article < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   article_es_settings = {
     index: {

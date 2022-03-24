@@ -16,8 +16,8 @@
 # under the License.
 
 class Episode < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   settings index: {number_of_shards: 1, number_of_replicas: 0} do
     mapping do

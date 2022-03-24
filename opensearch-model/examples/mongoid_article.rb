@@ -38,7 +38,7 @@ Moped.logger.level = Logger::DEBUG
 
 Mongoid.connect_to 'articles'
 
-Elasticsearch::Model.client = OpenSearch::Client.new host: 'localhost:9200', log: true
+OpenSearch::Model.client = OpenSearch::Client.new host: 'localhost:9200', log: true
 
 class Article
   include Mongoid::Document
@@ -54,8 +54,8 @@ end
 
 # Extend the model with Elasticsearch support
 #
-Article.__send__ :include, Elasticsearch::Model
-# Article.__send__ :include, Elasticsearch::Model::Callbacks
+Article.__send__ :include, OpenSearch::Model
+# Article.__send__ :include, OpenSearch::Model::Callbacks
 
 # Store data
 #

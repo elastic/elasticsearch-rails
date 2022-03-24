@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Importing do
+describe OpenSearch::Model::Importing do
 
   before(:all) do
     class DummyImportingModel
@@ -44,8 +44,8 @@ describe Elasticsearch::Model::Importing do
   end
 
   before do
-    allow(Elasticsearch::Model::Adapter).to receive(:from_class).with(DummyImportingModel).and_return(DummyImportingAdapter)
-    DummyImportingModel.__send__ :include, Elasticsearch::Model::Importing
+    allow(OpenSearch::Model::Adapter).to receive(:from_class).with(DummyImportingModel).and_return(DummyImportingAdapter)
+    DummyImportingModel.__send__ :include, OpenSearch::Model::Importing
   end
 
   context 'when a model includes the Importing module' do

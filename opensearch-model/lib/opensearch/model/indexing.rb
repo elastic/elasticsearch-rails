@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
     # Provides the necessary support to set up index options (mappings, settings)
@@ -331,7 +331,7 @@ module Elasticsearch
         def self.included(base)
           # Register callback for storing changed attributes for models
           # which implement `before_save` and return changed attributes
-          # (ie. when `Elasticsearch::Model` is included)
+          # (ie. when `OpenSearch::Model` is included)
           #
           # @note This is typically triggered only when the module would be
           #       included in the model directly, not within the proxy.

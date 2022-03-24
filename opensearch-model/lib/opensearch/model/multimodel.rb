@@ -15,10 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
 
-    # Keeps a global registry of classes that include `Elasticsearch::Model`
+    # Keeps a global registry of classes that include `OpenSearch::Model`
     #
     class Registry
       def initialize
@@ -60,7 +60,7 @@ module Elasticsearch
 
     # Wraps a collection of models when querying multiple indices
     #
-    # @see Elasticsearch::Model.search
+    # @see OpenSearch::Model.search
     #
     class Multimodel
       attr_reader :models
@@ -93,7 +93,7 @@ module Elasticsearch
       # @return OpenSearch::Transport::Client
       #
       def client
-        Elasticsearch::Model.client
+        OpenSearch::Model.client
       end
     end
   end

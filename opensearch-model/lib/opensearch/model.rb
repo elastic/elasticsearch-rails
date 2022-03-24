@@ -56,38 +56,38 @@ require 'opensearch/model/ext/active_record'
 
 case
 when defined?(::Kaminari)
-  Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::Kaminari
+  OpenSearch::Model::Response::Response.__send__ :include, OpenSearch::Model::Response::Pagination::Kaminari
 when defined?(::WillPaginate)
-  Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::WillPaginate
+  OpenSearch::Model::Response::Response.__send__ :include, OpenSearch::Model::Response::Pagination::WillPaginate
 end
 
-module Elasticsearch
+module OpenSearch
 
   # Elasticsearch integration for Ruby models
   # =========================================
   #
-  # `Elasticsearch::Model` contains modules for integrating the Elasticsearch search and analytical engine
+  # `OpenSearch::Model` contains modules for integrating the Elasticsearch search and analytical engine
   # with ActiveModel-based classes, or models, for the Ruby programming language.
   #
   # It facilitates importing your data into an index, automatically updating it when a record changes,
   # searching the specific index, setting up the index mapping or the model JSON serialization.
   #
-  # When the `Elasticsearch::Model` module is included in your class, it automatically extends it
-  # with the functionality; see {Elasticsearch::Model.included}. Most methods are available via
+  # When the `OpenSearch::Model` module is included in your class, it automatically extends it
+  # with the functionality; see {OpenSearch::Model.included}. Most methods are available via
   # the `__elasticsearch__` class and instance method proxies.
   #
   # It is possible to include/extend the model with the corresponding
   # modules directly, if that is desired:
   #
-  #     MyModel.__send__ :extend,  Elasticsearch::Model::Client::ClassMethods
-  #     MyModel.__send__ :include, Elasticsearch::Model::Client::InstanceMethods
-  #     MyModel.__send__ :extend,  Elasticsearch::Model::Searching::ClassMethods
+  #     MyModel.__send__ :extend,  OpenSearch::Model::Client::ClassMethods
+  #     MyModel.__send__ :include, OpenSearch::Model::Client::InstanceMethods
+  #     MyModel.__send__ :extend,  OpenSearch::Model::Searching::ClassMethods
   #     # ...
   #
   module Model
     METHODS = [:search, :mapping, :mappings, :settings, :index_name, :document_type, :import]
 
-    # Adds the `Elasticsearch::Model` functionality to the including class.
+    # Adds the `OpenSearch::Model` functionality to the including class.
     #
     # * Creates the `__elasticsearch__` class and instance method. These methods return a proxy object with
     #   other common methods defined on them.
@@ -97,17 +97,17 @@ module Elasticsearch
     # @example Include the module in the `Article` model definition
     #
     #     class Article < ActiveRecord::Base
-    #       include Elasticsearch::Model
+    #       include OpenSearch::Model
     #     end
     #
     # @example Inject the module into the `Article` model during run time
     #
-    #     Article.__send__ :include, Elasticsearch::Model
+    #     Article.__send__ :include, OpenSearch::Model
     #
     #
     def self.included(base)
       base.class_eval do
-        include Elasticsearch::Model::Proxy
+        include OpenSearch::Model::Proxy
 
         # Delegate common methods to the `__elasticsearch__` ClassMethodsProxy, unless they are defined already
         class << self
@@ -126,7 +126,7 @@ module Elasticsearch
       #
       # @example Get the client
       #
-      #     Elasticsearch::Model.client
+      #     OpenSearch::Model.client
       #     => #<OpenSearch::Client:0x007f96a7d0d000... >
       #
       def client
@@ -137,11 +137,11 @@ module Elasticsearch
       #
       # @example Configure (set) the client for all models
       #
-      #     Elasticsearch::Model.client = OpenSearch::Client.new host: 'http://localhost:9200', tracer: true
+      #     OpenSearch::Model.client = OpenSearch::Client.new host: 'http://localhost:9200', tracer: true
       #     => #<OpenSearch::Client:0x007f96a6dd0d80... >
       #
       # @note You have to set the client before you call Elasticsearch methods on the model,
-      #       or set it directly on the model; see {Elasticsearch::Model::Client::ClassMethods#client}
+      #       or set it directly on the model; see {OpenSearch::Model::Client::ClassMethods#client}
       #
       def client=(client)
         @client = client
@@ -149,22 +149,22 @@ module Elasticsearch
 
       # Search across multiple models
       #
-      # By default, all models which include the `Elasticsearch::Model` module are searched
+      # By default, all models which include the `OpenSearch::Model` module are searched
       #
       # @param query_or_payload [String,Hash,Object] The search request definition
       #                                              (string, JSON, Hash, or object responding to `to_hash`)
       # @param models [Array] The Array of Model objects to search
       # @param options [Hash] Optional parameters to be passed to the Elasticsearch client
       #
-      # @return [Elasticsearch::Model::Response::Response]
+      # @return [OpenSearch::Model::Response::Response]
       #
       # @example Search across specific models
       #
-      #     Elasticsearch::Model.search('foo', [Author, Article])
+      #     OpenSearch::Model.search('foo', [Author, Article])
       #
-      # @example Search across all models which include the `Elasticsearch::Model` module
+      # @example Search across all models which include the `OpenSearch::Model` module
       #
-      #     Elasticsearch::Model.search('foo')
+      #     OpenSearch::Model.search('foo')
       #
       def search(query_or_payload, models=[], options={})
         models = Multimodel.new(models)

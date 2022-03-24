@@ -73,8 +73,8 @@ Example of a basic integration into an ActiveRecord-based model:
 require 'opensearch/model'
 
 class Article < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 end
 
 # Index creation right at import time is not encouraged.
@@ -114,7 +114,7 @@ class Article
 end
 
 require 'opensearch/persistence'
-repository = Elasticsearch::Persistence::Repository.new
+repository = OpenSearch::Persistence::Repository.new
 
 repository.save Article.new(title: 'Test')
 # POST http://localhost:9200/repository/article

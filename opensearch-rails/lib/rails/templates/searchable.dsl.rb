@@ -19,7 +19,7 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
-    include Elasticsearch::Model
+    include OpenSearch::Model
 
     # Customize the index name
     #
@@ -85,10 +85,10 @@ module Searchable
     # and implement a "cross" faceted navigation
     #
     # @param q [String] The user query
-    # @return [Elasticsearch::Model::Response::Response]
+    # @return [OpenSearch::Model::Response::Response]
     #
     def self.search(q, options={})
-      @search_definition = Elasticsearch::DSL::Search.search do
+      @search_definition = OpenSearch::DSL::Search.search do
         query do
 
           # If a user query is present...
@@ -146,7 +146,7 @@ module Searchable
         aggregation :categories do
           # Filter the aggregation with any selected `author` and `published_week`
           #
-          f = Elasticsearch::DSL::Search::Filters::Bool.new
+          f = OpenSearch::DSL::Search::Filters::Bool.new
           f.must { match_all }
           f.must { term 'authors.full_name.raw' => options[:author] } if options[:author]
           f.must { range published_on: { gte: options[:published_week], lte: "#{options[:published_week]}||+1w" } } if options[:published_week]
@@ -163,7 +163,7 @@ module Searchable
         aggregation :authors do
           # Filter the aggregation with any selected `category` and `published_week`
           #
-          f = Elasticsearch::DSL::Search::Filters::Bool.new
+          f = OpenSearch::DSL::Search::Filters::Bool.new
           f.must { match_all }
           f.must { term categories: options[:category] } if options[:category]
           f.must { range published_on: { gte: options[:published_week], lte: "#{options[:published_week]}||+1w" } } if options[:published_week]
@@ -180,7 +180,7 @@ module Searchable
         aggregation :published do
           # Filter the aggregation with any selected `author` and `category`
           #
-          f = Elasticsearch::DSL::Search::Filters::Bool.new
+          f = OpenSearch::DSL::Search::Filters::Bool.new
           f.must { match_all }
           f.must { term 'authors.full_name.raw' => options[:author] } if options[:author]
           f.must { term categories: options[:category] } if options[:category]

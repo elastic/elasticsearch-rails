@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord Multimodel', if: test_mongoid? do
+describe 'OpenSearch::Model::Adapter::ActiveRecord Multimodel', if: test_mongoid? do
 
   before(:all) do
     connect_mongoid('mongoid_test')
@@ -60,7 +60,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Multimodel', if: test_mong
   context 'when the search is across multimodels with different adapters' do
 
     let(:search_result) do
-      Elasticsearch::Model.search(%q<"greatest Episode" OR "greatest Image"^2>, [Episode, Image])
+      OpenSearch::Model.search(%q<"greatest Episode" OR "greatest Image"^2>, [Episode, Image])
     end
 
     it 'executes the search across models' do

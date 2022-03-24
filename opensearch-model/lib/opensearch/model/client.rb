@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
     # Contains an `OpenSearch::Client` instance
     #
@@ -29,7 +29,7 @@ module Elasticsearch
         #     # => { "cluster_name" => "elasticsearch" ... }
         #
         def client client=nil
-          @client ||= Elasticsearch::Model.client
+          @client ||= OpenSearch::Model.client
         end
 
         # Set the client for a specific model class

@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Persistence
     module Repository
       module Response # :nodoc:
@@ -46,7 +46,7 @@ module Elasticsearch
           #
           MAX_SCORE = 'max_score'.freeze
 
-          # @param repository [Elasticsearch::Persistence::Repository::Class] The repository instance
+          # @param repository [OpenSearch::Persistence::Repository::Class] The repository instance
           # @param response   [Hash]  The full response returned from the Elasticsearch client
           # @param options    [Hash]  Optional parameters
           #
@@ -116,10 +116,10 @@ module Elasticsearch
           #     results.response.aggregations.titles.buckets.map { |term| "#{term['key']}: #{term['doc_count']}" }
           #     # => ["brown: 1", "dog: 1", ...]
           #
-          # @return [Elasticsearch::Model::HashWrapper]
+          # @return [OpenSearch::Model::HashWrapper]
           #
           def response
-            @response ||= Elasticsearch::Model::HashWrapper.new(raw_response)
+            @response ||= OpenSearch::Model::HashWrapper.new(raw_response)
           end
         end
       end

@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Serializing do
+describe OpenSearch::Model::Serializing do
 
   before(:all) do
     class DummyClass
-      include Elasticsearch::Model::Serializing::InstanceMethods
+      include OpenSearch::Model::Serializing::InstanceMethods
 
       def as_json(options={})
         'HASH'

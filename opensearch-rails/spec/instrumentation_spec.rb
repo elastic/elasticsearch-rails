@@ -21,7 +21,7 @@ describe 'ActiveSupport::Instrumentation integration' do
 
   before(:all) do
     class DummyInstrumentationModel
-      extend Elasticsearch::Model::Searching::ClassMethods
+      extend OpenSearch::Model::Searching::ClassMethods
 
       def self.index_name;    'foo'; end
       def self.document_type; 'bar'; end
@@ -40,7 +40,7 @@ describe 'ActiveSupport::Instrumentation integration' do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(DummyInstrumentationModel, 'foo')
+    OpenSearch::Model::Searching::SearchRequest.new(DummyInstrumentationModel, 'foo')
   end
 
   let(:client) do
@@ -49,7 +49,7 @@ describe 'ActiveSupport::Instrumentation integration' do
 
   before do
     allow(DummyInstrumentationModel).to receive(:client).and_return(client)
-    Elasticsearch::Rails::Instrumentation::Railtie.run_initializers
+    OpenSearch::Rails::Instrumentation::Railtie.run_initializers
   end
 
   context 'SearchRequest#execute!' do

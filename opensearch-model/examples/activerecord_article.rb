@@ -70,8 +70,8 @@ client.bulk index: 'articles',
 
 # Extend the model with Elasticsearch support
 #
-Article.__send__ :include, Elasticsearch::Model
-# Article.__send__ :include, Elasticsearch::Model::Callbacks
+Article.__send__ :include, OpenSearch::Model
+# Article.__send__ :include, OpenSearch::Model::Callbacks
 
 # ActiveRecord::Base.logger.silence do
 #   10_000.times do |i|
@@ -81,7 +81,7 @@ Article.__send__ :include, Elasticsearch::Model
 
 puts '', '-'*Pry::Terminal.width!
 
-Elasticsearch::Model.client = OpenSearch::Client.new log: true
+OpenSearch::Model.client = OpenSearch::Client.new log: true
 
 response = Article.search 'foo';
 

@@ -40,11 +40,11 @@ require 'opensearch/rails/lograge'
 describe 'ActiveSupport::Instrumentation integration' do
 
   before do
-    Elasticsearch::Rails::Lograge::Railtie.run_initializers
+    OpenSearch::Rails::Lograge::Railtie.run_initializers
   end
 
   it 'customizes the Lograge configuration' do
-    expect(Elasticsearch::Rails::Lograge::Railtie.initializers
+    expect(OpenSearch::Rails::Lograge::Railtie.initializers
                .select { |i| i.name == 'elasticsearch.lograge' }
                .first).not_to be_nil
   end

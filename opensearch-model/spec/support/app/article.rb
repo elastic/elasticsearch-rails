@@ -16,8 +16,8 @@
 # under the License.
 
 class ::Article < ActiveRecord::Base
-  include Elasticsearch::Model
-  include Elasticsearch::Model::Callbacks
+  include OpenSearch::Model
+  include OpenSearch::Model::Callbacks
 
   document_type 'article'
 

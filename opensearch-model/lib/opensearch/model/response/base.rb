@@ -15,10 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
     module Response
-      # Common funtionality for classes in the {Elasticsearch::Model::Response} module
+      # Common funtionality for classes in the {OpenSearch::Model::Response} module
       #
       module Base
         attr_reader :klass, :response, :raw_response

@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Rails
     module Instrumentation
       module Publishers
@@ -41,7 +41,7 @@ module Elasticsearch
           def execute_with_instrumentation!
             ActiveSupport::Notifications.instrument "search.elasticsearch",
               name:   'Search',
-              klass:  (self.klass.is_a?(Elasticsearch::Model::Proxy::ClassMethodsProxy) ? self.klass.target.to_s : self.klass.to_s),
+              klass:  (self.klass.is_a?(OpenSearch::Model::Proxy::ClassMethodsProxy) ? self.klass.target.to_s : self.klass.to_s),
               search: self.definition do
               execute_without_instrumentation!
             end

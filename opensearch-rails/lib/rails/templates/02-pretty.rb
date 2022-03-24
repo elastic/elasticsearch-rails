@@ -61,11 +61,11 @@ puts
 say_status  "Rubygems", "Adding Rubygems into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.25
 
-# NOTE: Kaminari has to be loaded before Elasticsearch::Model so the callbacks are executed
+# NOTE: Kaminari has to be loaded before OpenSearch::Model so the callbacks are executed
 #
 insert_into_file 'Gemfile', <<-CODE, before: /gem ["']elasticsearch["'].+$/
 
-# NOTE: Kaminari has to be loaded before Elasticsearch::Model so the callbacks are executed
+# NOTE: Kaminari has to be loaded before OpenSearch::Model so the callbacks are executed
 gem 'kaminari'
 
 CODE
@@ -81,7 +81,7 @@ puts
 say_status  "Model", "Adding a `Article.search` class method...\n", :yellow
 puts        '-'*80, ''; sleep 0.5
 
-insert_into_file 'app/models/article.rb', <<-CODE, after: 'include Elasticsearch::Model::Callbacks'
+insert_into_file 'app/models/article.rb', <<-CODE, after: 'include OpenSearch::Model::Callbacks'
 
 
   def self.search(query)

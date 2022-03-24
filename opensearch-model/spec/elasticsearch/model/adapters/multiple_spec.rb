@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Adapter::Multiple do
+describe OpenSearch::Model::Adapter::Multiple do
 
   before(:all) do
     class DummyOne
-      include Elasticsearch::Model
+      include OpenSearch::Model
 
       index_name 'dummy'
       document_type 'dummy_one'
@@ -39,7 +39,7 @@ describe Elasticsearch::Model::Adapter::Multiple do
 
     module Namespace
       class DummyTwo
-        include Elasticsearch::Model
+        include OpenSearch::Model
 
         index_name 'dummy'
         document_type 'dummy_two'
@@ -57,7 +57,7 @@ describe Elasticsearch::Model::Adapter::Multiple do
     end
 
     class DummyTwo
-      include Elasticsearch::Model
+      include OpenSearch::Model
 
       index_name 'other_index'
       document_type 'dummy_two'
@@ -76,7 +76,7 @@ describe Elasticsearch::Model::Adapter::Multiple do
 
   after(:all) do
     [DummyOne, Namespace::DummyTwo, DummyTwo].each do |adapter|
-      Elasticsearch::Model::Adapter::Adapter.adapters.delete(adapter)
+      OpenSearch::Model::Adapter::Adapter.adapters.delete(adapter)
     end
     Namespace.send(:remove_const, :DummyTwo) if defined?(Namespace::DummyTwo)
     remove_classes(DummyOne, DummyTwo, Namespace)
@@ -117,13 +117,13 @@ describe Elasticsearch::Model::Adapter::Multiple do
   end
 
   let(:multimodel) do
-    Elasticsearch::Model::Multimodel.new(DummyOne, DummyTwo, Namespace::DummyTwo)
+    OpenSearch::Model::Multimodel.new(DummyOne, DummyTwo, Namespace::DummyTwo)
   end
 
   describe '#records' do
 
     before do
-      multimodel.class.send :include, Elasticsearch::Model::Adapter::Multiple::Records
+      multimodel.class.send :include, OpenSearch::Model::Adapter::Multiple::Records
       expect(multimodel).to receive(:response).at_least(:once).and_return(response)
     end
 

@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord Dynamic Index naming' do
+describe 'OpenSearch::Model::Adapter::ActiveRecord Dynamic Index naming' do
 
   before do
     ArticleWithDynamicIndexName.counter = 0

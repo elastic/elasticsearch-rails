@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Aggregations do
+describe OpenSearch::Model::Response::Aggregations do
 
   before(:all) do
     class OriginClass
@@ -43,13 +43,13 @@ describe Elasticsearch::Model::Response::Aggregations do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
+    OpenSearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
       allow(request).to receive(:execute!).and_return(response_document)
     end
   end
 
   let(:aggregations) do
-    Elasticsearch::Model::Response::Response.new(OriginClass, search).aggregations
+    OpenSearch::Model::Response::Response.new(OriginClass, search).aggregations
   end
 
   describe 'method delegation' do

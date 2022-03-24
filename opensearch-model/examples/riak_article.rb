@@ -41,7 +41,7 @@ end
 
 # Extend the model with Elasticsearch support
 #
-Article.__send__ :include, Elasticsearch::Model
+Article.__send__ :include, OpenSearch::Model
 
 # Create documents in Riak
 #

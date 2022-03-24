@@ -15,14 +15,14 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
     module Response
 
       # Encapsulates the collection of records returned from the database
       #
       # Implements Enumerable and forwards its methods to the {#records} object,
-      # which is provided by an {Elasticsearch::Model::Adapter::Adapter} implementation.
+      # which is provided by an {OpenSearch::Model::Adapter::Adapter} implementation.
       #
       class Records
         include Enumerable

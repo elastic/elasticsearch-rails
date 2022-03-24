@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Rails
     module Instrumentation
 
@@ -55,4 +55,4 @@ module Elasticsearch
   end
 end
 
-Elasticsearch::Rails::Instrumentation::LogSubscriber.attach_to :elasticsearch
+OpenSearch::Rails::Instrumentation::LogSubscriber.attach_to :elasticsearch

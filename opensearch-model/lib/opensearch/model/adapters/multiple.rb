@@ -15,14 +15,14 @@
 # specific language governing permissions and limitations
 # under the License.
 
-module Elasticsearch
+module OpenSearch
   module Model
     module Adapter
 
       # An adapter to be used for deserializing results from multiple models,
-      # retrieved through `Elasticsearch::Model.search`
+      # retrieved through `OpenSearch::Model.search`
       #
-      # @see Elasticsearch::Model.search
+      # @see OpenSearch::Model.search
       #
       module Multiple
         Adapter.register self, lambda { |klass| klass.is_a? Multimodel }
@@ -71,9 +71,9 @@ module Elasticsearch
             adapter = __adapter_for_klass(klass)
 
             case
-              when Elasticsearch::Model::Adapter::ActiveRecord.equal?(adapter)
+              when OpenSearch::Model::Adapter::ActiveRecord.equal?(adapter)
                 klass.where(klass.primary_key => ids)
-              when Elasticsearch::Model::Adapter::Mongoid.equal?(adapter)
+              when OpenSearch::Model::Adapter::Mongoid.equal?(adapter)
                 klass.where(:id.in => ids)
             else
               klass.find(ids)
@@ -101,7 +101,7 @@ module Elasticsearch
 
           # Returns the class of the model corresponding to a specific `hit` in Elasticsearch results
           #
-          # @see Elasticsearch::Model::Registry
+          # @see OpenSearch::Model::Registry
           #
           # @api private
           #

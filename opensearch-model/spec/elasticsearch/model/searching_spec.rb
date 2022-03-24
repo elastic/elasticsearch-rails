@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Searching::ClassMethods do
+describe OpenSearch::Model::Searching::ClassMethods do
 
   before(:all) do
     class ::DummySearchingModel
-      extend Elasticsearch::Model::Searching::ClassMethods
+      extend OpenSearch::Model::Searching::ClassMethods
 
       def self.index_name;    'foo'; end
       def self.document_type; 'bar'; end
@@ -43,11 +43,11 @@ describe Elasticsearch::Model::Searching::ClassMethods do
     end
 
     before do
-      expect(Elasticsearch::Model::Searching::SearchRequest).to receive(:new).with(DummySearchingModel, 'foo', { default_operator: 'AND' }).and_return(response)
+      expect(OpenSearch::Model::Searching::SearchRequest).to receive(:new).with(DummySearchingModel, 'foo', { default_operator: 'AND' }).and_return(response)
     end
 
     it 'creates a search object' do
-      expect(DummySearchingModel.search('foo', default_operator: 'AND')).to be_a(Elasticsearch::Model::Response::Response)
+      expect(DummySearchingModel.search('foo', default_operator: 'AND')).to be_a(OpenSearch::Model::Response::Response)
     end
   end
 

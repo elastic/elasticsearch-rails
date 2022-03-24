@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe 'Elasticsearch::Model::Adapter::ActiveRecord Namespaced Model' do
+describe 'OpenSearch::Model::Adapter::ActiveRecord Namespaced Model' do
 
   before(:all) do
     ActiveRecord::Schema.define(:version => 1) do

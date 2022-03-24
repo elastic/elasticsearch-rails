@@ -23,7 +23,7 @@ require 'opensearch/model/version'
 
 Gem::Specification.new do |s|
   s.name          = 'opensearch-model'
-  s.version       = Elasticsearch::Model::VERSION
+  s.version       = OpenSearch::Model::VERSION
   s.authors       = ['Karel Minarik']
   s.email         = ['karel.minarik@elasticsearch.org']
   s.description   = 'ActiveModel/Record integrations for Elasticsearch.'

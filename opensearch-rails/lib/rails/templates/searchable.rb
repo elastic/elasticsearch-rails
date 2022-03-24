@@ -19,7 +19,7 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
-    include Elasticsearch::Model
+    include OpenSearch::Model
 
     # Customize the index name
     #
@@ -84,7 +84,7 @@ module Searchable
     # Search in title and content fields for `query`, include highlights in response
     #
     # @param query [String] The user query
-    # @return [Elasticsearch::Model::Response::Response]
+    # @return [OpenSearch::Model::Response::Response]
     #
     def self.search(query, options={})
 

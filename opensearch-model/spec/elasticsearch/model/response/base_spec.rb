@@ -17,11 +17,11 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Base do
+describe OpenSearch::Model::Response::Base do
 
   before(:all) do
     class DummyBaseClass
-      include Elasticsearch::Model::Response::Base
+      include OpenSearch::Model::Response::Base
     end
 
     class OriginClass
@@ -39,13 +39,13 @@ describe Elasticsearch::Model::Response::Base do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
+    OpenSearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
       allow(request).to receive(:execute!).and_return(response_document)
     end
   end
 
   let(:response) do
-    Elasticsearch::Model::Response::Response.new(OriginClass, search)
+    OpenSearch::Model::Response::Response.new(OriginClass, search)
   end
 
   let(:response_base) do
@@ -92,7 +92,7 @@ describe Elasticsearch::Model::Response::Base do
     it 'raises a NotImplemented error' do
       expect {
         response_base.results
-      }.to raise_exception(Elasticsearch::Model::NotImplemented)
+      }.to raise_exception(OpenSearch::Model::NotImplemented)
     end
   end
 
@@ -101,7 +101,7 @@ describe Elasticsearch::Model::Response::Base do
     it 'raises a NotImplemented error' do
       expect {
         response_base.records
-      }.to raise_exception(Elasticsearch::Model::NotImplemented)
+      }.to raise_exception(OpenSearch::Model::NotImplemented)
     end
   end
 end

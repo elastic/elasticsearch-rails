@@ -17,7 +17,7 @@
 
 require 'spec_helper'
 
-describe Elasticsearch::Model::Response::Response do
+describe OpenSearch::Model::Response::Response do
 
   before(:all) do
     class OriginClass
@@ -39,13 +39,13 @@ describe Elasticsearch::Model::Response::Response do
   end
 
   let(:search) do
-    Elasticsearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
+    OpenSearch::Model::Searching::SearchRequest.new(OriginClass, '*').tap do |request|
       allow(request).to receive(:execute!).and_return(response_document)
     end
   end
 
   let(:response) do
-    Elasticsearch::Model::Response::Response.new(OriginClass, search)
+    OpenSearch::Model::Response::Response.new(OriginClass, search)
   end
 
   it 'performs the Elasticsearch request lazily' do
@@ -98,7 +98,7 @@ describe Elasticsearch::Model::Response::Response do
   describe '#results' do
 
     it 'provides access to the results' do
-      expect(response.results).to be_a(Elasticsearch::Model::Response::Results)
+      expect(response.results).to be_a(OpenSearch::Model::Response::Results)
       expect(response.size).to be(0)
     end
   end
@@ -106,7 +106,7 @@ describe Elasticsearch::Model::Response::Response do
   describe '#records' do
 
     it 'provides access to the records' do
-      expect(response.records).to be_a(Elasticsearch::Model::Response::Records)
+      expect(response.records).to be_a(OpenSearch::Model::Response::Records)
       expect(response.size).to be(0)
     end
   end
