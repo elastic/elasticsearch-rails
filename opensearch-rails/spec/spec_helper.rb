@@ -23,8 +23,8 @@ require 'rails/railtie'
 require 'opensearch/rails/instrumentation'
 
 
-unless defined?(ELASTICSEARCH_URL)
-  ELASTICSEARCH_URL = ENV['ELASTICSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"
+unless defined?(OPENSEARCH_URL)
+  OPENSEARCH_URL = ENV['OPENSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"
 end
 
 RSpec.configure do |config|
@@ -35,7 +35,7 @@ RSpec.configure do |config|
     require 'ansi'
     tracer = ::Logger.new(STDERR)
     tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
-    OpenSearch::Model.client = OpenSearch::Client.new host: ELASTICSEARCH_URL,
+    OpenSearch::Model.client = OpenSearch::Client.new host: OPENSEARCH_URL,
                                                             tracer: (ENV['QUIET'] ? nil : tracer)
     puts "Elasticsearch Version: #{OpenSearch::Model.client.info['version']}"
 

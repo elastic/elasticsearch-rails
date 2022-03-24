@@ -40,7 +40,7 @@ require 'uri'
 require 'net/http'
 require 'json'
 
-$elasticsearch_url = ENV.fetch('ELASTICSEARCH_URL', 'http://localhost:9200')
+$OPENSEARCH_URL = ENV.fetch('OPENSEARCH_URL', 'http://localhost:9200')
 
 # ----- Check for Elasticsearch -------------------------------------------------------------------
 
@@ -58,11 +58,11 @@ docker_command =<<-CMD.gsub(/\s{1,}/, ' ').strip
 CMD
 
 begin
-  cluster_info = Net::HTTP.get(URI.parse($elasticsearch_url))
+  cluster_info = Net::HTTP.get(URI.parse($OPENSEARCH_URL))
 rescue Errno::ECONNREFUSED => e
-  say_status "ERROR", "Cannot connect to Elasticsearch on <#{$elasticsearch_url}>\n\n", :red
+  say_status "ERROR", "Cannot connect to Elasticsearch on <#{$OPENSEARCH_URL}>\n\n", :red
   say_status "", "The application requires an Elasticsearch cluster running, " +
-                 "but no cluster has been found on <#{$elasticsearch_url}>."
+                 "but no cluster has been found on <#{$OPENSEARCH_URL}>."
   say_status "", "The easiest way of launching Elasticsearch is by running it with Docker (https://www.docker.com/get-docker):\n\n"
   say_status "", docker_command + "\n"
   exit(1)
@@ -74,7 +74,7 @@ end
 cluster_info = JSON.parse(cluster_info)
 
 unless cluster_info['version']
-  say_status "ERROR", "Cannot determine Elasticsearch version from <#{$elasticsearch_url}>", :red
+  say_status "ERROR", "Cannot determine Elasticsearch version from <#{$OPENSEARCH_URL}>", :red
   say_status "", JSON.dump(cluster_info), :red
   exit(1)
 end

@@ -18,8 +18,8 @@
 require 'pry-nav'
 require 'opensearch/persistence'
 
-unless defined?(ELASTICSEARCH_URL)
-  ELASTICSEARCH_URL = ENV['ELASTICSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"
+unless defined?(OPENSEARCH_URL)
+  OPENSEARCH_URL = ENV['OPENSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"
 end
 
 RSpec.configure do |config|
@@ -35,7 +35,7 @@ end
 # The default client to be used by the repositories.
 #
 # @since 6.0.0
-DEFAULT_CLIENT = OpenSearch::Client.new(host: ELASTICSEARCH_URL,
+DEFAULT_CLIENT = OpenSearch::Client.new(host: OPENSEARCH_URL,
                                            tracer: (ENV['QUIET'] ? nil : ::Logger.new(STDERR)))
 
 class MyTestRepository

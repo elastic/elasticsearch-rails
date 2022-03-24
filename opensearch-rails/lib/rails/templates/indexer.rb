@@ -26,7 +26,7 @@ class Indexer
   sidekiq_options queue: 'elasticsearch', retry: false, backtrace: true
 
   Logger = Sidekiq.logger.level == Logger::DEBUG ? Sidekiq.logger : nil
-  Client = OpenSearch::Client.new host: (ENV['ELASTICSEARCH_URL'] || 'http://localhost:9200'), logger: Logger
+  Client = OpenSearch::Client.new host: (ENV['OPENSEARCH_URL'] || 'http://localhost:9200'), logger: Logger
 
   def perform(operation, klass, record_id, options={})
     logger.debug [operation, "#{klass}##{record_id} #{options.inspect}"]

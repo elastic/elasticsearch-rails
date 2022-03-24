@@ -143,7 +143,7 @@ class MyRepository
   end
 end
 
-client = OpenSearch::Client.new(url: ENV['ELASTICSEARCH_URL'], log: true)
+client = OpenSearch::Client.new(url: ENV['OPENSEARCH_URL'], log: true)
 repository = MyRepository.new(client: client, index_name: :my_notes, type: :note, klass: Note)
 repository.settings number_of_shards: 1 do
   mapping do

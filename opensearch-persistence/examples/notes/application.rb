@@ -72,7 +72,7 @@ class NoteRepository
   include OpenSearch::Persistence::Repository
   include OpenSearch::Persistence::Repository::DSL
 
-  client OpenSearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
+  client OpenSearch::Client.new url: ENV['OPENSEARCH_URL'], log: true
 
   index_name :notes
   document_type  :note
