@@ -17,6 +17,6 @@
 
 module OpenSearch
   module Model
-    VERSION = "7.2.1"
+    VERSION = "0.1.0.a"
   end
 end
