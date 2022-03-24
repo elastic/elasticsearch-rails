@@ -21,13 +21,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'elasticsearch/persistence/version'
 
 Gem::Specification.new do |s|
-  s.name          = "elasticsearch-persistence"
+  s.name          = "opensearch-persistence"
   s.version       = Elasticsearch::Persistence::VERSION
   s.authors       = ["Karel Minarik"]
   s.email         = ["karel.minarik@elasticsearch.org"]
   s.description   = "Persistence layer for Ruby models and Elasticsearch."
   s.summary       = "Persistence layer for Ruby models and Elasticsearch."
-  s.homepage      = "https://github.com/elasticsearch/elasticsearch-rails/"
+  s.homepage      = "https://github.com/elasticsearch/opensearch-rails/"
   s.license       = "Apache 2"
 
   s.files         = `git ls-files -z`.split("\x0")
@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = ">= 1.9.3"
 
   s.add_dependency "opensearch-ruby"
-  s.add_dependency "elasticsearch-model", '7.2.1'
+  s.add_dependency "opensearch-model", '7.2.1'
   s.add_dependency "activesupport",       '> 4'
   s.add_dependency "activemodel",         '> 4'
   s.add_dependency "hashie"

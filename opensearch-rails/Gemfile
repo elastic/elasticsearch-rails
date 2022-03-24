@@ -17,10 +17,19 @@
 
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in elasticsearch-model.gemspec
+# Specify your gem's dependencies in opensearch-rails.gemspec
 gemspec
+
+gem 'opensearch-model',
+    path: File.expand_path('../opensearch-model', __dir__),
+    require: false
+
+gem 'opensearch-persistence',
+    path: File.expand_path('../opensearch-persistence', __dir__),
+    require: false
 
 group :development, :testing do
   gem 'pry-nav'
   gem 'rspec'
+  gem 'sqlite3' unless defined?(JRUBY_VERSION)
 end

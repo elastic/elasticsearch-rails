@@ -36,7 +36,7 @@
 
 ## 0.1.3
 
-* Released the "elasticsearch-persistence" Rubygem
+* Released the "opensearch-persistence" Rubygem
 
 ## 0.0.1
 

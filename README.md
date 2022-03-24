@@ -1,11 +1,11 @@
 # Elasticsearch
 
-[![Ruby 2.7](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.7/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Ruby 2.6](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.6/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Ruby 2.5](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.5/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Ruby 2.4](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.4/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![JRuby](https://github.com/elastic/elasticsearch-rails/workflows/JRuby/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
+[![Ruby 2.7](https://github.com/elastic/opensearch-rails/workflows/Ruby%202.7/badge.svg)](https://github.com/elastic/opensearch-rails/actions)
+[![Ruby 2.6](https://github.com/elastic/opensearch-rails/workflows/Ruby%202.6/badge.svg)](https://github.com/elastic/opensearch-rails/actions)
+[![Ruby 2.5](https://github.com/elastic/opensearch-rails/workflows/Ruby%202.5/badge.svg)](https://github.com/elastic/opensearch-rails/actions)
+[![Ruby 2.4](https://github.com/elastic/opensearch-rails/workflows/Ruby%202.4/badge.svg)](https://github.com/elastic/opensearch-rails/actions)
+[![JRuby](https://github.com/elastic/opensearch-rails/workflows/JRuby/badge.svg)](https://github.com/elastic/opensearch-rails/actions)
+[![Code Climate](https://codeclimate.com/github/elastic/opensearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/opensearch-rails)
 
 This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
@@ -26,14 +26,14 @@ Elasticsearch client and Ruby API is provided by the
 
 Install each library from [Rubygems](https://rubygems.org/gems/elasticsearch):
 
-    gem install elasticsearch-model
-    gem install elasticsearch-rails
+    gem install opensearch-model
+    gem install opensearch-rails
 
 To use an unreleased version, add it to your `Gemfile` for [Bundler](http://bundler.io):
 
 ```ruby
-gem 'elasticsearch-model', github: 'elastic/elasticsearch-rails', branch: '5.x'
-gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
+gem 'opensearch-model', github: 'elastic/opensearch-rails', branch: '5.x'
+gem 'opensearch-rails', github: 'elastic/opensearch-rails', branch: '5.x'
 ```
 
 ## Compatibility
@@ -58,13 +58,13 @@ Check out [Elastic product end of life dates](https://www.elastic.co/support/eol
 
 This project is split into three separate gems:
 
-* [**`elasticsearch-model`**](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-model),
+* [**`opensearch-model`**](https://github.com/elastic/opensearch-rails/tree/main/opensearch-model),
   which contains search integration for Ruby/Rails models such as ActiveRecord::Base and Mongoid,
 
-* [**`elasticsearch-persistence`**](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-persistence),
+* [**`opensearch-persistence`**](https://github.com/elastic/opensearch-rails/tree/main/opensearch-persistence),
   which provides a standalone persistence layer for Ruby/Rails objects and models
 
-* [**`elasticsearch-rails`**](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails),
+* [**`opensearch-rails`**](https://github.com/elastic/opensearch-rails/tree/main/opensearch-rails),
   which contains various features for Ruby on Rails applications
 
 Example of a basic integration into an ActiveRecord-based model:
@@ -87,14 +87,14 @@ Article.import
 ```
 
 You can generate a simple Ruby on Rails application with a single command
-(see the [other available templates](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails#rails-application-templates)). You'll need to have an Elasticsearch cluster running on your system before generating the app. The easiest way of getting this set up is by running it with Docker with this command:
+(see the [other available templates](https://github.com/elastic/opensearch-rails/tree/main/opensearch-rails#rails-application-templates)). You'll need to have an Elasticsearch cluster running on your system before generating the app. The easiest way of getting this set up is by running it with Docker with this command:
 
 ```bash
   docker run \
-    --name elasticsearch-rails-searchapp \
+    --name opensearch-rails-searchapp \
     --publish 9200:9200 \
     --env "discovery.type=single-node" \
-    --env "cluster.name=elasticsearch-rails" \
+    --env "cluster.name=opensearch-rails" \
     --env "cluster.routing.allocation.disk.threshold_enabled=false" \
     --rm \
     docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0
@@ -103,7 +103,7 @@ You can generate a simple Ruby on Rails application with a single command
 Once Elasticsearch is running, you can generate the simple app with this command:
 
 ```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/01-basic.rb
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elasticsearch/opensearch-rails/main/opensearch-rails/lib/rails/templates/01-basic.rb
 ```
 
 Example of using Elasticsearch as a repository for a Ruby domain object:
@@ -125,21 +125,21 @@ repository.save Article.new(title: 'Test')
 
 ### Model
 
-* [[README]](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-model/README.md)
-* [[Documentation]](http://rubydoc.info/gems/elasticsearch-model/)
-* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-model/spec/elasticsearch/model)
+* [[README]](https://github.com/elastic/opensearch-rails/blob/main/opensearch-model/README.md)
+* [[Documentation]](http://rubydoc.info/gems/opensearch-model/)
+* [[Test Suite]](https://github.com/elastic/opensearch-rails/tree/main/opensearch-model/spec/elasticsearch/model)
 
 ### Persistence
 
-* [[README]](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-persistence/README.md)
-* [[Documentation]](http://rubydoc.info/gems/elasticsearch-persistence/)
-* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-persistence/spec)
+* [[README]](https://github.com/elastic/opensearch-rails/blob/main/opensearch-persistence/README.md)
+* [[Documentation]](http://rubydoc.info/gems/opensearch-persistence/)
+* [[Test Suite]](https://github.com/elastic/opensearch-rails/tree/main/opensearch-persistence/spec)
 
 ### Rails
 
-* [[README]](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-rails/README.md)
-* [[Documentation]](http://rubydoc.info/gems/elasticsearch-rails)
-* [[Test Suite]](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails/spec)
+* [[README]](https://github.com/elastic/opensearch-rails/blob/main/opensearch-rails/README.md)
+* [[Documentation]](http://rubydoc.info/gems/opensearch-rails)
+* [[Test Suite]](https://github.com/elastic/opensearch-rails/tree/main/opensearch-rails/spec)
 
 ## Development
 
@@ -147,7 +147,7 @@ To work on the code, clone the repository and install all dependencies first:
 
 ```
 git clone https://github.com/compliance-innovations/opensearch-rails.git
-cd elasticsearch-rails/
+cd opensearch-rails/
 bundle install
 rake bundle:install
 ```

@@ -17,29 +17,14 @@
 
 source 'https://rubygems.org'
 
-gem 'rake'
-gem 'ansi'
+# Specify your gem's dependencies in opensearch-persistence.gemspec
+gemspec
 
-gem 'multi_json'
-gem 'oj'
-gem 'hashie'
+gem 'opensearch-model',
+    path: File.expand_path('../opensearch-model', __dir__),
+    require: false
 
-gem 'patron'
-gem 'opensearch-ruby'
-gem 'elasticsearch-model',       git: 'https://github.com/compliance-innovations/opensearch-rails.git'
-gem 'elasticsearch-persistence', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
-
-gem 'sinatra', require: false
-gem 'thin'
-
-group :development do
-  gem 'sinatra-contrib'
-end
-
-group :test do
-  gem 'elasticsearch-extensions'
-  gem 'rack-test'
-  gem 'shoulda-context'
-  gem 'turn'
-  gem 'mocha'
+group :development, :testing do
+  gem 'pry-nav'
+  gem 'rspec'
 end

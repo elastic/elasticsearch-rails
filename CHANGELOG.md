@@ -1,19 +1,19 @@
 ## 7.2.1
 
 * The default git branch `master` has been renamed to `main`
-* Adds compatibility with Ruby 3 [Pull Request](https://github.com/elastic/elasticsearch-rails/pull/992)
+* Adds compatibility with Ruby 3 [Pull Request](https://github.com/elastic/opensearch-rails/pull/992)
 
 ## 7.2.0
 
 * Updates specs and dependency to use with `elasticsearch` v7.14.0.
 * Update README, remove Virtus (unmaintained)
-* Updates `Bundler.with_clean_dev` (deprecated) to `with_unbundled_env` [commit](https://github.com/elastic/elasticsearch-rails/commit/e4545e4fe2a1ce80009206c831d5740360bad6c2)
-* Deal with `nil` document types in Multimodel [commit](https://github.com/elastic/elasticsearch-rails/commit/cd9c309b78de443d2e37760998418616ba34276d)
-* Update dependency to explicitly support version 7 [commit](https://github.com/elastic/elasticsearch-rails/commit/65942e3da9cabad2f6965e69c8ef6a0994da9408)
-* Stop emitting FATAL log when checking existence of indices [commit](https://github.com/elastic/elasticsearch-rails/commit/5db9207ca398c5d77f671109360ca7f63e3f2112)
-* Remove unnecessary exception test on index checking [commit](https://github.com/elastic/elasticsearch-rails/commit/ce57cc17e304b0a4af123c1599f37fb892a5d93a)
-* Removes dependency on extensions [commit](https://github.com/elastic/elasticsearch-rails/commit/ed070b8329ca48b4cb12b513ac81ed78c88acc61)
-* Fixes basic template elasticsearch dependency [commit](https://github.com/elastic/elasticsearch-rails/commit/a4ec07b2d097545ca41c13686c9cbfc9eab9e639)
+* Updates `Bundler.with_clean_dev` (deprecated) to `with_unbundled_env` [commit](https://github.com/elastic/opensearch-rails/commit/e4545e4fe2a1ce80009206c831d5740360bad6c2)
+* Deal with `nil` document types in Multimodel [commit](https://github.com/elastic/opensearch-rails/commit/cd9c309b78de443d2e37760998418616ba34276d)
+* Update dependency to explicitly support version 7 [commit](https://github.com/elastic/opensearch-rails/commit/65942e3da9cabad2f6965e69c8ef6a0994da9408)
+* Stop emitting FATAL log when checking existence of indices [commit](https://github.com/elastic/opensearch-rails/commit/5db9207ca398c5d77f671109360ca7f63e3f2112)
+* Remove unnecessary exception test on index checking [commit](https://github.com/elastic/opensearch-rails/commit/ce57cc17e304b0a4af123c1599f37fb892a5d93a)
+* Removes dependency on extensions [commit](https://github.com/elastic/opensearch-rails/commit/ed070b8329ca48b4cb12b513ac81ed78c88acc61)
+* Fixes basic template elasticsearch dependency [commit](https://github.com/elastic/opensearch-rails/commit/a4ec07b2d097545ca41c13686c9cbfc9eab9e639)
 
 ### ActiveModel
 
@@ -34,7 +34,7 @@
 
 * Tested with elasticsearch Ruby client version 7.6.0
 * Updates rake version
-* Adds pipeline to bulk params [commit](https://github.com/elastic/elasticsearch-rails/commit/63c24c9fe48a74d00c65145cc55c32f4c6907448)
+* Adds pipeline to bulk params [commit](https://github.com/elastic/opensearch-rails/commit/63c24c9fe48a74d00c65145cc55c32f4c6907448)
 
 ## 7.0.0
 
@@ -130,7 +130,7 @@
 ### Persistence
 
 * Updated the failing integration tests for Elasticsearch 5.x
-* Updated the dependency for "elasticsearch" and "elasticsearch-model" to `5.x`
+* Updated the dependency for "elasticsearch" and "opensearch-model" to `5.x`
 * Documentation for Model should include Model and not Repository
 * Depend on version >= 6 of elasticsearch gems
 * Undo last commit; depend on version 5 of elasticsearch gems
@@ -231,4 +231,4 @@
 ## 0.1.9
 
 The last version for the old versioning scheme -- please see the Git commit log
-at https://github.com/elastic/elasticsearch-rails/commits/v0.1.9
+at https://github.com/elastic/opensearch-rails/commits/v0.1.9

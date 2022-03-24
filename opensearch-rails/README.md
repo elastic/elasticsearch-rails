@@ -1,7 +1,7 @@
 # Elasticsearch::Rails
 
-The `elasticsearch-rails` library is a companion for the
-the [`elasticsearch-model`](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-model)
+The `opensearch-rails` library is a companion for the
+the [`opensearch-model`](https://github.com/elastic/opensearch-rails/tree/main/opensearch-model)
 library, providing features suitable for Ruby on Rails applications.
 
 ## Compatibility
@@ -24,16 +24,16 @@ is compatible with the Elasticsearch `master` branch, therefore, with the next m
 
 Install the package from [Rubygems](https://rubygems.org):
 
-    gem install elasticsearch-rails
+    gem install opensearch-rails
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-rails', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '5.x'
+    gem 'opensearch-rails', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '5.x'
 
 or install it from a source code checkout:
 
     git clone https://github.com/compliance-innovations/opensearch-rails.git
-    cd elasticsearch-rails/elasticsearch-rails
+    cd opensearch-rails/opensearch-rails
     bundle install
     rake install
 
@@ -101,22 +101,22 @@ You should see the duration of the request to Elasticsearch as part of each log 
 You can generate a fully working example Ruby on Rails application, with an `Article` model and a search form,
 to play with (it generates the application skeleton and leaves you with a _Git_ repository to explore the
 steps and the code) with the
-[`01-basic.rb`](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-rails/lib/rails/templates/01-basic.rb) template:
+[`01-basic.rb`](https://github.com/elastic/opensearch-rails/blob/main/opensearch-rails/lib/rails/templates/01-basic.rb) template:
 
 ```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/01-basic.rb
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elastic/opensearch-rails/main/opensearch-rails/lib/rails/templates/01-basic.rb
 ```
 
 Run the same command again, in the same folder, with the
-[`02-pretty`](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-rails/lib/rails/templates/02-pretty.rb)
+[`02-pretty`](https://github.com/elastic/opensearch-rails/blob/main/opensearch-rails/lib/rails/templates/02-pretty.rb)
 template to add features such as a custom `Article.search` method, result highlighting and
 [_Bootstrap_](http://getbootstrap.com) integration:
 
 ```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/02-pretty.rb
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elastic/opensearch-rails/main/opensearch-rails/lib/rails/templates/02-pretty.rb
 ```
 
-Run the same command with the [`03-expert.rb`](https://github.com/elastic/elasticsearch-rails/blob/main/elasticsearch-rails/lib/rails/templates/03-expert.rb)
+Run the same command with the [`03-expert.rb`](https://github.com/elastic/opensearch-rails/blob/main/opensearch-rails/lib/rails/templates/03-expert.rb)
 template to refactor the application into a more complex use case,
 with couple of hundreds of The New York Times articles as the example content.
 The template will extract the Elasticsearch integration into a `Searchable` "concern" module,
@@ -124,7 +124,7 @@ define complex mapping, custom serialization, implement faceted navigation and s
 a complex query, and add a _Sidekiq_-based worker for updating the index in the background.
 
 ```bash
-rails new searchapp --skip --skip-bundle --template https://raw.github.com/elastic/elasticsearch-rails/main/elasticsearch-rails/lib/rails/templates/03-expert.rb
+rails new searchapp --skip --skip-bundle --template https://raw.github.com/elastic/opensearch-rails/main/opensearch-rails/lib/rails/templates/03-expert.rb
 ```
 
 ## License

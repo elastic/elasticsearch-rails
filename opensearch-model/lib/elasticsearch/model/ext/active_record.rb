@@ -16,7 +16,7 @@
 # under the License.
 
 # Prevent `MyModel.inspect` failing with `ActiveRecord::ConnectionNotEstablished`
-# (triggered by elasticsearch-model/lib/elasticsearch/model.rb:79:in `included')
+# (triggered by opensearch-model/lib/elasticsearch/model.rb:79:in `included')
 #
 ActiveRecord::Base.instance_eval do
   class << self

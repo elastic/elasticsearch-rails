@@ -20,16 +20,16 @@ The library version numbers follow the Elasticsearch major versions. The `main` 
 
 Install the package from [Rubygems](https://rubygems.org):
 
-    gem install elasticsearch-persistence
+    gem install opensearch-persistence
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-persistence', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '6.x'
+    gem 'opensearch-persistence', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '6.x'
 
 or install it from a source code checkout:
 
     git clone https://github.com/compliance-innovations/opensearch-rails.git
-    cd elasticsearch-rails/elasticsearch-persistence
+    cd opensearch-rails/opensearch-persistence
     bundle install
     rake install
 
@@ -374,7 +374,7 @@ repository.klass
 ##### Index Configuration
 
 The `settings` and `mappings` methods, provided by the
-[`elasticsearch-model`](http://rubydoc.info/gems/elasticsearch-model/Elasticsearch/Model/Indexing/ClassMethods)
+[`opensearch-model`](http://rubydoc.info/gems/opensearch-model/Elasticsearch/Model/Indexing/ClassMethods)
 gem, allow you to configure the index properties:
 
 ```ruby
@@ -567,7 +567,7 @@ and demonstrates a rich set of features:
 ### The ActiveRecord Pattern
 
 The ActiveRecord pattern has been deprecated as of version 6.0.0 of this gem. Please use the
-[Repository Pattern](#the-repository-pattern) instead. For more information on migrating 5.x ActiveRecord-based applications to use the Repository Pattern, please see [this blog post](https://www.elastic.co/blog/activerecord-to-repository-changing-persistence-patterns-with-the-elasticsearch-rails-gem).
+[Repository Pattern](#the-repository-pattern) instead. For more information on migrating 5.x ActiveRecord-based applications to use the Repository Pattern, please see [this blog post](https://www.elastic.co/blog/activerecord-to-repository-changing-persistence-patterns-with-the-opensearch-rails-gem).
 
 ## License
 

@@ -1,6 +1,6 @@
 # Elasticsearch::Model
 
-The `elasticsearch-model` library builds on top of the the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
+The `opensearch-model` library builds on top of the the [`elasticsearch`](https://github.com/elastic/elasticsearch-ruby) library.
 
 It aims to simplify integration of Ruby classes ("models"), commonly found e.g. in [Ruby on Rails](http://rubyonrails.org) applications, with the [Elasticsearch](https://www.elastic.co) search and analytics engine.
 
@@ -22,16 +22,16 @@ The library version numbers follow the Elasticsearch major versions. The `main` 
 
 Install the package from [Rubygems](https://rubygems.org):
 
-    gem install elasticsearch-model
+    gem install opensearch-model
 
 To use an unreleased version, either add it to your `Gemfile` for [Bundler](http://bundler.io):
 
-    gem 'elasticsearch-model', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '5.x'
+    gem 'opensearch-model', git: 'git://github.com/compliance-innovations/opensearch-rails.git', branch: '5.x'
 
 or install it from a source code checkout:
 
     git clone https://github.com/compliance-innovations/opensearch-rails.git
-    cd elasticsearch-rails/elasticsearch-model
+    cd opensearch-rails/opensearch-model
     bundle install
     rake install
 
@@ -248,7 +248,7 @@ response.records.order(:title).to_a
 The `records` method returns the real instances of your model, which is useful when you want to access your
 model methods -- at the expense of slowing down your application, of course.
 In most cases, working with `results` coming from Elasticsearch is sufficient, and much faster. See the
-[`elasticsearch-rails`](https://github.com/elastic/elasticsearch-rails/tree/main/elasticsearch-rails)
+[`opensearch-rails`](https://github.com/elastic/opensearch-rails/tree/main/opensearch-rails)
 library for more information about compatibility with the Ruby on Rails framework.
 
 When you want to access both the database `records` and search `results`, use the `each_with_hit`

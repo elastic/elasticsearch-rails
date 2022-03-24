@@ -18,8 +18,8 @@
 require 'pathname'
 require 'opensearch-ruby'
 
-subprojects = ['elasticsearch-rails', 'elasticsearch-persistence']
-subprojects << 'elasticsearch-model' unless defined?(JRUBY_VERSION)
+subprojects = ['opensearch-rails', 'opensearch-persistence']
+subprojects << 'opensearch-model' unless defined?(JRUBY_VERSION)
 
 __current__ = Pathname(File.expand_path(__dir__))
 
@@ -82,7 +82,7 @@ namespace :bundle do
     subprojects.each do |project|
       sh "rm -f #{__current__.join(project)}/Gemfile.lock"
     end
-    sh "rm -f #{__current__.join('elasticsearch-model/gemfiles')}/*.lock"
+    sh "rm -f #{__current__.join('opensearch-model/gemfiles')}/*.lock"
   end
   sh "rm -f Gemfile.lock"
 end
@@ -116,25 +116,25 @@ namespace :test do
 
   desc "Run integration tests in all subprojects"
   task integration: :setup_elasticsearch do
-    # 1/ elasticsearch-model
+    # 1/ opensearch-model
     #
     puts '-'*80
-    sh "cd #{__current__.join('elasticsearch-model')} && unset BUNDLE_GEMFILE &&" +
+    sh "cd #{__current__.join('opensearch-model')} && unset BUNDLE_GEMFILE &&" +
        %Q| #{ ENV['TEST_BUNDLE_GEMFILE'] ? "BUNDLE_GEMFILE='#{ENV['TEST_BUNDLE_GEMFILE']}'" : '' }|  +
        " bundle exec rake test:integration"
     puts "\n"
 
-    # 2/ elasticsearch-persistence
+    # 2/ opensearch-persistence
     #
     puts '-'*80
-    sh "cd #{__current__.join('elasticsearch-persistence')} && unset BUNDLE_GEMFILE &&" +
+    sh "cd #{__current__.join('opensearch-persistence')} && unset BUNDLE_GEMFILE &&" +
        " bundle exec rake test:integration"
     puts "\n"
 
-    # 3/ elasticsearch-rails
+    # 3/ opensearch-rails
     #
     puts '-'*80
-    sh "cd #{__current__.join('elasticsearch-rails')} && unset BUNDLE_GEMFILE &&" +
+    sh "cd #{__current__.join('opensearch-rails')} && unset BUNDLE_GEMFILE &&" +
        " bundle exec rake test:integration"
     puts "\n"
   end
