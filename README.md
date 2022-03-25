@@ -7,7 +7,7 @@
 [![JRuby](https://github.com/compliance-innovations/opensearch-rails/workflows/JRuby/badge.svg)](https://github.com/compliance-innovations/opensearch-rails/actions)
 
 This repository contains various Ruby and Rails integrations for [OpenSearch](https://opensearch.org/). This is a fork
-of [OpenSearch-rails v7.2.1](https://github.com/compliance-innovations/OpenSearch-rails/tree/v7.2.1).
+of [elasticsearch-rails v7.2.1](https://github.com/elastic/elasticsearch-rails/tree/v7.2.1).
 
 Functionalities include:
 * ActiveModel integration with adapters for ActiveRecord and Mongoid
