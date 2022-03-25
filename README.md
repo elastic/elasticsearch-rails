@@ -1,5 +1,11 @@
 # OpenSearch
 
+[![Ruby 2.7](https://github.com/compliance-innovations/opensearch-rails/workflows/Ruby%202.7/badge.svg)](https://github.com/compliance-innovations/opensearch-rails/actions)
+[![Ruby 2.6](https://github.com/compliance-innovations/opensearch-rails/workflows/Ruby%202.6/badge.svg)](https://github.com/compliance-innovations/opensearch-rails/actions)
+[![Ruby 2.5](https://github.com/compliance-innovations/opensearch-rails/workflows/Ruby%202.5/badge.svg)](https://github.com/compliance-innovations/opensearch-rails/actions)
+[![Ruby 2.4](https://github.com/compliance-innovations/opensearch-rails/workflows/Ruby%202.4/badge.svg)](https://github.com/compliance-innovations/opensearch-rails/actions)
+[![JRuby](https://github.com/compliance-innovations/opensearch-rails/workflows/JRuby/badge.svg)](https://github.com/compliance-innovations/opensearch-rails/actions)
+
 This repository contains various Ruby and Rails integrations for [OpenSearch](https://opensearch.org/). This is a fork
 of [OpenSearch-rails v7.2.1](https://github.com/compliance-innovations/OpenSearch-rails/tree/v7.2.1).
 
