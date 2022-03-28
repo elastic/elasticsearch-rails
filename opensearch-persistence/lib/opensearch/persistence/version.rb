@@ -17,6 +17,6 @@
 
 module OpenSearch
   module Persistence
-    VERSION = '0.1.0.a'
+    VERSION = '0.1.0'
   end
 end
