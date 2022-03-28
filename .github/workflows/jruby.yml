@@ -25,9 +25,9 @@ jobs:
         sudo sysctl -w vm.swappiness=1
         sudo sysctl -w fs.file-max=262144
         sudo sysctl -w vm.max_map_count=262144
-    - uses: elastic/elastic-github-actions/elasticsearch@master
+    - uses: opensearch-project/opensearch-ruby/.github/actions/opensearch@main
       with:
-        stack-version: 7.x-SNAPSHOT
+        cluster-version: latest
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: jruby-9.3
@@ -38,7 +38,7 @@ jobs:
         bundle install
         bundle exec rake bundle:clean
         bundle exec rake bundle:install
-    - name: Test elasticsearch-rails
-      run: cd elasticsearch-rails && bundle exec rake test:all
-    - name: Test elasticsearch-persistence
-      run: cd elasticsearch-persistence && bundle exec rake test:all
+    - name: Test opensearch-rails
+      run: cd opensearch-rails && bundle exec rake test:all
+    - name: Test opensearch-persistence
+      run: cd opensearch-persistence && bundle exec rake test:all

@@ -1,0 +1,183 @@
+# Licensed to Elasticsearch B.V. under one or more contributor
+# license agreements. See the NOTICE file distributed with
+# this work for additional information regarding copyright
+# ownership. Elasticsearch B.V. licenses this file to you under
+# the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+module OpenSearch
+  module Model
+
+    # This module provides a proxy interfacing between the including class and
+    # `OpenSearch::Model`, preventing the pollution of the including class namespace.
+    #
+    # The only "gateway" between the model and OpenSearch::Model is the
+    # `#__opensearch__` class and instance method.
+    #
+    # The including class must be compatible with
+    # [ActiveModel](https://github.com/rails/rails/tree/master/activemodel).
+    #
+    # @example Include the `OpenSearch::Model` module into an `Article` model
+    #
+    #     class Article < ActiveRecord::Base
+    #       include OpenSearch::Model
+    #     end
+    #
+    #     Article.__opensearch__.respond_to?(:search)
+    #     # => true
+    #
+    #     article = Article.first
+    #
+    #     article.respond_to? :index_document
+    #     # => false
+    #
+    #     article.__opensearch__.respond_to?(:index_document)
+    #     # => true
+    #
+    module Proxy
+
+      # Define the `__opensearch__` class and instance methods in the including class
+      # and register a callback for intercepting changes in the model.
+      #
+      # @note The callback is triggered only when `OpenSearch::Model` is included in the
+      #       module and the functionality is accessible via the proxy.
+      #
+      def self.included(base)
+
+        base.class_eval do
+
+          # `ClassMethodsProxy` instance, accessed as `MyModel.__opensearch__`
+          def self.__opensearch__ &block
+            @__opensearch__ ||= ClassMethodsProxy.new(self)
+            @__opensearch__.instance_eval(&block) if block_given?
+            @__opensearch__
+          end
+
+          # Mix the importing module into the `ClassMethodsProxy`
+          self.__opensearch__.class_eval do
+            include Adapter.from_class(base).importing_mixin
+          end
+
+          # Register a callback for storing changed attributes for models which implement
+          # `before_save` method and return changed attributes (ie. when `OpenSearch::Model` is included)
+          #
+          # @see http://api.rubyonrails.org/classes/ActiveModel/Dirty.html
+          #
+          before_save do |obj|
+            if obj.respond_to?(:changes_to_save) # Rails 5.1
+              changes_to_save = obj.changes_to_save
+            elsif obj.respond_to?(:changes)
+              changes_to_save = obj.changes
+            end
+
+            if changes_to_save
+              attrs = obj.__opensearch__.instance_variable_get(:@__changed_model_attributes) || {}
+              latest_changes = changes_to_save.inject({}) { |latest_changes, (k,v)| latest_changes.merge!(k => v.last) }
+              obj.__opensearch__.instance_variable_set(:@__changed_model_attributes, attrs.merge(latest_changes))
+            end
+          end if respond_to?(:before_save)
+        end
+
+        # {InstanceMethodsProxy}, accessed as `@mymodel.__opensearch__`
+        #
+        def __opensearch__ &block
+          @__opensearch__ ||= InstanceMethodsProxy.new(self)
+          @__opensearch__.instance_eval(&block) if block_given?
+          @__opensearch__
+        end
+      end
+
+      # @overload dup
+      #
+      # Returns a copy of this object. Resets the __opensearch__ proxy so
+      # the duplicate will build its own proxy.
+      def initialize_dup(_)
+        @__opensearch__ = nil
+        super
+      end
+
+      # Common module for the proxy classes
+      #
+      module Base
+        attr_reader :target
+
+        def initialize(target)
+          @target = target
+        end
+
+        def ruby2_keywords(*) # :nodoc:
+        end if RUBY_VERSION < "2.7"
+
+        # Delegate methods to `@target`. As per [the Ruby 3.0 explanation for keyword arguments](https://www.ruby-lang.org/en/news/2019/12/12/separation-of-positional-and-keyword-arguments-in-ruby-3-0/), the only way to work on Ruby <2.7, and 2.7, and 3.0+ is to use `ruby2_keywords`.
+        #
+        ruby2_keywords def method_missing(method_name, *arguments, &block)
+          target.respond_to?(method_name) ? target.__send__(method_name, *arguments, &block) : super
+        end
+
+        # Respond to methods from `@target`
+        #
+        def respond_to_missing?(method_name, include_private = false)
+          target.respond_to?(method_name) || super
+        end
+
+        def inspect
+          "[PROXY] #{target.inspect}"
+        end
+      end
+
+      # A proxy interfacing between OpenSearch::Model class methods and model class methods
+      #
+      # TODO: Inherit from BasicObject and make Pry's `ls` command behave?
+      #
+      class ClassMethodsProxy
+        include Base
+        include OpenSearch::Model::Client::ClassMethods
+        include OpenSearch::Model::Naming::ClassMethods
+        include OpenSearch::Model::Indexing::ClassMethods
+        include OpenSearch::Model::Searching::ClassMethods
+        include OpenSearch::Model::Importing::ClassMethods
+      end
+
+      # A proxy interfacing between OpenSearch::Model instance methods and model instance methods
+      #
+      # TODO: Inherit from BasicObject and make Pry's `ls` command behave?
+      #
+      class InstanceMethodsProxy
+        include Base
+        include OpenSearch::Model::Client::InstanceMethods
+        include OpenSearch::Model::Naming::InstanceMethods
+        include OpenSearch::Model::Indexing::InstanceMethods
+        include OpenSearch::Model::Serializing::InstanceMethods
+
+        def klass
+          target.class
+        end
+
+        def class
+          klass.__opensearch__
+        end
+
+        # Need to redefine `as_json` because we're not inheriting from `BasicObject`;
+        # see TODO note above.
+        #
+        def as_json(options={})
+          target.as_json(options)
+        end
+
+        def as_indexed_json(options={})
+          target.respond_to?(:as_indexed_json) ? target.__send__(:as_indexed_json, options) : super
+        end
+      end
+    end
+  end
+end
