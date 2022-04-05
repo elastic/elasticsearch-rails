@@ -678,7 +678,7 @@ describe Elasticsearch::Model::Indexing do
     context 'when the index is not found' do
       let(:logger) { nil }
       let(:transport) do
-        Elasticsearch::Transport::Client.new(logger: logger)
+        ELASTIC_TRANSPORT_CLASS::Client.new(logger: logger)
       end
 
       let(:client) do
@@ -918,7 +918,7 @@ describe Elasticsearch::Model::Indexing do
     end
 
     let(:transport) do
-      Elasticsearch::Transport::Client.new(logger: nil)
+      ELASTIC_TRANSPORT_CLASS::Client.new(logger: nil)
     end
 
     let(:indices) do
@@ -949,7 +949,7 @@ describe Elasticsearch::Model::Indexing do
           end
 
           let(:transport) do
-            Elasticsearch::Transport::Client.new(logger: logger)
+            ELASTIC_TRANSPORT_CLASS::Client.new(logger: logger)
           end
 
           it 'does not raise an exception' do
