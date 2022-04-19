@@ -343,7 +343,7 @@ response.results.first.title
 # => "Quick brown fox"
 ```
 
-Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-dsl) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
+Also, you can use the [**`elasticsearch-dsl`**](https://github.com/elastic/elasticsearch-dsl-ruby) library, which provides a specialized Ruby API for the Elasticsearch Query DSL:
 
 ```ruby
 require 'elasticsearch/dsl'

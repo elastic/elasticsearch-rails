@@ -1,4 +1,4 @@
-# Elasticsearch
+# Elasticsearch Rails
 
 [![Ruby 2.7](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.7/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
 [![Ruby 2.6](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.6/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
