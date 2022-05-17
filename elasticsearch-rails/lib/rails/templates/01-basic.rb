@@ -157,8 +157,8 @@ say_status  "Rubygems", "Adding Elasticsearch libraries into Gemfile...\n", :yel
 puts        '-'*80, ''; sleep 0.75
 
 gem 'elasticsearch'
-gem 'elasticsearch-model', git: 'https://github.com/elasticsearch/elasticsearch-rails.git'
-gem 'elasticsearch-rails', git: 'https://github.com/elasticsearch/elasticsearch-rails.git'
+gem 'elasticsearch-model', git: 'https://github.com/elasticsearch/elasticsearch-rails.git', branch: 'main'
+gem 'elasticsearch-rails', git: 'https://github.com/elasticsearch/elasticsearch-rails.git', branch: 'main'
 
 
 git add:    "Gemfile*"
