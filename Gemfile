@@ -18,7 +18,7 @@
 source 'https://rubygems.org'
 
 gem "rake", "~> 12"
-gem "elasticsearch"
+gem 'elasticsearch', '~> 7.13.2'
 gem "pry"
 gem "ansi"
 gem "cane"
