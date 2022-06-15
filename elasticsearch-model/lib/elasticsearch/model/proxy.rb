@@ -14,7 +14,8 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
+def ruby2_keywords(*) # :nodoc:
+end if RUBY_VERSION < "2.7"
 module Elasticsearch
   module Model
 
