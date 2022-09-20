@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Pin opensearch-ruby to '~> 1.1' because OpenSearch 2 is not supported yet
+
 ## 0.1.0
 
 * Fork [elasticsearch-rails v7.2.1](https://github.com/elastic/elasticsearch-rails/tree/v7.2.1)

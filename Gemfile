@@ -18,7 +18,7 @@
 source 'https://rubygems.org'
 
 gem "rake", "~> 12"
-gem "opensearch-ruby"
+gem "opensearch-ruby", '~> 1.0'
 gem "pry"
 gem "ansi"
 gem "cane"

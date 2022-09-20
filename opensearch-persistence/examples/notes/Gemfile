@@ -25,7 +25,7 @@ gem 'oj'
 gem 'hashie'
 
 gem 'patron'
-gem 'opensearch-ruby'
+gem 'opensearch-ruby', '~> 1.0'
 gem 'opensearch-model',       git: 'https://github.com/compliance-innovations/opensearch-rails.git'
 gem 'opensearch-persistence', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
 

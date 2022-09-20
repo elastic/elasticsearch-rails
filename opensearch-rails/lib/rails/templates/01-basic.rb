@@ -156,7 +156,7 @@ puts
 say_status  "Rubygems", "Adding OpenSearch libraries into Gemfile...\n", :yellow
 puts        '-'*80, ''; sleep 0.75
 
-gem 'opensearch-ruby'
+gem 'opensearch-ruby', '~> 1.0'
 gem 'opensearch-model', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
 gem 'opensearch-rails', git: 'https://github.com/compliance-innovations/opensearch-rails.git'
 

@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.4'
 
   s.add_dependency 'activesupport', '> 3'
-  s.add_dependency "opensearch-ruby"
+  s.add_dependency "opensearch-ruby", '~> 1.0'
   s.add_dependency 'hashie'
 
   s.add_development_dependency 'activemodel', '> 3'
