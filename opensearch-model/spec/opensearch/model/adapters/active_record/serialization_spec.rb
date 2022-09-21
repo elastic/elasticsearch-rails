@@ -41,9 +41,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Serialization' do
     context 'when a document is indexed' do
 
       let(:search_result) do
-        ArticleWithCustomSerialization.__opensearch__.client.get(index: 'article_with_custom_serializations',
-                                                                    type:  '_doc',
-                                                                    id:    '1')
+        ArticleWithCustomSerialization.__opensearch__.client.get(index: 'article_with_custom_serializations', id: '1')
       end
 
       it 'applies the serialization when indexing' do
@@ -66,7 +64,6 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Serialization' do
 
       let(:search_result) do
         ArticleWithCustomSerialization.__opensearch__.client.get(index: 'article_with_custom_serializations',
-                                                                    type:  '_doc',
                                                                     id:    article.id)
       end
 
