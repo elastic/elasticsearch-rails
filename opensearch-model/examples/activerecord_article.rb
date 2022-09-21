@@ -64,7 +64,6 @@ client = OpenSearch::Client.new log:true
 
 client.indices.delete index: 'articles' rescue nil
 client.bulk index: 'articles',
-            type:  'article',
             body:  Article.all.as_json.map { |a| { index: { _id: a.delete('id'), data: a } } },
             refresh: true
 

@@ -75,7 +75,6 @@ Article.create id: '3', title: 'Foo Foo'
 
 Article.__opensearch__.client.indices.delete index: 'articles' rescue nil
 Article.__opensearch__.client.bulk index: 'articles',
-                                      type:  'article',
                                       body:  Article.all.map { |a| { index: { _id: a.id, data: a.attributes } } },
                                       refresh: true
 
