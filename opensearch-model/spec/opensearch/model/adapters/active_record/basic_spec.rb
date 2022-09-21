@@ -160,17 +160,6 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
       end
     end
 
-    describe '#id' do
-
-      let(:search_result) do
-        Article.search('title:test')
-      end
-
-      it 'returns the type' do
-        expect(search_result.results.first.type).to eq('article')
-      end
-    end
-
     describe '#each_with_hit' do
 
       let(:search_result) do
