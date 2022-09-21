@@ -67,7 +67,7 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
       end
 
       Article.delete_all
-      Article.__opensearch__.create_index!(force: true, include_type_name: true)
+      Article.__opensearch__.create_index!(force: true)
 
       Article.create!(title: 'Test', body: '', clicks: 1)
       Article.create!(title: 'Testing Coding', body: '', clicks: 2)

@@ -131,25 +131,6 @@ describe OpenSearch::Model::Indexing do
       it 'uses text as the default field type' do
         expect(mappings.to_hash[:mytype][:properties][:bar][:type]).to eq('text')
       end
-
-      context 'when the \'include_type_name\' option is specified' do
-
-        let(:mappings) do
-          OpenSearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
-        end
-
-        before do
-          mappings.indexes :foo, { type: 'boolean', include_in_all: false }
-        end
-
-        it 'creates the correct mapping definition' do
-          expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('boolean')
-        end
-
-        it 'sets the \'include_type_name\' option' do
-          expect(mappings.to_hash[:mytype][:include_type_name]).to eq(true)
-        end
-      end
     end
 
     context 'when a type is not specified' do
@@ -173,9 +154,8 @@ describe OpenSearch::Model::Indexing do
     end
 
     context 'when specific mappings are defined' do
-
       let(:mappings) do
-        OpenSearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
+        OpenSearch::Model::Indexing::Mappings.new(:mytype)
       end
 
       before do
@@ -242,10 +222,6 @@ describe OpenSearch::Model::Indexing do
           expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:type]).to eq(:nested)
           expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:properties]).not_to be_nil
           expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:fields]).to be_nil
-        end
-
-        it 'defines the settings' do
-          expect(mappings.to_hash[:mytype][:include_type_name]).to be(true)
         end
       end
     end
