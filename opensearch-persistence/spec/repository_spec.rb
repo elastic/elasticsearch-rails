@@ -59,7 +59,7 @@ describe OpenSearch::Persistence::Repository do
       end
 
       it 'executes the block on the instance' do
-        expect(repository.mapping.to_hash).to eq(note: { dynamic: 'strict', properties: { foo: { type: 'text' } } })
+        expect(repository.mapping.to_hash).to eq( dynamic: 'strict', properties: { foo: { type: 'text' } })
       end
 
       context 'when options are provided in the args and set in the block' do
@@ -279,7 +279,7 @@ describe OpenSearch::Persistence::Repository do
 
         before do
           begin; repository.delete_index!; rescue; end
-          repository.create_index!(include_type_name: true)
+          repository.create_index!
         end
 
         it 'creates the index' do
@@ -334,7 +334,7 @@ describe OpenSearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!
         end
 
         it 'refreshes the index' do
@@ -361,7 +361,7 @@ describe OpenSearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!
         end
 
         it 'determines if the index exists' do
@@ -389,11 +389,10 @@ describe OpenSearch::Persistence::Repository do
     describe '#mapping' do
 
       let(:expected_mapping) do
-        { note: { dynamic: 'strict',
-                  properties: { foo: { type: 'object',
-                                       properties: { bar: { type: 'text' } } },
-                                baz: { type: 'text' } }
-                }
+        { dynamic: 'strict',
+          properties: { foo: { type: 'object',
+                               properties: { bar: { type: 'text' } } },
+                        baz: { type: 'text' } }
         }
       end
 
@@ -406,17 +405,16 @@ describe OpenSearch::Persistence::Repository do
       end
 
       it 'allows the value to be overridden with options on the instance' do
-        expect(RepositoryWithDSL.new(mapping: double('mapping', to_hash: { note: {} })).mapping.to_hash).to eq(note: {})
+        expect(RepositoryWithDSL.new(mapping: double('mapping', to_hash: {})).mapping.to_hash).to eq({})
       end
 
       context 'when the instance has a different document type' do
 
         let(:expected_mapping) do
-          { other_note: { dynamic: 'strict',
-                          properties: { foo: { type: 'object',
-                                               properties: { bar: { type: 'text' } } },
-                                        baz: { type: 'text' } }
-                        }
+          { dynamic: 'strict',
+            properties: { foo: { type: 'object',
+                                 properties: { bar: { type: 'text' } } },
+                          baz: { type: 'text' } }
           }
         end
 
@@ -547,24 +545,9 @@ describe OpenSearch::Persistence::Repository do
           RepositoryWithoutDSL.new(client: DEFAULT_CLIENT, document_type: 'mytype')
         end
 
-        context 'when the server is version >= 7.0', if: server_version > '7.0' do
-
-          context 'when the include_type_name option is specified' do
-
-            it 'creates an index' do
-              repository.create_index!(include_type_name: true)
-              expect(repository.index_exists?).to eq(true)
-            end
-          end
-
-          context 'when the include_type_name option is not specified' do
-
-            it 'raises an error' do
-              expect {
-                repository.create_index!
-              }.to raise_exception(OpenSearch::Transport::Transport::Errors::BadRequest)
-            end
-          end
+        it 'raises an error' do
+          repository.create_index!
+          expect(repository.index_exists?).to eq(true)
         end
       end
     end
@@ -582,7 +565,7 @@ describe OpenSearch::Persistence::Repository do
       end
 
       it 'deletes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
         repository.delete_index!
         expect(repository.index_exists?).to eq(false)
       end
@@ -605,7 +588,7 @@ describe OpenSearch::Persistence::Repository do
       end
 
       it 'refreshes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
         expect(repository.refresh_index!['_shards']).to be_a(Hash)
       end
     end
@@ -627,7 +610,7 @@ describe OpenSearch::Persistence::Repository do
       end
 
       it 'returns whether the index exists' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
         expect(repository.index_exists?).to be(true)
       end
     end
@@ -645,17 +628,16 @@ describe OpenSearch::Persistence::Repository do
       end
 
       it 'allows the mapping to be set as an option' do
-        expect(RepositoryWithoutDSL.new(mapping: double('mapping', to_hash: { note: {} })).mapping.to_hash).to eq(note: {})
+        expect(RepositoryWithoutDSL.new(mapping: double('mapping', to_hash: { })).mapping.to_hash).to eq({})
       end
 
       context 'when a block is passed to the create method' do
 
         let(:expected_mapping) do
-          { note: { dynamic: 'strict',
-                    properties: { foo: { type: 'object',
-                                         properties: { bar: { type: 'text' } } },
-                                  baz: { type: 'text' } }
-            }
+          { dynamic: 'strict',
+            properties: { foo: { type: 'object',
+                                 properties: { bar: { type: 'text' } } },
+                          baz: { type: 'text' } }
           }
         end
 
@@ -677,7 +659,7 @@ describe OpenSearch::Persistence::Repository do
         context 'when the mapping is set in the options' do
 
           let(:repository) do
-            RepositoryWithoutDSL.create(mapping: double('mapping', to_hash: { note: {} })) do
+            RepositoryWithoutDSL.create(mapping: double('mapping', to_hash: { })) do
               mapping dynamic: 'strict' do
                 indexes :foo do
                   indexes :bar
@@ -688,7 +670,7 @@ describe OpenSearch::Persistence::Repository do
           end
 
           it 'uses the mapping from the options' do
-            expect(repository.mapping.to_hash).to eq(note: {})
+            expect(repository.mapping.to_hash).to eq({})
           end
         end
       end
@@ -725,11 +707,10 @@ describe OpenSearch::Persistence::Repository do
         context 'when a mapping is set in the block as well' do
 
           let(:expected_mapping) do
-            { note: { dynamic: 'strict',
-                      properties: { foo: { type: 'object',
-                                           properties: { bar: { type: 'text' } } },
-                                    baz: { type: 'text' } }
-                    }
+            { dynamic: 'strict',
+              properties: { foo: { type: 'object',
+                                   properties: { bar: { type: 'text' } } },
+                            baz: { type: 'text' } }
             }
           end
 

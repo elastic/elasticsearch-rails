@@ -74,14 +74,12 @@ describe OpenSearch::Persistence::Repository::Store do
     context 'when options are provided' do
 
       let!(:response) do
-        repository.save(document, type: 'other_note')
+        repository.save(document)
       end
 
       it 'saves the document using the options' do
-        expect {
-          repository.find(response['_id'])
-        }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
-        expect(repository.find(response['_id'], type: 'other_note')).to eq('a' => 1)
+        repository.find(response['_id'])
+        expect(repository.find(response['_id'])).to eq('a' => 1)
       end
     end
   end
@@ -331,7 +329,7 @@ describe OpenSearch::Persistence::Repository::Store do
     context 'when the document does not exist' do
 
       before do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
       end
 
       it 'raises an exception' do
