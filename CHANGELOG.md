@@ -1,3 +1,7 @@
+## 1.0.0
+
+* Support OpenSearch 2 by removing deprecated type and include_type_name parameters
+
 ## 0.1.1
 
 * Pin opensearch-ruby to '~> 1.1' because OpenSearch 2 is not supported yet

@@ -74,7 +74,7 @@ require 'opensearch/rails/instrumentation'
 
 You should see an output like this in your application log in development environment:
 
-    Article Search (321.3ms) { index: "articles", type: "article", body: { query: ... } }
+    Article Search (321.3ms) { index: "articles", body: { query: ... } }
 
 Also, the total duration of the request to OpenSearch is displayed in the Rails request breakdown:
 

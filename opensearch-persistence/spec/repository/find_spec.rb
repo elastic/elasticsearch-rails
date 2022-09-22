@@ -46,17 +46,6 @@ describe OpenSearch::Persistence::Repository::Find do
         expect(repository.exists?('1')).to be(false)
       end
     end
-
-    context 'when options are provided' do
-
-      let(:id) do
-        repository.save(a: 1)['_id']
-      end
-
-      it 'applies the options' do
-        expect(repository.exists?(id, type: 'other_type')).to be(false)
-      end
-    end
   end
 
   describe '#find' do
@@ -128,48 +117,6 @@ describe OpenSearch::Persistence::Repository::Find do
           expect {
             repository.find(1)
           }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
-        end
-      end
-    end
-
-    context 'when options are provided' do
-
-      context 'when a single id is passed' do
-
-        let!(:id) do
-          repository.save(a: 1)['_id']
-        end
-
-        it 'applies the options' do
-          expect {
-            repository.find(id, type: 'none')
-          }.to raise_exception(OpenSearch::Persistence::Repository::DocumentNotFound)
-        end
-      end
-
-      context 'when an array of ids is passed' do
-
-        let!(:ids) do
-          3.times.collect do |i|
-            repository.save(a: i)['_id']
-          end
-        end
-
-        it 'applies the options' do
-          expect(repository.find(ids, type: 'none')).to eq([nil, nil, nil])
-        end
-      end
-
-      context 'when multiple ids are passed' do
-
-        let!(:ids) do
-          3.times.collect do |i|
-            repository.save(a: i)['_id']
-          end
-        end
-
-        it 'applies the options' do
-          expect(repository.find(*ids, type: 'none')).to eq([nil, nil, nil])
         end
       end
     end

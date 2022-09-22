@@ -67,8 +67,7 @@ describe 'ActiveSupport::Instrumentation integration' do
                                                                         { klass: 'DummyInstrumentationModel',
                                                                           name: 'Search',
                                                                           search: { body: query,
-                                                                          index: 'foo',
-                                                                          type: 'bar' } }).and_return({})
+                                                                          index: 'foo'} }).and_return({})
     end
 
     let(:query) do

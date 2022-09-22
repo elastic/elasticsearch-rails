@@ -25,9 +25,9 @@ jobs:
         sudo sysctl -w vm.swappiness=1
         sudo sysctl -w fs.file-max=262144
         sudo sysctl -w vm.max_map_count=262144
-    - uses: opensearch-project/opensearch-ruby/.github/actions/opensearch@1.x
+    - uses: opensearch-project/opensearch-ruby/.github/actions/opensearch@main
       with:
-        cluster-version: 1
+        cluster-version: 2
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.4

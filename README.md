@@ -43,11 +43,11 @@ The libraries are compatible with Ruby 2.4 and higher.
 
 We follow Ruby’s own maintenance policy and officially support all currently maintained versions per [Ruby Maintenance Branches](https://www.ruby-lang.org/en/downloads/branches/).
 
-The version numbers follow the OpenSearch major versions. Currently the `main` branch is compatible with version `1.x` of the OpenSearch stack.
+The version numbers follow the OpenSearch major versions. Currently the `main` branch is compatible with version `2.x` of the OpenSearch stack.
 
 | Rubygem       |   | OpenSearch    |
 |:-------------:|:-:| :-----------: |
-| main          | → | 1.x           |
+| main          | → | 2.x           |
 
 ## Usage
 

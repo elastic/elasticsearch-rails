@@ -58,7 +58,7 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
       context 'when page is called once' do
 
         let(:search_request) do
-          { index: index_field, from: 25, size: 25, q: '*', type: type_field}
+          { index: index_field, from: 25, size: 25, q: '*'}
         end
 
         before do
@@ -75,11 +75,11 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
       context 'when page is called more than once' do
 
         let(:search_request_one) do
-          { index: index_field, from: 25, size: 25, q: '*', type: type_field}
+          { index: index_field, from: 25, size: 25, q: '*'}
         end
 
         let(:search_request_two) do
-          { index: index_field, from: 75, size: 25, q: '*', type: type_field}
+          { index: index_field, from: 75, size: 25, q: '*'}
         end
 
         before do
@@ -399,10 +399,6 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
         ModelClass
       end
 
-      let(:type_field) do
-        'bar'
-      end
-
       let(:index_field) do
         'foo'
       end
@@ -414,10 +410,6 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
 
       let(:model) do
         OpenSearch::Model::Multimodel.new(ModelClass)
-      end
-
-      let(:type_field) do
-        ['bar']
       end
 
       let(:index_field) do
@@ -441,10 +433,6 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
         ModelClass
       end
 
-      let(:type_field) do
-        'bar'
-      end
-
       let(:index_field) do
         'foo'
       end
@@ -456,10 +444,6 @@ describe 'OpenSearch::Model::Response::Response Kaminari' do
 
       let(:model) do
         OpenSearch::Model::Multimodel.new(ModelClass)
-      end
-
-      let(:type_field) do
-        ['bar']
       end
 
       let(:index_field) do

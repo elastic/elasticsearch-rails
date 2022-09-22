@@ -10,7 +10,7 @@ The library version numbers follow the OpenSearch major versions. The `main` bra
 
 | Rubygem       |   | OpenSearch    |
 |:-------------:|:-:| :-----------: |
-| main          | → | 1.x           |
+| main          | → | 2.x           |
 
 ## Installation
 
@@ -140,7 +140,7 @@ class MyRepository
 end
 
 client = OpenSearch::Client.new(url: ENV['OPENSEARCH_URL'], log: true)
-repository = MyRepository.new(client: client, index_name: :my_notes, type: :note, klass: Note)
+repository = MyRepository.new(client: client, index_name: :my_notes, klass: Note)
 repository.settings number_of_shards: 1 do
   mapping do
     indexes :text, analyzer: 'snowball'

@@ -70,13 +70,12 @@ client = OpenSearch::Client.new log:true
 
 client.indices.delete index: 'articles' rescue nil
 client.bulk index: 'articles',
-            type:  'article',
             body:  Article.find(['1', '2', '3']).map { |a|
                      { index: { _id: a.id, data: a.attributes } }
                    },
             refresh: true
 
-response = Article.search 'foo', index: 'articles', type: 'article';
+response = Article.search 'foo', index: 'articles';
 
 Pry.start(binding, prompt: lambda { |obj, nest_level, _| '> ' },
                    input: StringIO.new('response.records.to_a'),

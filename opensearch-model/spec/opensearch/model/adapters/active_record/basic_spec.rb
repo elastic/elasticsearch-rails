@@ -67,7 +67,7 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
       end
 
       Article.delete_all
-      Article.__opensearch__.create_index!(force: true, include_type_name: true)
+      Article.__opensearch__.create_index!(force: true)
 
       Article.create!(title: 'Test', body: '', clicks: 1)
       Article.create!(title: 'Testing Coding', body: '', clicks: 2)
@@ -157,17 +157,6 @@ describe OpenSearch::Model::Adapter::ActiveRecord do
 
       it 'returns the id' do
         expect(search_result.results.first.id).to eq('1')
-      end
-    end
-
-    describe '#id' do
-
-      let(:search_result) do
-        Article.search('title:test')
-      end
-
-      it 'returns the type' do
-        expect(search_result.results.first.type).to eq('article')
       end
     end
 

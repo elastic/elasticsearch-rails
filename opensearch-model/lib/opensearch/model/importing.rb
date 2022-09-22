@@ -99,9 +99,9 @@ module OpenSearch
         #
         #    Article.import refresh: true
         #
-        # @example Import the records into a different index/type than the default one
+        # @example Import the records into a different index than the default one
         #
-        #    Article.import index: 'my-new-index', type: 'my-other-type'
+        #    Article.import index: 'my-new-index'
         #
         # @example Pass an ActiveRecord scope to limit the imported records
         #
@@ -141,7 +141,6 @@ module OpenSearch
           errors       = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
-          target_type  = options.delete(:type)      || document_type
           transform    = options.delete(:transform) || __transform
           pipeline     = options.delete(:pipeline)
           return_value = options.delete(:return)    || 'count'
@@ -161,7 +160,6 @@ module OpenSearch
           __find_in_batches(options) do |batch|
             params = {
               index: target_index,
-              type:  target_type,
               body:  __batch_to_bulk(batch, transform)
             }
 

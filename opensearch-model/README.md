@@ -12,7 +12,7 @@ The library version numbers follow the OpenSearch major versions. The `main` bra
 
 | Rubygem       |   | OpenSearch    |
 |:-------------:|:-:| :-----------: |
-| main          | → | 1.x           |
+| main          | → | 2.x           |
 
 ## Installation
 
@@ -523,10 +523,10 @@ class Indexer
     case operation.to_s
       when /index/
         record = Article.find(record_id)
-        Client.index  index: 'articles', type: 'article', id: record.id, body: record.__opensearch__.as_indexed_json
+        Client.index  index: 'articles', id: record.id, body: record.__opensearch__.as_indexed_json
       when /delete/
         begin
-          Client.delete index: 'articles', type: 'article', id: record_id
+          Client.delete index: 'articles', id: record_id
         rescue OpenSearch::Transport::Transport::Errors::NotFound
           logger.debug "Article not found, ID: #{record_id}"
         end
