@@ -10,7 +10,7 @@ The library version numbers follow the OpenSearch major versions. The `main` bra
 
 | Rubygem       |   | OpenSearch    |
 |:-------------:|:-:| :-----------: |
-| main          | → | 1.x           |
+| main          | → | 2.x           |
 
 ## Installation
 
