@@ -113,26 +113,6 @@ describe OpenSearch::Model::Indexing do
       expect(OpenSearch::Model::Indexing::Mappings.new({ foo: 'bar' }).as_json).to eq(expected_mapping_hash)
     end
 
-    context 'when a type is specified' do
-
-      let(:mappings) do
-        OpenSearch::Model::Indexing::Mappings.new
-      end
-
-      before do
-        mappings.indexes :foo, { type: 'boolean', include_in_all: false }
-        mappings.indexes :bar
-      end
-
-      it 'creates the correct mapping definition' do
-        expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
-      end
-
-      it 'uses text as the default field type' do
-        expect(mappings.to_hash[:properties][:bar][:type]).to eq('text')
-      end
-    end
-
     context 'when a type is not specified' do
 
       let(:mappings) do
