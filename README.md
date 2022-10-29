@@ -97,7 +97,7 @@ You can generate a simple Ruby on Rails application with a single command
     --env "cluster.name=elasticsearch-rails" \
     --env "cluster.routing.allocation.disk.threshold_enabled=false" \
     --rm \
-    docker.elastic.co/elasticsearch/elasticsearch-oss:7.6.0
+    docker.elastic.co/elasticsearch/elasticsearch:7.6.0
 ```
 
 Once Elasticsearch is running, you can generate the simple app with this command:
