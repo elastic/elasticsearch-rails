@@ -6,7 +6,7 @@ Persistence layer for Ruby domain objects in Elasticsearch, using the Repository
 
 This library is compatible with Ruby 2.4 and higher.
 
-The library version numbers follow the Elasticsearch major versions. The `main` branch is compatible with the latest Elasticsearch stack stable release.
+The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -14,6 +14,7 @@ The library version numbers follow the Elasticsearch major versions. The `main` 
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
+| 7.x           | → | 7.x           |
 | main          | → | 7.x           |
 
 ## Installation
