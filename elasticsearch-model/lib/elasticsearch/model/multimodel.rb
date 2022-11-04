@@ -90,7 +90,7 @@ module Elasticsearch
 
       # Get the client common for all models
       #
-      # @return Elasticsearch::Transport::Client
+      # @return Elastic::Transport::Client
       #
       def client
         Elasticsearch::Model.client

@@ -87,7 +87,7 @@ module Elasticsearch
           request[:type] = document_type if document_type
           document = client.get(request.merge(options))
           deserialize(document)
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        rescue ELASTIC_TRANSPORT_CLASS::Transport::Errors::NotFound => e
           raise DocumentNotFound, e.message, caller
         end
 
