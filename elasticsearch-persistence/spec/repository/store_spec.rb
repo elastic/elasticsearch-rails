@@ -242,7 +242,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         it 'raises an exception' do
           expect {
             repository.update(1, doc: { text: 'testing_2' })
-          }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
+          }.to raise_exception(ELASTIC_TRANSPORT_CLASS::Transport::Errors::NotFound)
         end
 
         context 'when upsert is provided' do
@@ -262,7 +262,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         it 'raises an exception' do
           expect {
             repository.update(id: 1, text: 'testing_2')
-          }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
+          }.to raise_exception(ELASTIC_TRANSPORT_CLASS::Transport::Errors::NotFound)
         end
 
         context 'when upsert is provided' do
@@ -337,7 +337,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       it 'raises an exception' do
         expect {
           repository.delete(1)
-        }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
+        }.to raise_exception(ELASTIC_TRANSPORT_CLASS::Transport::Errors::NotFound)
       end
     end
   end

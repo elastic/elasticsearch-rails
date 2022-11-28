@@ -163,7 +163,7 @@ module Elasticsearch
               index: target_index,
               type:  target_type,
               body:  __batch_to_bulk(batch, transform)
-            }
+            }.compact
 
             params[:pipeline] = pipeline if pipeline
 

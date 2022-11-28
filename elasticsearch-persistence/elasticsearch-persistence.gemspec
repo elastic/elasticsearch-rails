@@ -36,6 +36,20 @@ Gem::Specification.new do |s|
   s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.require_paths = ['lib']
 
+  s.extra_rdoc_files  = [ 'README.md', 'LICENSE.txt' ]
+  s.rdoc_options      = [ '--charset=UTF-8' ]
+
+  s.required_ruby_version = '>= 1.9.3'
+
+  s.add_dependency 'elasticsearch',       '~> 8'
+  s.add_dependency 'elasticsearch-model', '7.2.1'
+  s.add_dependency 'activesupport',       '> 4'
+  s.add_dependency 'activemodel',         '> 4'
+  s.add_dependency 'hashie'
+
+  s.add_development_dependency 'bundler'
+  s.add_development_dependency 'rake', '~> 12'
+
   s.extra_rdoc_files  = ['README.md', 'LICENSE.txt']
   s.rdoc_options      = ['--charset=UTF-8']
 

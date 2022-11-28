@@ -61,6 +61,14 @@ when defined?(::WillPaginate)
   Elasticsearch::Model::Response::Response.__send__ :include, Elasticsearch::Model::Response::Pagination::WillPaginate
 end
 
+ELASTIC_TRANSPORT_CLASS =
+  begin
+    require 'elastic/transport'
+    Elastic::Transport
+  rescue LoadError
+    Elasticsearch::Transport
+  end
+
 module Elasticsearch
 
   # Elasticsearch integration for Ruby models
