@@ -48,12 +48,12 @@ require 'rake/testtask'
 namespace :test do
   desc 'Run all tests. Optionally define env variable RAILS_VERSIONS. E.g. RAILS_VERSIONS=3.0,5.0'
   task :all, [:rails_versions] do |task, args|
-    gemfiles = ENV['RAILS_VERSIONS'] ? ENV['RAILS_VERSIONS'].split(',').map {|v| "#{v}.gemfile"} : GEMFILES
+    gemfiles = ENV['RAILS_VERSIONS'] ? ENV['RAILS_VERSIONS'].split(',').map { |v| "#{v}.gemfile" } : GEMFILES
     puts '-' * 80
     gemfiles.each do |gemfile|
       puts "GEMFILE: #{gemfile}"
-      sh "BUNDLE_GEMFILE='#{File.expand_path("../gemfiles/#{gemfile}", __FILE__)}' " +
-             " bundle exec rspec"
+      sh "BUNDLE_GEMFILE='#{File.expand_path("../gemfiles/#{gemfile}", __FILE__)}' " \
+             ' bundle exec rspec'
       puts '-' * 80
     end
   end

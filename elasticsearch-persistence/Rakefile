@@ -15,11 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-require "bundler/gem_tasks"
+require 'bundler/gem_tasks'
 
-desc "Run unit tests"
-task :default => 'test:unit'
-task :test    => 'test:unit'
+desc 'Run unit tests'
+task default: 'test:unit'
+task test: 'test:unit'
 
 # ----- Test tasks ------------------------------------------------------------
 
@@ -27,14 +27,15 @@ require 'rake/testtask'
 require 'rspec/core/rake_task'
 
 namespace :test do
-
   RSpec::Core::RakeTask.new(:spec)
 
   Rake::TestTask.new(:all) do |test|
     test.verbose = false
     test.warning = false
-    test.deps = [ :spec ]
+    test.deps = [:spec]
   end
+
+  task unit: :spec
 end
 
 namespace :bundle do
@@ -65,6 +66,6 @@ if defined?(RUBY_VERSION) && RUBY_VERSION > '1.9'
       cane.style_measure = 120
     end
   rescue LoadError
-    warn "cane not available, quality task not provided."
+    warn 'cane not available, quality task not provided.'
   end
 end
