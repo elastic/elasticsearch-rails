@@ -34,6 +34,8 @@ namespace :test do
     test.warning = false
     test.deps = [:spec] unless defined?(JRUBY_VERSION)
   end
+
+  task unit: :spec
 end
 
 namespace :bundle do

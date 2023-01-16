@@ -17,13 +17,13 @@
 
 source 'https://rubygems.org'
 
-gem "rake", "~> 12"
-gem "elasticsearch"
-gem "pry"
-gem "ansi"
-gem "cane"
+gem 'ansi'
+gem 'cane'
+gem 'elasticsearch', '~> 7'
+gem 'pry'
+gem 'rake', '~> 12'
 
 group :development do
-  gem 'yard'
   gem 'rspec'
+  gem 'yard'
 end

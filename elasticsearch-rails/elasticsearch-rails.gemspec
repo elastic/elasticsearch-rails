@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.name          = 'elasticsearch-rails'
   s.version       = Elasticsearch::Rails::VERSION
   s.authors       = ['Karel Minarik']
-  s.email         = ['karel.minarik@elasticsearch.org']
+  s.email         = ['support@elastic.co']
   s.description   = 'Ruby on Rails integrations for Elasticsearch.'
   s.summary       = 'Ruby on Rails integrations for Elasticsearch.'
   s.homepage      = 'https://github.com/elasticsearch/elasticsearch-rails/'

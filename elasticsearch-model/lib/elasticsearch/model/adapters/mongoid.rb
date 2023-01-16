@@ -18,18 +18,21 @@
 module Elasticsearch
   module Model
     module Adapter
-
       # An adapter for Mongoid-based models
       #
       # @see http://mongoid.org
       #
       module Mongoid
-
-        Adapter.register self,
-                         lambda { |klass| !!defined?(::Mongoid::Document) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::Mongoid::Document) }
+        Adapter.register(
+          self,
+          lambda do |klass|
+            !!defined?(::Mongoid::Document) &&
+              klass.respond_to?(:ancestors) &&
+              klass.ancestors.include?(::Mongoid::Document)
+          end
+        )
 
         module Records
-
           # Return a `Mongoid::Criteria` instance
           #
           def records
@@ -59,7 +62,6 @@ module Elasticsearch
         end
 
         module Callbacks
-
           # Handle index updates (creating, updating or deleting documents)
           # when the model changes, by hooking into the lifecycle
           #
@@ -73,7 +75,6 @@ module Elasticsearch
         end
 
         module Importing
-
           # Fetch batches of records from the database
           #
           # @see https://github.com/mongoid/mongoid/issues/1334
@@ -88,19 +89,16 @@ module Elasticsearch
             scope = all
             scope = scope.send(named_scope) if named_scope
             scope = query.is_a?(Proc) ? scope.class_exec(&query) : scope.where(query) if query
-  
             scope.no_timeout.each_slice(batch_size) do |items|
               yield (preprocess ? self.__send__(preprocess, items) : items)
             end
           end
 
           def __transform
-            lambda {|a|  { index: { _id: a.id.to_s, data: a.as_indexed_json } }}
+            lambda { |a| { index: { _id: a.id.to_s, data: a.as_indexed_json } } }
           end
         end
-
       end
-
     end
   end
 end
