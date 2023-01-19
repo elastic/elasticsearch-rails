@@ -9,3 +9,4 @@ coverage/
 rdoc/
 doc/
 Gemfile.lock
+.byebug_history
