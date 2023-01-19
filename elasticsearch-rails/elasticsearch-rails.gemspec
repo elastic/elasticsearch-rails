@@ -44,7 +44,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files  = ['README.md', 'LICENSE.txt']
   s.rdoc_options      = ['--charset=UTF-8']
 
-  s.required_ruby_version = '>= 2.4'
+  s.required_ruby_version = '>= 3'
 
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'cane'
