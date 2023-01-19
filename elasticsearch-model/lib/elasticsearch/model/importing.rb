@@ -17,14 +17,12 @@
 
 module Elasticsearch
   module Model
-
     # Provides support for easily and efficiently importing large amounts of
     # records from the including class into the index.
     #
     # @see ClassMethods#import
     #
     module Importing
-
       # When included in a model, adds the importing methods.
       #
       # @example Import all records from the `Article` model
@@ -42,13 +40,12 @@ module Elasticsearch
       end
 
       module ClassMethods
-
         # Import all model records into the index
         #
         # The method will pick up correct strategy based on the `Importing` module
         # defined in the corresponding adapter.
         #
-        # @param options [Hash] Options passed to the underlying `__find_in_batches`method
+        # @param options [Hash] Options passed to the underlying `__find_in_batches` method
         # @param block  [Proc] Optional block to evaluate for each batch
         #
         # @yield [Hash] Gives the Hash with the Elasticsearch response to the block

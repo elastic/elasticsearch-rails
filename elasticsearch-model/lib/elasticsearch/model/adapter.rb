@@ -17,7 +17,6 @@
 
 module Elasticsearch
   module Model
-
     # Contains an adapter which provides OxM-specific implementations for common behaviour:
     #
     # * {Adapter::Adapter#records_mixin   Fetching records from the database}
@@ -29,7 +28,6 @@ module Elasticsearch
     # @see Elasticsearch::Model::Adapter::Mongoid
     #
     module Adapter
-
       # Returns an adapter based on the Ruby class passed
       #
       # @example Create an adapter for an ActiveRecord-based model

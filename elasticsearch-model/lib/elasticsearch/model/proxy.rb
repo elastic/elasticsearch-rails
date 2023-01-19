@@ -17,7 +17,6 @@
 
 module Elasticsearch
   module Model
-
     # This module provides a proxy interfacing between the including class and
     # `Elasticsearch::Model`, preventing the pollution of the including class namespace.
     #
@@ -45,7 +44,6 @@ module Elasticsearch
     #     # => true
     #
     module Proxy
-
       # Define the `__elasticsearch__` class and instance methods in the including class
       # and register a callback for intercepting changes in the model.
       #
@@ -53,9 +51,7 @@ module Elasticsearch
       #       module and the functionality is accessible via the proxy.
       #
       def self.included(base)
-
         base.class_eval do
-
           # `ClassMethodsProxy` instance, accessed as `MyModel.__elasticsearch__`
           def self.__elasticsearch__ &block
             @__elasticsearch__ ||= ClassMethodsProxy.new(self)
