@@ -1,3 +1,11 @@
+## 6.1.2
+
+* Updates Bundler.with_clean_dev (deprecated) to with_unbundled_env
+
+## 6.1.1
+
+* fix: Ruby 2.7 deprecation warning on `find_in_batches`
+
 ## 6.1.0
 
 * Update test tasks and travis (#840)
