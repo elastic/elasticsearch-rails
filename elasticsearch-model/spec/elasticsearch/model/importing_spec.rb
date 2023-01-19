@@ -18,18 +18,17 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Importing do
-
   before(:all) do
     class DummyImportingModel
     end
 
     module DummyImportingAdapter
       module ImportingMixin
-        def __find_in_batches(options={}, &block)
+        def __find_in_batches( options = {}, &block)
           yield if block_given?
         end
         def __transform
-          lambda {|a|}
+          lambda { |a| }
         end
       end
 
@@ -49,7 +48,6 @@ describe Elasticsearch::Model::Importing do
   end
 
   context 'when a model includes the Importing module' do
-
     it 'provides importing methods' do
       expect(DummyImportingModel.respond_to?(:import)).to be(true)
       expect(DummyImportingModel.respond_to?(:__find_in_batches)).to be(true)
@@ -57,7 +55,6 @@ describe Elasticsearch::Model::Importing do
   end
 
   describe '#import' do
-
     before do
       allow(DummyImportingModel).to receive(:index_name).and_return('foo')
       allow(DummyImportingModel).to receive(:document_type).and_return('foo')
@@ -75,7 +72,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when no options are provided' do
-
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
         allow(DummyImportingModel).to receive(:index_exists?).and_return(true)
@@ -87,7 +83,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when there is an error' do
-
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
         allow(DummyImportingModel).to receive(:index_exists?).and_return(true)
@@ -102,14 +97,12 @@ describe Elasticsearch::Model::Importing do
       end
 
       context 'when the method is called with the option to return the errors' do
-
         it 'returns the errors' do
           expect(DummyImportingModel.import(return: 'errors')).to eq([{ 'index' => { 'error' => 'FAILED' } }])
         end
       end
 
       context 'when the method is called with a block' do
-
         it 'yields the response to the block' do
           DummyImportingModel.import do |response|
             expect(response['items'].size).to eq(2)
@@ -119,7 +112,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when the index does not exist' do
-
       before do
         allow(DummyImportingModel).to receive(:index_exists?).and_return(false)
       end
@@ -132,7 +124,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when the method is called with the force option' do
-
       before do
         expect(DummyImportingModel).to receive(:create_index!).with(force: true, index: 'foo').and_return(true)
         expect(DummyImportingModel).to receive(:__find_in_batches).with(foo: 'bar').and_return(true)
@@ -144,7 +135,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when the method is called with the refresh option' do
-
       before do
         expect(DummyImportingModel).to receive(:refresh_index!).with(index: 'foo').and_return(true)
         expect(DummyImportingModel).to receive(:__find_in_batches).with(foo: 'bar').and_return(true)
@@ -156,7 +146,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when a different index name is provided' do
-
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
         expect(client).to receive(:bulk).with(body: nil, index: 'my-new-index', type: 'foo').and_return(response)
@@ -168,7 +157,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when a different document type is provided' do
-
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
         expect(client).to receive(:bulk).with(body: nil, index: 'foo', type: 'my-new-type').and_return(response)
@@ -180,7 +168,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'the transform method' do
-
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
         expect(DummyImportingModel).to receive(:__transform).and_return(transform)
@@ -197,9 +184,7 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when a transform is provided as an option' do
-
       context 'when the transform option is not a lambda' do
-
         let(:transform) do
           'not_callable'
         end
@@ -212,7 +197,6 @@ describe Elasticsearch::Model::Importing do
       end
 
       context 'when the transform option is a lambda' do
-
         before do
           expect(DummyImportingModel).to receive(:client).and_return(client)
           expect(DummyImportingModel).to receive(:__batch_to_bulk).with(anything, transform)
@@ -229,7 +213,6 @@ describe Elasticsearch::Model::Importing do
     end
 
     context 'when a pipeline is provided as an options' do
-
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
         expect(client).to receive(:bulk).with(body: nil, index: 'foo', type: 'foo', pipeline: 'my-pipeline').and_return(response)

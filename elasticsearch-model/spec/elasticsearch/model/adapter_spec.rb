@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Adapter do
-
   before(:all) do
     class ::DummyAdapterClass; end
     class ::DummyAdapterClassWithAdapter; end
@@ -37,14 +36,12 @@ describe Elasticsearch::Model::Adapter do
   end
 
   describe '#from_class' do
-
     it 'should return an Adapter instance' do
       expect(Elasticsearch::Model::Adapter.from_class(DummyAdapterClass)).to be_a(Elasticsearch::Model::Adapter::Adapter)
     end
   end
 
   describe 'register' do
-
     before do
       expect(Elasticsearch::Model::Adapter::Adapter).to receive(:register).and_call_original
       Elasticsearch::Model::Adapter.register(:foo, lambda { |c| false })
@@ -55,7 +52,6 @@ describe Elasticsearch::Model::Adapter do
     end
 
     context 'when a specific adapter class is set' do
-
       before do
         expect(Elasticsearch::Model::Adapter::Adapter).to receive(:register).and_call_original
         Elasticsearch::Model::Adapter::Adapter.register(DummyAdapter,
@@ -73,7 +69,6 @@ describe Elasticsearch::Model::Adapter do
   end
 
   describe 'default adapter' do
-
     let(:adapter) do
       Elasticsearch::Model::Adapter::Adapter.new(DummyAdapterClass)
     end
@@ -84,11 +79,9 @@ describe Elasticsearch::Model::Adapter do
   end
 
   describe '#records_mixin' do
-
     before do
       Elasticsearch::Model::Adapter::Adapter.register(DummyAdapter,
                                                       lambda { |c| c == DummyAdapterClassWithAdapter })
-
     end
 
     let(:adapter) do
@@ -101,11 +94,9 @@ describe Elasticsearch::Model::Adapter do
   end
 
   describe '#callbacks_mixin' do
-
     before do
       Elasticsearch::Model::Adapter::Adapter.register(DummyAdapter,
                                                       lambda { |c| c == DummyAdapterClassWithAdapter })
-
     end
 
     let(:adapter) do
@@ -118,11 +109,9 @@ describe Elasticsearch::Model::Adapter do
   end
 
   describe '#importing_mixin' do
-
     before do
       Elasticsearch::Model::Adapter::Adapter.register(DummyAdapter,
                                                       lambda { |c| c == DummyAdapterClassWithAdapter })
-
     end
 
     let(:adapter) do

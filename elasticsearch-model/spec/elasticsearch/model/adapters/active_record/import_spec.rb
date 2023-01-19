@@ -19,12 +19,12 @@ require 'spec_helper'
 
 describe 'Elasticsearch::Model::Adapter::ActiveRecord Importing' do
   before(:all) do
-    ActiveRecord::Schema.define(:version => 1) do
+    ActiveRecord::Schema.define(version: 1) do
       create_table :import_articles do |t|
         t.string   :title
         t.integer  :views
         t.string   :numeric # For the sake of invalid data sent to Elasticsearch
-        t.datetime :created_at, :default => 'NOW()'
+        t.datetime :created_at, default: 'NOW()'
       end
     end
 
