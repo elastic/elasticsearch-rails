@@ -97,7 +97,7 @@ module Elasticsearch
             serialized = serialize(document_or_id)
             id = __get_id_from_document(serialized)
           end
-          client.delete({ index: index_name, type: document_type, id: id }.merge(options))
+          client.delete({ index: index_name, id: id }.merge(options))
         end
       end
     end
