@@ -21,8 +21,6 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :testing do
-  gem 'mongoid', '~> 6'
-  gem 'sqlite3'
   gem 'pry-nav'
   gem 'rspec'
 end

@@ -43,5 +43,3 @@ group :test do
   gem 'turn'
   gem 'mocha'
 end
-
-# gem 'sqlite3'

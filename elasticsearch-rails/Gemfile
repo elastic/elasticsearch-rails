@@ -32,5 +32,4 @@ group :development, :testing do
   gem 'pry-nav'
   gem 'rspec'
   gem 'sqlite3' unless defined?(JRUBY_VERSION)
-  gem 'sqlite3'
 end
