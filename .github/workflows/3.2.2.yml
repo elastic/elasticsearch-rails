@@ -1,4 +1,4 @@
-name: Ruby 2.6
+name: Ruby 3.2.2
 on:
   push:
     branches:
@@ -29,9 +29,10 @@ jobs:
       with:
         stack-version: 8.8.0-SNAPSHOT
         security-enabled: false
+        action.destructive_requires_name: false
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.6
+        ruby-version: 3.2.2
     - name: Bundle
       run: |
         sudo apt-get install libsqlite3-dev

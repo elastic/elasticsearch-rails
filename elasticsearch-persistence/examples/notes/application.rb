@@ -75,7 +75,6 @@ class NoteRepository
   client Elasticsearch::Client.new url: ENV['ELASTICSEARCH_URL'], log: true
 
   index_name :notes
-  document_type  :note
 
   mapping do
     indexes :text,       analyzer: 'snowball'

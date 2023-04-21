@@ -531,7 +531,7 @@ class Indexer
       when /delete/
         begin
           Client.delete index: 'articles', type: 'article', id: record_id
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        rescue Elastic::Transport::Transport::Errors::NotFound
           logger.debug "Article not found, ID: #{record_id}"
         end
       else raise ArgumentError, "Unknown operation '#{operation}'"

@@ -64,7 +64,6 @@ module Elasticsearch
           if document_or_id.is_a?(String) || document_or_id.is_a?(Integer)
             id = document_or_id
             body = options
-            type = document_type
           else
             document = serialize(document_or_id)
             id = __extract_id_from_document(document)
@@ -73,7 +72,6 @@ module Elasticsearch
             else
               body = { doc: document }.merge(options)
             end
-            type = document.delete(:type) || document_type
           end
           client.update(index: index_name, id: id, body: body)
         end

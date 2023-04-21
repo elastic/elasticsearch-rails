@@ -85,7 +85,7 @@ module Elasticsearch
           request = { index: index_name, id: id }
           document = client.get(request.merge(options))
           deserialize(document)
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        rescue Elastic::Transport::Transport::Errors::NotFound => e
           raise DocumentNotFound, e.message, caller
         end
 

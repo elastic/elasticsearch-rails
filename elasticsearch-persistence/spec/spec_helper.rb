@@ -47,7 +47,7 @@ end
 # The default repository to be used by tests.
 #
 # @since 6.0.0
-DEFAULT_REPOSITORY = MyTestRepository.new(index_name: 'my_test_repository', document_type: 'test')
+DEFAULT_REPOSITORY = MyTestRepository.new(index_name: 'my_test_repository')
 
 # Get the Elasticsearch server version.
 #

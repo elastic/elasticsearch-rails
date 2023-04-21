@@ -194,7 +194,6 @@ class NoteRepository
   include Elasticsearch::Persistence::Repository::DSL
 
   index_name 'notes'
-  document_type 'note'
   klass Note
 
   settings number_of_shards: 1 do
@@ -315,33 +314,6 @@ end
 repository = NoteRepository.new
 repository.index_name
 # => 'notes_development'
-
-```
-
-The `document_type` method specifies the Elasticsearch document type to use for storage, lookup and search. The default value is
-'_doc'. Keep in mind that future versions of Elasticsearch will not allow you to set this yourself and will use the type,
-'_doc'.
-
-```ruby
-repository = NoteRepository.new(document_type: 'note')
-repository.document_type
-# => 'note'
-
-```
-
-or with the DSL mixin:
-
-```ruby
-class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
-
-  document_type 'note'
-end
-
-repository = NoteRepository.new
-repository.document_type
-# => 'note'
 
 ```
 
