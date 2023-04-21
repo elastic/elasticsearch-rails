@@ -27,7 +27,8 @@ jobs:
         sudo sysctl -w vm.max_map_count=262144
     - uses: elastic/elastic-github-actions/elasticsearch@master
       with:
-        stack-version: 8.7.0-SNAPSHOT
+        stack-version: 8.8.0-SNAPSHOT
+        security-enabled: false
     - uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.6
