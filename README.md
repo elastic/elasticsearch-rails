@@ -162,6 +162,10 @@ You can also unit, integration, or both tests for all sub-projects from the top-
 
 The test suite expects an Elasticsearch cluster running on port 9250, and **will delete all the data**.
 
+```
+docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "action.destructive_requires_name=false" elasticsearch:8.7.0
+```
+
 ## License
 
 This software is licensed under the Apache 2 license, quoted below.
@@ -173,9 +177,9 @@ This software is licensed under the Apache 2 license, quoted below.
     the Apache License, Version 2.0 (the "License"); you may
     not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     	http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on an
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY

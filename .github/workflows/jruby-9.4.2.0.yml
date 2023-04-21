@@ -31,7 +31,7 @@ jobs:
         security-enabled: false
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: jruby-9.3
+        ruby-version: jruby-9.4.2.0
     - name: Bundle
       run: |
         sudo apt-get install libsqlite3-dev

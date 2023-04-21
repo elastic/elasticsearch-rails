@@ -23,4 +23,5 @@ gemspec
 group :development, :testing do
   gem 'pry-nav'
   gem 'rspec'
+  gem 'mongoid', '~> 6'
 end
