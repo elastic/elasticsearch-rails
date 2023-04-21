@@ -26,7 +26,6 @@ describe Elasticsearch::Model::Response::Base do
 
     class OriginClass
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
     end
   end
 

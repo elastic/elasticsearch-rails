@@ -24,7 +24,6 @@ describe Elasticsearch::Model::Adapter::Multiple do
       include Elasticsearch::Model
 
       index_name 'dummy'
-      document_type 'dummy_one'
 
       def self.find(ids)
         ids.map { |id| new(id) }
@@ -42,7 +41,6 @@ describe Elasticsearch::Model::Adapter::Multiple do
         include Elasticsearch::Model
 
         index_name 'dummy'
-        document_type 'dummy_two'
 
         def self.find(ids)
           ids.map { |id| new(id) }
@@ -60,7 +58,6 @@ describe Elasticsearch::Model::Adapter::Multiple do
       include Elasticsearch::Model
 
       index_name 'other_index'
-      document_type 'dummy_two'
 
       def self.find(ids)
         ids.map { |id| new(id) }
@@ -86,27 +83,22 @@ describe Elasticsearch::Model::Adapter::Multiple do
     [
       {
         _index: 'dummy',
-        _type: 'dummy_two',
         _id: '2'
       },
       {
         _index: 'dummy',
-        _type: 'dummy_one',
         _id: '2'
       },
       {
         _index: 'other_index',
-        _type: 'dummy_two',
         _id: '1'
       },
       {
         _index: 'dummy',
-        _type: 'dummy_two',
         _id: '1'
       },
       {
         _index: 'dummy',
-        _type: 'dummy_one',
         _id: '3'
       }
     ]

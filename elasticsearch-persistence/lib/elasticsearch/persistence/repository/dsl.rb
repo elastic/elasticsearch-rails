@@ -35,18 +35,6 @@ module Elasticsearch
         # @since 6.0.0
         module ClassMethods
 
-          # Get or set the class-level document type setting.
-          #
-          # @example
-          #   MyRepository.document_type
-          #
-          # @return [ String, Symbol ] _type The repository's document type.
-          #
-          # @since 6.0.0
-          def document_type(_type = nil)
-            @document_type ||= _type
-          end
-
           # Get or set the class-level index name setting.
           #
           # @example

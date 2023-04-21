@@ -24,7 +24,6 @@ describe 'ActiveSupport::Instrumentation integration' do
       extend Elasticsearch::Model::Searching::ClassMethods
 
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
     end
   end
 
@@ -67,8 +66,7 @@ describe 'ActiveSupport::Instrumentation integration' do
                                                                         { klass: 'DummyInstrumentationModel',
                                                                           name: 'Search',
                                                                           search: { body: query,
-                                                                          index: 'foo',
-                                                                          type: 'bar' } }).and_return({})
+                                                                          index: 'foo'} }).and_return({})
     end
 
     let(:query) do

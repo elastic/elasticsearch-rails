@@ -54,7 +54,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
   end
 
-  context 'when a document_type is defined for the Model' do
+  context 'when a document_type is defined for the Model ?!' do
 
     before(:all) do
       ActiveRecord::Schema.define(:version => 1) do

@@ -37,7 +37,6 @@ module Elasticsearch
           @options = options
 
           __index_name    = options[:index] || klass.index_name
-          __document_type = options[:type]  || klass.document_type
 
           case
             # search query: ...
@@ -54,9 +53,9 @@ module Elasticsearch
           end
 
           if body
-            @definition = { index: __index_name, type: __document_type, body: body }.update options
+            @definition = { index: __index_name, body: body }.update options
           else
-            @definition = { index: __index_name, type: __document_type, q: q }.update options
+            @definition = { index: __index_name, q: q }.update options
           end
         end
 

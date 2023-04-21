@@ -22,7 +22,6 @@ describe 'Elasticsearch::Model::Response::Response WillPaginate' do
   before(:all) do
     class ModelClass
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
 
       def self.per_page
         33

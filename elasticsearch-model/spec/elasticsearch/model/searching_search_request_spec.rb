@@ -23,7 +23,6 @@ describe Elasticsearch::Model::Serializing do
     class ::DummySearchingModel
       extend Elasticsearch::Model::Searching::ClassMethods
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
     end
   end
 
@@ -44,7 +43,7 @@ describe Elasticsearch::Model::Serializing do
     context 'when the search definition is a simple query' do
 
       before do
-        expect(client).to receive(:search).with(index: 'foo', type: 'bar', q: 'foo').and_return({})
+        expect(client).to receive(:search).with(index: 'foo', q: 'foo').and_return({})
       end
 
       let(:search) do
@@ -59,7 +58,7 @@ describe Elasticsearch::Model::Serializing do
     context 'when the search definition is a hash' do
 
       before do
-        expect(client).to receive(:search).with(index: 'foo', type: 'bar', body: { foo: 'bar' }).and_return({})
+        expect(client).to receive(:search).with(index: 'foo', body: { foo: 'bar' }).and_return({})
       end
 
       let(:search) do
@@ -74,7 +73,7 @@ describe Elasticsearch::Model::Serializing do
     context 'when the search definition is a json string' do
 
       before do
-        expect(client).to receive(:search).with(index: 'foo', type: 'bar', body: '{"foo":"bar"}').and_return({})
+        expect(client).to receive(:search).with(index: 'foo', body: '{"foo":"bar"}').and_return({})
       end
 
       let(:search) do
@@ -99,7 +98,7 @@ describe Elasticsearch::Model::Serializing do
       end
 
       before do
-        expect(client).to receive(:search).with(index: 'foo', type: 'bar', body: {foo: 'bar'}).and_return({})
+        expect(client).to receive(:search).with(index: 'foo', body: {foo: 'bar'}).and_return({})
       end
 
       let(:search) do
@@ -114,7 +113,7 @@ describe Elasticsearch::Model::Serializing do
     context 'when extra options are specified' do
 
       before do
-        expect(client).to receive(:search).with(index: 'foo', type: 'bar', q: 'foo', size: 15).and_return({})
+        expect(client).to receive(:search).with(index: 'foo', q: 'foo', size: 15).and_return({})
       end
 
       let(:search) do

@@ -248,9 +248,6 @@ module Elasticsearch
 
           unless index_exists?(index: target_index)
             options.delete(:force)
-            puts '*'*100
-            puts settings
-            puts mapping.to_hash
             self.client.indices.create({ index: target_index,
                                          body: {
                                            settings: settings,
@@ -292,7 +289,7 @@ module Elasticsearch
             self.client.indices.delete index: target_index
           rescue Exception => e
             if e.class.to_s =~ /NotFound/ && options[:force]
-              client.transport.transport.logger.debug("[!!!] Index does not exist (#{e.class})") if client.transport.transport.logger
+              client.transport.logger.debug("[!!!] Index does not exist (#{e.class})") if client.transport.logger
               nil
             else
               raise e
@@ -374,7 +371,6 @@ module Elasticsearch
           request = { index: index_name,
                       id:    id,
                       body:  document }
-          request.merge!(type: document_type) if document_type
 
           client.index(request.merge!(options))
         end
@@ -395,7 +391,6 @@ module Elasticsearch
         def delete_document(options={})
           request = { index: index_name,
                       id:    self.id }
-          request.merge!(type: document_type) if document_type
 
           client.delete(request.merge!(options))
         end
@@ -436,7 +431,6 @@ module Elasticsearch
               request = { index: index_name,
                           id:    self.id,
                           body:  { doc: attributes } }
-              request.merge!(type: document_type) if document_type
 
               client.update(request.merge!(options))
             end
@@ -463,7 +457,6 @@ module Elasticsearch
           request = { index: index_name,
                       id:    self.id,
                       body:  { doc: attributes } }
-          request.merge!(type: document_type) if document_type
 
           client.update(request.merge!(options))
         end

@@ -141,7 +141,6 @@ module Elasticsearch
           errors       = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
-          target_type  = options.delete(:type)      || document_type
           transform    = options.delete(:transform) || __transform
           pipeline     = options.delete(:pipeline)
           return_value = options.delete(:return)    || 'count'

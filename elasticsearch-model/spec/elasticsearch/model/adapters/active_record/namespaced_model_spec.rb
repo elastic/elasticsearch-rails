@@ -43,10 +43,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Namespaced Model' do
       expect(MyNamespace::Book.index_name).to eq('my_namespace-books')
     end
 
-    it 'has the proper document type' do
-      expect(MyNamespace::Book.document_type).to eq('book')
-    end
-
     it 'saves the document into the index' do
       expect(MyNamespace::Book.search('title:test').results.size).to eq(1)
       expect(MyNamespace::Book.search('title:test').results.first.title).to eq('Test')
