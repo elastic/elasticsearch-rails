@@ -279,7 +279,7 @@ describe Elasticsearch::Persistence::Repository do
 
         before do
           begin; repository.delete_index!; rescue; end
-          repository.create_index!(include_type_name: true)
+          repository.create_index!()
         end
 
         it 'creates the index' do
@@ -334,7 +334,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!()
         end
 
         it 'refreshes the index' do
@@ -361,7 +361,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!()
         end
 
         it 'determines if the index exists' do
@@ -549,14 +549,6 @@ describe Elasticsearch::Persistence::Repository do
 
         context 'when the server is version >= 7.0', if: server_version > '7.0' do
 
-          context 'when the include_type_name option is specified' do
-
-            it 'creates an index' do
-              repository.create_index!(include_type_name: true)
-              expect(repository.index_exists?).to eq(true)
-            end
-          end
-
           context 'when the include_type_name option is not specified' do
 
             it 'raises an error' do
@@ -582,7 +574,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'deletes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
         repository.delete_index!
         expect(repository.index_exists?).to eq(false)
       end
@@ -605,7 +597,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'refreshes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
         expect(repository.refresh_index!['_shards']).to be_a(Hash)
       end
     end
@@ -627,7 +619,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'returns whether the index exists' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
         expect(repository.index_exists?).to be(true)
       end
     end
