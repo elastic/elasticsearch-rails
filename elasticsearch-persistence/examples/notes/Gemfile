@@ -26,9 +26,11 @@ gem 'hashie'
 
 gem 'patron'
 gem 'elasticsearch'
-gem 'elasticsearch-model', path: '../../../elasticsearch-model'
-gem 'elasticsearch-persistence', path: '../../../elasticsearch-persistence'
-gem 'elasticsearch-rails', path: '../../../'
+gem 'elasticsearch-model',       git: 'https://github.com/elastic/elasticsearch-rails.git'
+gem 'elasticsearch-persistence', git: 'https://github.com/elastic/elasticsearch-rails.git'
+# gem 'elasticsearch-model', path: '../../../elasticsearch-model'
+# gem 'elasticsearch-persistence', path: '../../../elasticsearch-persistence'
+# gem 'elasticsearch-rails', path: '../../../'
 
 
 gem 'sinatra', require: false
@@ -46,4 +48,4 @@ group :test do
   gem 'mocha'
 end
 
-gem 'sqlite3'
+# gem 'sqlite3'

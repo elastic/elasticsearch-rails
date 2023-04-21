@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.4'
 
   s.add_dependency 'activesupport', '> 3'
-  s.add_dependency 'elasticsearch', '~> 8'
+  s.add_dependency 'elasticsearch', '~> 8.7.0'
   s.add_dependency 'hashie'
 
   s.add_development_dependency 'activemodel', '> 3'
@@ -52,7 +52,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rake', '~> 12'
   s.add_development_dependency 'require-prof'
   s.add_development_dependency 'shoulda-context'
   s.add_development_dependency 'simplecov'
