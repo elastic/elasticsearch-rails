@@ -40,7 +40,6 @@ module Elasticsearch
           request = { index: index_name,
                       id: id,
                       body: serialized }
-          request[:type] = document_type if document_type
           client.index(request.merge(options))
         end
 
@@ -76,7 +75,7 @@ module Elasticsearch
             end
             type = document.delete(:type) || document_type
           end
-          client.update(index: index_name, id: id, type: type, body: body)
+          client.update(index: index_name, id: id, body: body)
         end
 
         # Remove the serialized object or document with specified ID from Elasticsearch
