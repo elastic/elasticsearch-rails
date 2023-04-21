@@ -51,13 +51,12 @@ module Elasticsearch
       # Wraps the [index mappings](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html)
       #
       class Mappings
-        attr_accessor :options, :type
+        attr_accessor :options
 
         # @private
         TYPES_WITH_EMBEDDED_PROPERTIES = %w(object nested)
 
-        def initialize(type = nil, options={})
-          @type    = type
+        def initialize(options={})
           @options = options
           @mapping = {}
         end
@@ -152,7 +151,7 @@ module Elasticsearch
         # when it doesn't already define them. Use the `__elasticsearch__` proxy otherwise.
         #
         def mapping(options={}, &block)
-          @mapping ||= Mappings.new(document_type, options)
+          @mapping ||= Mappings.new(options)
 
           @mapping.options.update(options) unless options.empty?
 
@@ -249,6 +248,9 @@ module Elasticsearch
 
           unless index_exists?(index: target_index)
             options.delete(:force)
+            puts '*'*100
+            puts settings
+            puts mapping.to_hash
             self.client.indices.create({ index: target_index,
                                          body: {
                                            settings: settings,

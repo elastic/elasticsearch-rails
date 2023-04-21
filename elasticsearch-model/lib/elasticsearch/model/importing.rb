@@ -161,7 +161,6 @@ module Elasticsearch
           __find_in_batches(options) do |batch|
             params = {
               index: target_index,
-              type:  target_type,
               body:  __batch_to_bulk(batch, transform)
             }
 

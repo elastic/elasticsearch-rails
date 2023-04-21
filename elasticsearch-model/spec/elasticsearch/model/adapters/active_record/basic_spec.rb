@@ -67,7 +67,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
       end
 
       Article.delete_all
-      Article.__elasticsearch__.create_index!(force: true, include_type_name: true)
+      Article.__elasticsearch__.create_index!(force: true)
 
       Article.create!(title: 'Test', body: '', clicks: 1)
       Article.create!(title: 'Testing Coding', body: '', clicks: 2)

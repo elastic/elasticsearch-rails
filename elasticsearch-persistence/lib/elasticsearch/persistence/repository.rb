@@ -58,7 +58,6 @@ module Elasticsearch
         # @param [ Proc ] block A block to evaluate on the new repository instance.
         #
         # @option options [ Symbol, String ] :index_name The name of the index.
-        # @option options [ Symbol, String ] :document_type The type of documents persisted in this repository.
         # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
         # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
         #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
@@ -95,7 +94,6 @@ module Elasticsearch
       # @param [ Hash ] options The options to use.
       #
       # @option options [ Symbol, String ] :index_name The name of the index.
-      # @option options [ Symbol, String ] :document_type The type of documents persisted in this repository.
       # @option options [ Symbol, String ] :client The client used to handle requests to and from Elasticsearch.
       # @option options [ Symbol, String ] :klass The class used to instantiate an object when documents are
       #   deserialized. The default is nil, in which case the raw document will be returned as a Hash.
@@ -119,19 +117,6 @@ module Elasticsearch
         @client ||= @options[:client] ||
                       __get_class_value(:client) ||
                       Elasticsearch::Client.new
-      end
-
-      # Get the document type used by the repository object.
-      #
-      # @example
-      #   repository.document_type
-      #
-      # @return [ String, Symbol ] The repository's document type.
-      #
-      # @since 6.0.0
-      def document_type
-        @document_type ||= @options[:document_type] ||
-                             __get_class_value(:document_type)
       end
 
       # Get the index name used by the repository.
@@ -180,7 +165,6 @@ module Elasticsearch
       def mapping(*args)
         @memoized_mapping ||= @options[:mapping] || (begin
           if _mapping = __get_class_value(:mapping)
-            _mapping.instance_variable_set(:@type, document_type)
             _mapping
           end
         end) || (super && @mapping)
@@ -229,7 +213,7 @@ module Elasticsearch
       #
       # @since 6.0.0
       def inspect
-        "#<#{self.class}:0x#{object_id} index_name=#{index_name} document_type=#{document_type} klass=#{klass}>"
+        "#<#{self.class}:0x#{object_id} index_name=#{index_name} klass=#{klass}>"
       end
 
       private

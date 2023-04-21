@@ -37,21 +37,10 @@ describe Elasticsearch::Persistence::Repository do
       expect(RepositoryWithoutDSL.create).to be_a(RepositoryWithoutDSL)
     end
 
-    context 'when options are provided' do
-
-      let(:repository) do
-        RepositoryWithoutDSL.create(document_type: 'note')
-      end
-
-      it 'sets the options on the instance' do
-        expect(repository.document_type).to eq('note')
-      end
-    end
-
     context 'when a block is passed' do
 
       let(:repository) do
-        RepositoryWithoutDSL.create(document_type: 'note') do
+        RepositoryWithoutDSL.create do
           mapping dynamic: 'strict' do
             indexes :foo
           end
@@ -59,7 +48,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'executes the block on the instance' do
-        expect(repository.mapping.to_hash).to eq(note: { dynamic: 'strict', properties: { foo: { type: 'text' } } })
+        expect(repository.mapping.to_hash).to eq(dynamic: 'strict', properties: { foo: { type: 'text' } })
       end
 
       context 'when options are provided in the args and set in the block' do
@@ -124,15 +113,11 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       let(:repository) do
-        RepositoryWithoutDSL.new(client: client, document_type: 'user', index_name: 'users', klass: Array)
+        RepositoryWithoutDSL.new(client: client, index_name: 'users', klass: Array)
       end
 
       it 'sets the client' do
         expect(repository.client).to be(client)
-      end
-
-      it 'sets document type' do
-        expect(repository.document_type).to eq('user')
       end
 
       it 'sets index name' do
@@ -152,7 +137,6 @@ describe Elasticsearch::Persistence::Repository do
         include Elasticsearch::Persistence::Repository
         include Elasticsearch::Persistence::Repository::DSL
 
-        document_type 'note'
         index_name 'notes_repo'
         klass Hash
         client DEFAULT_CLIENT
@@ -229,26 +213,6 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    context '#document_type' do
-
-      it 'allows the value to be set only once on the class' do
-        RepositoryWithDSL.document_type('other_note')
-        expect(RepositoryWithDSL.document_type).to eq('note')
-      end
-
-      it 'sets the value at the class level' do
-        expect(RepositoryWithDSL.document_type).to eq('note')
-      end
-
-      it 'sets the value as the default at the instance level' do
-        expect(RepositoryWithDSL.new.document_type).to eq('note')
-      end
-
-      it 'allows the value to be overridden with options on the instance' do
-        expect(RepositoryWithDSL.new(document_type: 'other_note').document_type).to eq('other_note')
-      end
-    end
-
     context '#index_name' do
 
       it 'allows the value to be set only once on the class' do
@@ -279,7 +243,7 @@ describe Elasticsearch::Persistence::Repository do
 
         before do
           begin; repository.delete_index!; rescue; end
-          repository.create_index!(include_type_name: true)
+          repository.create_index!()
         end
 
         it 'creates the index' do
@@ -334,7 +298,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!()
         end
 
         it 'refreshes the index' do
@@ -361,7 +325,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!()
         end
 
         it 'determines if the index exists' do
@@ -389,11 +353,10 @@ describe Elasticsearch::Persistence::Repository do
     describe '#mapping' do
 
       let(:expected_mapping) do
-        { note: { dynamic: 'strict',
+        { dynamic: 'strict',
                   properties: { foo: { type: 'object',
                                        properties: { bar: { type: 'text' } } },
                                 baz: { type: 'text' } }
-                }
         }
       end
 
@@ -407,22 +370,6 @@ describe Elasticsearch::Persistence::Repository do
 
       it 'allows the value to be overridden with options on the instance' do
         expect(RepositoryWithDSL.new(mapping: double('mapping', to_hash: { note: {} })).mapping.to_hash).to eq(note: {})
-      end
-
-      context 'when the instance has a different document type' do
-
-        let(:expected_mapping) do
-          { other_note: { dynamic: 'strict',
-                          properties: { foo: { type: 'object',
-                                               properties: { bar: { type: 'text' } } },
-                                        baz: { type: 'text' } }
-                        }
-          }
-        end
-
-        it 'updates the mapping to use the document type' do
-          expect(RepositoryWithDSL.new(document_type: 'other_note').mapping.to_hash).to eq(expected_mapping)
-        end
       end
     end
 
@@ -490,19 +437,6 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    context '#document_type' do
-
-      it 'does not define the method at the class level' do
-        expect {
-          RepositoryWithoutDSL.document_type
-        }.to raise_exception(NoMethodError)
-      end
-
-      it 'allows the value to be overridden with options on the instance' do
-        expect(RepositoryWithoutDSL.new(document_type: 'notes').document_type).to eq('notes')
-      end
-    end
-
     context '#index_name' do
 
       it 'does not define the method at the class level' do
@@ -546,26 +480,6 @@ describe Elasticsearch::Persistence::Repository do
         let(:repository) do
           RepositoryWithoutDSL.new(client: DEFAULT_CLIENT, document_type: 'mytype')
         end
-
-        context 'when the server is version >= 7.0', if: server_version > '7.0' do
-
-          context 'when the include_type_name option is specified' do
-
-            it 'creates an index' do
-              repository.create_index!(include_type_name: true)
-              expect(repository.index_exists?).to eq(true)
-            end
-          end
-
-          context 'when the include_type_name option is not specified' do
-
-            it 'raises an error' do
-              expect {
-                repository.create_index!
-              }.to raise_exception(Elasticsearch::Transport::Transport::Errors::BadRequest)
-            end
-          end
-        end
       end
     end
 
@@ -582,7 +496,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'deletes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
         repository.delete_index!
         expect(repository.index_exists?).to eq(false)
       end
@@ -605,7 +519,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'refreshes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
         expect(repository.refresh_index!['_shards']).to be_a(Hash)
       end
     end
@@ -627,7 +541,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'returns whether the index exists' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
         expect(repository.index_exists?).to be(true)
       end
     end
@@ -651,11 +565,10 @@ describe Elasticsearch::Persistence::Repository do
       context 'when a block is passed to the create method' do
 
         let(:expected_mapping) do
-          { note: { dynamic: 'strict',
+          { dynamic: 'strict',
                     properties: { foo: { type: 'object',
                                          properties: { bar: { type: 'text' } } },
                                   baz: { type: 'text' } }
-            }
           }
         end
 
@@ -725,11 +638,10 @@ describe Elasticsearch::Persistence::Repository do
         context 'when a mapping is set in the block as well' do
 
           let(:expected_mapping) do
-            { note: { dynamic: 'strict',
+            { dynamic: 'strict',
                       properties: { foo: { type: 'object',
                                            properties: { bar: { type: 'text' } } },
                                     baz: { type: 'text' } }
-                    }
             }
           end
 

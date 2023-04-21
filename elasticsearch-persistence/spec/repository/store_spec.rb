@@ -70,20 +70,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         expect(repository.find(response['_id'])).to eq('b' => 1)
       end
     end
-
-    context 'when options are provided' do
-
-      let!(:response) do
-        repository.save(document, type: 'other_note')
-      end
-
-      it 'saves the document using the options' do
-        expect {
-          repository.find(response['_id'])
-        }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
-        expect(repository.find(response['_id'], type: 'other_note')).to eq('a' => 1)
-      end
-    end
   end
 
   describe '#update' do
@@ -242,7 +228,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         it 'raises an exception' do
           expect {
             repository.update(1, doc: { text: 'testing_2' })
-          }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
+          }.to raise_exception(Elastic::Transport::Transport::Errors::NotFound)
         end
 
         context 'when upsert is provided' do
@@ -262,7 +248,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         it 'raises an exception' do
           expect {
             repository.update(id: 1, text: 'testing_2')
-          }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
+          }.to raise_exception(Elastic::Transport::Transport::Errors::NotFound)
         end
 
         context 'when upsert is provided' do
@@ -331,13 +317,13 @@ describe Elasticsearch::Persistence::Repository::Store do
     context 'when the document does not exist' do
 
       before do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!()
       end
 
       it 'raises an exception' do
         expect {
           repository.delete(1)
-        }.to raise_exception(Elasticsearch::Transport::Transport::Errors::NotFound)
+        }.to raise_exception(Elastic::Transport::Transport::Errors::NotFound)
       end
     end
   end

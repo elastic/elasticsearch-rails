@@ -19,9 +19,10 @@ source 'https://rubygems.org'
 
 gem 'ansi'
 gem 'cane'
-gem 'elasticsearch', '~> 7'
+gem 'elasticsearch', '~> 8.7.0'
 gem 'pry'
 gem 'rake', '~> 12'
+gem 'sqlite3'
 
 group :development do
   gem 'rspec'
