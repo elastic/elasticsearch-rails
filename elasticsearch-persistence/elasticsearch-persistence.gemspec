@@ -53,7 +53,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'oj' unless defined?(JRUBY_VERSION)
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'rails', '> 4'
+  s.add_development_dependency 'rails', '~> 7'
   s.add_development_dependency 'rake', '~> 12'
   s.add_development_dependency 'ruby-prof' unless defined?(JRUBY_VERSION)
   s.add_development_dependency 'shoulda-context'

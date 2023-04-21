@@ -52,7 +52,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'pry'
-  s.add_development_dependency 'rails', '> 3.1'
+  s.add_development_dependency 'rails', '~> 7'
   s.add_development_dependency 'rake', '~> 12'
   s.add_development_dependency 'require-prof'
   s.add_development_dependency 'shoulda-context'
