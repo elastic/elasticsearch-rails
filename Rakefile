@@ -163,7 +163,7 @@ task :wait_for_green do
         ready = true
         break
       end
-    rescue Elasticsearch::Transport::Transport::Errors::RequestTimeout => ex
+    rescue Elastic::Transport::Transport::Errors::RequestTimeout => ex
       puts "Couldn't confirm green status.\n#{ex.inspect}."
     rescue Faraday::ConnectionFailed => ex
       puts "Couldn't connect to Elasticsearch.\n#{ex.inspect}."

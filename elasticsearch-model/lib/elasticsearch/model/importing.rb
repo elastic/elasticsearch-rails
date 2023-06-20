@@ -185,8 +185,6 @@ module Elasticsearch
           batch.map { |model| transform.call(model) }
         end
       end
-
     end
-
   end
 end

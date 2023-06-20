@@ -6,18 +6,19 @@ It aims to simplify integration of Ruby classes ("models"), commonly found e.g. 
 
 ## Compatibility
 
-This library is compatible with Ruby 2.4 and higher.
+This library is compatible with Ruby 3 and higher.
 
 The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
 
-| Rubygem       |   | Elasticsearch |
-|:-------------:|:-:| :-----------: |
-| 0.1           | → | 1.x           |
-| 2.x           | → | 2.x           |
-| 5.x           | → | 5.x           |
-| 6.x           | → | 6.x           |
-| 7.x           | → | 7.x           |
-| main          | → | 7.x           |
+| Rubygem |   | Elasticsearch |
+|:-------:|:-:|:-------------:|
+| 0.1     | → | 1.x           |
+| 2.x     | → | 2.x           |
+| 5.x     | → | 5.x           |
+| 6.x     | → | 6.x           |
+| 7.x     | → | 7.x           |
+| 8.x     | → | 8.x           |
+| main    | → | 8.x           |
 
 ## Installation
 
@@ -532,7 +533,7 @@ class Indexer
       when /delete/
         begin
           Client.delete index: 'articles', type: 'article', id: record_id
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        rescue Elastic::Transport::Transport::Errors::NotFound
           logger.debug "Article not found, ID: #{record_id}"
         end
       else raise ArgumentError, "Unknown operation '#{operation}'"
