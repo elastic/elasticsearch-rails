@@ -66,7 +66,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
       end
 
       Article.delete_all
-      Article.__elasticsearch__.create_index!(force: true, include_type_name: true)
+      Article.__elasticsearch__.create_index!(force: true)
 
       Article.create!(title: 'Test', body: '', clicks: 1)
       Article.create!(title: 'Testing Coding', body: '', clicks: 2)
@@ -159,19 +159,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
       end
     end
 
-    describe '#id' do
-
-      let(:search_result) do
-        Article.search('title:test')
-      end
-
-      it 'returns the type' do
-        expect(search_result.results.first.type).to eq('article')
-      end
-    end
-
     describe '#each_with_hit' do
-
       let(:search_result) do
         Article.search('title:test')
       end

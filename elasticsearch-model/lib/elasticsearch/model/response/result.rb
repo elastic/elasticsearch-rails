@@ -40,12 +40,6 @@ module Elasticsearch
           @result['_id']
         end
 
-        # Return document `_type` as `_type`
-        #
-        def type
-          @result['_type']
-        end
-
         # Delegate methods to `@result` or `@result._source`
         #
         def method_missing(name, *arguments)

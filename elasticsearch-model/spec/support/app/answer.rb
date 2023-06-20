@@ -23,7 +23,6 @@ class Answer < ActiveRecord::Base
   JOIN_TYPE = 'answer'.freeze
 
   index_name 'questions_and_answers'.freeze
-  document_type 'doc'.freeze
 
   before_create :randomize_id
 

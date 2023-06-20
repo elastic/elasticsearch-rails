@@ -44,23 +44,7 @@ describe Elasticsearch::Model::Response::Result do
     end
   end
 
-  describe '#type' do
-
-    let(:result) do
-      described_class.new(foo: 'bar', _type: 'baz', _source: { type: 'BAM' })
-    end
-
-    it 'returns the _type field' do
-      expect(result.type).to eq('baz')
-    end
-
-    it 'provides access to the source type field' do
-      expect(result._source.type).to eq('BAM')
-    end
-  end
-
   describe 'method delegation' do
-
     let(:result) do
       described_class.new(foo: 'bar', _source: { bar: { bam: 'baz' } })
     end

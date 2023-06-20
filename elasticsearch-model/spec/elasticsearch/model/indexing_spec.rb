@@ -38,7 +38,6 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe 'the Settings class' do
-
     it 'should be convertible to a hash' do
       expect(Elasticsearch::Model::Indexing::Settings.new(foo: 'bar').to_hash).to eq(foo: 'bar')
     end
