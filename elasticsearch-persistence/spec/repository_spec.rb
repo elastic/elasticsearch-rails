@@ -562,7 +562,7 @@ describe Elasticsearch::Persistence::Repository do
             it 'raises an error' do
               expect {
                 repository.create_index!
-              }.to raise_exception(Elasticsearch::Transport::Transport::Errors::BadRequest)
+              }.to raise_exception(Elastic::Transport::Transport::Errors::BadRequest)
             end
           end
         end

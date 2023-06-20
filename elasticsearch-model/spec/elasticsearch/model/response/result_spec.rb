@@ -19,7 +19,6 @@ require 'spec_helper'
 require 'active_support/json/encoding'
 
 describe Elasticsearch::Model::Response::Result do
-
   let(:result) do
     described_class.new(foo: 'bar', bar: { bam: 'baz' })
   end
