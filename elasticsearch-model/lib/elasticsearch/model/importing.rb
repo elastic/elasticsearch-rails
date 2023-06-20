@@ -59,7 +59,6 @@ module Elasticsearch
         #         "index" => {
         #           "error" => 'FAILED',
         #           "_index" => "test",
-        #           "_type" => "_doc",
         #           "_id" => '1',
         #           "_version" => 1,
         #           "result" => "foo",
@@ -138,7 +137,6 @@ module Elasticsearch
           errors       = []
           refresh      = options.delete(:refresh)   || false
           target_index = options.delete(:index)     || index_name
-          target_type  = options.delete(:type)      || document_type
           transform    = options.delete(:transform) || __transform
           pipeline     = options.delete(:pipeline)
           return_value = options.delete(:return)    || 'count'
@@ -158,7 +156,6 @@ module Elasticsearch
           __find_in_batches(options) do |batch|
             params = {
               index: target_index,
-              type:  target_type,
               body:  __batch_to_bulk(batch, transform)
             }
 

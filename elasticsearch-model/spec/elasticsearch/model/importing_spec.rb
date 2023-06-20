@@ -57,7 +57,6 @@ describe Elasticsearch::Model::Importing do
   describe '#import' do
     before do
       allow(DummyImportingModel).to receive(:index_name).and_return('foo')
-      allow(DummyImportingModel).to receive(:document_type).and_return('foo')
       allow(DummyImportingModel).to receive(:index_exists?).and_return(true)
       allow(DummyImportingModel).to receive(:__batch_to_bulk)
       allow(client).to receive(:bulk).and_return(response)
@@ -148,22 +147,11 @@ describe Elasticsearch::Model::Importing do
     context 'when a different index name is provided' do
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
-        expect(client).to receive(:bulk).with(body: nil, index: 'my-new-index', type: 'foo').and_return(response)
+        expect(client).to receive(:bulk).with(body: nil, index: 'my-new-index').and_return(response)
       end
 
       it 'uses the alternate index name' do
         expect(DummyImportingModel.import(index: 'my-new-index')).to eq(0)
-      end
-    end
-
-    context 'when a different document type is provided' do
-      before do
-        expect(DummyImportingModel).to receive(:client).and_return(client)
-        expect(client).to receive(:bulk).with(body: nil, index: 'foo', type: 'my-new-type').and_return(response)
-      end
-
-      it 'uses the alternate index name' do
-        expect(DummyImportingModel.import(type: 'my-new-type')).to eq(0)
       end
     end
 
@@ -215,7 +203,7 @@ describe Elasticsearch::Model::Importing do
     context 'when a pipeline is provided as an options' do
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
-        expect(client).to receive(:bulk).with(body: nil, index: 'foo', type: 'foo', pipeline: 'my-pipeline').and_return(response)
+        expect(client).to receive(:bulk).with(body: nil, index: 'foo', pipeline: 'my-pipeline').and_return(response)
       end
 
       it 'uses the pipeline option' do

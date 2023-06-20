@@ -24,7 +24,6 @@ class Question < ActiveRecord::Base
   JOIN_METADATA = { join_field: JOIN_TYPE}.freeze
 
   index_name 'questions_and_answers'.freeze
-  document_type 'doc'.freeze
 
   mapping do
     indexes :title

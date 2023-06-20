@@ -27,7 +27,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Namespaced Model' do
     end
 
     MyNamespace::Book.delete_all
-    MyNamespace::Book.__elasticsearch__.create_index!(force: true, include_type_name: true)
+    MyNamespace::Book.__elasticsearch__.create_index!(force: true)
     MyNamespace::Book.create!(title: 'Test')
     MyNamespace::Book.__elasticsearch__.refresh_index!
   end
@@ -41,10 +41,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Namespaced Model' do
 
     it 'has the proper index name' do
       expect(MyNamespace::Book.index_name).to eq('my_namespace-books')
-    end
-
-    it 'has the proper document type' do
-      expect(MyNamespace::Book.document_type).to eq('book')
     end
 
     it 'saves the document into the index' do
