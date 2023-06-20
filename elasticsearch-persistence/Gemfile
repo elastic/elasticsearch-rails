@@ -25,6 +25,7 @@ gem 'elasticsearch-model',
     require: false
 
 group :development, :testing do
+  gem 'debug'
   gem 'pry-nav'
   gem 'rspec'
 end
