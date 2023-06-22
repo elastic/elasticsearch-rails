@@ -41,9 +41,10 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Serialization' do
     context 'when a document is indexed' do
 
       let(:search_result) do
-        ArticleWithCustomSerialization.__elasticsearch__.client.get(index: 'article_with_custom_serializations',
-                                                                    type:  '_doc',
-                                                                    id:    '1')
+        ArticleWithCustomSerialization.__elasticsearch__.client.get(
+          index: 'article_with_custom_serializations',
+          id:    '1'
+        )
       end
 
       it 'applies the serialization when indexing' do
@@ -54,7 +55,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Serialization' do
     context 'when a document is updated' do
 
       before do
-        article.update_attributes(title: 'UPDATED', status: 'yellow')
+        article.update(title: 'UPDATED', status: 'yellow')
         ArticleWithCustomSerialization.__elasticsearch__.refresh_index!
       end
 
@@ -65,9 +66,10 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Serialization' do
       end
 
       let(:search_result) do
-        ArticleWithCustomSerialization.__elasticsearch__.client.get(index: 'article_with_custom_serializations',
-                                                                    type:  '_doc',
-                                                                    id:    article.id)
+        ArticleWithCustomSerialization.__elasticsearch__.client.get(
+          index: 'article_with_custom_serializations',
+          id:    article.id
+        )
       end
 
       it 'applies the serialization when updating' do
