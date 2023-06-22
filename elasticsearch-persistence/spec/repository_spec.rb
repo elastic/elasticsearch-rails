@@ -18,9 +18,7 @@
 require 'spec_helper'
 
 describe Elasticsearch::Persistence::Repository do
-
   describe '#create' do
-
     before(:all) do
       class RepositoryWithoutDSL
         include Elasticsearch::Persistence::Repository
@@ -38,7 +36,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     context 'when options are provided' do
-
       let(:repository) do
         RepositoryWithoutDSL.create(document_type: 'note')
       end
@@ -49,7 +46,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     context 'when a block is passed' do
-
       let(:repository) do
         RepositoryWithoutDSL.create(document_type: 'note') do
           mapping dynamic: 'strict' do
@@ -59,11 +55,10 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'executes the block on the instance' do
-        expect(repository.mapping.to_hash).to eq(note: { dynamic: 'strict', properties: { foo: { type: 'text' } } })
+        expect(repository.mapping.to_hash).to eq({ dynamic: 'strict', properties: { foo: { type: 'text' } } })
       end
 
       context 'when options are provided in the args and set in the block' do
-
         let(:repository) do
           RepositoryWithoutDSL.create(mapping: double('mapping', to_hash: {}), document_type: 'note') do
             mapping dynamic: 'strict' do
@@ -80,7 +75,6 @@ describe Elasticsearch::Persistence::Repository do
   end
 
   describe '#initialize' do
-
     before(:all) do
       class RepositoryWithoutDSL
         include Elasticsearch::Persistence::Repository
@@ -98,7 +92,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     context 'when options are not provided' do
-
       let(:repository) do
         RepositoryWithoutDSL.new
       end
@@ -118,7 +111,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     context 'when options are provided' do
-
       let(:client) do
         Elasticsearch::Client.new
       end
@@ -146,13 +138,11 @@ describe Elasticsearch::Persistence::Repository do
   end
 
   context 'when the DSL module is included' do
-
     before(:all) do
       class RepositoryWithDSL
         include Elasticsearch::Persistence::Repository
         include Elasticsearch::Persistence::Repository::DSL
 
-        document_type 'note'
         index_name 'notes_repo'
         klass Hash
         client DEFAULT_CLIENT
@@ -179,7 +169,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     context '#client' do
-
       it 'allows the value to be set only once on the class' do
         RepositoryWithDSL.client(double('client', class: 'other_client'))
         expect(RepositoryWithDSL.client).to be(DEFAULT_CLIENT)
@@ -199,7 +188,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     context '#klass' do
-
       it 'allows the value to be set only once on the class' do
         RepositoryWithDSL.klass(Array)
         expect(RepositoryWithDSL.klass).to eq(Hash)
@@ -229,28 +217,7 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    context '#document_type' do
-
-      it 'allows the value to be set only once on the class' do
-        RepositoryWithDSL.document_type('other_note')
-        expect(RepositoryWithDSL.document_type).to eq('note')
-      end
-
-      it 'sets the value at the class level' do
-        expect(RepositoryWithDSL.document_type).to eq('note')
-      end
-
-      it 'sets the value as the default at the instance level' do
-        expect(RepositoryWithDSL.new.document_type).to eq('note')
-      end
-
-      it 'allows the value to be overridden with options on the instance' do
-        expect(RepositoryWithDSL.new(document_type: 'other_note').document_type).to eq('other_note')
-      end
-    end
-
     context '#index_name' do
-
       it 'allows the value to be set only once on the class' do
         RepositoryWithDSL.index_name('other_name')
         expect(RepositoryWithDSL.index_name).to eq('notes_repo')
@@ -270,16 +237,14 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#create_index!' do
-
       context 'when the method is called on an instance' do
-
         let(:repository) do
           RepositoryWithDSL.new
         end
 
         before do
           begin; repository.delete_index!; rescue; end
-          repository.create_index!(include_type_name: true)
+          repository.create_index!
         end
 
         it 'creates the index' do
@@ -288,7 +253,6 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       context 'when the method is called on the class' do
-
         it 'raises a NotImplementedError' do
           expect {
             RepositoryWithDSL.create_index!
@@ -298,9 +262,7 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#delete_index!' do
-
       context 'when the method is called on an instance' do
-
         let(:repository) do
           RepositoryWithDSL.new
         end
@@ -316,7 +278,6 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       context 'when the method is called on the class' do
-
         it 'raises a NotImplementedError' do
           expect {
             RepositoryWithDSL.delete_index!
@@ -326,15 +287,13 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#refresh_index!' do
-
       context 'when the method is called on an instance' do
-
         let(:repository) do
           RepositoryWithDSL.new
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!
         end
 
         it 'refreshes the index' do
@@ -343,7 +302,6 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       context 'when the method is called on the class' do
-
         it 'raises a NotImplementedError' do
           expect {
             RepositoryWithDSL.refresh_index!
@@ -353,15 +311,13 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#index_exists?' do
-
       context 'when the method is called on an instance' do
-
         let(:repository) do
           RepositoryWithDSL.new
         end
 
         before do
-          repository.create_index!(include_type_name: true)
+          repository.create_index!
         end
 
         it 'determines if the index exists' do
@@ -377,7 +333,6 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       context 'when the method is called on the class' do
-
         it 'raises a NotImplementedError' do
           expect {
             RepositoryWithDSL.index_exists?
@@ -387,13 +342,15 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#mapping' do
-
       let(:expected_mapping) do
-        { note: { dynamic: 'strict',
-                  properties: { foo: { type: 'object',
-                                       properties: { bar: { type: 'text' } } },
-                                baz: { type: 'text' } }
-                }
+        {
+          dynamic: 'strict',
+          properties: {
+            foo: {
+              type: 'object',
+              properties: { bar: { type: 'text' } } },
+            baz: { type: 'text' }
+          }
         }
       end
 
@@ -410,7 +367,6 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       context 'when the instance has a different document type' do
-
         let(:expected_mapping) do
           { other_note: { dynamic: 'strict',
                           properties: { foo: { type: 'object',
@@ -427,7 +383,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#settings' do
-
       it 'sets the value at the class level' do
         expect(RepositoryWithDSL.settings.to_hash).to eq(number_of_shards: 1, number_of_replicas: 0)
       end
@@ -443,7 +398,6 @@ describe Elasticsearch::Persistence::Repository do
   end
 
   context 'when the DSL module is not included' do
-
     before(:all) do
       class RepositoryWithoutDSL
         include Elasticsearch::Persistence::Repository
@@ -546,26 +500,6 @@ describe Elasticsearch::Persistence::Repository do
         let(:repository) do
           RepositoryWithoutDSL.new(client: DEFAULT_CLIENT, document_type: 'mytype')
         end
-
-        context 'when the server is version >= 7.0', if: server_version > '7.0' do
-
-          context 'when the include_type_name option is specified' do
-
-            it 'creates an index' do
-              repository.create_index!(include_type_name: true)
-              expect(repository.index_exists?).to eq(true)
-            end
-          end
-
-          context 'when the include_type_name option is not specified' do
-
-            it 'raises an error' do
-              expect {
-                repository.create_index!
-              }.to raise_exception(Elastic::Transport::Transport::Errors::BadRequest)
-            end
-          end
-        end
       end
     end
 
@@ -582,7 +516,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'deletes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
         repository.delete_index!
         expect(repository.index_exists?).to eq(false)
       end
@@ -605,7 +539,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'refreshes an index' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
         expect(repository.refresh_index!['_shards']).to be_a(Hash)
       end
     end
@@ -627,7 +561,7 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       it 'returns whether the index exists' do
-        repository.create_index!(include_type_name: true)
+        repository.create_index!
         expect(repository.index_exists?).to be(true)
       end
     end
@@ -651,10 +585,14 @@ describe Elasticsearch::Persistence::Repository do
       context 'when a block is passed to the create method' do
 
         let(:expected_mapping) do
-          { note: { dynamic: 'strict',
-                    properties: { foo: { type: 'object',
-                                         properties: { bar: { type: 'text' } } },
-                                  baz: { type: 'text' } }
+          {
+            dynamic: 'strict',
+            properties: {
+              foo: {
+                type: 'object',
+                properties: { bar: { type: 'text' } }
+              },
+              baz: { type: 'text' }
             }
           }
         end
@@ -695,7 +633,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#settings' do
-
       it 'does not define the method at the class level' do
         expect {
           RepositoryWithoutDSL.settings
@@ -711,7 +648,6 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       context 'when a block is passed to the #create method' do
-
         let(:repository) do
           RepositoryWithoutDSL.create(document_type: 'note') do
             settings number_of_shards: 1, number_of_replicas: 0
@@ -723,13 +659,16 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         context 'when a mapping is set in the block as well' do
-
           let(:expected_mapping) do
-            { note: { dynamic: 'strict',
-                      properties: { foo: { type: 'object',
-                                           properties: { bar: { type: 'text' } } },
-                                    baz: { type: 'text' } }
-                    }
+            {
+              dynamic: 'strict',
+              properties: {
+                foo: {
+                  type: 'object',
+                  properties: { bar: { type: 'text' } }
+                },
+                baz: { type: 'text' }
+              }
             }
           end
 
