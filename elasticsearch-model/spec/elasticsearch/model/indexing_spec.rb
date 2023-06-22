@@ -125,7 +125,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the \'include_type_name\' option is specified' do
-
         let(:mappings) do
           Elasticsearch::Model::Indexing::Mappings.new(include_type_name: true)
         end
@@ -164,7 +163,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when specific mappings are defined' do
-
       let(:mappings) do
         Elasticsearch::Model::Indexing::Mappings.new(include_type_name: true)
       end
@@ -608,7 +606,7 @@ describe Elasticsearch::Model::Indexing do
       end
     end
 
-    context 'when the index does not exists' do
+    context 'when the index does not exist' do
       let(:client) do
         double('client', indices: double('indices', exists: false))
       end
@@ -634,19 +632,7 @@ describe Elasticsearch::Model::Indexing do
 
     context 'when the index is not found' do
       let(:logger) { nil }
-      let(:transport) do
-        Elastic::Transport::Client.new(logger: logger)
-      end
-
-      let(:client) do
-        double('client', indices: indices, transport: transport)
-      end
-
-      let(:indices) do
-        double('indices').tap do |ind|
-          expect(ind).to receive(:delete).and_raise(NotFound)
-        end
-      end
+      let(:client) { Elasticsearch::Client.new(logger: logger) }
 
       before do
         expect(DummyIndexingModelForRecreate).to receive(:client).at_most(3).times.and_return(client)
@@ -662,16 +648,12 @@ describe Elasticsearch::Model::Indexing do
             Logger.new(STDOUT).tap { |l| l.level = Logger::DEBUG }
           end
 
-          let(:client) do
-            double('client', indices: indices, transport: transport)
-          end
-
           it 'deletes the index without raising an exception' do
             expect(DummyIndexingModelForRecreate.delete_index!(force: true)).to be_nil
           end
 
           it 'logs the message that the index is not found' do
-            expect(logger).to receive(:debug)
+            expect(logger).to receive(:debug).at_least(:once)
             expect(DummyIndexingModelForRecreate.delete_index!(force: true)).to be_nil
           end
         end
@@ -681,7 +663,7 @@ describe Elasticsearch::Model::Indexing do
         it 'raises an exception' do
           expect {
             DummyIndexingModelForRecreate.delete_index!
-          }.to raise_exception(NotFound)
+          }.to raise_exception(Elastic::Transport::Transport::Errors::NotFound)
         end
       end
 
@@ -750,14 +732,12 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the index does not exist' do
-
       before do
         expect(DummyIndexingModelForCreate).to receive(:client).and_return(client)
         expect(DummyIndexingModelForCreate).to receive(:index_exists?).and_return(false)
       end
 
       context 'when options are not provided' do
-
         let(:expected_body) do
           { mappings: { properties: { foo: { analyzer: 'keyword',
                                                      type: 'text' } } },
@@ -774,7 +754,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when options are provided' do
-
         let(:expected_body) do
           { mappings: { foobar: { properties: { foo: { analyzer: 'bar' } } } },
             settings: { index: { number_of_shards: 3 } } }
@@ -795,7 +774,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the index exists' do
-
       before do
         expect(DummyIndexingModelForCreate).to receive(:index_exists?).and_return(true)
         expect(indices).to receive(:create).never
@@ -864,15 +842,7 @@ describe Elasticsearch::Model::Indexing do
     end
 
     let(:client) do
-      double('client', indices: indices, transport: transport)
-    end
-
-    let(:transport) do
-      Elastic::Transport::Client.new(logger: nil)
-    end
-
-    let(:indices) do
-      double('indices')
+      Elasticsearch::Client.new(logger: nil)
     end
 
     before do
@@ -882,7 +852,7 @@ describe Elasticsearch::Model::Indexing do
     context 'when the force option is true' do
       context 'when the operation raises a NotFound exception' do
         before do
-          expect(indices).to receive(:refresh).and_raise(NotFound)
+          expect(client).to receive_message_chain(:indices, :refresh).and_raise(NotFound)
         end
 
         it 'does not raise an exception' do
@@ -895,11 +865,7 @@ describe Elasticsearch::Model::Indexing do
           end
 
           let(:client) do
-            double('client', indices: indices, transport: transport)
-          end
-
-          let(:transport) do
-            Elastic::Transport::Client.new(logger: logger)
+            Elasticsearch::Client.new(logger: logger)
           end
 
           it 'does not raise an exception' do
@@ -915,7 +881,7 @@ describe Elasticsearch::Model::Indexing do
 
       context 'when the operation raises another type of exception' do
         before do
-          expect(indices).to receive(:refresh).and_raise(Exception)
+          expect(client).to receive_message_chain(:indices, :refresh).and_raise(Exception)
         end
 
         it 'does not raise an exception' do
@@ -928,7 +894,7 @@ describe Elasticsearch::Model::Indexing do
 
     context 'when an index name is provided in the options' do
       before do
-        expect(indices).to receive(:refresh).with(index: 'custom-foo')
+        expect(client).to receive_message_chain(:indices, :refresh).with(index: 'custom-foo')
       end
 
       it 'uses the index name' do
