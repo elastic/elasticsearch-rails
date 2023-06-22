@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Indexing do
-
   before(:all) do
     class ::DummyIndexingModel
       extend ActiveModel::Naming
@@ -48,13 +47,11 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe '#settings' do
-
     it 'returns an instance of the Settings class' do
       expect(DummyIndexingModel.settings).to be_a(Elasticsearch::Model::Indexing::Settings)
     end
 
     context 'when the settings are updated' do
-
       before do
         DummyIndexingModel.settings(foo: 'boo')
         DummyIndexingModel.settings(bar: 'bam')
@@ -66,7 +63,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the settings are updated with a yml file' do
-
       before do
         DummyIndexingModel.settings File.open('spec/support/model.yml')
         DummyIndexingModel.settings bar: 'bam'
@@ -78,7 +74,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the settings are updated with a json file' do
-
       before do
         DummyIndexingModel.settings File.open('spec/support/model.json')
         DummyIndexingModel.settings bar: 'bam'
@@ -91,9 +86,8 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe '#mappings' do
-
     let(:expected_mapping_hash) do
-      { :mytype => { foo: 'bar', :properties => {} } }
+      { foo: 'bar', :properties => {} }
     end
 
     it 'returns an instance of the Mappings class' do
@@ -105,17 +99,16 @@ describe Elasticsearch::Model::Indexing do
     end
 
     it 'should be convertible to a hash' do
-      expect(Elasticsearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).to_hash).to eq(expected_mapping_hash)
+      expect(Elasticsearch::Model::Indexing::Mappings.new({ foo: 'bar' }).to_hash).to eq(expected_mapping_hash)
     end
 
     it 'should be convertible to json' do
-      expect(Elasticsearch::Model::Indexing::Mappings.new(:mytype, { foo: 'bar' }).as_json).to eq(expected_mapping_hash)
+      expect(Elasticsearch::Model::Indexing::Mappings.new({ foo: 'bar' }).as_json).to eq(expected_mapping_hash)
     end
 
     context 'when a type is specified' do
-
       let(:mappings) do
-        Elasticsearch::Model::Indexing::Mappings.new(:mytype)
+        Elasticsearch::Model::Indexing::Mappings.new
       end
 
       before do
@@ -124,17 +117,17 @@ describe Elasticsearch::Model::Indexing do
       end
 
       it 'creates the correct mapping definition' do
-        expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('boolean')
+        expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
       end
 
       it 'uses text as the default field type' do
-        expect(mappings.to_hash[:mytype][:properties][:bar][:type]).to eq('text')
+        expect(mappings.to_hash[:properties][:bar][:type]).to eq('text')
       end
 
       context 'when the \'include_type_name\' option is specified' do
 
         let(:mappings) do
-          Elasticsearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
+          Elasticsearch::Model::Indexing::Mappings.new(include_type_name: true)
         end
 
         before do
@@ -142,17 +135,16 @@ describe Elasticsearch::Model::Indexing do
         end
 
         it 'creates the correct mapping definition' do
-          expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('boolean')
+          expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
         end
 
         it 'sets the \'include_type_name\' option' do
-          expect(mappings.to_hash[:mytype][:include_type_name]).to eq(true)
+          expect(mappings.to_hash[:include_type_name]).to eq(true)
         end
       end
     end
 
     context 'when a type is not specified' do
-
       let(:mappings) do
         Elasticsearch::Model::Indexing::Mappings.new
       end
@@ -174,7 +166,7 @@ describe Elasticsearch::Model::Indexing do
     context 'when specific mappings are defined' do
 
       let(:mappings) do
-        Elasticsearch::Model::Indexing::Mappings.new(:mytype, include_type_name: true)
+        Elasticsearch::Model::Indexing::Mappings.new(include_type_name: true)
       end
 
       before do
@@ -183,15 +175,14 @@ describe Elasticsearch::Model::Indexing do
       end
 
       it 'creates the correct mapping definition' do
-        expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('boolean')
+        expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
       end
 
       it 'uses text as the default type' do
-        expect(mappings.to_hash[:mytype][:properties][:bar][:type]).to eq('text')
+        expect(mappings.to_hash[:properties][:bar][:type]).to eq('text')
       end
 
       context 'when mappings are defined for multiple fields' do
-
         before do
           mappings.indexes :my_field, type: 'text' do
             indexes :raw, type: 'keyword'
@@ -199,14 +190,13 @@ describe Elasticsearch::Model::Indexing do
         end
 
         it 'defines the mapping for all the fields' do
-          expect(mappings.to_hash[:mytype][:properties][:my_field][:type]).to eq('text')
-          expect(mappings.to_hash[:mytype][:properties][:my_field][:fields][:raw][:type]).to eq('keyword')
-          expect(mappings.to_hash[:mytype][:properties][:my_field][:fields][:raw][:properties]).to be_nil
+          expect(mappings.to_hash[:properties][:my_field][:type]).to eq('text')
+          expect(mappings.to_hash[:properties][:my_field][:fields][:raw][:type]).to eq('keyword')
+          expect(mappings.to_hash[:properties][:my_field][:fields][:raw][:properties]).to be_nil
         end
       end
 
       context 'when embedded properties are defined' do
-
         before do
           mappings.indexes :foo do
             indexes :bar
@@ -226,31 +216,30 @@ describe Elasticsearch::Model::Indexing do
         end
 
         it 'defines mappings for the embedded properties' do
-          expect(mappings.to_hash[:mytype][:properties][:foo][:type]).to eq('object')
-          expect(mappings.to_hash[:mytype][:properties][:foo][:properties][:bar][:type]).to eq('text')
-          expect(mappings.to_hash[:mytype][:properties][:foo][:fields]).to be_nil
+          expect(mappings.to_hash[:properties][:foo][:type]).to eq('object')
+          expect(mappings.to_hash[:properties][:foo][:properties][:bar][:type]).to eq('text')
+          expect(mappings.to_hash[:properties][:foo][:fields]).to be_nil
 
-          expect(mappings.to_hash[:mytype][:properties][:foo_object][:type]).to eq('object')
-          expect(mappings.to_hash[:mytype][:properties][:foo_object][:properties][:bar][:type]).to eq('text')
-          expect(mappings.to_hash[:mytype][:properties][:foo_object][:fields]).to be_nil
+          expect(mappings.to_hash[:properties][:foo_object][:type]).to eq('object')
+          expect(mappings.to_hash[:properties][:foo_object][:properties][:bar][:type]).to eq('text')
+          expect(mappings.to_hash[:properties][:foo_object][:fields]).to be_nil
 
-          expect(mappings.to_hash[:mytype][:properties][:foo_nested][:type]).to eq('nested')
-          expect(mappings.to_hash[:mytype][:properties][:foo_nested][:properties][:bar][:type]).to eq('text')
-          expect(mappings.to_hash[:mytype][:properties][:foo_nested][:fields]).to be_nil
+          expect(mappings.to_hash[:properties][:foo_nested][:type]).to eq('nested')
+          expect(mappings.to_hash[:properties][:foo_nested][:properties][:bar][:type]).to eq('text')
+          expect(mappings.to_hash[:properties][:foo_nested][:fields]).to be_nil
 
-          expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:type]).to eq(:nested)
-          expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:properties]).not_to be_nil
-          expect(mappings.to_hash[:mytype][:properties][:foo_nested_as_symbol][:fields]).to be_nil
+          expect(mappings.to_hash[:properties][:foo_nested_as_symbol][:type]).to eq(:nested)
+          expect(mappings.to_hash[:properties][:foo_nested_as_symbol][:properties]).not_to be_nil
+          expect(mappings.to_hash[:properties][:foo_nested_as_symbol][:fields]).to be_nil
         end
 
         it 'defines the settings' do
-          expect(mappings.to_hash[:mytype][:include_type_name]).to be(true)
+          expect(mappings.to_hash[:include_type_name]).to be(true)
         end
       end
     end
 
     context 'when the method is called on a class' do
-
       before do
         DummyIndexingModel.mappings(foo: 'boo')
         DummyIndexingModel.mappings(bar: 'bam')
@@ -265,7 +254,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the method is called with a block' do
-
         before do
           DummyIndexingModel.mapping do
             indexes :foo, type: 'boolean'
@@ -278,16 +266,14 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the class has a document_type' do
-
         before do
           DummyIndexingModel.instance_variable_set(:@mapping, nil)
-          DummyIndexingModel.document_type(:mytype)
           DummyIndexingModel.mappings(foo: 'boo')
           DummyIndexingModel.mappings(bar: 'bam')
         end
 
         let(:expected_mappings_hash) do
-          { mytype: { foo: "boo", bar: "bam", properties: {} } }
+          { foo: "boo", bar: "bam", properties: {} }
         end
 
         it 'sets the mappings' do
@@ -298,7 +284,6 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe 'instance methods' do
-
     before(:all) do
       class ::DummyIndexingModelWithCallbacks
         extend  Elasticsearch::Model::Indexing::ClassMethods
@@ -365,9 +350,7 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the module is included' do
-
       context 'when the model uses the old ActiveModel::Dirty' do
-
         before do
           DummyIndexingModelWithOldDirty.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
         end
@@ -389,7 +372,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the model users the current ActiveModel::Dirty' do
-
         before do
           DummyIndexingModelWithCallbacks.__send__ :include, Elasticsearch::Model::Indexing::InstanceMethods
         end
@@ -412,12 +394,10 @@ describe Elasticsearch::Model::Indexing do
     end
 
     describe '#index_document' do
-
       before do
         expect(instance).to receive(:client).and_return(client)
         expect(instance).to receive(:as_indexed_json).and_return('JSON')
         expect(instance).to receive(:index_name).and_return('foo')
-        expect(instance).to receive(:document_type).twice.and_return('bar')
         expect(instance).to receive(:id).and_return('1')
       end
 
@@ -430,9 +410,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when no options are passed to the method' do
-
         before do
-          expect(client).to receive(:index).with(index: 'foo', type: 'bar', id: '1', body: 'JSON').and_return(true)
+          expect(client).to receive(:index).with({ index: 'foo', id: '1', body: 'JSON' }).and_return(true)
         end
 
         it 'provides the method on an instance' do
@@ -441,9 +420,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when extra options are passed to the method' do
-
         before do
-          expect(client).to receive(:index).with(index: 'foo', type: 'bar', id: '1', body: 'JSON', parent: 'A').and_return(true)
+          expect(client).to receive(:index).with({ index: 'foo', id: '1', body: 'JSON', parent: 'A' }).and_return(true)
         end
 
         it 'passes the extra options to the method call on the client' do
@@ -453,11 +431,9 @@ describe Elasticsearch::Model::Indexing do
     end
 
     describe '#delete_document' do
-
       before do
         expect(instance).to receive(:client).and_return(client)
         expect(instance).to receive(:index_name).and_return('foo')
-        expect(instance).to receive(:document_type).twice.and_return('bar')
         expect(instance).to receive(:id).and_return('1')
       end
 
@@ -470,9 +446,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when no options are passed to the method' do
-
         before do
-          expect(client).to receive(:delete).with(index: 'foo', type: 'bar', id: '1').and_return(true)
+          expect(client).to receive(:delete).with({ index: 'foo', id: '1' }).and_return(true)
         end
 
         it 'provides the method on an instance' do
@@ -481,9 +456,8 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when extra options are passed to the method' do
-
         before do
-          expect(client).to receive(:delete).with(index: 'foo', type: 'bar', id: '1', parent: 'A').and_return(true)
+          expect(client).to receive(:delete).with({ index: 'foo', id: '1', parent: 'A' }).and_return(true)
         end
 
         it 'passes the extra options to the method call on the client' do
@@ -493,7 +467,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     describe '#update_document' do
-
       let(:client) do
         double('client')
       end
@@ -503,7 +476,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when no changes are present' do
-
         before do
           expect(instance).to receive(:index_document).and_return(true)
           expect(client).to receive(:update).never
@@ -516,19 +488,16 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when changes are present' do
-
         before do
           allow(instance).to receive(:client).and_return(client)
           allow(instance).to receive(:index_name).and_return('foo')
-          allow(instance).to receive(:document_type).and_return('bar')
           allow(instance).to receive(:id).and_return('1')
         end
 
         context 'when the changes are included in the as_indexed_json representation' do
-
           before do
             instance.instance_variable_set(:@__changed_model_attributes, { foo: 'bar' })
-            expect(client).to receive(:update).with(index: 'foo', type: 'bar', id: '1', body: { doc: { foo: 'bar' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { foo: 'bar' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -537,14 +506,13 @@ describe Elasticsearch::Model::Indexing do
         end
 
         context 'when the changes are not all included in the as_indexed_json representation' do
-
           let(:instance) do
             DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
           end
 
           before do
             instance.instance_variable_set(:@__changed_model_attributes, {'foo' => 'B', 'bar' => 'D' })
-            expect(client).to receive(:update).with(index: 'foo', type: 'bar', id: '1', body: { doc: { foo: 'B' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { foo: 'B' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -553,7 +521,6 @@ describe Elasticsearch::Model::Indexing do
         end
 
         context 'when none of the changes are included in the as_indexed_json representation' do
-
           let(:instance) do
             DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
           end
@@ -568,7 +535,6 @@ describe Elasticsearch::Model::Indexing do
         end
 
         context 'when there are partial updates' do
-
           let(:instance) do
             DummyIndexingModelWithCallbacksAndCustomAsIndexedJson.new
           end
@@ -576,7 +542,7 @@ describe Elasticsearch::Model::Indexing do
           before do
             instance.instance_variable_set(:@__changed_model_attributes, { 'foo' => { 'bar' => 'BAR'} })
             expect(instance).to receive(:as_indexed_json).and_return('foo' => 'BAR')
-            expect(client).to receive(:update).with(index: 'foo', type: 'bar', id: '1', body: { doc: { 'foo' => 'BAR' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { 'foo' => 'BAR' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -587,7 +553,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     describe '#update_document_attributes' do
-
       let(:client) do
         double('client')
       end
@@ -597,19 +562,16 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when changes are present' do
-
         before do
           expect(instance).to receive(:client).and_return(client)
           expect(instance).to receive(:index_name).and_return('foo')
-          expect(instance).to receive(:document_type).twice.and_return('bar')
           expect(instance).to receive(:id).and_return('1')
           instance.instance_variable_set(:@__changed_model_attributes, { author: 'john' })
         end
 
         context 'when no options are specified' do
-
           before do
-            expect(client).to receive(:update).with(index: 'foo', type: 'bar', id: '1', body: { doc: { title: 'green' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { title: 'green' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -618,9 +580,8 @@ describe Elasticsearch::Model::Indexing do
         end
 
         context 'when extra options are provided' do
-
           before do
-            expect(client).to receive(:update).with(index: 'foo', type: 'bar', id: '1', body: { doc: { title: 'green' } }, refresh: true).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { title: 'green' } }, refresh: true }).and_return(true)
           end
 
           it 'updates the document' do
@@ -632,7 +593,6 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe '#index_exists?' do
-
     before do
       expect(DummyIndexingModel).to receive(:client).and_return(client)
     end
@@ -649,7 +609,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when the index does not exists' do
-
       let(:client) do
         double('client', indices: double('indices', exists: false))
       end
@@ -661,7 +620,6 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe '#delete_index!' do
-
     before(:all) do
       class ::DummyIndexingModelForRecreate
         extend ActiveModel::Naming
@@ -720,7 +678,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the force option is not provided' do
-
         it 'raises an exception' do
           expect {
             DummyIndexingModelForRecreate.delete_index!
@@ -729,7 +686,6 @@ describe Elasticsearch::Model::Indexing do
       end
 
       context 'when the exception is not NotFound' do
-
         let(:indices) do
           double('indices').tap do |ind|
             expect(ind).to receive(:delete).and_raise(Exception)
@@ -745,7 +701,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when an index name is provided in the options' do
-
       before do
         expect(DummyIndexingModelForRecreate).to receive(:client).and_return(client)
         expect(indices).to receive(:delete).with(index: 'custom-foo')
@@ -766,7 +721,6 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe '#create_index' do
-
     before(:all) do
       class ::DummyIndexingModelForCreate
         extend ActiveModel::Naming
@@ -811,7 +765,7 @@ describe Elasticsearch::Model::Indexing do
         end
 
         before do
-          expect(indices).to receive(:create).with(index: 'foo', body: expected_body).and_return(true)
+          expect(indices).to receive(:create).with({ index: 'foo', body: expected_body }).and_return(true)
         end
 
         it 'creates the index' do
@@ -827,7 +781,7 @@ describe Elasticsearch::Model::Indexing do
         end
 
         before do
-          expect(indices).to receive(:create).with(index: 'foobar', body: expected_body).and_return(true)
+          expect(indices).to receive(:create).with({ index: 'foobar', body: expected_body }).and_return(true)
         end
 
         it 'creates the index' do
@@ -853,7 +807,6 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when creating the index raises an exception' do
-
       before do
         expect(DummyIndexingModelForCreate).to receive(:client).and_return(client)
         expect(DummyIndexingModelForCreate).to receive(:delete_index!).and_return(true)
@@ -869,11 +822,10 @@ describe Elasticsearch::Model::Indexing do
     end
 
     context 'when an index name is provided in the options' do
-
       before do
         expect(DummyIndexingModelForCreate).to receive(:client).and_return(client).twice
         expect(indices).to receive(:exists).and_return(false)
-        expect(indices).to receive(:create).with(index: 'custom-foo', body: expected_body)
+        expect(indices).to receive(:create).with({ index: 'custom-foo', body: expected_body })
       end
 
       let(:expected_body) do
@@ -891,7 +843,6 @@ describe Elasticsearch::Model::Indexing do
   end
 
   describe '#refresh_index!' do
-
     before(:all) do
       class ::DummyIndexingModelForRefresh
         extend ActiveModel::Naming
