@@ -26,10 +26,12 @@ module ParentChildSearchable
     settings = Question.settings.to_hash.merge Answer.settings.to_hash
     mapping_properties = { join_field: { type: JOIN,
                                          relations: { Question::JOIN_TYPE => Answer::JOIN_TYPE } } }
-
-    merged_properties = mapping_properties.merge(Question.mappings.to_hash[:doc][:properties]).merge(
-        Answer.mappings.to_hash[:doc][:properties])
-    mappings = { doc: { properties: merged_properties }}
+    merged_properties = mapping_properties.merge(
+      Question.mappings.to_hash[:properties]
+    ).merge(
+      Answer.mappings.to_hash[:properties]
+    )
+    mappings = { properties: merged_properties }
 
     client.indices.create({ index: INDEX_NAME,
                             body: {
