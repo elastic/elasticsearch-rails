@@ -65,7 +65,6 @@ describe Elasticsearch::Model do
       expect(DummyIncludingModel).to respond_to(:mapping)
       expect(DummyIncludingModel).to respond_to(:settings)
       expect(DummyIncludingModel).to respond_to(:index_name)
-      expect(DummyIncludingModel).to respond_to(:document_type)
       expect(DummyIncludingModel).to respond_to(:import)
     end
 
