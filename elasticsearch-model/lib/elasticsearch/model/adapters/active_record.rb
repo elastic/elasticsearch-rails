@@ -18,11 +18,9 @@
 module Elasticsearch
   module Model
     module Adapter
-
       # An adapter for ActiveRecord-based models
       #
       module ActiveRecord
-
         Adapter.register self,
                          lambda { |klass| !!defined?(::ActiveRecord::Base) && klass.respond_to?(:ancestors) && klass.ancestors.include?(::ActiveRecord::Base) }
 
@@ -71,7 +69,6 @@ module Elasticsearch
         end
 
         module Callbacks
-
           # Handle index updates (creating, updating or deleting documents)
           # when the model changes, by hooking into the lifecycle
           #
@@ -87,7 +84,6 @@ module Elasticsearch
         end
 
         module Importing
-
           # Fetch batches of records from the database (used by the import method)
           #
           #
