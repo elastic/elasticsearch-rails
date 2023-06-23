@@ -18,13 +18,10 @@
 require 'spec_helper'
 
 describe 'ActiveSupport::Instrumentation integration' do
-
   before(:all) do
     class DummyInstrumentationModel
       extend Elasticsearch::Model::Searching::ClassMethods
-
-      def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
+      def self.index_name; 'foo'; end
     end
   end
 
@@ -33,10 +30,14 @@ describe 'ActiveSupport::Instrumentation integration' do
   end
 
   let(:response_document) do
-    { 'took' => '5ms',
-      'hits' => { 'total' => 123,
-                  'max_score' => 456,
-                  'hits' => [] } }
+    {
+      'took' => '5ms',
+      'hits' => {
+        'total' => 123,
+        'max_score' => 456,
+        'hits' => []
+      }
+    }
   end
 
   let(:search) do
@@ -53,7 +54,6 @@ describe 'ActiveSupport::Instrumentation integration' do
   end
 
   context 'SearchRequest#execute!' do
-
     it 'wraps the method with instrumentation' do
       expect(search).to respond_to(:execute_without_instrumentation!)
       expect(search).to respond_to(:execute_with_instrumentation!)
@@ -61,14 +61,19 @@ describe 'ActiveSupport::Instrumentation integration' do
   end
 
   context 'Model#search' do
-
     before do
-      expect(ActiveSupport::Notifications).to receive(:instrument).with('search.elasticsearch',
-                                                                        { klass: 'DummyInstrumentationModel',
-                                                                          name: 'Search',
-                                                                          search: { body: query,
-                                                                          index: 'foo',
-                                                                          type: 'bar' } }).and_return({})
+      expect(ActiveSupport::Notifications).
+        to receive(:instrument).
+             with('search.elasticsearch',
+                  {
+                    klass: 'DummyInstrumentationModel',
+                    name: 'Search',
+                    search: {
+                      body: query,
+                      index: 'foo',
+                    }
+                  }
+                 ).and_return({})
     end
 
     let(:query) do
