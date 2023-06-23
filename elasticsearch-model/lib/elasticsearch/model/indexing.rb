@@ -17,7 +17,6 @@
 
 module Elasticsearch
   module Model
-
     # Provides the necessary support to set up index options (mappings, settings)
     # as well as instance methods to create, update or delete documents in the index.
     #
@@ -29,7 +28,6 @@ module Elasticsearch
     # @see InstanceMethods#delete_document
     #
     module Indexing
-
       # Wraps the [index settings](https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html)
       #
       class Settings

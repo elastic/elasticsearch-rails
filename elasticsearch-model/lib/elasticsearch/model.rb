@@ -62,7 +62,6 @@ when defined?(::WillPaginate)
 end
 
 module Elasticsearch
-
   # Elasticsearch integration for Ruby models
   # =========================================
   #
@@ -108,7 +107,6 @@ module Elasticsearch
     def self.included(base)
       base.class_eval do
         include Elasticsearch::Model::Proxy
-
         # Delegate common methods to the `__elasticsearch__` ClassMethodsProxy, unless they are defined already
         class << self
           METHODS.each do |method|

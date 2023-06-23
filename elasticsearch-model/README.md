@@ -269,8 +269,8 @@ It is possible to search across multiple models with the module method:
 ```ruby
 Elasticsearch::Model.search('fox', [Article, Comment]).results.to_a.map(&:to_hash)
 # => [
-#      {"_index"=>"articles", "_type"=>"article", "_id"=>"1", "_score"=>0.35136628, "_source"=>...},
-#      {"_index"=>"comments", "_type"=>"comment", "_id"=>"1", "_score"=>0.35136628, "_source"=>...}
+#      {"_index"=>"articles", "_id"=>"1", "_score"=>0.35136628, "_source"=>...},
+#      {"_index"=>"comments", "_id"=>"1", "_score"=>0.35136628, "_source"=>...}
 #    ]
 
 Elasticsearch::Model.search('fox', [Article, Comment]).records.to_a
@@ -415,13 +415,11 @@ Article.__elasticsearch__.create_index! force: true
 Article.__elasticsearch__.refresh_index!
 ```
 
-By default, index name and document type will be inferred from your class name,
-you can set it explicitly, however:
+By default, index name will be inferred from your class name, you can set it explicitly, however:
 
 ```ruby
 class Article
   index_name    "articles-#{Rails.env}"
-  document_type "post"
 end
 ```
 
@@ -529,10 +527,10 @@ class Indexer
     case operation.to_s
       when /index/
         record = Article.find(record_id)
-        Client.index  index: 'articles', type: 'article', id: record.id, body: record.__elasticsearch__.as_indexed_json
+        Client.index  index: 'articles', id: record.id, body: record.__elasticsearch__.as_indexed_json
       when /delete/
         begin
-          Client.delete index: 'articles', type: 'article', id: record_id
+          Client.delete index: 'articles', id: record_id
         rescue Elastic::Transport::Transport::Errors::NotFound
           logger.debug "Article not found, ID: #{record_id}"
         end
@@ -555,7 +553,7 @@ You'll see the job being processed in the console where you started the _Sidekiq
 Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: ["index", "ID: 7"]
 Indexer JID-eb7e2daf389a1e5e83697128 INFO: PUT http://localhost:9200/articles/article/1 [status:200, request:0.004s, query:n/a]
 Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: > {"id":1,"title":"Updated", ...}
-Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: < {"ok":true,"_index":"articles","_type":"article","_id":"1","_version":6}
+Indexer JID-eb7e2daf389a1e5e83697128 DEBUG: < {"ok":true,"_index":"articles","_id":"1","_version":6}
 Indexer JID-eb7e2daf389a1e5e83697128 INFO: done: 0.006 sec
 ```
 
