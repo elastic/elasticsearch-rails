@@ -43,23 +43,24 @@ describe Elasticsearch::Persistence::Repository::Response::Results do
     { "took" => 2,
       "timed_out" => false,
       "_shards" => {"total" => 5, "successful" => 5, "failed" => 0},
-      "hits" =>
-               { "total" => 2,
-                 "max_score" => 0.19,
-                 "hits" =>
-                           [{"_index" => "my_index",
-                             "_type" => "note",
-                             "_id" => "1",
-                             "_score" => 0.19,
-                             "_source" => {"id" => 1, "title" => "Test 1"}},
-
-                            {"_index" => "my_index",
-                             "_type" => "note",
-                             "_id" => "2",
-                             "_score" => 0.19,
-                             "_source" => {"id" => 2, "title" => "Test 2"}}
-                            ]
-               }
+      "hits" => {
+        "total" => 2,
+        "max_score" => 0.19,
+        "hits" => [
+          {
+            "_index" => "my_index",
+            "_id" => "1",
+            "_score" => 0.19,
+            "_source" => {"id" => 1, "title" => "Test 1"}
+          },
+          {
+            "_index" => "my_index",
+            "_id" => "2",
+            "_score" => 0.19,
+            "_source" => {"id" => 2, "title" => "Test 2"}
+          }
+        ]
+      }
     }
   end
 

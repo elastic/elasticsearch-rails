@@ -35,19 +35,9 @@ describe Elasticsearch::Persistence::Repository do
       expect(RepositoryWithoutDSL.create).to be_a(RepositoryWithoutDSL)
     end
 
-    context 'when options are provided' do
-      let(:repository) do
-        RepositoryWithoutDSL.create(document_type: 'note')
-      end
-
-      it 'sets the options on the instance' do
-        expect(repository.document_type).to eq('note')
-      end
-    end
-
     context 'when a block is passed' do
       let(:repository) do
-        RepositoryWithoutDSL.create(document_type: 'note') do
+        RepositoryWithoutDSL.create do
           mapping dynamic: 'strict' do
             indexes :foo
           end
@@ -60,7 +50,7 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when options are provided in the args and set in the block' do
         let(:repository) do
-          RepositoryWithoutDSL.create(mapping: double('mapping', to_hash: {}), document_type: 'note') do
+          RepositoryWithoutDSL.create(mapping: double('mapping', to_hash: {})) do
             mapping dynamic: 'strict' do
               indexes :foo
             end
@@ -116,15 +106,11 @@ describe Elasticsearch::Persistence::Repository do
       end
 
       let(:repository) do
-        RepositoryWithoutDSL.new(client: client, document_type: 'user', index_name: 'users', klass: Array)
+        RepositoryWithoutDSL.new(client: client, index_name: 'users', klass: Array)
       end
 
       it 'sets the client' do
         expect(repository.client).to be(client)
-      end
-
-      it 'sets document type' do
-        expect(repository.document_type).to eq('user')
       end
 
       it 'sets index name' do
@@ -368,16 +354,19 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when the instance has a different document type' do
         let(:expected_mapping) do
-          { other_note: { dynamic: 'strict',
-                          properties: { foo: { type: 'object',
-                                               properties: { bar: { type: 'text' } } },
-                                        baz: { type: 'text' } }
-                        }
+          {
+            other_note:
+              {
+                dynamic: 'strict',
+                properties: {
+                  foo: {
+                    type: 'object',
+                    properties: { bar: { type: 'text' } }
+                  },
+                  baz: { type: 'text' }
+                }
+              }
           }
-        end
-
-        it 'updates the mapping to use the document type' do
-          expect(RepositoryWithDSL.new(document_type: 'other_note').mapping.to_hash).to eq(expected_mapping)
         end
       end
     end
@@ -444,21 +433,8 @@ describe Elasticsearch::Persistence::Repository do
       end
     end
 
-    context '#document_type' do
-
-      it 'does not define the method at the class level' do
-        expect {
-          RepositoryWithoutDSL.document_type
-        }.to raise_exception(NoMethodError)
-      end
-
-      it 'allows the value to be overridden with options on the instance' do
-        expect(RepositoryWithoutDSL.new(document_type: 'notes').document_type).to eq('notes')
-      end
-    end
 
     context '#index_name' do
-
       it 'does not define the method at the class level' do
         expect {
           RepositoryWithoutDSL.index_name
@@ -475,7 +451,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#create_index!' do
-
       let(:repository) do
         RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
       end
@@ -494,17 +469,9 @@ describe Elasticsearch::Persistence::Repository do
         repository.create_index!
         expect(repository.index_exists?).to eq(true)
       end
-
-      context 'when the repository has a document type defined' do
-
-        let(:repository) do
-          RepositoryWithoutDSL.new(client: DEFAULT_CLIENT, document_type: 'mytype')
-        end
-      end
     end
 
     describe '#delete_index!' do
-
       let(:repository) do
         RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
       end
@@ -523,7 +490,6 @@ describe Elasticsearch::Persistence::Repository do
     end
 
     describe '#refresh_index!' do
-
       let(:repository) do
         RepositoryWithoutDSL.new(client: DEFAULT_CLIENT)
       end
@@ -598,7 +564,7 @@ describe Elasticsearch::Persistence::Repository do
         end
 
         let(:repository) do
-          RepositoryWithoutDSL.create(document_type: 'note') do
+          RepositoryWithoutDSL.create do
             mapping dynamic: 'strict' do
               indexes :foo do
                 indexes :bar
@@ -649,7 +615,7 @@ describe Elasticsearch::Persistence::Repository do
 
       context 'when a block is passed to the #create method' do
         let(:repository) do
-          RepositoryWithoutDSL.create(document_type: 'note') do
+          RepositoryWithoutDSL.create do
             settings number_of_shards: 1, number_of_replicas: 0
           end
         end
@@ -673,7 +639,7 @@ describe Elasticsearch::Persistence::Repository do
           end
 
           let(:repository) do
-            RepositoryWithoutDSL.create(document_type: 'note') do
+            RepositoryWithoutDSL.create do
               settings number_of_shards: 1, number_of_replicas: 0 do
                 mapping dynamic: 'strict' do
                   indexes :foo do
