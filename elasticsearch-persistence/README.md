@@ -237,7 +237,7 @@ You can also override the default configuration with options passed to the initi
 
 ```ruby
 client = Elasticsearch::Client.new(url: 'http://localhost:9250', log: true)
-client.transport.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
+client.transport.logger.formatter = proc { |s, d, p, m| "\e[2m# #{m}\n\e[0m" }
 repository = NoteRepository.new(client: client, index_name: 'notes_development')
 
 repository.create_index!(force: true)
@@ -268,7 +268,7 @@ The repository uses the standard Elasticsearch [client](https://github.com/elast
 ```ruby
 client = Elasticsearch::Client.new(url: 'http://search.server.org')
 repository = NoteRepository.new(client: client)
-repository.client.transport.transport.logger = Logger.new(STDERR)
+repository.client.transport.logger = Logger.new(STDERR)
 repository.client
 # => Elasticsearch::Client
 
