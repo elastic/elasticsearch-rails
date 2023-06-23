@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe Elasticsearch::Persistence::Repository::Store do
-
   let(:repository) do
     DEFAULT_REPOSITORY
   end
@@ -28,7 +27,6 @@ describe Elasticsearch::Persistence::Repository::Store do
   end
 
   describe '#save' do
-
     let(:document) do
       { a: 1 }
     end
@@ -42,7 +40,6 @@ describe Elasticsearch::Persistence::Repository::Store do
     end
 
     context 'when the repository defines a custom serialize method' do
-
       before do
         class OtherNoteRepository
           include Elasticsearch::Persistence::Repository
@@ -70,24 +67,9 @@ describe Elasticsearch::Persistence::Repository::Store do
         expect(repository.find(response['_id'])).to eq('b' => 1)
       end
     end
-
-    context 'when options are provided' do
-
-      let!(:response) do
-        repository.save(document)
-      end
-
-      it 'saves the document using the options' do
-        expect {
-          repository.find(response['_id'])
-        }.to raise_exception(Elasticsearch::Persistence::Repository::DocumentNotFound)
-        expect(repository.find(response['_id'])).to eq('a' => 1)
-      end
-    end
   end
 
   describe '#update' do
-
     before(:all) do
       class Note
         def to_hash
@@ -103,15 +85,12 @@ describe Elasticsearch::Persistence::Repository::Store do
     end
 
     context 'when the document exists' do
-
       let!(:id) do
         repository.save(Note.new)['_id']
       end
 
       context 'when an id is provided' do
-
         context 'when a doc is specified in the options' do
-
           before do
             repository.update(id, doc: { text: 'testing_2' })
           end
@@ -122,7 +101,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when a script is specified in the options' do
-
           before do
             repository.update(id, script: { inline: 'ctx._source.views += 1' })
           end
@@ -133,7 +111,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when params are specified in the options' do
-
           before do
             repository.update(id, script: { inline: 'ctx._source.views += params.count',
                                             params: { count: 2 } })
@@ -145,7 +122,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when upsert is specified in the options' do
-
           before do
             repository.update(id, script: { inline: 'ctx._source.views += 1' },
                                   upsert: { text: 'testing_2' })
@@ -157,7 +133,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when doc_as_upsert is specified in the options' do
-
           before do
             repository.update(id, doc: { text: 'testing_2' },
                                   doc_as_upsert: true)
@@ -170,9 +145,7 @@ describe Elasticsearch::Persistence::Repository::Store do
       end
 
       context 'when a document is provided as the query criteria' do
-
         context 'when no options are provided' do
-
           before do
             repository.update(id: id, text: 'testing_2')
           end
@@ -183,9 +156,7 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when options are provided' do
-
           context 'when a doc is specified in the options' do
-
             before do
               repository.update({ id: id, text: 'testing' }, doc: { text: 'testing_2' })
             end
@@ -196,10 +167,11 @@ describe Elasticsearch::Persistence::Repository::Store do
           end
 
           context 'when a script is specified in the options' do
-
             before do
-              repository.update({ id: id, text: 'testing' },
-                                script: { inline: 'ctx._source.views += 1' })
+              repository.update(
+                { id: id, text: 'testing' },
+                script: { inline: 'ctx._source.views += 1' }
+              )
             end
 
             it 'updates using the id and script from the options' do
@@ -208,7 +180,6 @@ describe Elasticsearch::Persistence::Repository::Store do
           end
 
           context 'when params are specified in the options' do
-
             before do
               repository.update({ id: id, text: 'testing' },
                                 script: { inline: 'ctx._source.views += params.count',
@@ -221,7 +192,6 @@ describe Elasticsearch::Persistence::Repository::Store do
           end
 
           context 'when upsert is specified in the options' do
-
             before do
               repository.update({ id: id, text: 'testing_2' },
                                 doc_as_upsert: true)
@@ -236,9 +206,7 @@ describe Elasticsearch::Persistence::Repository::Store do
     end
 
     context 'when the document does not exist' do
-
       context 'when an id is provided 'do
-
         it 'raises an exception' do
           expect {
             repository.update(1, doc: { text: 'testing_2' })
@@ -246,7 +214,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when upsert is provided' do
-
           before do
             repository.update(1, doc: { text: 'testing' }, doc_as_upsert: true)
           end
@@ -258,7 +225,6 @@ describe Elasticsearch::Persistence::Repository::Store do
       end
 
       context 'when a document is provided' do
-
         it 'raises an exception' do
           expect {
             repository.update(id: 1, text: 'testing_2')
@@ -266,7 +232,6 @@ describe Elasticsearch::Persistence::Repository::Store do
         end
 
         context 'when upsert is provided' do
-
           before do
             repository.update({ id: 1, text: 'testing' }, doc_as_upsert: true)
           end
@@ -280,7 +245,6 @@ describe Elasticsearch::Persistence::Repository::Store do
   end
 
   describe '#delete' do
-
     before(:all) do
       class Note
         def to_hash
@@ -296,13 +260,11 @@ describe Elasticsearch::Persistence::Repository::Store do
     end
 
     context 'when the document exists' do
-
       let!(:id) do
         repository.save(Note.new)['_id']
       end
 
       context 'an id is provided' do
-
         before do
           repository.delete(id)
         end
@@ -315,7 +277,6 @@ describe Elasticsearch::Persistence::Repository::Store do
       end
 
       context 'when a document is provided' do
-
         before do
           repository.delete(id: id, text: 'testing')
         end
@@ -329,7 +290,6 @@ describe Elasticsearch::Persistence::Repository::Store do
     end
 
     context 'when the document does not exist' do
-
       before do
         repository.create_index!
       end

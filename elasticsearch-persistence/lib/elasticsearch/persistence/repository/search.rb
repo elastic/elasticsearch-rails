@@ -60,8 +60,7 @@ module Elasticsearch
         # @return [Elasticsearch::Persistence::Repository::Response::Results]
         #
         def search(query_or_definition, options={})
-          request = { index: index_name,
-                      type: document_type }
+          request = { index: index_name }
           if query_or_definition.respond_to?(:to_hash)
             request[:body] = query_or_definition.to_hash
           elsif query_or_definition.is_a?(String)
@@ -98,8 +97,7 @@ module Elasticsearch
         #
         def count(query_or_definition=nil, options={})
           query_or_definition ||= { query: { match_all: {} } }
-          request = { index: index_name,
-                      type: document_type }
+          request = { index: index_name }
 
           if query_or_definition.respond_to?(:to_hash)
             request[:body] = query_or_definition.to_hash
