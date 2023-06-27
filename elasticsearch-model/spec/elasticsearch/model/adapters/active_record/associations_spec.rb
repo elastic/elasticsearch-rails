@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
-
   before(:all) do
     ActiveRecord::Schema.define(version: 1) do
       create_table :categories do |t|
@@ -76,7 +75,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
   end
 
   context 'when a document is created' do
-
     before do
       Post.create!(title: 'Test')
       Post.create!(title: 'Testing Coding')
@@ -97,9 +95,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
   end
 
   describe 'has_many_and_belongs_to association' do
-
-      context 'when an association is updated' do
-
+    context 'when an association is updated' do
       before do
         post.categories = [category_a,  category_b]
         Post.__elasticsearch__.refresh_index!
@@ -119,20 +115,20 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
 
       let(:search_result) do
         Post.search(query: {
-            bool: {
-                must: {
-                    multi_match: {
-                        fields: ['title'],
-                        query: 'first'
-                    }
-                },
-                filter: {
-                    terms: {
-                        categories: ['One']
-                    }
-                }
-            }
-        } )
+                      bool: {
+                        must: {
+                          multi_match: {
+                            fields: ['title'],
+                            query: 'first'
+                          }
+                        },
+                        filter: {
+                          terms: {
+                            categories: ['One']
+                          }
+                        }
+                      }
+                    } )
       end
 
       it 'applies the update with' do
@@ -144,7 +140,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
     end
 
     context 'when an association is deleted' do
-
       before do
         post.categories = [category_a,  category_b]
         post.categories = [category_b]
@@ -165,20 +160,20 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
 
       let(:search_result) do
         Post.search(query: {
-            bool: {
-                must: {
-                    multi_match: {
-                        fields: ['title'],
-                        query: 'first'
-                    }
-                },
-                filter: {
-                    terms: {
-                        categories: ['One']
-                    }
-                }
-            }
-        } )
+                      bool: {
+                        must: {
+                          multi_match: {
+                            fields: ['title'],
+                            query: 'first'
+                          }
+                        },
+                        filter: {
+                          terms: {
+                            categories: ['One']
+                          }
+                        }
+                      }
+                    } )
       end
 
       it 'applies the update with a reindex' do
@@ -189,9 +184,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
   end
 
   describe 'has_many through association' do
-
     context 'when the association is updated' do
-
       before do
         author_a = Author.where(first_name: "John", last_name: "Smith").first_or_create!
         author_b = Author.where(first_name: "Mary", last_name: "Smith").first_or_create!
@@ -210,33 +203,17 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
         Post.__elasticsearch__.refresh_index!
       end
 
-      context 'if active record is at least 4' do
-
-        let(:search_result) do
-          Post.search('authors.full_name:john')
-        end
-
-        it 'applies the update', if: active_record_at_least_4? do
-          expect(search_result.results.size).to eq(2)
-          expect(search_result.records.size).to eq(2)
-        end
+      let(:search_result) do
+        Post.search('authors.full_name:john')
       end
 
-      context 'if active record is less than 4' do
-
-        let(:search_result) do
-          Post.search('authors.author.full_name:john')
-        end
-
-        it 'applies the update', if: !active_record_at_least_4? do
-          expect(search_result.results.size).to eq(2)
-          expect(search_result.records.size).to eq(2)
-        end
+      it 'applies the update' do
+        expect(search_result.results.size).to eq(2)
+        expect(search_result.records.size).to eq(2)
       end
     end
 
-    context 'when an association is added', if: active_record_at_least_4? do
-
+    context 'when an association is added' do
       before do
         author_a = Author.where(first_name: "John", last_name: "Smith").first_or_create!
         author_b = Author.where(first_name: "Mary", last_name: "Smith").first_or_create!
@@ -262,9 +239,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
   end
 
   describe 'has_many association' do
-
-    context 'when an association is added', if: active_record_at_least_4? do
-
+    context 'when an association is added' do
       before do
         # Create posts
         post_1 = Post.create!(title: "First Post", text: "This is the first post...")
@@ -282,18 +257,18 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
 
       let(:search_result) do
         Post.search(query: {
-            nested: {
-                path: 'comments',
-                query: {
-                    bool: {
-                        must: [
-                            { match: { 'comments.author' => 'john' } },
-                            { match: { 'comments.text'   => 'good' } }
-                        ]
-                    }
-                }
-            }
-        })
+                      nested: {
+                        path: 'comments',
+                        query: {
+                          bool: {
+                            must: [
+                              { match: { 'comments.author' => 'john' } },
+                              { match: { 'comments.text'   => 'good' } }
+                            ]
+                          }
+                        }
+                      }
+                    })
       end
 
       it 'adds the association' do
@@ -303,9 +278,7 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
   end
 
   describe '#touch' do
-
     context 'when a touch callback is defined on the model' do
-
       before do
         # Create categories
         category_a = Category.where(title: "One").first_or_create!
@@ -329,7 +302,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Associations' do
   end
 
   describe '#includes' do
-
     before do
       post_1 = Post.create(title: 'One')
       post_2 = Post.create(title: 'Two')
