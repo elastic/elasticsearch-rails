@@ -327,31 +327,23 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'ordering of SQL queries' do
-
       context 'when order is called on the ActiveRecord query' do
-
         let(:search_result) do
           Article.search query: { match: { title: { query: 'test' } } }
         end
 
-        it 'allows the SQL query to be ordered independent of the Elasticsearch results order', unless: active_record_at_least_4? do
-          expect(search_result.records.order('title DESC').first.title).to eq('Testing Coding')
-          expect(search_result.records.order('title DESC')[0].title).to eq('Testing Coding')
-        end
-
-        it 'allows the SQL query to be ordered independent of the Elasticsearch results order', if: active_record_at_least_4? do
+        it 'allows the SQL query to be ordered independent of the Elasticsearch results order' do
           expect(search_result.records.order(title: :desc).first.title).to eq('Testing Coding')
           expect(search_result.records.order(title: :desc)[0].title).to eq('Testing Coding')
         end
       end
 
       context 'when more methods are chained on the ActiveRecord query' do
-
         let(:search_result) do
           Article.search query: {match: {title: {query: 'test'}}}
         end
 
-        it 'allows the SQL query to be ordered independent of the Elasticsearch results order', if: active_record_at_least_4? do
+        it 'allows the SQL query to be ordered independent of the Elasticsearch results order' do
           expect(search_result.records.distinct.order(title: :desc).first.title).to eq('Testing Coding')
           expect(search_result.records.distinct.order(title: :desc)[0].title).to eq('Testing Coding')
         end

@@ -65,15 +65,6 @@ RSpec.configure do |config|
   end
 end
 
-# Is the ActiveRecord version at least 4.0?
-#
-# @return [ true, false ] Whether the ActiveRecord version is at least 4.0.
-#
-# @since 6.0.1
-def active_record_at_least_4?
-  defined?(::ActiveRecord) && ::ActiveRecord::VERSION::MAJOR >= 4
-end
-
 # Delete all documents from the indices of the provided list of models.
 #
 # @param [ Array<ActiveRecord::Base> ] models The list of models.
