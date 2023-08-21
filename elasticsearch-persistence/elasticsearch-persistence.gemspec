@@ -24,8 +24,8 @@ require 'elasticsearch/persistence/version'
 Gem::Specification.new do |s|
   s.name          = 'elasticsearch-persistence'
   s.version       = Elasticsearch::Persistence::VERSION
-  s.authors       = ['Karel Minarik']
-  s.email         = ['support@elastic.co']
+  s.authors       = ['Elastic Client Library Maintainers']
+  s.email         = ['client-libs@elastic.co']
   s.description   = 'Persistence layer for Ruby models and Elasticsearch.'
   s.summary       = 'Persistence layer for Ruby models and Elasticsearch.'
   s.homepage      = 'https://github.com/elasticsearch/elasticsearch-rails/'
