@@ -23,8 +23,8 @@ require 'elasticsearch/rails/version'
 Gem::Specification.new do |s|
   s.name          = 'elasticsearch-rails'
   s.version       = Elasticsearch::Rails::VERSION
-  s.authors       = ['Karel Minarik']
-  s.email         = ['support@elastic.co']
+  s.authors       = ['Elastic Client Library Maintainers']
+  s.email         = ['client-libs@elastic.co']
   s.description   = 'Ruby on Rails integrations for Elasticsearch.'
   s.summary       = 'Ruby on Rails integrations for Elasticsearch.'
   s.homepage      = 'https://github.com/elasticsearch/elasticsearch-rails/'
