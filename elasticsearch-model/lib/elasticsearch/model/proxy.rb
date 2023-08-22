@@ -14,7 +14,8 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-
+def ruby2_keywords(*) # :nodoc:
+end if RUBY_VERSION < "2.7"
 module Elasticsearch
   module Model
 
@@ -114,10 +115,7 @@ module Elasticsearch
         def initialize(target)
           @target = target
         end
-
-        def ruby2_keywords(*) # :nodoc:
-        end if RUBY_VERSION < "2.7"
-
+        
         # Delegate methods to `@target`. As per [the Ruby 3.0 explanation for keyword arguments](https://www.ruby-lang.org/en/news/2019/12/12/separation-of-positional-and-keyword-arguments-in-ruby-3-0/), the only way to work on Ruby <2.7, and 2.7, and 3.0+ is to use `ruby2_keywords`.
         #
         ruby2_keywords def method_missing(method_name, *arguments, &block)
