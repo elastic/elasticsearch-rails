@@ -56,6 +56,8 @@ namespace :test do
       puts '-' * 80
     end
   end
+
+  task unit: :all
 end
 
 # ----- Documentation tasks ---------------------------------------------------
