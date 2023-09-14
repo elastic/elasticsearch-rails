@@ -53,7 +53,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Parent-Child' do
   end
 
   describe 'has_child search' do
-
     let(:search_result) do
       Question.search(query: { has_child: { type: 'answer', query: { match: { author: 'john' } } } })
     end
@@ -64,7 +63,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Parent-Child' do
   end
 
   describe 'hash_parent search' do
-
     let(:search_result) do
       Answer.search(query: { has_parent: { parent_type: 'question', query: { match: { author: 'john' } } } })
     end
@@ -75,7 +73,6 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Parent-Child' do
   end
 
   context 'when a parent is deleted' do
-
     before do
       Question.where(title: 'First Question').each(&:destroy)
       Question.__elasticsearch__.refresh_index!

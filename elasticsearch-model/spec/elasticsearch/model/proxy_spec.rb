@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Proxy do
-
   before(:all) do
     class ::DummyProxyModel
       include Elasticsearch::Model::Proxy

@@ -97,7 +97,6 @@ module Elasticsearch
       end
 
       module ClassMethods
-
         # Defines mappings for the index
         #
         # @example Define mapping for model
