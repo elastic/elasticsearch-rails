@@ -122,10 +122,9 @@ describe Elasticsearch::Model::Proxy do
       expect(model).to eq(model_target)
       expect(duplicate).to eq(duplicate_target)
     end
-  end
 
-  it 'forwards keyword arguments to target methods' do
-    expect(DummyProxyModel.new.__elasticsearch__.keyword_method(foo: 'bar')).to eq('bar')
+    it 'forwards keyword arguments to target methods' do
+      expect(DummyProxyModel.new.__elasticsearch__.keyword_method(foo: 'bar')).to eq('bar')
+    end
   end
-
 end
