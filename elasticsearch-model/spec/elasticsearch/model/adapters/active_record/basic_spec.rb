@@ -301,11 +301,10 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'access to the response via methods' do
-
       let(:search_result) do
         Article.search(query: { match: { title: { query: 'test' } } },
                        aggregations: {
-                           dates: { date_histogram: { field: 'created_at', interval: 'hour' } },
+                           dates: { date_histogram: { field: 'created_at', calendar_interval: 'hour' } },
                            clicks: { global: {}, aggregations: { min: { min: { field: 'clicks' } } } }
                        },
                        suggest: { text: 'tezt', title: { term: { field: 'title', suggest_mode: 'always' } } })
