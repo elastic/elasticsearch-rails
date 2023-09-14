@@ -30,7 +30,7 @@ gem 'sqlite3' unless defined?(JRUBY_VERSION)
 # gem 'mongoid', '~> 6'
 
 group :development, :testing do
-  gem 'byebug'
+  gem 'debug'
   gem 'pry-nav'
   gem 'rspec'
 end

@@ -24,6 +24,7 @@ gem 'pry'
 gem 'rake', '~> 12'
 
 group :development do
+  gem 'debug'
   gem 'rspec'
   gem 'yard'
 end
