@@ -51,7 +51,6 @@ module Elasticsearch
       class Mappings
         attr_accessor :options
 
-        # @private
         TYPES_WITH_EMBEDDED_PROPERTIES = %w(object nested)
 
         def initialize(options={})
@@ -84,11 +83,7 @@ module Elasticsearch
         end
 
         def to_hash
-          if @type
-            { @type.to_sym => @options.merge( properties: @mapping ) }
-          else
-            @options.merge( properties: @mapping )
-          end
+          @options.merge( properties: @mapping )
         end
 
         def as_json(options={})

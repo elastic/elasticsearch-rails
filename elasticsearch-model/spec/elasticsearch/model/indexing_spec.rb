@@ -94,10 +94,6 @@ describe Elasticsearch::Model::Indexing do
       expect(DummyIndexingModel.mappings).to be_a(Elasticsearch::Model::Indexing::Mappings)
     end
 
-    it 'does not raise an exception when there is no type passed to the #initialize method' do
-      expect(Elasticsearch::Model::Indexing::Mappings.new)
-    end
-
     it 'should be convertible to a hash' do
       expect(Elasticsearch::Model::Indexing::Mappings.new({ foo: 'bar' }).to_hash).to eq(expected_mapping_hash)
     end
@@ -106,44 +102,7 @@ describe Elasticsearch::Model::Indexing do
       expect(Elasticsearch::Model::Indexing::Mappings.new({ foo: 'bar' }).as_json).to eq(expected_mapping_hash)
     end
 
-    context 'when a type is specified' do
-      let(:mappings) do
-        Elasticsearch::Model::Indexing::Mappings.new
-      end
-
-      before do
-        mappings.indexes :foo, { type: 'boolean', include_in_all: false }
-        mappings.indexes :bar
-      end
-
-      it 'creates the correct mapping definition' do
-        expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
-      end
-
-      it 'uses text as the default field type' do
-        expect(mappings.to_hash[:properties][:bar][:type]).to eq('text')
-      end
-
-      context 'when the \'include_type_name\' option is specified' do
-        let(:mappings) do
-          Elasticsearch::Model::Indexing::Mappings.new(include_type_name: true)
-        end
-
-        before do
-          mappings.indexes :foo, { type: 'boolean', include_in_all: false }
-        end
-
-        it 'creates the correct mapping definition' do
-          expect(mappings.to_hash[:properties][:foo][:type]).to eq('boolean')
-        end
-
-        it 'sets the \'include_type_name\' option' do
-          expect(mappings.to_hash[:include_type_name]).to eq(true)
-        end
-      end
-    end
-
-    context 'when a type is not specified' do
+    context 'basic mappings' do
       let(:mappings) do
         Elasticsearch::Model::Indexing::Mappings.new
       end

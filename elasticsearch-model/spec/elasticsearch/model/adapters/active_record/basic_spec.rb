@@ -18,43 +18,7 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Adapter::ActiveRecord do
-
-  context 'when a document_type is not defined for the Model' do
-    before do
-      ActiveRecord::Schema.define(:version => 1) do
-        create_table :article_no_types do |t|
-          t.string   :title
-          t.string   :body
-          t.integer  :clicks, :default => 0
-          t.datetime :created_at, :default => 'NOW()'
-        end
-      end
-
-      ArticleNoType.delete_all
-      ArticleNoType.__elasticsearch__.create_index!(force: true)
-
-      ArticleNoType.create!(title: 'Test', body: '', clicks: 1)
-      ArticleNoType.create!(title: 'Testing Coding', body: '', clicks: 2)
-      ArticleNoType.create!(title: 'Coding', body: '', clicks: 3)
-
-      ArticleNoType.__elasticsearch__.refresh_index!
-    end
-
-    describe 'indexing a document' do
-
-      let(:search_result) do
-        ArticleNoType.search('title:test')
-      end
-
-      it 'allows searching for documents' do
-        expect(search_result.results.size).to be(2)
-        expect(search_result.records.size).to be(2)
-      end
-    end
-  end
-
-  context 'when a document_type is defined for the Model' do
-
+  context 'for the Model' do
     before(:all) do
       ActiveRecord::Schema.define(:version => 1) do
         create_table :articles do |t|
