@@ -31,7 +31,6 @@ describe Elasticsearch::Model::Response::Records do
 
     class DummyModel
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
 
       def self.find(*args)
         DummyCollection.new

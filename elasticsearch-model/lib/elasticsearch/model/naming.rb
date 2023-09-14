@@ -17,15 +17,10 @@
 
 module Elasticsearch
   module Model
-
-    # Provides methods for getting and setting index name and document type for the model
+    # Provides methods for getting and setting index name the model
     #
     module Naming
-
-      DEFAULT_DOC_TYPE = '_doc'.freeze
-
       module ClassMethods
-
         # Get or set the name of the index
         #
         # @example Set the index name for the `Article` model
@@ -64,46 +59,18 @@ module Elasticsearch
           @index_name = name
         end
 
-        # Get or set the document type
-        #
-        # @example Set the document type for the `Article` model
-        #
-        #     class Article
-        #       document_type "my-article"
-        #     end
-        #
-        # @example Directly set the document type for the `Article` model
-        #
-        #     Article.document_type "my-article"
-        #
-        def document_type name=nil
-          @document_type = name || @document_type || implicit(:document_type)
-        end
-
-
-        # Set the document type
-        #
-        # @see document_type
-        #
-        def document_type=(name)
-          @document_type = name
-        end
-
         private
 
-          def implicit(prop)
-            self.send("default_#{prop}")
-          end
+        def implicit(prop)
+          self.send("default_#{prop}")
+        end
 
-          def default_index_name
-            self.model_name.collection.gsub(/\//, '-')
-          end
-
-          def default_document_type; end
+        def default_index_name
+          self.model_name.collection.gsub(/\//, '-')
+        end
       end
 
       module InstanceMethods
-
         # Get or set the index name for the model instance
         #
         # @example Set the index name for an instance of the `Article` model
@@ -129,25 +96,7 @@ module Elasticsearch
         def index_name=(name)
           @index_name = name
         end
-
-        # @example Set the document type for an instance of the `Article` model
-        #
-        #     @article.document_type "my-article"
-        #     @article.__elasticsearch__.update_document
-        #
-        def document_type name=nil
-          @document_type = name || @document_type || self.class.document_type
-        end
-
-        # Set the document type
-        #
-        # @see document_type
-        #
-        def document_type=(name)
-          @document_type = name
-        end
       end
-
     end
   end
 end

@@ -18,13 +18,11 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Adapter::Multiple do
-
   before(:all) do
     class DummyOne
       include Elasticsearch::Model
 
       index_name 'dummy'
-      document_type 'dummy_one'
 
       def self.find(ids)
         ids.map { |id| new(id) }
