@@ -158,11 +158,8 @@ module Elasticsearch
               index: target_index,
               body:  __batch_to_bulk(batch, transform)
             }
-
             params[:pipeline] = pipeline if pipeline
-
             response = client.bulk params
-
             yield response if block_given?
 
             errors +=  response['items'].select { |k, v| k.values.first['error'] }

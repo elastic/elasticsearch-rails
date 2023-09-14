@@ -76,7 +76,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'indexing a document' do
-
       let(:search_result) do
         Article.search('title:test')
       end
@@ -88,7 +87,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe '#results' do
-
       let(:search_result) do
         Article.search('title:test')
       end
@@ -97,12 +95,11 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
         expect(search_result.results.first).to be_a(Elasticsearch::Model::Response::Result)
       end
 
-      it 'prooperly loads the document' do
+      it 'properly loads the document' do
         expect(search_result.results.first.title).to eq('Test')
       end
 
       context 'when the result contains other data' do
-
         let(:search_result) do
           Article.search(query: { match: { title: 'test' } }, highlight: { fields: { title: {} } })
         end
@@ -119,7 +116,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe '#records' do
-
       let(:search_result) do
         Article.search('title:test')
       end
@@ -134,7 +130,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'Enumerable' do
-
       let(:search_result) do
         Article.search('title:test')
       end
@@ -149,7 +144,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe '#id' do
-
       let(:search_result) do
         Article.search('title:test')
       end
@@ -173,7 +167,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'search results order' do
-
       let(:search_result) do
         Article.search(query: { match: { title: 'code' }}, sort: { clicks: :desc })
       end
@@ -196,7 +189,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'a paged collection' do
-
       let(:search_result) do
         Article.search(query: { match: { title: { query: 'test' } } },
                        size: 2,
@@ -212,7 +204,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe '#destroy' do
-
       before do
         Article.create!(title: 'destroy', body: '', clicks: 1)
         Article.__elasticsearch__.refresh_index!
@@ -233,7 +224,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'full document updates' do
-
       before do
         article = Article.create!(title: 'update', body: '', clicks: 1)
         Article.__elasticsearch__.refresh_index!
@@ -254,7 +244,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'attribute updates' do
-
       before do
         article = Article.create!(title: 'update', body: '', clicks: 1)
         Article.__elasticsearch__.refresh_index!
@@ -275,7 +264,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe '#save' do
-
       before do
         article = Article.create!(title: 'save', body: '', clicks: 1)
 
@@ -302,7 +290,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'a DSL search' do
-
       let(:search_result) do
         Article.search(query: { match: { title: { query: 'test' } } })
       end
@@ -314,7 +301,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'chaining SQL queries on response.records' do
-
       let(:search_result) do
         Article.search(query: { match: { title: { query: 'test' } } })
       end

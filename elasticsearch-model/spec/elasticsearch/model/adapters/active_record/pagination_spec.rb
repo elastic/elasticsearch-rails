@@ -18,7 +18,6 @@
 require 'spec_helper'
 
 describe 'Elasticsearch::Model::Adapter::ActiveRecord Pagination' do
-
   before(:all) do
     ActiveRecord::Schema.define(:version => 1) do
       create_table ArticleForPagination.table_name do |t|
@@ -41,48 +40,41 @@ describe 'Elasticsearch::Model::Adapter::ActiveRecord Pagination' do
   end
 
   context 'when no other page is specified' do
-
     let(:records) do
       ArticleForPagination.search('title:test').page(1).records
     end
 
     describe '#size' do
-
       it 'returns the correct size' do
         expect(records.size).to eq(25)
       end
     end
 
     describe '#current_page' do
-
       it 'returns the correct current page' do
         expect(records.current_page).to eq(1)
       end
     end
 
     describe '#prev_page' do
-
       it 'returns the correct previous page' do
         expect(records.prev_page).to be_nil
       end
     end
 
     describe '#next_page' do
-
       it 'returns the correct next page' do
         expect(records.next_page).to eq(2)
       end
     end
 
     describe '#total_pages' do
-
       it 'returns the correct total pages' do
         expect(records.total_pages).to eq(3)
       end
     end
 
     describe '#first_page?' do
-
       it 'returns the correct first page' do
         expect(records.first_page?).to be(true)
       end

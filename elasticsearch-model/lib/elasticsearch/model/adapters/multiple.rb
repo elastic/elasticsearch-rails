@@ -18,7 +18,6 @@
 module Elasticsearch
   module Model
     module Adapter
-
       # An adapter to be used for deserializing results from multiple models,
       # retrieved through `Elasticsearch::Model.search`
       #

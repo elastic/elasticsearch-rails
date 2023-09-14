@@ -44,9 +44,7 @@ describe Elasticsearch::Model::Multimodel do
   end
 
   describe 'the model registry' do
-
     before(:all) do
-
       class JustAModel
         include Elasticsearch::Model
       end

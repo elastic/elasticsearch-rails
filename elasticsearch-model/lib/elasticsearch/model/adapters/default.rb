@@ -18,15 +18,12 @@
 module Elasticsearch
   module Model
     module Adapter
-
       # The default adapter for models which haven't one registered
       #
       module Default
-
         # Module for implementing methods and logic related to fetching records from the database
         #
         module Records
-
           # Return the collection of records fetched from the database
           #
           # By default uses `MyModel#find[1, 2, 3]`
@@ -60,7 +57,6 @@ module Elasticsearch
             raise NotImplemented, "Method not implemented for default adapter"
           end
         end
-
       end
     end
   end
