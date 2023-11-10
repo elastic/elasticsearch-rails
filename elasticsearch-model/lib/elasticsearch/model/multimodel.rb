@@ -48,7 +48,12 @@ module Elasticsearch
       # Adds a model to the registry
       #
       def add(klass)
-        @models << klass
+        # Detect already loaded models and ensure that a duplicate is not stored
+        if i = @models.index{ |_class| _class.name == klass.name }
+          @models[i] = klass
+        else
+          @models << klass
+        end
       end
 
       # Returns a copy of the registered models
