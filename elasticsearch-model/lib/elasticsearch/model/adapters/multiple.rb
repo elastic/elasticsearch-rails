@@ -107,16 +107,14 @@ module Elasticsearch
           #
           def __type_for_hit(hit)
 
-            key = "#{hit[:_index]}::#{hit[:_type]}" if hit[:_type] && hit[:_type] != '_doc'
-            key = hit[:_index] unless key
-
-            # DVB -- not sure the ramifications of this - but do not memoize the model/klass
-            # I do not think that caching the types is necessary, minimal processing savings
-            # at the expense of broken STI autoloading in development, see #848
-            Registry.all.detect do |model|
-              (model.index_name == hit[:_index] && __no_type?(hit)) ||
-                  (model.index_name == hit[:_index] && model.document_type == hit[:_type])
+            key = if hit[:_type] && hit[:_type] != '_doc'
+              "#{hit[:_index]}::#{hit[:_type]}"
+            else
+              hit[:_index]
             end
+
+            # DVB -- #838, refactor the lookup of index name to model into the Registry
+            Registry.lookup(key, hit[:_type])
           end
 
           def __no_type?(hit)
