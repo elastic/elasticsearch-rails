@@ -54,9 +54,9 @@ module Elasticsearch
           end
 
           if body
-            @definition = { index: __index_name, type: __document_type, body: body }.update options
+            @definition = { index: __index_name, type: __document_type, body: body }.compact.update options
           else
-            @definition = { index: __index_name, type: __document_type, q: q }.update options
+            @definition = { index: __index_name, type: __document_type, q: q }.compact.update options
           end
         end
 
