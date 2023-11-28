@@ -145,6 +145,7 @@ module Elasticsearch
           transform    = options.delete(:transform) || __transform
           pipeline     = options.delete(:pipeline)
           return_value = options.delete(:return)    || 'count'
+          max_size     = options.delete(:max_size)  || 10_000_000
 
           unless transform.respond_to?(:call)
             raise ArgumentError,
@@ -159,19 +160,46 @@ module Elasticsearch
           end
 
           __find_in_batches(options) do |batch|
-            params = {
-              index: target_index,
-              type:  target_type,
-              body:  __batch_to_bulk(batch, transform)
-            }
+            batch = __batch_to_bulk(batch, transform)
 
-            params[:pipeline] = pipeline if pipeline
+            until batch.empty?
+              todo = []
+              size = 0
 
-            response = client.bulk params
+              # Accumulate until we hit max size
+              until size > max_size or batch.empty?
+                todo.push batch.shift
+                size += todo.last.to_s.size
+              end
 
-            yield response if block_given?
+              # Put back last one if we went over
+              if size > max_size
+                batch.push todo.pop
+                size -= batch.last.to_s.size
+              end
 
-            errors +=  response['items'].select { |k, v| k.values.first['error'] }
+              # If we got here with nothing to do, we put our only todo back
+              # because it was too big - error.
+              if todo.empty?
+                item = batch.last
+                raise RuntimeError,
+                      "#{target} #{item[:index][:_id]} size #{item.to_s.size} is larger than max_size #{max_size}"
+              end
+
+              params = {
+                index: target_index,
+                type:  target_type,
+                body:  todo
+              }
+
+              params[:pipeline] = pipeline if pipeline
+
+              response = client.bulk params
+
+              yield response if block_given?
+
+              errors +=  response['items'].select { |k, v| k.values.first['error'] }
+            end
           end
 
           self.refresh_index! index: target_index if refresh
