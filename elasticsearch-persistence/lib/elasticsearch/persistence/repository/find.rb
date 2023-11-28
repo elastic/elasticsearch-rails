@@ -64,7 +64,6 @@ module Elasticsearch
         #
         def exists?(id, options={})
           request = { index: index_name, id: id }
-          request[:type] = document_type if document_type
           client.exists(request.merge(options))
         end
 
@@ -84,10 +83,9 @@ module Elasticsearch
         #
         def __find_one(id, options={})
           request = { index: index_name, id: id }
-          request[:type] = document_type if document_type
           document = client.get(request.merge(options))
           deserialize(document)
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        rescue Elastic::Transport::Transport::Errors::NotFound => e
           raise DocumentNotFound, e.message, caller
         end
 
@@ -95,7 +93,6 @@ module Elasticsearch
         #
         def __find_many(ids, options={})
           request = { index: index_name, body: { ids: ids } }
-          request[:type] = document_type if document_type
           documents = client.mget(request.merge(options))
           documents[DOCS].map do |document|
             deserialize(document) if document[FOUND]

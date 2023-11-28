@@ -23,7 +23,6 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
     class ModelClass
       include ::Kaminari::ConfigurationMethods
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
     end
   end
 
@@ -58,7 +57,7 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
       context 'when page is called once' do
 
         let(:search_request) do
-          { index: index_field, from: 25, size: 25, q: '*', type: type_field}
+          { index: index_field, from: 25, size: 25, q: '*'}
         end
 
         before do
@@ -75,11 +74,11 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
       context 'when page is called more than once' do
 
         let(:search_request_one) do
-          { index: index_field, from: 25, size: 25, q: '*', type: type_field}
+          { index: index_field, from: 25, size: 25, q: '*'}
         end
 
         let(:search_request_two) do
-          { index: index_field, from: 75, size: 25, q: '*', type: type_field}
+          { index: index_field, from: 75, size: 25, q: '*'}
         end
 
         before do

@@ -22,7 +22,6 @@ describe Elasticsearch::Model::Response::Results do
   before(:all) do
     class OriginClass
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
     end
   end
 

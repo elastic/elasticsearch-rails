@@ -162,6 +162,14 @@ You can also unit, integration, or both tests for all sub-projects from the top-
 
 The test suite expects an Elasticsearch cluster running on port 9250, and **will delete all the data**.
 
+```
+docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "action.destructive_requires_name=false" elasticsearch:8.7.0
+```
+
+```
+docker run --name mongodb -d mongo:5
+```
+
 ## License
 
 This software is licensed under the Apache 2 license, quoted below.

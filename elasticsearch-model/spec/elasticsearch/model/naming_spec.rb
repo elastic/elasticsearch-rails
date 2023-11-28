@@ -51,11 +51,6 @@ describe 'naming' do
     expect(::MyNamespace::DummyNamingModelInNamespace.new.index_name).to eq('my_namespace-dummy_naming_model_in_namespaces')
   end
 
-  it 'returns nil' do
-    expect(DummyNamingModel.document_type).to be_nil
-    expect(DummyNamingModel.new.document_type).to be_nil
-  end
-
   describe '#index_name' do
 
     context 'when the index name is set on the class' do
@@ -135,68 +130,6 @@ describe 'naming' do
 
       it 'changes the index name' do
         expect(DummyNamingModel.index_name).to eq('foobar_index_y')
-      end
-    end
-  end
-
-  describe '#document_type' do
-
-    it 'returns nil' do
-      expect(DummyNamingModel.document_type).to be_nil
-    end
-
-    context 'when the method is called with an argument' do
-
-      before do
-        DummyNamingModel.document_type 'foo'
-      end
-
-      it 'changes the document type' do
-        expect(DummyNamingModel.document_type).to eq('foo')
-      end
-    end
-
-    context 'when the method is called on an instance' do
-
-      let(:instance) do
-        DummyNamingModel.new
-      end
-
-      before do
-        instance.document_type 'foobar_d'
-      end
-
-      it 'changes the document type' do
-        expect(instance.document_type).to eq('foobar_d')
-      end
-    end
-  end
-
-  describe '#document_type=' do
-
-    context 'when the method is called on the class' do
-
-      before do
-        DummyNamingModel.document_type = 'foo_z'
-      end
-
-      it 'changes the document type' do
-        expect(DummyNamingModel.document_type).to eq('foo_z')
-      end
-    end
-
-    context 'when the method is called on an instance' do
-
-      let(:instance) do
-        DummyNamingModel.new
-      end
-
-      before do
-        instance.document_type = 'foobar_b'
-      end
-
-      it 'changes the document type' do
-        expect(instance.document_type).to eq('foobar_b')
       end
     end
   end

@@ -51,13 +51,12 @@ module Elasticsearch
       # Wraps the [index mappings](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html)
       #
       class Mappings
-        attr_accessor :options, :type
+        attr_accessor :options
 
         # @private
         TYPES_WITH_EMBEDDED_PROPERTIES = %w(object nested)
 
-        def initialize(type = nil, options={})
-          @type    = type
+        def initialize(options={})
           @options = options
           @mapping = {}
         end
@@ -152,7 +151,7 @@ module Elasticsearch
         # when it doesn't already define them. Use the `__elasticsearch__` proxy otherwise.
         #
         def mapping(options={}, &block)
-          @mapping ||= Mappings.new(document_type, options)
+          @mapping ||= Mappings.new(options)
 
           @mapping.options.update(options) unless options.empty?
 
@@ -290,7 +289,7 @@ module Elasticsearch
             self.client.indices.delete index: target_index
           rescue Exception => e
             if e.class.to_s =~ /NotFound/ && options[:force]
-              client.transport.transport.logger.debug("[!!!] Index does not exist (#{e.class})") if client.transport.transport.logger
+              client.transport.logger.debug("[!!!] Index does not exist (#{e.class})") if client.transport.logger
               nil
             else
               raise e
@@ -372,7 +371,6 @@ module Elasticsearch
           request = { index: index_name,
                       id:    id,
                       body:  document }
-          request.merge!(type: document_type) if document_type
 
           client.index(request.merge!(options))
         end
@@ -393,7 +391,6 @@ module Elasticsearch
         def delete_document(options={})
           request = { index: index_name,
                       id:    self.id }
-          request.merge!(type: document_type) if document_type
 
           client.delete(request.merge!(options))
         end
@@ -434,7 +431,6 @@ module Elasticsearch
               request = { index: index_name,
                           id:    self.id,
                           body:  { doc: attributes } }
-              request.merge!(type: document_type) if document_type
 
               client.update(request.merge!(options))
             end
@@ -461,7 +457,6 @@ module Elasticsearch
           request = { index: index_name,
                       id:    self.id,
                       body:  { doc: attributes } }
-          request.merge!(type: document_type) if document_type
 
           client.update(request.merge!(options))
         end

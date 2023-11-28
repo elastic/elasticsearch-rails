@@ -80,18 +80,6 @@ module Elasticsearch
         models.map { |m| m.index_name }
       end
 
-      # Get an Array of document types used for retrieving documents when doing a search across multiple models
-      #
-      # @return [Array] the list of document types used for retrieving documents
-      #
-      def document_type
-        models.map { |m| m.document_type }.compact.presence
-      end
-
-      # Get the client common for all models
-      #
-      # @return Elasticsearch::Transport::Client
-      #
       def client
         Elasticsearch::Model.client
       end

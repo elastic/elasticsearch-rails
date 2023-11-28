@@ -30,6 +30,7 @@ rescue LoadError
 end
 require 'yaml'
 require 'active_record'
+require 'sqlite3'
 
 unless defined?(ELASTICSEARCH_URL)
   ELASTICSEARCH_URL = ENV['ELASTICSEARCH_URL'] || "localhost:#{(ENV['TEST_CLUSTER_PORT'] || 9200)}"

@@ -24,7 +24,6 @@ describe Elasticsearch::Model::Searching::ClassMethods do
       extend Elasticsearch::Model::Searching::ClassMethods
 
       def self.index_name;    'foo'; end
-      def self.document_type; 'bar'; end
     end
   end
 

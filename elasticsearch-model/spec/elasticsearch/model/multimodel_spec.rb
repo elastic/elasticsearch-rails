@@ -24,19 +24,15 @@ describe Elasticsearch::Model::Multimodel do
   end
 
   let(:model_1) do
-    double('Foo', index_name: 'foo_index', document_type: 'foo', to_ary: nil)
+    double('Foo', index_name: 'foo_index', to_ary: nil)
   end
 
   let(:model_2) do
-    double('Bar', index_name: 'bar_index', document_type: 'bar', to_ary: nil)
+    double('Bar', index_name: 'bar_index', to_ary: nil)
   end
 
   it 'has an index name' do
     expect(multimodel.index_name).to eq(['foo_index', 'bar_index'])
-  end
-
-  it 'has an document type' do
-    expect(multimodel.document_type).to eq(['foo', 'bar'])
   end
 
   it 'has a client' do

@@ -54,7 +54,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
   end
 
-  context 'when a document_type is defined for the Model' do
+  context 'when a document_type is defined for the Model ?!' do
 
     before(:all) do
       ActiveRecord::Schema.define(:version => 1) do
@@ -67,7 +67,7 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
       end
 
       Article.delete_all
-      Article.__elasticsearch__.create_index!(force: true, include_type_name: true)
+      Article.__elasticsearch__.create_index!(force: true)
 
       Article.create!(title: 'Test', body: '', clicks: 1)
       Article.create!(title: 'Testing Coding', body: '', clicks: 2)

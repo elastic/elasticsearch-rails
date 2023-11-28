@@ -13,7 +13,7 @@ jobs:
   tests:
     env:
       TEST_ES_SERVER: http://localhost:9200
-      RAILS_VERSIONS: '5.0,6.0'
+      RAILS_VERSIONS: '6.0,7.0'
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
@@ -27,10 +27,11 @@ jobs:
         sudo sysctl -w vm.max_map_count=262144
     - uses: elastic/elastic-github-actions/elasticsearch@master
       with:
-        stack-version: 7.x-SNAPSHOT
+        stack-version: 8.8.0-SNAPSHOT
+        security-enabled: false
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: jruby-9.3
+        ruby-version: jruby-9.4.2.0
     - name: Bundle
       run: |
         sudo apt-get install libsqlite3-dev

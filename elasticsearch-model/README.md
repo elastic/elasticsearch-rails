@@ -414,13 +414,12 @@ Article.__elasticsearch__.create_index! force: true
 Article.__elasticsearch__.refresh_index!
 ```
 
-By default, index name and document type will be inferred from your class name,
+By default, index name will be inferred from your class name,
 you can set it explicitly, however:
 
 ```ruby
 class Article
   index_name    "articles-#{Rails.env}"
-  document_type "post"
 end
 ```
 
@@ -532,7 +531,7 @@ class Indexer
       when /delete/
         begin
           Client.delete index: 'articles', type: 'article', id: record_id
-        rescue Elasticsearch::Transport::Transport::Errors::NotFound
+        rescue Elastic::Transport::Transport::Errors::NotFound
           logger.debug "Article not found, ID: #{record_id}"
         end
       else raise ArgumentError, "Unknown operation '#{operation}'"
@@ -763,9 +762,9 @@ This software is licensed under the Apache 2 license, quoted below.
     the Apache License, Version 2.0 (the "License"); you may
     not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     	http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on an
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
