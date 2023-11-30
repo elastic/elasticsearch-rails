@@ -237,7 +237,7 @@ __END__
 <% @notes.each_with_hit do |note, hit|  %>
   <div class="note">
     <p>
-      <%= hit.highlight && hit.highlight.size > 0 ? hit.highlight.text.first : note.text %>
+      <%= hit[:highlight] && hit[:highlight].size > 0 ? hit[:highlight].text.first : note.text %>
 
       <% note.tags.each do |tag| %> <strong class="t"><%= tag %></strong><% end %>
       <small class="d"><%= Time.parse(note.created_at).strftime('%d/%m/%Y %H:%M') %></small>
