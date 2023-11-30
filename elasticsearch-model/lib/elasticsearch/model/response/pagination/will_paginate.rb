@@ -55,9 +55,11 @@ module Elasticsearch
             param_name = options[:param_name] || :page
             page       = [options[param_name].to_i, 1].max
             per_page   = (options[:per_page] || __default_per_page).to_i
+            total      = options[:total_entries]
 
             search.definition.update size: per_page,
                                      from: (page - 1) * per_page
+            @total_entries = total.to_i if total.present?
             self
           end
 
@@ -94,7 +96,7 @@ module Elasticsearch
           # Returns the total number of results
           #
           def total_entries
-            results.total
+            @total_entries || results.total
           end
 
           # Returns the models's `per_page` value or the default

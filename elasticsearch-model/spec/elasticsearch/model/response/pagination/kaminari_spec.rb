@@ -298,8 +298,20 @@ describe 'Elasticsearch::Model::Response::Response Kaminari' do
         allow(response.results).to receive(:total).and_return(100)
       end
 
-      it 'returns the total number of hits' do
-        expect(response.total_count).to eq(100)
+      context 'when a custom value is not set' do
+        it 'returns the total number of hits' do
+          expect(response.total_count).to eq(100)
+        end
+      end
+
+      context 'when a value is set via the #total method' do
+        before do
+          response.total(50)
+        end
+
+        it 'returns the total number of hits' do
+          expect(response.total_count).to eq(50)
+        end
       end
     end
 
