@@ -21,8 +21,11 @@ desc 'Run unit tests'
 task default: 'test:all'
 task test:    'test:all'
 
-gemfiles = ['5.0.gemfile', '6.0.gemfile']
-gemfiles << '4.0.gemfile' if RUBY_VERSION < '2.7'
+gemfiles = []
+gemfiles += ['4.0.gemfile', '5.0.gemfile'] if RUBY_VERSION < '2.7'
+gemfiles << '6.0.gemfile' if RUBY_VERSION < '3.0'
+gemfiles << '7.1.gemfile' if RUBY_VERSION >= '3.0'
+
 GEMFILES = gemfiles.freeze
 
 namespace :bundle do
@@ -53,7 +56,7 @@ namespace :test do
     gemfiles.each do |gemfile|
       puts "GEMFILE: #{gemfile}"
       sh "BUNDLE_GEMFILE='#{File.expand_path("../gemfiles/#{gemfile}", __FILE__)}' " +
-             " bundle exec rspec"
+             " bundle exec rspec -b"
       puts '-' * 80
     end
   end
