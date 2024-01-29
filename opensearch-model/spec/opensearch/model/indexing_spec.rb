@@ -387,7 +387,7 @@ describe OpenSearch::Model::Indexing do
       context 'when no options are passed to the method' do
 
         before do
-          expect(client).to receive(:index).with(index: 'foo', id: '1', body: 'JSON').and_return(true)
+          expect(client).to receive(:index).with({ index: 'foo', id: '1', body: 'JSON' }).and_return(true)
         end
 
         it 'provides the method on an instance' do
@@ -398,7 +398,7 @@ describe OpenSearch::Model::Indexing do
       context 'when extra options are passed to the method' do
 
         before do
-          expect(client).to receive(:index).with(index: 'foo', id: '1', body: 'JSON', parent: 'A').and_return(true)
+          expect(client).to receive(:index).with({ index: 'foo', id: '1', body: 'JSON', parent: 'A' }).and_return(true)
         end
 
         it 'passes the extra options to the method call on the client' do
@@ -426,7 +426,7 @@ describe OpenSearch::Model::Indexing do
       context 'when no options are passed to the method' do
 
         before do
-          expect(client).to receive(:delete).with(index: 'foo', id: '1').and_return(true)
+          expect(client).to receive(:delete).with({ index: 'foo', id: '1' }).and_return(true)
         end
 
         it 'provides the method on an instance' do
@@ -437,7 +437,7 @@ describe OpenSearch::Model::Indexing do
       context 'when extra options are passed to the method' do
 
         before do
-          expect(client).to receive(:delete).with(index: 'foo', id: '1', parent: 'A').and_return(true)
+          expect(client).to receive(:delete).with({ index: 'foo', id: '1', parent: 'A' }).and_return(true)
         end
 
         it 'passes the extra options to the method call on the client' do
@@ -482,7 +482,7 @@ describe OpenSearch::Model::Indexing do
 
           before do
             instance.instance_variable_set(:@__changed_model_attributes, { foo: 'bar' })
-            expect(client).to receive(:update).with(index: 'foo', id: '1', body: { doc: { foo: 'bar' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { foo: 'bar' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -498,7 +498,7 @@ describe OpenSearch::Model::Indexing do
 
           before do
             instance.instance_variable_set(:@__changed_model_attributes, {'foo' => 'B', 'bar' => 'D' })
-            expect(client).to receive(:update).with(index: 'foo', id: '1', body: { doc: { foo: 'B' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { foo: 'B' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -528,9 +528,9 @@ describe OpenSearch::Model::Indexing do
           end
 
           before do
-            instance.instance_variable_set(:@__changed_model_attributes, { 'foo' => { 'bar' => 'BAR'} })
+            instance.instance_variable_set(:@__changed_model_attributes, { 'foo' => { 'bar' => 'BAR' } })
             expect(instance).to receive(:as_indexed_json).and_return('foo' => 'BAR')
-            expect(client).to receive(:update).with(index: 'foo', id: '1', body: { doc: { 'foo' => 'BAR' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { 'foo' => 'BAR' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -562,7 +562,7 @@ describe OpenSearch::Model::Indexing do
         context 'when no options are specified' do
 
           before do
-            expect(client).to receive(:update).with(index: 'foo', id: '1', body: { doc: { title: 'green' } }).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { title: 'green' } } }).and_return(true)
           end
 
           it 'updates the document' do
@@ -573,7 +573,7 @@ describe OpenSearch::Model::Indexing do
         context 'when extra options are provided' do
 
           before do
-            expect(client).to receive(:update).with(index: 'foo', id: '1', body: { doc: { title: 'green' } }, refresh: true).and_return(true)
+            expect(client).to receive(:update).with({ index: 'foo', id: '1', body: { doc: { title: 'green' } }, refresh: true }).and_return(true)
           end
 
           it 'updates the document' do
@@ -701,7 +701,7 @@ describe OpenSearch::Model::Indexing do
 
       before do
         expect(DummyIndexingModelForRecreate).to receive(:client).and_return(client)
-        expect(indices).to receive(:delete).with(index: 'custom-foo')
+        expect(indices).to receive(:delete).with({ index: 'custom-foo' })
       end
 
       let(:client) do
@@ -764,7 +764,7 @@ describe OpenSearch::Model::Indexing do
         end
 
         before do
-          expect(indices).to receive(:create).with(index: 'foo', body: expected_body).and_return(true)
+          expect(indices).to receive(:create).with({ index: 'foo', body: expected_body }).and_return(true)
         end
 
         it 'creates the index' do
@@ -780,7 +780,7 @@ describe OpenSearch::Model::Indexing do
         end
 
         before do
-          expect(indices).to receive(:create).with(index: 'foobar', body: expected_body).and_return(true)
+          expect(indices).to receive(:create).with({ index: 'foobar', body: expected_body }).and_return(true)
         end
 
         it 'creates the index' do
@@ -826,7 +826,7 @@ describe OpenSearch::Model::Indexing do
       before do
         expect(DummyIndexingModelForCreate).to receive(:client).and_return(client).twice
         expect(indices).to receive(:exists).and_return(false)
-        expect(indices).to receive(:create).with(index: 'custom-foo', body: expected_body)
+        expect(indices).to receive(:create).with({ index: 'custom-foo', body: expected_body })
       end
 
       let(:expected_body) do
@@ -930,7 +930,7 @@ describe OpenSearch::Model::Indexing do
 
     context 'when an index name is provided in the options' do
       before do
-        expect(indices).to receive(:refresh).with(index: 'custom-foo')
+        expect(indices).to receive(:refresh).with({ index: 'custom-foo' })
       end
 
       it 'uses the index name' do

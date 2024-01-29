@@ -133,8 +133,8 @@ describe OpenSearch::Model::Importing do
     context 'when the method is called with the force option' do
 
       before do
-        expect(DummyImportingModel).to receive(:create_index!).with(force: true, index: 'foo').and_return(true)
-        expect(DummyImportingModel).to receive(:__find_in_batches).with(foo: 'bar').and_return(true)
+        expect(DummyImportingModel).to receive(:create_index!).with({ force: true, index: 'foo' }).and_return(true)
+        expect(DummyImportingModel).to receive(:__find_in_batches).with({ foo: 'bar' }).and_return(true)
       end
 
       it 'deletes and creates the index' do
@@ -145,8 +145,8 @@ describe OpenSearch::Model::Importing do
     context 'when the method is called with the refresh option' do
 
       before do
-        expect(DummyImportingModel).to receive(:refresh_index!).with(index: 'foo').and_return(true)
-        expect(DummyImportingModel).to receive(:__find_in_batches).with(foo: 'bar').and_return(true)
+        expect(DummyImportingModel).to receive(:refresh_index!).with({ index: 'foo' }).and_return(true)
+        expect(DummyImportingModel).to receive(:__find_in_batches).with({ foo: 'bar' }).and_return(true)
       end
 
       it 'refreshes the index' do
@@ -158,7 +158,7 @@ describe OpenSearch::Model::Importing do
 
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
-        expect(client).to receive(:bulk).with(body: nil, index: 'my-new-index').and_return(response)
+        expect(client).to receive(:bulk).with({ body: nil, index: 'my-new-index' }).and_return(response)
       end
 
       it 'uses the alternate index name' do
@@ -219,7 +219,7 @@ describe OpenSearch::Model::Importing do
 
       before do
         expect(DummyImportingModel).to receive(:client).and_return(client)
-        expect(client).to receive(:bulk).with(body: nil, index: 'foo', pipeline: 'my-pipeline').and_return(response)
+        expect(client).to receive(:bulk).with({ body: nil, index: 'foo', pipeline: 'my-pipeline' }).and_return(response)
       end
 
       it 'uses the pipeline option' do
