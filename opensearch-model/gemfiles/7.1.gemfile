@@ -33,4 +33,5 @@ gem 'sqlite3' unless defined?(JRUBY_VERSION)
 group :development, :testing do
   gem 'rspec'
   gem 'pry-nav'
+  gem 'byebug'
 end

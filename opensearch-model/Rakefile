@@ -22,8 +22,7 @@ task default: 'test:all'
 task test:    'test:all'
 
 gemfiles = []
-gemfiles += ['4.0.gemfile', '5.0.gemfile'] if RUBY_VERSION < '2.7'
-gemfiles << '6.0.gemfile' if RUBY_VERSION < '3.0'
+gemfiles << '6.1.gemfile' if RUBY_VERSION <= '3.0'
 gemfiles << '7.1.gemfile' if RUBY_VERSION >= '3.0'
 
 GEMFILES = gemfiles.freeze

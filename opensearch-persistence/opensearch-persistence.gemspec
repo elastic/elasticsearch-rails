@@ -23,7 +23,7 @@ require 'opensearch/persistence/version'
 Gem::Specification.new do |s|
   s.name          = "opensearch-persistence"
   s.version       = OpenSearch::Persistence::VERSION
-  s.authors       = ["Compliance Innovations B.V."]
+  s.authors       = ["CDD Solutions B.V."]
   s.email         = ["developers@compliance-innovations.com"]
   s.description   = "Persistence layer for Ruby models and OpenSearch."
   s.summary       = "Persistence layer for Ruby models and OpenSearch."
@@ -38,12 +38,12 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files  = [ "README.md", "LICENSE.txt" ]
   s.rdoc_options      = [ "--charset=UTF-8" ]
 
-  s.required_ruby_version = ">= 1.9.3"
+  s.required_ruby_version = ">= 2.5"
 
   s.add_dependency "opensearch-ruby", '~> 2.0'
   s.add_dependency "opensearch-model"
-  s.add_dependency "activesupport",       '> 4'
-  s.add_dependency "activemodel",         '> 4'
+  s.add_dependency "activesupport",       '>= 6.1'
+  s.add_dependency "activemodel",         '>= 6.1'
   s.add_dependency "hashie"
 
   s.add_development_dependency "bundler"
@@ -51,7 +51,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "oj" unless defined?(JRUBY_VERSION)
 
-  s.add_development_dependency "rails", '> 4'
+  s.add_development_dependency "rails", '>= 6.1'
 
   s.add_development_dependency "minitest"
   s.add_development_dependency "test-unit"
