@@ -52,7 +52,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Serialization' do
     context 'when a document is updated' do
 
       before do
-        article.update_attributes(title: 'UPDATED', status: 'yellow')
+        article.update(title: 'UPDATED', status: 'yellow')
         ArticleWithCustomSerialization.__opensearch__.refresh_index!
       end
 

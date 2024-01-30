@@ -174,7 +174,7 @@ describe OpenSearch::Model::Adapter::Mongoid do
     context 'query criteria specified as a hash' do
 
       before do
-        expect(relation).to receive(:where).with(color: 'red').and_return(relation)
+        expect(relation).to receive(:where).with({ color: 'red' }).and_return(relation)
       end
 
       let(:query) do
