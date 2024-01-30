@@ -18,6 +18,11 @@
 class ::ArticleForPagination < ActiveRecord::Base
   include OpenSearch::Model
 
+  # NOTE: This was added to fix pagination tests in ruby 3. It is not clear why
+  # this is necessary since this should be done automatically by including
+  # `OpenSearch::Model`.
+  include OpenSearch::Model::Importing
+
   scope :published, -> { where(published: true) }
 
   settings index: { number_of_shards: 1, number_of_replicas: 0 } do
