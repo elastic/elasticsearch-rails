@@ -32,7 +32,7 @@ describe 'OpenSearch::Model::Adapter::ActiveRecord Namespaced Model' do
     MyNamespace::Book.__opensearch__.refresh_index!
   end
 
-  after do
+  after(:all) do
     clear_indices(MyNamespace::Book)
     clear_tables(MyNamespace::Book)
   end
