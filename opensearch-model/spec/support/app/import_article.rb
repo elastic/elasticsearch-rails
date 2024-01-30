@@ -17,6 +17,7 @@
 
 class ImportArticle < ActiveRecord::Base
   include OpenSearch::Model
+  include OpenSearch::Model::Importing
 
   scope :popular, -> { where('views >= 5') }
 
