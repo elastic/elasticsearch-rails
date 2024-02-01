@@ -42,7 +42,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     require 'ansi'
     tracer = ::Logger.new(STDERR)
-    tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
+    tracer.formatter = lambda { |s, d, p, m| "#{m&.gsub(/^.*$/) { |n| '   ' + n }&.ansi(:faint)}\n" }
     OpenSearch::Model.client = OpenSearch::Client.new host: OPENSEARCH_URL,
                                                             tracer: (ENV['QUIET'] ? nil : tracer)
     puts "OpenSearch Version: #{OpenSearch::Model.client.info['version']}"
