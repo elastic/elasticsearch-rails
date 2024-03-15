@@ -19,7 +19,7 @@ require 'hashie/mash'
 
 require 'active_support/core_ext/module/delegation'
 
-require 'elasticsearch'
+require 'opensearch-ruby'
 
 require 'elasticsearch/model/version'
 
