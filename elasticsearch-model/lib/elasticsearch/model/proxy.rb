@@ -61,7 +61,7 @@ module Elasticsearch
 
           # Mix the importing module into the `ClassMethodsProxy`
           self.__elasticsearch__.class_eval do
-            include Adapter.from_class(base).importing_mixin
+            extend Adapter.from_class(base).importing_mixin
           end
 
           # Register a callback for storing changed attributes for models which implement
