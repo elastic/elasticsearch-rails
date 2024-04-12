@@ -591,7 +591,7 @@ describe Elasticsearch::Model::Indexing do
 
     context 'when the index is not found' do
       let(:logger) { nil }
-      let(:client) { Elasticsearch::Client.new(logger: logger) }
+      let(:client) { Elasticsearch::Client.new(logger: logger, transport_options: { ssl: { verify: false } }) }
 
       before do
         expect(DummyIndexingModelForRecreate).to receive(:client).at_most(3).times.and_return(client)
