@@ -38,14 +38,16 @@ def admin_client
 
     if test_suite == 'security'
       transport_options.merge!(:ssl => { verify: false,
-                                         ca_path: CERT_DIR })
+                                         ca_path: defined?(CERT_DIR) ? CERT_DIR : nil
+                                       }.compact)
 
       password = ENV['ELASTIC_PASSWORD']
       user = ENV['ELASTIC_USER'] || 'elastic'
-      url = "https://#{user}:#{password}@#{host}:#{port}"
+      url = "https://#{user}:#{password}@#{host || 'localhost'}:#{port || 9200}"
     else
       url = "http://#{host || 'localhost'}:#{port || 9200}"
     end
+    ENV['ELASTICSEARCH_URL'] ||= url
     Elasticsearch::Client.new(host: url, transport_options: transport_options)
   end
 end
@@ -140,7 +142,7 @@ namespace :test do
   end
 
   desc "Run all tests in all subprojects"
-  task all: :wait_for_green do
+  task all: :wait_for_green_or_yellow do
     subprojects.each do |project|
       puts '-'*80
       sh "cd #{project} && " +
@@ -151,20 +153,20 @@ namespace :test do
   end
 end
 
-desc "Wait for elasticsearch cluster to be in green state"
-task :wait_for_green do
+desc "Wait for elasticsearch cluster to be in green or yellow state"
+task :wait_for_green_or_yellow do
   require 'elasticsearch'
 
   ready = nil
   5.times do |i|
     begin
-      puts "Attempting to wait for green status: #{i + 1}"
-      if admin_client.cluster.health(wait_for_status: 'green', timeout: '50s')
+      puts "Attempting to wait for green or yellow status: #{i + 1}"
+      if admin_client.cluster.health(wait_for_status: 'yellow', timeout: '50s')
         ready = true
         break
       end
     rescue Elastic::Transport::Transport::Errors::RequestTimeout => ex
-      puts "Couldn't confirm green status.\n#{ex.inspect}."
+      puts "Couldn't confirm green or yellow status.\n#{ex.inspect}."
     rescue Faraday::ConnectionFailed => ex
       puts "Couldn't connect to Elasticsearch.\n#{ex.inspect}."
       sleep(30)

@@ -36,7 +36,8 @@ RSpec.configure do |config|
     tracer = ::Logger.new(STDERR)
     tracer.formatter = lambda { |s, d, p, m| "#{m.gsub(/^.*$/) { |n| '   ' + n }.ansi(:faint)}\n" }
     Elasticsearch::Model.client = Elasticsearch::Client.new host: ELASTICSEARCH_URL,
-                                                            tracer: (ENV['QUIET'] ? nil : tracer)
+                                                            tracer: (ENV['QUIET'] ? nil : tracer),
+                                                            transport_options: { :ssl => { verify: false } }
     puts "Elasticsearch Version: #{Elasticsearch::Model.client.info['version']}"
 
     unless ActiveRecord::Base.connected?

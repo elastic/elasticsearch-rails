@@ -36,7 +36,8 @@ end
 #
 # @since 6.0.0
 DEFAULT_CLIENT = Elasticsearch::Client.new(host: ELASTICSEARCH_URL,
-                                           tracer: (ENV['QUIET'] ? nil : ::Logger.new(STDERR)))
+                                           tracer: (ENV['QUIET'] ? nil : ::Logger.new(STDERR)),
+                                           transport_options: { :ssl => { verify: false } })
 
 class MyTestRepository
   include Elasticsearch::Persistence::Repository
