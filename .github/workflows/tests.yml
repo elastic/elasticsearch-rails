@@ -1,4 +1,4 @@
-name: Ruby 3.0
+name: Ruby tests
 on:
   push:
     branches:

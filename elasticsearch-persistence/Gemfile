@@ -25,7 +25,7 @@ gem 'elasticsearch-model',
     require: false
 
 group :development, :testing do
-  gem 'debug'
+  gem 'debug' unless defined?(JRUBY_VERSION)
   gem 'pry-nav'
   gem 'rspec'
 end
