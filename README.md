@@ -1,11 +1,7 @@
 # Elasticsearch Rails
 
-[![Ruby 2.7](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.7/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Ruby 2.6](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.6/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Ruby 2.5](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.5/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Ruby 2.4](https://github.com/elastic/elasticsearch-rails/workflows/Ruby%202.4/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![JRuby](https://github.com/elastic/elasticsearch-rails/workflows/JRuby/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions)
-[![Code Climate](https://codeclimate.com/github/elastic/elasticsearch-rails/badges/gpa.svg)](https://codeclimate.com/github/elastic/elasticsearch-rails)
+[![Ruby tests](https://github.com/elastic/elasticsearch-rails/actions/workflows/tests.yml/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions/workflows/tests.yml)
+[![JRuby tests](https://github.com/elastic/elasticsearch-rails/actions/workflows/jruby.yml/badge.svg)](https://github.com/elastic/elasticsearch-rails/actions/workflows/jruby.yml)
 
 This repository contains various Ruby and Rails integrations for [Elasticsearch](http://elasticsearch.org):
 
@@ -29,20 +25,13 @@ Install each library from [Rubygems](https://rubygems.org/gems/elasticsearch):
     gem install elasticsearch-model
     gem install elasticsearch-rails
 
-To use an unreleased version, add it to your `Gemfile` for [Bundler](http://bundler.io):
-
-```ruby
-gem 'elasticsearch-model', github: 'elastic/elasticsearch-rails', branch: '5.x'
-gem 'elasticsearch-rails', github: 'elastic/elasticsearch-rails', branch: '5.x'
-```
-
 ## Compatibility
 
-The libraries are compatible with Ruby 2.4 and higher.
+The libraries are compatible with Ruby 3.0 and higher.
 
 We follow Ruby’s own maintenance policy and officially support all currently maintained versions per [Ruby Maintenance Branches](https://www.ruby-lang.org/en/downloads/branches/).
 
-The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
+The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `8.x` of the Elasticsearch stack.
 
 | Rubygem       |   | Elasticsearch |
 |:-------------:|:-:| :-----------: |
@@ -50,7 +39,9 @@ The version numbers follow the Elasticsearch major versions. Currently the `main
 | 2.x           | → | 2.x           |
 | 5.x           | → | 5.x           |
 | 6.x           | → | 6.x           |
-| main          | → | 7.x           |
+| 7.x           | → | 7.x           |
+| 8.x           | → | 8.x           |
+| main          | → | 8.x           |
 
 Check out [Elastic product end of life dates](https://www.elastic.co/support/eol) to learn which releases are still actively supported and tested.
 
