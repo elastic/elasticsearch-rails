@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rails: [ '6.1', '7.0' ]
+        rails: [ '6.1', '7.0', '7.1' ]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -26,11 +26,11 @@ jobs:
         sudo sysctl -w vm.max_map_count=262144
     - uses: elastic/elastic-github-actions/elasticsearch@master
       with:
-        stack-version: 8.11.0-SNAPSHOT
+        stack-version: 8.13-SNAPSHOT
         security-enabled: false
     - uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 3.0
+        ruby-version: 3.3
     - name: Bundle
       run: |
         sudo apt-get install libsqlite3-dev
