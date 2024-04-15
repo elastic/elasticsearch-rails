@@ -17,7 +17,7 @@
 
 module Elasticsearch
   module Model
-    # Provides methods for getting and setting index name the model
+    # Provides methods for getting and setting index and name for the model
     #
     module Naming
       module ClassMethods

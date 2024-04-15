@@ -17,7 +17,6 @@
 
 module Elasticsearch
   module Model
-
     # Keeps a global registry of classes that include `Elasticsearch::Model`
     #
     class Registry
