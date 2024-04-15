@@ -21,7 +21,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :testing do
-  gem 'debug'
+  gem 'debug' unless defined?(JRUBY_VERSION)
   gem 'pry-nav'
   gem 'rspec'
 end
