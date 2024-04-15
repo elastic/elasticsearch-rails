@@ -29,8 +29,10 @@ gem 'elasticsearch-persistence',
     require: false
 
 group :development, :testing do
-  gem 'debug'
   gem 'pry-nav'
   gem 'rspec'
-  gem 'sqlite3' unless defined?(JRUBY_VERSION)
+  unless defined?(JRUBY_VERSION)
+    gem 'sqlite3'
+    gem 'debug'
+  end
 end

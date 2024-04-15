@@ -24,7 +24,7 @@ gem 'pry'
 gem 'rake', '~> 12'
 
 group :development do
-  gem 'debug'
+  gem 'debug' unless defined?(JRUBY_VERSION)
   gem 'rspec'
   gem 'yard'
 end
