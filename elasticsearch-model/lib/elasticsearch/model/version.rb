@@ -17,6 +17,6 @@
 
 module Elasticsearch
   module Model
-    VERSION = '8.0.0'.freeze
+    VERSION = '8.0.0.pre'.freeze
   end
 end
