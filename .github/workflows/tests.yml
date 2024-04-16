@@ -2,10 +2,10 @@ name: Ruby tests
 on:
   push:
     branches:
-      - 8.x
+      - main
   pull_request:
     branches:
-      - 8.x
+      - main
 jobs:
   tests:
     env:

@@ -2,10 +2,10 @@ name: JRuby tests
 on:
   push:
     branches:
-      - 8.x
+      - main
   pull_request:
     branches:
-      - 8.x
+      - main
   workflow_dispatch:
     branches:
       - '*'
