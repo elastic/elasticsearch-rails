@@ -4,18 +4,19 @@ Persistence layer for Ruby domain objects in Elasticsearch, using the Repository
 
 ## Compatibility
 
-This library is compatible with Ruby 2.4 and higher.
+This library is compatible with Ruby 3.1 and higher.
 
-The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
+The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `8.x` of the Elasticsearch stack.
 
-| Rubygem       |   | Elasticsearch |
-|:-------------:|:-:| :-----------: |
-| 0.1           | → | 1.x           |
-| 2.x           | → | 2.x           |
-| 5.x           | → | 5.x           |
-| 6.x           | → | 6.x           |
-| 7.x           | → | 7.x           |
-| main          | → | 7.x           |
+| Rubygem |   | Elasticsearch |
+|:-------:|:-:|:-------------:|
+| 0.1     | → | 1.x           |
+| 2.x     | → | 2.x           |
+| 5.x     | → | 5.x           |
+| 6.x     | → | 6.x           |
+| 7.x     | → | 7.x           |
+| 8.x     | → | 8.x           |
+| main    | → | 8.x           |
 
 ## Installation
 
@@ -78,7 +79,7 @@ note = Note.new id: 1, text: 'Test'
 repository.save(note)
 # PUT http://localhost:9200/repository/_doc/1 [status:201, request:0.210s, query:n/a]
 # > {"id":1,"text":"Test"}
-# < {"_index":"repository","_type":"note","_id":"1","_version":1,"created":true}
+# < {"_index":"repository","_id":"1","_version":1,"created":true}
 ```
 
 ...find it...
@@ -86,7 +87,7 @@ repository.save(note)
 ```ruby
 n = repository.find(1)
 # GET http://localhost:9200/repository/_doc/1 [status:200, request:0.003s, query:n/a]
-# < {"_index":"repository","_type":"note","_id":"1","_version":2,"found":true, "_source" : {"id":1,"text":"Test"}}
+# < {"_index":"repository","_id":"1","_version":2,"found":true, "_source" : {"id":1,"text":"Test"}}
 => <Note:0x007fcbfc0c4980 @attributes={"id"=>1, "text"=>"Test"}>
 ```
 
@@ -105,14 +106,14 @@ repository.search(query: { match: { text: 'test' } }).first
 ```ruby
 repository.delete(note)
 # DELETE http://localhost:9200/repository/_doc/1 [status:200, request:0.014s, query:n/a]
-# < {"found":true,"_index":"repository","_type":"note","_id":"1","_version":3}
-=> {"found"=>true, "_index"=>"repository", "_type"=>"note", "_id"=>"1", "_version"=>2}
+# < {"found":true,"_index":"repository","_id":"1","_version":3}
+=> {"found"=>true, "_index"=>"repository", "_id"=>"1", "_version"=>2}
 ```
 
 The repository module provides a number of features and facilities to configure and customize the behavior:
 
 * Configuring the Elasticsearch [client](https://github.com/elastic/elasticsearch-ruby#usage) being used
-* Setting the index name, document type, and object class for deserialization
+* Setting the index name, and object class for deserialization
 * Composing mappings and settings for the index
 * Creating, deleting or refreshing the index
 * Finding or searching for documents
@@ -145,7 +146,7 @@ class MyRepository
 end
 
 client = Elasticsearch::Client.new(url: ENV['ELASTICSEARCH_URL'], log: true)
-repository = MyRepository.new(client: client, index_name: :my_notes, type: :note, klass: Note)
+repository = MyRepository.new(client: client, index_name: :my_notes, klass: Note)
 repository.settings number_of_shards: 1 do
   mapping do
     indexes :text, analyzer: 'snowball'
@@ -153,8 +154,7 @@ repository.settings number_of_shards: 1 do
 end
 ```
 
-The custom Elasticsearch client will be used now, with a custom index and type names,
-as well as the custom serialization and de-serialization logic.
+The custom Elasticsearch client will be used now, with a custom index, as well as the custom serialization and de-serialization logic.
 
 We can create the index with the desired settings and mappings:
 
@@ -170,7 +170,7 @@ Save the document with extra properties added by the `serialize` method:
 repository.save(note)
 # PUT http://localhost:9200/my_notes/note/1
 # > {"id":1,"text":"Test","my_special_key":"my_special_stuff"}
-{"_index"=>"my_notes", "_type"=>"my_note", "_id"=>"1", "_version"=>4, ... }
+{"_index"=>"my_notes", "_id"=>"1", "_version"=>4, ... }
 ```
 
 And `deserialize` it:
@@ -194,7 +194,6 @@ class NoteRepository
   include Elasticsearch::Persistence::Repository::DSL
 
   index_name 'notes'
-  document_type 'note'
   klass Note
 
   settings number_of_shards: 1 do
@@ -318,36 +317,8 @@ repository.index_name
 
 ```
 
-The `document_type` method specifies the Elasticsearch document type to use for storage, lookup and search. The default value is
-'_doc'. Keep in mind that future versions of Elasticsearch will not allow you to set this yourself and will use the type,
-'_doc'.
-
-```ruby
-repository = NoteRepository.new(document_type: 'note')
-repository.document_type
-# => 'note'
-
-```
-
-or with the DSL mixin:
-
-```ruby
-class NoteRepository
-  include Elasticsearch::Persistence::Repository
-  include Elasticsearch::Persistence::Repository::DSL
-
-  document_type 'note'
-end
-
-repository = NoteRepository.new
-repository.document_type
-# => 'note'
-
-```
-
 The `klass` method specifies the Ruby class name to use when initializing objects from
-documents retrieved from the repository. If this value is not set, a Hash representation of the document will be 
-returned instead.
+documents retrieved from the repository. If this value is not set, a Hash representation of the document will be returned instead.
 
 ```ruby
 repository = NoteRepository.new(klass: Note)
@@ -452,7 +423,7 @@ The `save` method allows you to store a domain object in the repository:
 ```ruby
 note = Note.new id: 1, title: 'Quick Brown Fox'
 repository.save(note)
-# => {"_index"=>"notes_development", "_type"=>"_doc", "_id"=>"1", "_version"=>1, "created"=>true}
+# => {"_index"=>"notes_development", "_id"=>"1", "_version"=>1, "created"=>true}
 ```
 
 The `update` method allows you to perform a partial update of a document in the repository.
@@ -460,14 +431,14 @@ Use either a partial document:
 
 ```ruby
 repository.update id: 1, title: 'UPDATED',  tags: []
-# => {"_index"=>"notes_development", "_type"=>"_doc", "_id"=>"1", "_version"=>2}
+# => {"_index"=>"notes_development", "_id"=>"1", "_version"=>2}
 ```
 
 Or a script (optionally with parameters):
 
 ```ruby
 repository.update 1, script: 'if (!ctx._source.tags.contains(t)) { ctx._source.tags += t }', params: { t: 'foo' }
-# => {"_index"=>"notes_development", "_type"=>"_doc", "_id"=>"1", "_version"=>3}
+# => {"_index"=>"notes_development", "_id"=>"1", "_version"=>3}
 ```
 
 

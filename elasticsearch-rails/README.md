@@ -6,18 +6,19 @@ library, providing features suitable for Ruby on Rails applications.
 
 ## Compatibility
 
-This library is compatible with Ruby 1.9.3 and higher.
+This library is compatible with Ruby 3.1 and higher.
 
-The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
+The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `8.x` of the Elasticsearch stack.
 
-| Rubygem       |   | Elasticsearch |
-|:-------------:|:-:| :-----------: |
-| 0.1           | → | 1.x           |
-| 2.x           | → | 2.x           |
-| 5.x           | → | 5.x           |
-| 6.x           | → | 6.x           |
-| 7.x           | → | 7.x           |
-| main          | → | 7.x           |
+| Rubygem |   | Elasticsearch |
+|:-------:|:-:|:-------------:|
+| 0.1     | → | 1.x           |
+| 2.x     | → | 2.x           |
+| 5.x     | → | 5.x           |
+| 6.x     | → | 6.x           |
+| 7.x     | → | 7.x           |
+| 8.x     | → | 8.x           |
+| main    | → | 8.x           |
 
 ## Installation
 
@@ -137,9 +138,9 @@ This software is licensed under the Apache 2 license, quoted below.
     the Apache License, Version 2.0 (the "License"); you may
     not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
     	http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on an
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
