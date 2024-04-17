@@ -8,7 +8,7 @@ It aims to simplify integration of Ruby classes ("models"), commonly found e.g. 
 
 This library is compatible with Ruby 3 and higher.
 
-The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `7.x` of the Elasticsearch stack. **We haven't tested and updated the code for Elasticsearch `8.0` yet**.
+The version numbers follow the Elasticsearch major versions. Currently the `main` branch is compatible with version `8.x` of the Elasticsearch stack.
 
 | Rubygem |   | Elasticsearch |
 |:-------:|:-:|:-------------:|
@@ -141,7 +141,7 @@ Elasticsearch::Model.client = Elasticsearch::Client.new log: true
 You might want to do this during your application bootstrap process, e.g. in a Rails initializer.
 
 Please refer to the
-[`elasticsearch-transport`](https://github.com/elastic/elasticsearch-ruby/tree/main/elasticsearch-transport)
+[`elastic-transport`](https://github.com/elastic/elastic-transport-ruby/)
 library documentation for all the configuration options, and to the
 [`elasticsearch-api`](http://rubydoc.info/gems/elasticsearch-api) library documentation
 for information about the Ruby client API.
