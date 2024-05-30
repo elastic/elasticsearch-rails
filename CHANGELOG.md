@@ -1,3 +1,25 @@
+## 8.0.0
+
+First general availability release for `8.0.0`. Major versions of `8.x` will support Elasticsearch version `8.x` changing the `elasticsearch` dependency's major version: `gem 'elasticsearch', '~> 8'`.
+All references to `type` should have been removed. Document types were deprecated and do not exist in `8.x`.
+
+The dependency from `elasticsearch` on `elasticsearch-transport` was updated to `elastic-transport`. All `8.x` Elasticsearch APIs supported by `elasticsearch` should now be supported on the Rails library. See [Release notes for the Elasticsearch client 8.0](https://www.elastic.co/guide/en/elasticsearch/client/ruby-api/current/release_notes_80.html) and the [8.x release notes](https://www.elastic.co/guide/en/elasticsearch/client/ruby-api/current/release_notes.html#_8_x) for more information.
+
+### Compatibility
+
+The gem is currently testing with Ruby 3.1, 3.2 and 3.3 and JRuby 9.4. Testing for Ruby `2.x` versions has been dropped as they're no longer updated or supported. Currently testing with Rails 6.1, 7.0 and 7.1.
+
+### Changes since 8.0.0.pre
+
+- Address Rails 7.1 deprecation warning in elasticsearch-rails [PR](https://github.com/elastic/elasticsearch-rails/pull/1067)
+- Ensure subclasses are added to the registry [PR](https://github.com/elastic/elasticsearch-rails/pull/1073)
+
+### Development changes
+
+- Using `debug` for debugging in `development` and `testing` Gemfile groups.
+- Minor general code cleanups and styling changes.
+- Updated code for `elasticsearch` 8.x.
+
 ## 7.2.1
 
 * The default git branch `master` has been renamed to `main`
