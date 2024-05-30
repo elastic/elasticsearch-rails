@@ -26,7 +26,7 @@ gemspec path: '../'
 
 gem 'activemodel',  '6.1'
 gem 'activerecord', '6.1'
-gem 'sqlite3' unless defined?(JRUBY_VERSION)
+gem 'sqlite3', '~> 1.4' unless defined?(JRUBY_VERSION)
 # gem 'mongoid', '~> 6'
 
 group :development, :testing do
