@@ -80,7 +80,6 @@ namespace :elasticsearch do
       total_errors = klass.__elasticsearch__.import force:      ENV.fetch('FORCE', false),
                                   batch_size: ENV.fetch('BATCH', 1000).to_i,
                                   index:      ENV.fetch('INDEX', nil),
-                                  type:       ENV.fetch('TYPE',  nil),
                                   scope:      ENV.fetch('SCOPE', nil) do |response|
         pbar.inc response['items'].size if pbar
         STDERR.flush
