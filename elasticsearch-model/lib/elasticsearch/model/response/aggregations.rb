@@ -26,6 +26,11 @@ module Elasticsearch
           __redefine_enumerable_methods super(attributes)
         end
 
+        # #initialize takes fewer arguments than the ::Hashie::Mash superclass so we have to change dup accordingly
+        def dup
+          self.class.new(self)
+        end
+
         # Fix the problem of Hashie::Mash returning unexpected values for `min` and `max` methods
         #
         # People can define names for aggregations such as `min` and `max`, but these

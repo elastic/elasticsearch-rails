@@ -80,4 +80,15 @@ describe Elasticsearch::Model::Response::Aggregations do
       expect(aggregations.price.max.value).to eq(99)
     end
   end
+
+  describe '#dup' do
+
+    it 'creates a duplicate of the aggregations object' do
+      duped_aggregations = aggregations.dup
+      expect(duped_aggregations).to be_a(Elasticsearch::Model::Response::Aggregations)
+      expect(duped_aggregations).not_to be(aggregations)
+      expect(duped_aggregations.foo.bar).to eq(10)
+      expect(duped_aggregations.price.doc_count).to eq(123)
+    end
+  end
 end
