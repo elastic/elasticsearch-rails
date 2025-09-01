@@ -1,3 +1,10 @@
+## 8.0.1
+
+Bugfix release:
+
+- elasticsearch-rails: Fixes [#1082](https://github.com/elastic/elasticsearch-rails/issues/1082) `rake elasticsearch:import:model - ArgumentError: unknown keyword: :type (ArgumentError)`. Thanks @beatjoerg [Pull Request](https://github.com/elastic/elasticsearch-rails/pull/1083).
+- elasticsearch-model: Fixes `ArgumentError` when calling `dup` on aggregations. Thanks @rafayqayyum [Pull Request](https://github.com/elastic/elasticsearch-rails/pull/1090).
+
 ## 8.0.0
 
 First general availability release for `8.0.0`. Major versions of `8.x` will support Elasticsearch version `8.x` changing the `elasticsearch` dependency's major version: `gem 'elasticsearch', '~> 8'`.
