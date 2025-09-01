@@ -27,27 +27,27 @@ describe Elasticsearch::Rails::Instrumentation::LogSubscriber do
     allow(instance).to receive(:logger) { logger }
   end
 
-  describe "#search" do
+  describe '#search' do
     subject { instance.search(event) }
 
     let(:event) { double("search.elasticsearch", duration: 1.2345, payload: { name: "execute", search: { query: { match_all: {}}}}) }
 
-    it "logs the event" do
+    it 'logs the event' do
       expect(instance).to receive(:color).with(" execute (1.2ms)", described_class::GREEN, { bold: true }).and_call_original
       expect(logger).to receive(:debug?) { true }
       expect(logger).to receive(:debug).with("  \e[1m\e[32m execute (1.2ms)\e[0m \e[2m{query: {match_all: {}}}\e[0m")
       subject
     end
 
-    context "when Rails version is older" do
-      let(:rails_version) { "7.0.0" }
+    context 'when ActiveSupport version is older' do
+      let(:active_support_version) { '7.0.0' }
 
       before do
-        allow(::Rails).to receive(:gem_version) { Gem::Version.new(rails_version) }
+        allow(::ActiveSupport).to receive(:gem_version) { Gem::Version.new(active_support_version) }
       end
 
-      it "logs the event" do
-        expect(instance).to receive(:color).with(" execute (1.2ms)", described_class::GREEN, true).and_call_original
+      it 'logs the event' do
+        expect(instance).to receive(:color).with(' execute (1.2ms)', described_class::GREEN, true).and_return "\e[1m\e[32m execute (1.2ms)\e[0m"
         expect(logger).to receive(:debug?) { true }
         expect(logger).to receive(:debug).with("  \e[1m\e[32m execute (1.2ms)\e[0m \e[2m{query: {match_all: {}}}\e[0m")
         subject

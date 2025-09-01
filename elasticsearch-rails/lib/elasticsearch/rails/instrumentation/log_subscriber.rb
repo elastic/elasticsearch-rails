@@ -18,7 +18,6 @@
 module Elasticsearch
   module Rails
     module Instrumentation
-
       # A log subscriber to attach to Elasticsearch related events
       #
       # @see https://github.com/rails/rails/blob/master/activerecord/lib/active_record/log_subscriber.rb
@@ -58,10 +57,9 @@ module Elasticsearch
         def new_color_syntax?
           return @new_color_syntax if defined?(@new_color_syntax)
 
-          @new_color_syntax = ::Rails.respond_to?(:gem_version) && ::Rails.gem_version >= '7.1'
+          @new_color_syntax = ::ActiveSupport.respond_to?(:gem_version) && ::ActiveSupport::gem_version >= '7.1'
         end
       end
-
     end
   end
 end
