@@ -244,8 +244,20 @@ describe 'Elasticsearch::Model::Response::Response WillPaginate' do
         allow(response).to receive(:results).and_return(double('results', total: 100))
       end
 
-      it 'returns the total results' do
-        expect(response.total_entries).to eq(100)
+      context 'when a custom value is not set' do
+        it 'returns the total results' do
+          expect(response.total_entries).to eq(100)
+        end
+      end
+
+      context 'when a value is set via the #paginate method' do
+        before do
+          response.paginate(total_entries: 50)
+        end
+
+        it 'returns the total_entries value' do
+          expect(response.total_entries).to eq(50)
+        end
       end
     end
   end

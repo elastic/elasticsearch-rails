@@ -106,10 +106,17 @@ module Elasticsearch
             self
           end
 
+          # Set the "total_count" value
+          #
+          def total(value)
+            @total_count = value.to_i
+            self
+          end
+
           # Returns the total number of results
           #
           def total_count
-            results.total
+            @total_count || results.total
           end
 
           # Returns the models's `per_page` value or the default
