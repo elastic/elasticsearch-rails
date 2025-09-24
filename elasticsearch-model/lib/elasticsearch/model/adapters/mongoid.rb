@@ -89,7 +89,7 @@ module Elasticsearch
             scope = all
             scope = scope.send(named_scope) if named_scope
             scope = query.is_a?(Proc) ? scope.class_exec(&query) : scope.where(query) if query
-            scope.no_timeout.each_slice(batch_size) do |items|
+            scope.no_timeout.batch_size(batch_size).each_slice(batch_size) do |items|
               yield (preprocess ? self.__send__(preprocess, items) : items)
             end
           end
