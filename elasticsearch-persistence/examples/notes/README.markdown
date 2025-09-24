@@ -1,4 +1,4 @@
-Demo Aplication for the Repository Pattern
+Demo Application for the Repository Pattern
 ==========================================
 
 This directory contains a simple demo application for the repository pattern of the `Elasticsearch::Persistence`

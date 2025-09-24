@@ -95,7 +95,7 @@ The gem is currently testing with Ruby 3.1, 3.2 and 3.3 and JRuby 9.4. Testing f
 ### Persistence
 
 * Ensure that arguments are passed to super (#853)
-* Index name option is handled by super, no need to pass options expicitly
+* Index name option is handled by super, no need to pass options explicitly
 * Handle total hits as an object in search response
 
 ### Ruby on Rails

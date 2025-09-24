@@ -46,7 +46,7 @@ describe 'naming' do
     expect(DummyNamingModel.new.index_name).to eq('dummy_naming_models')
   end
 
-  it 'returns the sanitized defualt index name for namespaced models' do
+  it 'returns the sanitized default index name for namespaced models' do
     expect(::MyNamespace::DummyNamingModelInNamespace.index_name).to eq('my_namespace-dummy_naming_model_in_namespaces')
     expect(::MyNamespace::DummyNamingModelInNamespace.new.index_name).to eq('my_namespace-dummy_naming_model_in_namespaces')
   end
