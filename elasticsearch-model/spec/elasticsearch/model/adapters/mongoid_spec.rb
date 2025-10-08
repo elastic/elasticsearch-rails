@@ -163,7 +163,7 @@ describe Elasticsearch::Model::Adapter::Mongoid do
     context 'query criteria specified as a proc' do
 
       let(:query) do
-        Proc.new { where(color: "red") }
+        Proc.new { where({ color: "red" }) }
       end
 
       it 'execites the query' do
