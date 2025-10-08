@@ -31,4 +31,5 @@ gem 'activesupport', '7.0'
 group :development, :testing do
   gem 'pry-nav'
   gem 'rspec'
+  gem 'sqlite3', '~> 2.0'
 end

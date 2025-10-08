@@ -18,9 +18,7 @@
 require 'spec_helper'
 
 describe Elasticsearch::Model::Adapter::ActiveRecord do
-
   context 'when a document_type is not defined for the Model' do
-
     before do
       ActiveRecord::Schema.define(:version => 1) do
         create_table :article_no_types do |t|
@@ -42,7 +40,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
     end
 
     describe 'indexing a document' do
-
       let(:search_result) do
         ArticleNoType.search('title:test')
       end
@@ -55,7 +52,6 @@ describe Elasticsearch::Model::Adapter::ActiveRecord do
   end
 
   context 'when a document_type is defined for the Model' do
-
     before(:all) do
       ActiveRecord::Schema.define(:version => 1) do
         create_table :articles do |t|
